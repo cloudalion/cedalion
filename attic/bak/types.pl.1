@@ -1,0 +1,136 @@
+%:- [util].
+
+% Operator :: - is of type..
+:- op(200, xfx, '::').
+% Operator ::< - is a special case of...
+:- op(700, xfx, '::<').
+% Operator -:: - For these type the following is defined...
+:- op(1000, xfx, '-::').
+
+% Transform a term containing type defintions to a plain term.
+removeTypeDefinitions((_ -:: TermWithTypeDefs), PlainTerm) :-
+	!,
+	removeTypeDefinitions(TermWithTypeDefs, PlainTerm).
+removeTypeDefinitions(TermWithTypeDefs, PlainTerm) :-
+	transformTerm({(A::_->A)}, TermWithTypeDefs, PlainTerm).
+
+% Transform a term to a cannonical form, meanning that each element has a type definition
+toCannonicalForm(Term::Type, CannonicalTerm::Type) :-
+	!,
+	toInternalCannonicalForm(Term, CannonicalTerm).
+toCannonicalForm(Term, CannonicalTerm::_) :-
+	toInternalCannonicalForm(Term, CannonicalTerm).
+toInternalCannonicalForm(Term, Cannonical) :-
+	Term =.. [Func | Args],
+	doList([Args, CannonicalArgs], {[Arg, CannonicalArg]; toCannonicalForm(Arg, CannonicalArg)}),
+	Cannonical =.. [Func | CannonicalArgs].
+
+% Check if a given type is "definite", meaning that given a list of types it can depend on, it does not depend on any "open-ended" types
+definiteType(Type, ListOfDependecies) :-
+	copy_term([Type, ListOfDependecies], [TypeCopy, ListOfDependenciesCopy]),
+	doList(ListOfDependenciesCopy, {type}),
+	ground(TypeCopy).
+
+% proove(Term, Type, (VarsIn->VarsOut), Proof): 
+%	Provide proof that a Term is of type Type.  The proof is unified with Proof.
+%	VarsIn and VarsOut are lists of Var=Type couples, describing the types of variables.
+proove(Var, Type, VarTypes, Proof) :-
+	var(Var),
+	prooveVarType(Var, Type, VarTypes, Proof).
+proove(Term, Type, VarTypes, Proof) :-
+	classify(Term, ClassifiedType, VarTypes, PartialProof) ->
+		failsafeReconcileTypes(Type, ClassifiedType, PartialProof, Proof);
+		createDefinition(Term, Type, VarTypes, Proof).
+
+% Proove a list of terms is of a list of types
+prooveList([], [], (Vars->Vars), []).
+prooveList([FirstTerm | RestTerms], [FirstType | RestTypes], (VarsIn->VarsOut), [FirstProof | RestProofs]) :-
+	proove(FirstTerm, FirstType, (VarsIn->VarsMid), FirstProof),
+	prooveList(RestTerms, RestTypes, (VarsMid->VarsOut), RestProofs).
+
+% prooveVarType(Var, Type, VarTypes, Proof):
+%	Proove that a variable Var is of type Type, given VarTypes variable bindings.  Proof is unified with Proof.
+prooveVarType(Var, Type, (VarsIn->VarsIn), Proof) :-
+	findVarType(Var, VarsIn, VarType),
+	!,
+	reconcileTypes(Type, VarType, p(var(Var), VarType), Proof).
+prooveVarType(Var, Type, (VarsIn->[Var=Type|VarsIn]), p(var(Var), Type)).
+
+findVarType(Var, [FirstVar=Type | _], Type) :-
+	Var==FirstVar.
+findVarType(Var, [_ | Rest], Type) :-
+	findVarType(Var, Rest, Type).
+	
+
+% classify(Term, Type, VarTypes, Proof) :
+% 	Classify Term - try to provide a type for it (Type), along with a Proof
+classify(Num, number, (VarsIn->VarsIn), p(Num, number)) :-
+	number(Num),
+	!.
+classify(Var, Type, (VarsIn->VarsIn), p(var(Var), Type)) :-
+	var(Var),
+	!,
+	findVarType(Var, VarsIn, Type).
+classify(Term::Type, Type, (VarsIn->VarsOut), p(TermProof::TypeProof, Type)) :-
+	!,
+	proove(Term, Type, (VarsIn->VarsMid), TermProof),
+	proove(Type, type, (VarsMid->VarsOut), TypeProof).
+
+classify(Term, Type, VarTypes, p(Proof, Type)) :-
+	Term =.. [Func | Args],
+	sameSizeList(Args, ArgTypes),
+	defined(Func, ArgTypes, Type),
+	prooveList(Args, ArgTypes, VarTypes, ChildProofs),
+	Proof =.. [Func | ChildProofs].
+
+% classifyList(Terms, Types, VarTypes, Proofs):
+%	Classify a list of terms.
+classifyList([], [], (VarsIn->VarsIn), []).
+classifyList([FirstTerm | RestTerms], [FirstType | RestTypes], (VarsIn->VarsOut), [FirstProof | RestProofs]) :-
+	classify(FirstTerm, FirstType, (VarsIn->VarsMid), FirstProof),
+	classifyList(RestTerms, RestTypes, (VarsMid->VarsOut), RestProofs).
+
+% reconcileTypes(Type, GivenType, PartialProof, Proof)
+%	Reconciles between the given type GivenType and the expected type Type.  Given a partial proof PartialProof
+%	prooving that a term is of type GivenType, Proof is unified with the full proof of type Type.
+reconcileTypes(Type, Type, Proof, Proof) :-
+	!.
+reconcileTypes(Type, GivenType, PartialProof, Proof) :-
+	MoreGeneralType ::< GivenType,
+	reconcileTypes(Type, MoreGeneralType, r(PartialProof, MoreGeneralType), Proof).
+
+% failsafeReconcileTypes(Type, ClassifiedType, PartialProof, Proof):
+%	Perform a failsafe reconciliation - if fails, the Proof will be an error.
+failsafeReconcileTypes(Type, ClassifiedType, PartialProof, Proof) :-
+	reconcileTypes(Type, ClassifiedType, PartialProof, Proof).
+failsafeReconcileTypes(Type, ClassifiedType, PartialProof, error(typeMismatch(Type, ClassifiedType), PartialProof)) :-
+	\+ reconcileTypes(Type, ClassifiedType, PartialProof, _).
+
+% createDefinition(Term, Type, VarTypes, Proof):
+%	Create a difinition for the top level element in Term, to be of type Type, assuming all arguments are classifiable
+createDefinition(Var, _, (VarsIn->VarsIn), error(untypedVariable, Var)) :-
+	var(Var),
+	!.
+createDefinition(Term, Type, VarTypes, p(Proof, Type)) :-
+	Term =.. [Func | Args],
+	classifyList(Args, ArgTypes, VarTypes, Proofs),
+	!,
+	assert(defined(Func, ArgTypes, Type)),
+	Proof =.. [Func | Proofs].
+createDefinition(Term, Type, VarTypes, error(unclassifiedArg(Index), Term)) :-
+	Term =.. [Func | Args],
+	unclassifiedIndex(Args, VarTypes, 1, Index).
+
+unclassifiedIndex([FirstTerm | RestTerms], (VarsIn->VarsOut), First, Index) :-
+	Next is First + 1,
+	classify(FirstTerm, _, (VarsIn -> VarsMid), _),
+	!,
+	unclassifiedIndex(RestTerms, (VarsIn->VarsOut), Next, Index).
+unclassifiedIndex(_, _, Index, Index).
+
+% Union type
+defined(+, [T, T], T).
+defined(::<, [type, type], goal).
+A ::< A+_.
+B ::< _+B.
+

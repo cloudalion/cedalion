@@ -1,0 +1,224 @@
+% Hindley-Milner type system with type classes
+:- [util].
+
+% Strings are marked with a $ prefix (e.g. $'Hello, World').
+:- op(100, fx, '$').
+% Type Assertions are performed in the form Term::Type
+:- op(200, xfx, '::').
+% Class assertions
+:- op(1200, xfx, '=>').
+:- assert(signature('=>', clause, [list(pred), clause], [], [])).
+% Deduction
+:- op(1190, xfx, if).
+:- assert(signature(if, clause, [pred, list(pred)], [], [])).
+% List type
+:- assert(signature([], list(_), [], [], [])).
+:- assert(signature('.', list(T), [T, list(T)], [], [])).
+% Fact clause
+:- assert(signature(fact, clause, [pred], [], [])).
+
+% compileUnit(unit(Path, Header, Body)):
+%	Performs type checks and asserts the clauses in Body.
+%	Signatures for the name/arity pairs introduced in Header are defined by type-inference.
+%	Path is used as a base for the markers asserted by this predicate.
+%	It fails if an error occured in the process.
+compileUnit(unit(Path, Header, Body)) :-
+	createHeaderSignatures(Header, Signatures),
+	duplicateClauses(Body, BodyDup),
+	buildTypeTree(BodyDup, list(clause), Signatures, ([]->_), Path, Tree),
+	classifyTypes(Tree, []),
+	assertSignatures(Signatures, ClassRestrictions),
+	assertClauses(BodyDup).
+
+% createHeaderSignatures(Header, Signatures):
+%	Transform a list of name/arity pairs into a list of signatures of the type:
+%	sig(Name, Type, ArgTypes, TypeVars, Restrictions).
+createHeaderSignatures([], []).
+createHeaderSignatures([Name/Arity | Header], [sig(Name, _Type, ArgTypes, _VarTypes, _Restrictions) | Signatures]) :-
+	length(ArgTypes, Arity),
+	createHeaderSignatures(Header, Signatures).
+
+% duplicateClauses(Body, BodyDup):
+%	For each clause in Body, duplicate the clause to avoid sharing variables between different clauses
+duplicateClauses([], []).
+duplicateClauses([Clause | Body], [CopyOfClause | BodyDup]) :-
+	copy_term(Clause, CopyOfClause),
+	duplicateClauses(Body, BodyDup).
+
+% buildTypeTree(Term, Type, Signatures, (VarTypesIn->VarTypesOut), Path, Tree):
+%	Perform Hindley-Milner type inference on Term, which is supposed to match type Type.
+%	Signatures contains local signature definitions.  VarTypes In->Out provide sharing type for sharing variables.
+%	Path provides reference for the location inside a bigger term/unit.
+%	The result of this operation is the construction of a type-assigning tree for Term, unified with Tree.
+% Case 1: Numbers
+buildTypeTree(Num, number, _, (VarTypes->VarTypes), _, number(Num)) :-
+	number(Num),
+	!.
+% Case 2: Seen variables
+buildTypeTree(Var, Type, _, (VarTypes->VarTypes), Path, var(Var, Type)) :-
+	var(Var),
+	findType(Var, VarTypes, VarType),
+	!,
+	try(safeUnify(Type, VarType), Path, typeMismatch(Type, VarType)).
+% Case 3: Unseen variables
+buildTypeTree(Var, Type, _, (VarTypes->[varType(Var, Type) | VarTypes]), _, var(Var, Type)):-
+	var(Var),
+	!.
+% Case 4: Strings.  Strings are atoms marked with a $ prefix
+buildTypeTree($ Atom, string, _, (VarTypes->VarTypes), Path, string(Atom)) :-
+	!,
+	try(atom(Atom), Path, notAnAtom(Atom)).
+% Case 5: A type assertion (Term::Type)
+buildTypeTree(Term::Type, Type, Signatures, VarTypes, Path, compound('::', Type, [], [], Trees, Term::Type, Path)) :-
+	!,
+	buildTypeTrees([Term, Type], [Type, type], Signatures, VarTypes, Path, 0, Trees).
+% Case 6: A general compound term
+buildTypeTree(Term, Type, Signatures, VarTypes, Path, compound(Func, Type, TypeVars, Constraints, ChildTrees, Term, Path)) :-
+	Term =.. [Func | Args],
+	length(Args, Arity),
+	length(ArgTypes, Arity),
+	try(findSignature(Signatures, Func, SigType, ArgTypes, TypeVars, Constraints), 
+		Path, unknownConcept(Func/Arity)),
+	try(safeUnify(Type, SigType), Path, typeMismatch(Type, SigType)),
+	buildTypeTrees(Args, ArgTypes, Signatures, VarTypes, Path, 0, ChildTrees).
+	
+% buildTypeTrees(Args, ArgTypes, Signature, VarTypes, Path, ChildTrees):
+%	Run buildTypeTree/5 on all elements in the given list.
+buildTypeTrees([], [], _, (VarTypes->VarTypes), _, _, []).
+buildTypeTrees([Arg | Args], [Type | Types], Signature, (VarTypesIn->VarTypesOut), Path, PrevIndex, [Tree | Trees]) :-
+	Index is PrevIndex + 1,
+	append(Path, [Index], NewPath),
+	buildTypeTree(Arg, Type, Signature, (VarTypesIn->VarTypesMid), NewPath, Tree),
+	buildTypeTrees(Args, Types, Signature, (VarTypesMid->VarTypesOut), Path, Index, Trees).
+
+% findSignature(Signatures, Func, SigType, ArgTypes, TypeVars, Restrictions):
+%	Finds the signature of Func/length(ArgTypes) in either the global or local environments.
+%	The local environment is manifested by the Signatures list of signatures, while the
+%	global environment is manifasted by the signature/4 predicate.
+findSignature(Signatures, Func, SigType, ArgTypes, TypeVars, Restrictions) :-
+	member(sig(Func, SigType, ArgTypes, TypeVars, Restrictions), Signatures).
+findSignature(_, Func, SigType, ArgTypes, TypeVars, Restrictions) :-
+	signature(Func, SigType, ArgTypes, TypeVars, Restrictions).
+
+% findType(Var, VarTypes, VarType):
+%	Find a type bound to a variable in a list of elements of the sort: varType(Var, VarType), provided as VarTypes.
+findType(Var, [varType(Var1, VarType) | _], VarType) :-
+	Var1 == Var.
+findType(Var, [_ | VarTypes], VarType) :-
+	findType(Var, VarTypes, VarType).
+
+% classifyTypes(Tree, TypeAssertions):
+%	Crawls a type-assigning Tree, and check that all type constraints are met, 
+%	meaning they are provable from TypeAssertions.
+%	This predicate also updates constraints for "open" concepts.
+% Case 1: Numbers are ignored
+classifyTypes(number(_), _).
+% Case 2: Variables are ignored
+classifyTypes(var(_, _), _).
+% Case 3: Strings are ignored
+classifyTypes(string(_), _).
+% Case 4: Type assertions ([goals] => clause): Unify variable types with ad-hoc types.
+% Then assert the assertions and classify the content.
+classifyTypes(compound(_, clause, _, _, [_, ClauseTree], (TypeAssertions => _), Path), PrevAssertions) :-
+	placeAdHocVars(TypeAssertions),
+	forall(member(Goal, TypeAssertions), assert(Goal)),
+	append(PrevAssertions, TypeAssertions, AllAssertions),
+	classifyTypes(ClauseTree, AllAssertions).
+% Case 5: A general compound term
+classifyTypes(compound(_, _, TypeVars, Constraints, ChildTrees, _, Path), Assertions) :-
+	buildConstraints(Constraints, TypeVars, Assertions, ChildTrees),
+	forall(member(Goal, Constraints), try(Goal, Path, failedToProve(Goal))),
+	classifyTypesInList(ChildTrees, Assertions).
+	
+% classifyTypesInList(Trees, Assertions):
+%	Applies classifyTypes on the elements of Trees.
+classifyTypesInList([], _).
+classifyTypesInList([Tree | Trees], Assertions) :-
+	classifyTypes(Tree, Assertions),
+	classifyTypesInList(Trees, Assertions).
+
+% placeAdHocVars(Term):
+%	Unifies all variables in Term with term of the sort typeVar(Num) where Num is a unique number.
+placeAdHocVars(Term) :-
+	var(Term),
+	!,
+	unique(Uniq),
+	Term = typeVar(Uniq).
+placeAdHocVars(Term) :-
+	Term =.. [_ | Args],
+	placeAdHocVarsInList(Args).
+placeAdHocVarsInList([]).
+placeAdHocVarsInList([Term | Terms]) :- 
+	placeAdHocVars(Term),
+	placeAdHocVarsInList(Terms).
+
+% unique(Uniq):
+% Unify Uniq with a unique number
+unique(Uniq) :-
+	retract(lastUniqueValue(Last)),
+	!,
+	Uniq is Last + 1,
+	assert(lastUniqueValue(Uniq)).
+unique(0) :-
+	assert(lastUniqueValue(0)).
+
+% replaceAdHocVars(InTerm, OutTerm, VarsIn->VarsOut):
+%	Unifies OutTerm with a term similar to InTerm, replacing typeVar(X) with unbound variables.
+%	Variables replacing subterms with matching numbers (X) are unified.
+%	VarsIn and VarsOut contain (Var,Num) pairs.
+replaceAdHocVars(typeVar(X), Var, (VarsIn->VarsIn)) :-
+	?member((Var, X), VarsIn)
+	!.
+replaceAdHocVars(typeVar(X), Var, (VarsIn->[(Var, X) | VarsIn])) :-
+	!.
+replaceAdHocVars(TermIn, TermOut, Vars) :-
+	TermIn =.. [Func | ArgsIn],
+	replaceAdHocVarsInList(ArgsIn, ArgsOut, Vars),
+	TermOut =.. [Func | ArgsOut].
+replaceAdHocVarsInList([], [], (VarsIn->VarsIn)).
+replaceAdHocVarsInList([TermIn | TermsIn], [TermOut | TermsOut], (VarsIn->VarsOut)) :-
+	replaceAdHocVars(TermIn, TermOut, (VarsIn->VarsMid)),
+	replaceAdHocVarsInList(TermsIn, TermsOut, (VarsMid->VarsOut)).
+
+% occursIn(Pattern, Term)
+%	Succeeds for every occurence of Pattern in Term
+occursIn(Pattern, Pattern).
+occursIn(Pattern, Term) :-
+	\+var(Term),
+	Term =.. [_ | Args],
+	occursInList(Pattern, Args).
+occursInList(Pattern, [Term | _]) :-
+	occursIn(Pattern, Term).
+occursInList(Pattern, [_ | Terms]) :-
+	occursInList(Pattern, Terms).
+
+
+
+% buildConstraints(Constraints, TypeVars, Assertions, ChildTrees):
+%	For unbound constraints, create them based on the assertions where the types are relevant.
+buildConstraints(Constraints, TypeVars, Assertions, ChildTrees) :-
+	var(Constraints),
+	var(TypeVars),
+	!,
+	setof(typeVar(X), occursIn(typeVar(X), ChildTrees), TypeVars),
+	findall(Goal, (member(Goal, Assertions), member(TypeVar, TypeVars), occursIn(TypeVar, Goal)), Constraints).
+buildConstraints(_, _, _).
+
+% assertSignatures(Signatures, ClassRestrictions),
+% assertClauses(BodyDup).
+
+% try(Goal, Path, Error):
+%	Try to run Goal.  If it fails, assert a marker with error(Error) as content, on Path
+try(Goal, _, _) :-
+	Goal,
+	!.
+try(_, Path, Error) :-
+	assertMarker(Path, error(Error)),
+	fail.
+
+% assertMarker(Path, Marker):
+%	Asserts a marker with Marker as contents and Path as path
+assertMarker(Path, Marker) :-
+	assert(marker(Path, Marker)).
+
+

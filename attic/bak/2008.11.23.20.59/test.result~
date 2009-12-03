@@ -1,0 +1,2 @@
+testResult('Arithmetics',[3]).
+testResult('One Two Three',[1,2,3]).

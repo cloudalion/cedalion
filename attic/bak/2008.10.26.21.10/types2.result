@@ -1,0 +1,9 @@
+testResult(createHeaderSignatures,[[sig(member,_1362,[_1365,_1367],_1364),sig(pred,_1373,[],_1375)]]).
+testResult(buildTypeTree1,[[sig(pred,type,[],_1372)]]).
+testResult(buildTypeTree2,[[sig(member,pred,[_1386,list(_1386)],_1385),sig(pred,type,[],_1398)]]).
+testResult(buildTypeTree3,[compound(if,clause,[],[compound(mem,pred,[],[var(_1387,_1388),compound('.',list(_1388),[],[var(_1403,_1388),var(_1408,list(_1388))],[_1403|_1408],[1,2])],mem(_1387,[_1403|_1408]),[1]),compound('.',list(pred),[],[compound(mem,pred,[],[var(_1387,_1388),var(_1408,list(_1388))],mem(_1387,_1408),[2,1]),compound([],list(pred),[],[],[],[2,2])],[mem(_1387,_1408)],[2])],(mem(_1387,[_1403|_1408])if[mem(_1387,_1408)]),[])]).
+testResult(buildTypeTree4,[[sig(member,pred,[_1397,list(_1397)],_1396)]]).
+testResult(buildTypeTree5,[]).
+testResult(markers,[([2,1,2,1,2],error(typeMismatch(list(_1370),_1370)))]).
+testResult(dependsOn1,[true]).
+testResult(dependsOn2,[]).

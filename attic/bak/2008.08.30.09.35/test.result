@@ -1,0 +1,25 @@
+testResult('Arithmetics',[3]).
+testResult('One Two Three',[1,2,3]).
+testResult('Do List',[[5,5,5]]).
+testResult('Do List - Singleton',[[1*4,2*3,3*2]]).
+testResult('Set union',[1,2,3,4,5,6,7,8,9]).
+testResult('Transform term',[2+4*6/8]).
+testResult('Transform term - variables',[a(a(1)+a(a(_270*a(3))/a(4)))]).
+testResult(forall1,[]).
+testResult(forall2,[true]).
+testResult(removeTypeDefinitions,[1+2]).
+testResult(removeTypeDefinitions2,[1+2]).
+testResult(removeTypeDefinitions3,[1+2]).
+testResult(checkType1,[[foundType([],goal),error([3],unclassified),foundType([1,unclassified],thing),_270=thing,foundType([2,unclassified],type),defined(thing,[],type,[2,unclassified])]]).
+testResult(checkType2,[[foundType([],goal),defined(dosomething,[number,thing],goal,[]),foundType([1,2],thing),_273=thing,foundType([2,2],type)]]).
+testResult(checkType3,[[foundType([],goal),foundType([1],goal+visual(a+b)),defined(member,[_285,list(_285)],goal+visual(a+b),[1]),foundType([2,2,1],list(_285)),_317=list(_285),foundType([1,2,1],_285),foundType([1,1,1],_285),_346=_285,foundType([2,1,1],type),_285=type,foundType([2],type),foundType([2,2],type),foundType([1,2,2],visualization),foundType([2,1,2,2],visualization),defined(b,[],visualization,[2,1,2,2]),foundType([1,1,2,2],visualization),defined(a,[],visualization,[1,1,2,2]),foundType([1,2],type),goal=type]]).
+testResult(checkType4,[[foundType([],goal),foundType([1],goal),defined(a,[type],goal,[1]),foundType([2],type),goal=type]]).
+testResult(checkType5,[a+b]).
+testResult(definition,[definition(+,[_245,_245],_245,[]),definition(::<,[type,type],goal,[]),definition(member,[set(_270)],type,[]),definition('.',[_278,list(_278)],list(_278),[]),definition([],[],list(_294),[]),definition(goal,[],type,[]),definition(visual,[visualization],type,[]),definition(thing,[],type,[2,unclassified]),definition(dosomething,[number,thing],goal,[]),definition(member,[_340,list(_340)],goal+visual(a+b),[1]),definition(b,[],visualization,[2,1,2,2]),definition(a,[],visualization,[1,1,2,2]),definition(a,[type],goal,[1])]).
+testResult(isOfType1,[true]).
+testResult(isOfType2,[a+b]).
+testResult(isOfType3,[]).
+testResult(isOfType4,[]).
+testResult(isOfType5,[false]).
+testResult(checkSet1,[[foundType([],_251),foundType([],number),foundType([set],set(number)),foundType([2,set],list(number)),foundType([2,2,set],list(number)),foundType([2,2,2,set],list(number)),foundType([1,2,2,set],number),foundType([1,2,set],number),foundType([1,set],number)]]).
+testResult(checkSet2,[[foundType([],_251),error([],notMemberOf([1,2,3])),foundType([],number),foundType([set],set(number)),foundType([2,set],list(number)),foundType([2,2,set],list(number)),foundType([2,2,2,set],list(number)),foundType([1,2,2,set],number),foundType([1,2,set],number),foundType([1,set],number)]]).

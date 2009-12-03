@@ -1,0 +1,10 @@
+testResult(createHeaderSignatures,[[sig(member,_1362,[_1366,_1368],_1364,_1365),sig(pred,_1374,[],_1376,_1377)]]).
+testResult(buildTypeTree1,[[sig(pred,type,[],_1372,_1373)]]).
+testResult(buildTypeTree2,[[sig(member,pred,[_1387,list(_1387)],_1385,_1386),sig(pred,type,[],_1399,_1400)]]).
+testResult(buildTypeTree3,[compound(if,clause,[],[],[compound(mem,pred,[],[],[var(_1389,_1390),compound('.',list(_1390),[],[],[var(_1406,_1390),var(_1411,list(_1390))],[_1406|_1411],[1,2])],mem(_1389,[_1406|_1411]),[1]),compound('.',list(pred),[],[],[compound(mem,pred,[],[],[var(_1389,_1390),var(_1411,list(_1390))],mem(_1389,_1411),[2,1]),compound([],list(pred),[],[],[],[],[2,2])],[mem(_1389,_1411)],[2])],(mem(_1389,[_1406|_1411])if[mem(_1389,_1411)]),[])]).
+testResult(buildTypeTree4,[[sig(member,pred,[_1398,list(_1398)],_1396,_1397)]]).
+testResult(buildTypeTree5,[]).
+testResult(markers,[([2,1,2,1,2],error(typeMismatch(list(_1370),_1370)))]).
+testResult(placeAdHocVars1,[[typeVar(0),typeVar(1),typeVar(2)]]).
+testResult(occursIn1,[3,4,5]).
+testResult(replaceAdHocVars1,[_1370+_1373*_1370]).

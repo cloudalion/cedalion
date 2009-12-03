@@ -1,0 +1,42 @@
+% unit test for types2.pl
+
+:- [types2].
+%:- use_module(library(terms)).
+
+unitTest(createHeaderSignatures,
+	createHeaderSignatures([member/2, pred/0], Sig),
+	Sig).
+unitTest(buildTypeTree1, (
+	createHeaderSignatures([pred/0], Sig),
+	buildTypeTree(pred, type, Sig, ([]->_), [], Tree)), 
+	(Sig)).
+unitTest(buildTypeTree2, (
+	createHeaderSignatures([member/2, pred/0], Sig),
+	buildTypeTree(member(X, [X | _])::pred, 
+		_, Sig, ([]->_), [], Tree)),
+	(Sig)).
+:- assert(signature(mem, pred, [T, list(T)], [])).
+unitTest(buildTypeTree3, (
+	buildTypeTree((mem(X, [_ | L]) if [mem(X, L)]), 
+		_, [], ([]->_), [], Tree)),
+	(Tree)).
+unitTest(buildTypeTree4, (
+	createHeaderSignatures([member/2], Sig),
+	buildTypeTree([
+		fact(member(X, [X|_])),
+		(member(X, [_ | L]) if [member(X, L)])], 
+		_, Sig, ([]->_), [], Tree)), 
+	(Sig)).
+unitTest(buildTypeTree5, (
+	createHeaderSignatures([member/2], Sig),
+	buildTypeTree([
+		fact(member(X, [X|_])),
+		(member(X, [_, L]) if [member(X, L)])], 
+		_, Sig, ([]->_), [], Tree)), 
+	(Sig)).
+unitTest(markers, marker(Path, Marker), (Path, Marker)).
+
+unitTest(dependsOn1, dependsOn(X, 1+2*X-4), true).
+unitTest(dependsOn2, dependsOn(_, 1+2*_-4), false).
+
+

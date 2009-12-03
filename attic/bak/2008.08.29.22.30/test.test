@@ -1,0 +1,42 @@
+% This is a test to test the unittest mechanism
+unitTest('Arithmetics', X is 1 + 2, X).
+a(1).
+a(2).
+a(3).
+unitTest('One Two Three', a(X), X).
+
+% Testing the utilities
+:- [util].
+unitTest('Do List', doList([[1, 2, 3], [4, 3, 2], X], {[A, B, C]; C is A + B}), X).
+unitTest('Do List - Singleton', doList([[1, 2, 3], [4, 3, 2], X], {[A, B, A*B]}), X).
+unitTest('Set union', member(X, union([[1, 2, 3], [4, 5, 6], {A; member(A, [7, 8, 9])}])), X).
+unitTest('Transform term', transformTerm({Num->Twice; number(Num), Twice is Num * 2}, 1+2*3/4, X), X).
+unitTest('Transform term - variables', transformTerm({A->a(A)}, 1+D*3/4, X), X).
+unitTest(forall1, forall(member(X, [1, 2, 3]), X > 2), false).
+unitTest(forall2, forall(member(X, [1, 2, 3]), X > 0), true).
+
+
+% Testing the type mechanism
+:- [types].
+unitTest(removeTypeDefinitions, removeTypeDefinitions((1::int+2::int)::expr(int), PlainTerm), PlainTerm).
+unitTest(removeTypeDefinitions2, removeTypeDefinitions((1::int+2)::expr(int), PlainTerm), PlainTerm).
+unitTest(removeTypeDefinitions3, removeTypeDefinitions(((1::T+2)::expr(T)), PlainTerm), PlainTerm).
+definition('.', [T, list(T)], list(T), []).
+definition('[]', [], list(_), []).
+list(T) ::< set(T).
+definition(goal, [], type, []).
+definition(visual, [visualization], type, []).
+unitTest(checkType1, checkType(dosomething(2, T::thing, Asdf), goal, Err), Err).
+unitTest(checkType2, checkType(dosomething(2, T::thing), goal, Err), Err).
+unitTest(checkType3, checkType(member(X::T, [X|_])::(_+visual(a+b)), goal, Err), Err).
+unitTest(checkType4, checkType(a(T)::T, goal, Err), Err).
+unitTest(checkType5, checkType(member(X, [1, 2]), visual(X), _), X).
+unitTest(definition, definition(Name, Types, Type, Path), definition(Name, Types, Type, Path)).
+unitTest(isOfType1, isOfType(member(X, [1, 2, 3]), goal), true).
+unitTest(isOfType2, isOfType(member(X, [1, 2, 3]), visual(X)), X).
+unitTest(isOfType3, isOfType(member(X, [1, 2, 3]), dsf), false).
+unitTest(isOfType4, isOfType(notAnything, _), false).
+unitTest(isOfType5, isOfType(notAnything+notAnythingElse, _), false).
+unitTest(checkSet1, checkType(1, member([1, 2, 3]), Err), Err).
+unitTest(checkSet2, checkType(4, member([1, 2, 3]), Err), Err).
+

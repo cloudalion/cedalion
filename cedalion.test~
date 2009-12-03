@@ -1,0 +1,21 @@
+:- [cedalion].
+
+unitTest(s(member1), setMember(X, listSet([1, 2, 3]), _), X).
+unitTest(s(member2), setMember(X, set(t(Y), setMember(Y, listSet([1, 2, 3]), _)), _), X).
+
+
+unitTest(s(if1), if(2<3, true, fail), s(yes)).
+unitTest(s(if2), if(2>3, fail, true), s(yes)).
+
+unitTest(s(mapList1), mapList(set([X::number, Y::number], Y is X * 2), [[1, 2, 3]::list(number), Dest]), Dest).
+unitTest(s(firstElements1), firstElements([[1, 2, 3]::list(number), [s(a), s(b), s(c)]::list(string)], Firsts, Rests), x(Firsts, Rests)).
+
+unitTest(s(transformTerm), transformTerm(a(b, c(_)), TermTo, _, set(pair(b, t), true), _), TermTo).
+
+unitTest(s(parseTerm1), parseTerm(a(b, c, 3, _)::_, s(Func), TArgs), x(Func, TArgs)).
+unitTest(s(parseTerm2), parseTerm(TTerm, s(hello), [1::number, s(world)::string]), TTerm).
+
+:- assert(loadedFile(a, [pair(x,x)], [])).
+unitTest(s(pathExtract), pathExtract(path(path(wholeFile(a), 0), 0), Content::Type, VarNames), x(Content::Type, VarNames)).
+unitTest(s(pathModify), pathModify(path(path(wholeFile(a), 0), 0), t::_, [], Command), Command).
+

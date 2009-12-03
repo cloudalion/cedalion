@@ -1,0 +1,3618 @@
+#LyX 1.5.6 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass article
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine natbib_numerical
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+A Type-System for DSLs in Logic Programming
+\end_layout
+
+\begin_layout Author
+Boaz Rosenan
+\end_layout
+
+\begin_layout Abstract
+Logic programming has a variety of applications.
+ It is most useful for expressing things not easily expressed with traditional,
+ imperative languages.
+ One reason for the power of logic programming lies in the fact that Domain
+ Specific Languages (DSLs) can be defined easily and elegantly from within
+ the language, so that programming can take any shape desired by its designer.
+\end_layout
+
+\begin_layout Abstract
+Most existing logic-programming languages (such as most Prolog variants)
+ are dynamically typed.
+ Other languages that are statically typed (such as Mercury) are typed in
+ a way that does not support such DSLs.
+ Static typing is desired since it can help the creator of a DSL lay out
+ the rules for that DSL.
+\end_layout
+
+\begin_layout Abstract
+We introduce a type-system for a logic-programming language based on Prolog
+ that will support and facilitate the definitions of DSLs.
+\end_layout
+
+\begin_layout Section
+Introduction
+\begin_inset LatexCommand label
+name "sec:Introduction"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Logic programming has been known to be a powerful paradigm for solving difficult
+ problems, ones not easily solved with main-stream imperative languages.
+ Throughout the years it has been used for different aspects of artificial
+ intelligence, natural language processing, expert systems and more.
+ All these tasks require the language to be highly expressive in terms of
+ the problem domain.
+ The combination of simplicity and power of the computational model behind
+ logic programming facilitated that expressiveness.
+ Logic programming starts with first-order logic, but it can move anywhere.
+\end_layout
+
+\begin_layout Standard
+Let's consider the following Prolog code example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "Listing 1"
+
+\end_inset
+
+
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Standard
+
+:- op(700, xfx, '::=').
+\end_layout
+
+\begin_layout Standard
+
+% parse(Pattern, Text, Residue)
+\end_layout
+
+\begin_layout Standard
+
+%   Succeeds if a prefix of Text matches Pattern, leaving Residue
+\end_layout
+
+\begin_layout Standard
+
+parse(empty, Text, Text).
+\end_layout
+
+\begin_layout Standard
+
+parse(First, [First | Rest], Rest).
+\end_layout
+
+\begin_layout Standard
+
+parse((A, B), Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(A, Text, AfterA),
+\end_layout
+
+\begin_layout Standard
+
+    parse(B, AfterA, Residue).
+\end_layout
+
+\begin_layout Standard
+
+parse(NonTerminal, Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    NonTerminal ::= Pattern,
+\end_layout
+
+\begin_layout Standard
+
+    parse(Pattern, Text, Residue).
+\end_layout
+
+\end_inset
+
+This is a definition of a predicate - 
+\begin_inset Formula $parse/3$
+\end_inset
+
+, which parses a string using a given pattern.
+ The pattern may contain terminals (elements that are expected in the string
+ e.g.
+ characters), and non-terminal symbols.
+ The pattern may contain uses of the comma operator for concatenation.
+ Non-terminals are interpreted by using the 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ predicate, not defined here.
+ This predicate converts a non-terminal symbol to a pattern.
+ After converting it to a pattern, the 
+\emph on
+parse/3
+\emph default
+ predicate calls itself recursively to parse the underlying pattern.
+\end_layout
+
+\begin_layout Standard
+While the 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ predicate was not defined by this code, its meaning was.
+ It was defined by usage.
+ The definition of the
+\emph on
+ 
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ predicate becomes the grammar accepted by the 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ predicate.
+ The behavior of 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ is determined by the definition of 
+\begin_inset Formula $::=/2$
+\end_inset
+
+, which in this case is left to the user.
+ Users can now define their own grammar using a BNF-like language, all by
+ defining the 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ predicate.
+ The following Prolog code completes the example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "listing 2"
+
+\end_inset
+
+
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Standard
+
+'S' ::= a, 'S', b.
+\end_layout
+
+\begin_layout Standard
+
+'S' ::= empty.
+\end_layout
+
+\begin_layout Standard
+
+:- parse('S', [a, a, b, b], []).
+\end_layout
+
+\begin_layout Standard
+
+yes.
+\end_layout
+
+\begin_layout Standard
+
+:- parse('S', [a, a, b], []).
+\end_layout
+
+\begin_layout Standard
+
+no.
+\end_layout
+
+\end_inset
+
+This is a usage example.
+ Here we define a non-terminal symbol 
+\emph on
+
+\begin_inset Formula $S$
+\end_inset
+
+
+\emph default
+, with 2 production rules stating that a matching string must contain a
+ series of a symbols followed by 
+\emph on
+
+\begin_inset Formula $a$
+\end_inset
+
+
+\emph default
+ series of 
+\emph on
+
+\begin_inset Formula $b$
+\end_inset
+
+
+\emph default
+ symbols, where the number of 
+\emph on
+a
+\emph default
+s and 
+\emph on
+b
+\emph default
+s must be the same.
+ Then we test the 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ predicate with 2 strings - one conforming and one not.
+\end_layout
+
+\begin_layout Standard
+On the Prolog level, this was a definition of 
+\begin_inset Formula $::=/2$
+\end_inset
+
+; but actually this was a definition of 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ This definition did not wear the traditional logic-programming shape of
+ a Horn Clause.
+ In logic-programming terms this definition of 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ consists of a set of 
+\begin_inset Quotes eld
+\end_inset
+
+facts
+\begin_inset Quotes erd
+\end_inset
+
+.
+ An alternative way to look at this definition is to say that we've stepped
+ out of logic programming and into another domain - context free grammars,
+ in this particular case.
+\end_layout
+
+\begin_layout Standard
+In a similar way we can show that Prolog code can be used in other domains
+ as well - functional programming, imperative programming and more.
+ All these extensions use the same technique of defining a predicate by
+ its usage as a part of the 
+\begin_inset Quotes eld
+\end_inset
+
+DSL
+\begin_inset Quotes erd
+\end_inset
+
+ definition, and then having the user of the DSL define that predicate in
+ the traditional sense.
+\end_layout
+
+\begin_layout Standard
+The above example may raise a few questions: We used capital letters for
+ non-terminal symbols and lowercase letters for characters, but this was
+ no more than a convention.
+ Is there a way we can differentiate between them? How can we make sure
+ that grammars defined by the user are correct (i.e.
+ have a single non-terminal symbol on the left-hand-side, and a legal term
+ on the right hand side)?
+\end_layout
+
+\begin_layout Standard
+One way of solving this is by using static typing.
+ With static typing we can define the type signature of 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ as a part of the DSL definition, to allow only correct production rules
+ to be defined.
+ The field of type-systems for logic-programming languages has been widely
+ explored (
+\begin_inset LatexCommand citep
+key "mycroft1984pts,somogyi1995mep,schrijvers:ttp"
+
+\end_inset
+
+), but most existing type-systems assume 
+\begin_inset Quotes eld
+\end_inset
+
+traditional
+\begin_inset Quotes erd
+\end_inset
+
+ use, meaning they assume that predicates are defined using a closed set
+ of consecutive Horn Clauses, and not in the way 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ was defined in the above example.
+ In this paper we define a type-system that allows and empowers DSL definition.
+ The type information provided by this type system will complete the DSL
+ definition with rules of correctness.
+\end_layout
+
+\begin_layout Standard
+In section 
+\begin_inset LatexCommand ref
+reference "sec:Requirements"
+
+\end_inset
+
+ we shall explore the requirements we have for this type-system.
+ In section 
+\begin_inset LatexCommand ref
+reference "sec:Language"
+
+\end_inset
+
+ we will describe the language constructs added to facilitate this type-system.
+ In section 
+\begin_inset LatexCommand ref
+reference "sec:Algorithm"
+
+\end_inset
+
+ we shall describe the algorithm used to type-check the code, and in section
+ 
+\begin_inset LatexCommand ref
+reference "sec:Discussion"
+
+\end_inset
+
+ we shall provide a discussion and comparison to other type systems.
+\end_layout
+
+\begin_layout Section
+Requirements
+\begin_inset LatexCommand label
+name "sec:Requirements"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Implicit
+\end_layout
+
+\begin_layout Standard
+We require that the type-system will be as seamless as possible.
+ This is especially important for defined DSLs.
+ For example, in the above DSL (context-free grammars) we allow the language
+ definition (the first listing) to be altered to contain type definitions,
+ but we would like to keep the user code (the second listing) virtually
+ unchanged.
+ In that example, the definition of 
+\emph on
+S
+\emph default
+ as a non-terminal symbol should be implicit, and any use of that symbol
+ thereafter should be associated to that definition.
+ This implies that we need 
+\noun on
+Hindley-Milner
+\noun default
+ type inference, to allow our language to be 
+\emph on
+implicitly typed
+\emph default
+.
+\end_layout
+
+\begin_layout Subsection
+Polymorphism
+\end_layout
+
+\begin_layout Standard
+Another requirement is for type signatures to be polymorphic.
+ For example, in the above example we may want to be able to parse lists
+ of any kind of element (e.g.
+ characters, tokens of some sort etc).
+ This requires that the type signature of 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ should be polymorphic (i.e.
+ depend on a type variable instead of all-concrete types).
+ This kind of polymorphism is totally supported by 
+\noun on
+Hindley-Milner
+\noun default
+ type inference.
+ However, sometimes we may wish to restrain this polymorphism.
+ One example would be if we want to keep the 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ predicate 
+\begin_inset Quotes eld
+\end_inset
+
+open
+\begin_inset Quotes erd
+\end_inset
+
+, meaning we would like to allow users to extend it to allow different kinds
+ of patterns to be used.
+ One example for this could be to allow character ranges (as often used
+ in regular expressions) when the terminal type is a character.
+ Allowing this requires that the 
+\emph on
+Pattern
+\emph default
+ parameter provided to 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ would not be of a restricted type, but rather a member of a 
+\emph on
+type-class
+\emph default
+.
+ This type-class would be associated with the 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ predicate and any new 
+\emph on
+instance
+\emph default
+ of that class (a type conforming to it) would require an implementation
+ of 
+\emph on
+
+\begin_inset Formula $parse/3$
+\end_inset
+
+
+\emph default
+ that takes that instance type as its 
+\emph on
+Pattern
+\emph default
+ parameter.
+\end_layout
+
+\begin_layout Standard
+Type-classes provide great strength to the language.
+ They allow terms to change their meaning based on the context, while maintainin
+g the ability to infer types.
+ In DSL terms, they can be used to reason about the semantic correctness
+ of a piece of DSL code.
+\end_layout
+
+\begin_layout Subsection
+Extensibility
+\end_layout
+
+\begin_layout Standard
+Here we require that the type-system will allow DSL definition.
+ This requires that type inference and constraint checking associated with
+ type-classes will not be based on the assumption that all clauses contributing
+ to a certain predicate are grouped together in the source file.
+ We can't even assume they are in the same source file or module.
+ In the example above, the 
+\emph on
+
+\begin_inset Formula $::=/2$
+\end_inset
+
+
+\emph default
+ predicate can be 
+\begin_inset Quotes eld
+\end_inset
+
+defined
+\begin_inset Quotes erd
+\end_inset
+
+ in numerous different modules, in different parts of the software, each
+ defining a different grammar.
+ We would still like type-checking to be able to work correctly.
+\end_layout
+
+\begin_layout Section
+Language Extensions to support the Type-System
+\begin_inset LatexCommand label
+name "sec:Language"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this section we will introduce the language constructs needed for our
+ type-system.
+ We'll start with a definition of the 
+\noun on
+Hindley-Milner
+\noun default
+ system, and then move on to define type-classes.
+\end_layout
+
+\begin_layout Subsection
+The 
+\noun on
+Hindley-Milner
+\noun default
+ Type-Inference
+\begin_inset LatexCommand label
+name "sub:Hindley-Milner"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Units
+\end_layout
+
+\begin_layout Standard
+Because of the extensibility requirement we do not want to rely on the fact
+ that clauses of a certain predicate are kept together to infer their types.
+ It is for that same reason that we don't want to limit type inference to
+ predicates.
+ For this reason we define a new concept - a 
+\emph on
+unit
+\emph default
+.
+ A unit is a user-defined section of the code - a set of clauses, forming
+ the scope in which one or more concepts
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+We will use the term 
+\emph on
+concept
+\emph default
+ here to refer to a 
+\emph on
+name/arity
+\emph default
+ pair.
+ This can apply to both predicates and functions.
+\end_layout
+
+\end_inset
+
+ assume their type signature by type-inference.
+ In other words, type inference 
+\begin_inset Quotes eld
+\end_inset
+
+happens
+\begin_inset Quotes erd
+\end_inset
+
+ inside units.
+ Each concept that is defined in a unit has an 
+\begin_inset Quotes eld
+\end_inset
+
+open
+\begin_inset Quotes erd
+\end_inset
+
+ type signature inside this unit (meaning the type signature can be determined
+ inside that unit), a 
+\begin_inset Quotes eld
+\end_inset
+
+closed
+\begin_inset Quotes erd
+\end_inset
+
+ signature after that unit (meaning that other clauses using that concept
+ do not change its signature), and no signature before that unit (meaning
+ that using that concept above the unit where it's defined will emit an
+ error).
+\end_layout
+
+\begin_layout Standard
+A unit definition looks like the following:
+\begin_inset Formula \[
+\begin{array}{l}
+\textrm{unit }[name_{1}/arity_{1},\dots,name_{n}/arity_{n}].\\
+clause_{1}\\
+\vdots\\
+clause_{k}\\
+\textrm{end.}\end{array}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Standard
+
+unit [p/2].
+\end_layout
+
+\begin_layout Standard
+
+p(1, _).
+\end_layout
+
+\begin_layout Standard
+
+p(_, X) :- p(X, _).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\end_inset
+
+This example defines a simple predicate which succeeds if given the value
+ 1 as one of its arguments.
+ Line 2 asserts that the first argument must be a number (or an integer,
+ depending on how we decide to type numbers).
+ Line 3 asserts that the first and second argument share type (and hence
+ the second argument is also a number).
+ The type signature provided by this definition is the combination of what
+ we infer from both clauses.
+ In this example we define a predicate, but units can be used to define
+ any kind of concept.
+\end_layout
+
+\begin_layout Subsubsection
+Explicit Type Signature
+\end_layout
+
+\begin_layout Standard
+An alternative way to provide a type signature is by specifying it explicitly.
+ This is done using the 
+\emph on
+::/2
+\emph default
+ operator, in the following way:
+\begin_inset Formula \[
+name(\tau_{1},\dots,\tau_{n})::\tau\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $\tau,\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+ are types.
+ For example, here is a definition of a list:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+[] :: list(_).
+\end_layout
+
+\begin_layout Standard
+
+[T | list(T)] :: list(T).
+\end_layout
+
+\end_inset
+
+This is a definition of the polymorphic type 
+\emph on
+list(T)
+\emph default
+, which has 2 concepts that conform to it: 
+\emph on
+[]/0
+\emph default
+ and 
+\emph on
+(.)/2
+\emph default
+.
+ Since this is an explicit definition of the type signature of both concepts,
+ this code should not be contained in a unit defining these concepts.
+ However, this is also the definition of the concept 
+\emph on
+list/1
+\emph default
+ as a type, so this code can be written like this to implicitly provide
+ a signature for 
+\emph on
+list/1
+\emph default
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+unit [list/1].
+\end_layout
+
+\begin_layout Standard
+
+[] :: list(_).
+\end_layout
+
+\begin_layout Standard
+
+[T | list(T)] :: list(T).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\end_inset
+
+As can be seen in the above example, types are first-order elements in this
+ type-system.
+ They all have the type 
+\emph on
+type
+\emph default
+.
+ In this example 
+\emph on
+list/1
+\emph default
+ receives the signature:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+list(type) :: type
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This concept of type signatures is different than the one presented in 
+\begin_inset LatexCommand citet
+key "somogyi1995mep,schrijvers:ttp"
+
+\end_inset
+
+ for explicit type signatures in that here types are 
+\emph on
+open
+\emph default
+.
+ Unlike 
+\emph on
+closed
+\emph default
+ type definitions, where a type is associated with a pre-determined number
+ of constructors - here each constructor is defined on its own and is associated
+ to the type.
+ We will demonstrate how this attribute is crutual for extensibility.
+\end_layout
+
+\begin_layout Standard
+Predicates are concepts with type 
+\emph on
+pred
+\emph default
+.
+ This allows for predicates such as 
+\begin_inset Formula $call/1$
+\end_inset
+
+ and 
+\begin_inset Formula $findall/3$
+\end_inset
+
+ to take predicates as parameters
+\begin_inset Foot
+status collapsed
+
+\begin_layout Standard
+This is an example where the openness of the types comes handy and relieves
+ us of the need to introduce a new construct such as the 
+\begin_inset Formula $pred$
+\end_inset
+
+ declaration described in 
+\begin_inset LatexCommand citet
+key "somogyi1995mep,schrijvers:ttp"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+.
+ For example, the predicate 
+\emph on
+p/2
+\emph default
+ from the above example will have the following signature:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+p(number, number) :: pred
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Implementing the Parsing example with Type Inference
+\end_layout
+
+\begin_layout Standard
+The example from section 
+\begin_inset LatexCommand ref
+reference "sec:Introduction"
+
+\end_inset
+
+ should look like this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Standard
+
+% The DSL Definition:
+\end_layout
+
+\begin_layout Standard
+
+:- op(700, xfx, '::=').
+\end_layout
+
+\begin_layout Standard
+
+unit [pattern/1].
+\end_layout
+
+\begin_layout Standard
+
+parse(pattern(C), list(C), list(C)) :: pred
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+unit [empty/0, cat/2, terminal/1, '::='/2].
+\end_layout
+
+\begin_layout Standard
+
+parse(empty, Text, Text).
+\end_layout
+
+\begin_layout Standard
+
+parse(terminal(First), [First | Rest], Rest).
+\end_layout
+
+\begin_layout Standard
+
+parse(cat(A, B), Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(A, Text, AfterA),
+\end_layout
+
+\begin_layout Standard
+
+    parse(B, AfterA, Residue).
+\end_layout
+
+\begin_layout Standard
+
+parse(NonTerminal, Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    NonTerminal ::= Pattern,
+\end_layout
+
+\begin_layout Standard
+
+    parse(Pattern, Text, Residue).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+% DSL usage
+\end_layout
+
+\begin_layout Standard
+
+unit ['S'/0].
+\end_layout
+
+\begin_layout Standard
+
+'S' ::= cat(cat(terminal(1), 'S'), terminal(2)).
+\end_layout
+
+\begin_layout Standard
+
+'S' ::= empty.
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+:- parse('S', [1, 1, 2, 2], []).
+\end_layout
+
+\begin_layout Standard
+
+yes.
+\end_layout
+
+\begin_layout Standard
+
+:- parse('S', [1, 1, 2], []).
+\end_layout
+
+\begin_layout Standard
+
+no.
+\end_layout
+
+\end_inset
+
+This example consists of 3 units - 2 in the DSL definition and 1 in the
+ usage.
+ The first unit defines a polymorphic type - 
+\begin_inset Formula $pattern/1$
+\end_inset
+
+, which is the type of all allowed patterns.
+ Its type parameter determines the type of tokens it is supposed to match
+ in the input string.
+ The signature of 
+\begin_inset Formula $parse/3$
+\end_inset
+
+ is given explicitly on line 4.
+ This signature provides the connection between the types of the arguments.
+\end_layout
+
+\begin_layout Standard
+The second unit defines the clauses of 
+\begin_inset Formula $pred/3$
+\end_inset
+
+, thus inferring the types of the constructs forming a valid pattern.
+ This unit also infers the signature of 
+\begin_inset Formula $::=/2$
+\end_inset
+
+, which is to be defined by the user.
+ The content of the unit is the same as the definition of 
+\begin_inset Formula $parse/3$
+\end_inset
+
+ in section 
+\begin_inset LatexCommand ref
+reference "sec:Introduction"
+
+\end_inset
+
+, except for use of 
+\begin_inset Formula $cat/2$
+\end_inset
+
+ instead of 
+\begin_inset Formula $(,)/2$
+\end_inset
+
+ and the use of 
+\begin_inset Formula $terminal/1$
+\end_inset
+
+.
+ These are needed here because in our type-system, like many other 
+\noun on
+Hindley-Milner 
+\noun default
+type systems, a concept can only have one signature (no overloading).
+ This means that if 
+\begin_inset Formula $(,)/2$
+\end_inset
+
+ already has a signature, we cannot 
+\begin_inset Quotes eld
+\end_inset
+
+overload
+\begin_inset Quotes erd
+\end_inset
+
+ it.
+ Similarly, on line 9, if we omit the 
+\emph on
+terminal
+\emph default
+ wrapper, we will get a type-mismatch, since 
+\emph on
+First
+\emph default
+ has type 
+\begin_inset Formula $pattern(C)$
+\end_inset
+
+ on the first argument, but type 
+\begin_inset Formula $C$
+\end_inset
+
+ on the second argument.
+ Adding these constructs makes the DSL less expressive, but we will fix
+ that in section 
+\begin_inset LatexCommand ref
+reference "sub:Type-Classes"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The third unit is in the 
+\begin_inset Quotes eld
+\end_inset
+
+user
+\begin_inset Quotes erd
+\end_inset
+
+ code.
+ Here the new concept we define is 
+\emph on
+
+\begin_inset Formula $S/0$
+\end_inset
+
+
+\emph default
+.
+ It gets its type from its usage as the first argument of 
+\begin_inset Formula $::=/2$
+\end_inset
+
+.
+ 
+\begin_inset Formula $S/0$
+\end_inset
+
+ is given the type 
+\emph on
+pattern(number)
+\emph default
+, by inferring the type of the right-hand-side of the definition on line
+ 20.
+ We used numbers instead of atoms in this example to avoid the 
+\begin_inset Quotes eld
+\end_inset
+
+atom vs.
+ concept
+\begin_inset Quotes erd
+\end_inset
+
+ problem.
+ This is a caveat in the Prolog language, and our way of dealing with it
+ is out of the scope of this paper.
+\end_layout
+
+\begin_layout Subsection
+Type Classes and Type Constraints
+\begin_inset LatexCommand label
+name "sub:Type-Classes"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Type-classes originated from functional programming, and are best known
+ as a feature of the 
+\emph on
+Haskell
+\emph default
+ type system 
+\begin_inset LatexCommand citep
+key "hall1996tch"
+
+\end_inset
+
+.
+ The term 
+\emph on
+Type Class
+\emph default
+ implies 
+\emph on
+A set of types
+\emph default
+.
+ This is the case for 
+\emph on
+Haskell98
+\emph default
+, where a type-class attributes a single type.
+ However, we sometimes wish to have dependencies between types and type-classes,
+ such as a class of container types related to the element type of the container.
+ Some extensions to 
+\emph on
+Haskell
+\emph default
+ implemented by 
+\emph on
+GHC
+\emph default
+ and 
+\emph on
+Hugs
+\emph default
+ allow a class to attribute more than a single type, thus allowing this
+ kind of relations, in fact making type classes 
+\emph on
+predicates
+\emph default
+ over types rather than just sets.
+ It has been shown that this extension may be unsafe in some cases 
+\begin_inset LatexCommand citep
+key "Jones00typeclasses"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To cope with these issues, we take the approach of 
+\emph on
+Parametric Type Classes
+\emph default
+ 
+\begin_inset LatexCommand citep
+key "Chen92parametrictype,Jones00typeclasses"
+
+\end_inset
+
+, where a class attributes only one type (i.e.
+ a class remains a set and not a general predicate), but is itself parametric
+ and may depend on types.
+ We use the notation 
+\begin_inset Formula $\tau\in class(\tau_{1},\dots,\tau_{n})$
+\end_inset
+
+ to denote that type 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is member of the parametric class 
+\begin_inset Formula $class$
+\end_inset
+
+ with parameters 
+\begin_inset Formula $\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Type Classes and Completeness
+\end_layout
+
+\begin_layout Standard
+Traditionally, type-classes are associated with declarations, which should
+ have definitions for each instance.
+ This is the case in Haskell (
+\begin_inset LatexCommand citet
+key "hall1996tch"
+
+\end_inset
+
+), where a type-class is associated with a set of signatures for functions,
+ and this is the case in Mercury (
+\begin_inset LatexCommand citet
+key "Jeffery_typeclasses"
+
+\end_inset
+
+), where a type class is associated with signatures of predicates.
+ In Haskell, this association guarantees a solution for each function for
+ every valid combination of values of any type that is an instance of that
+ type-class.
+ This is done by checking that every instance definition has an implementation
+ of all associated functions, and that each function definition has an equation
+ for every constructor of that type.
+\end_layout
+
+\begin_layout Standard
+While this can be done in functional-programming, in logic programming this
+ is harder.
+ Mercury has a 
+\emph on
+determinism
+\emph default
+ system built into the language.
+ This system allows each predicate to be classified as either 
+\emph on
+deterministic
+\emph default
+ (meaning it always has 1 solution), 
+\emph on
+semi-deterministic
+\emph default
+ (meaning it has 1 solution, or it fails) or 
+\emph on
+non-deterministic
+\emph default
+.
+ Each dederminism category refers to a specific 
+\emph on
+mode
+\emph default
+ of the predicate.
+ With this mechanism in place, we can make conscious descissions about the
+ expected behavior of a predicate associated to a type-class.
+ If we define a predicte associated with a type-class to be deterministic
+ for a certain mode, then the type system will make sure that every instance
+ provides a solution for every valid combination of inputs for this mode.
+ Unfortunately, modes and determinism are two of Mercury more questionable
+ features, features we do not wish to add to our language.
+\newline
+
+\end_layout
+
+\begin_layout Standard
+Unlike 
+\begin_inset LatexCommand citet
+key "Jeffery_typeclasses"
+
+\end_inset
+
+, we do not associate a type-class to a set of predicates.
+ The reason for that is that unlike Mercury (
+\begin_inset LatexCommand citet
+key "somogyi1995mep"
+
+\end_inset
+
+), our language is based on Prolog, which does not have a determinism mechanism
+ to help make sure a predicate shall succeed for all legal combinations
+ of its inputs.
+ We do not support modes to even know which arguments are the input arguments
+ of a predicate.
+ For this reason we cannot differentiate between an incomplete predicate
+ to a predicate that intentionally does not succeed on a subset of its possible
+ inputs.
+\end_layout
+
+\begin_layout Standard
+In addition to that, since type-definitions are open, the problem of having
+ appropriate clauses for each possible input does not end with type-classes:
+ it also occurs with different constructors associated with a type.
+\newline
+
+\end_layout
+
+\begin_layout Standard
+Just like predicates and types, type-classes are also first-order elements
+ in our language.
+ They have the type 
+\begin_inset Formula $class$
+\end_inset
+
+, and their signature can be inferred using the 
+\noun on
+Hindley-Milner
+\noun default
+ type inferrence system as described in section 
+\begin_inset LatexCommand ref
+reference "sub:Hindley-Milner"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A definition of a new type-class takes the following form:
+\begin_inset Formula \[
+\textrm{class}\:\tau\in name(\tau_{1},\dots,\tau_{n})\:\textrm{where }[\sigma_{1},\dots,\sigma_{k}].\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $name$
+\end_inset
+
+ is a the name of the type-class, 
+\begin_inset Formula $\tau,\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+ are type variables, and 
+\begin_inset Formula $\sigma_{1},\dots,\sigma_{k}$
+\end_inset
+
+ are type signatures of predicates depending on 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+
+\begin_inset Formula $\tau,\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+.
+ Since all these signatures relate to predicates, 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\noun default
+\color inherit
+
+\begin_inset Formula $\sigma_{1},\dots,\sigma_{k}$
+\end_inset
+
+ consist of only the left-hand-side of the signature.
+ The right-hand-side is assumed to be 
+\begin_inset Formula $pred$
+\end_inset
+
+.
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+ This definition emits a type-class called 
+\begin_inset Formula $name$
+\end_inset
+
+ that defines a mapping between 
+\begin_inset Formula $n$
+\end_inset
+
+ types (the class parameters) to a set of types.
+ It also requires, for each instance of that class, that the predicates
+ defined by 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\noun default
+\color inherit
+
+\begin_inset Formula $\sigma_{1},\dots,\sigma_{k}$
+\end_inset
+
+ shall be defined with the concrete types related to that instance.
+ Here is an example of such class definition, related to our parsing example:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+class P<-pattern(C) where [parse(P, list(C), list(C))].
+\end_layout
+
+\end_inset
+
+In this example 
+\begin_inset Formula $pattern(C)$
+\end_inset
+
+ is defined as a type-class (and not as a type as in the example in 
+\begin_inset LatexCommand ref
+reference "sub:Hindley-Milner"
+
+\end_inset
+
+).
+ 
+\begin_inset Formula $C$
+\end_inset
+
+ is still the character or token type.
+ 
+\begin_inset Formula $pattern(C)$
+\end_inset
+
+ is a set of pattern types, for which 
+\begin_inset Formula $P$
+\end_inset
+
+ is a representative.
+ Instances of this type-class provide the connection between 
+\begin_inset Formula $P$
+\end_inset
+
+ and 
+\begin_inset Formula $C$
+\end_inset
+
+.
+ Each such instance is required to provide one or more clauses to 
+\begin_inset Formula $parse/3$
+\end_inset
+
+, where the argument types match the types associated with 
+\begin_inset Formula $P$
+\end_inset
+
+ and 
+\begin_inset Formula $C$
+\end_inset
+
+ for that instance.
+\end_layout
+
+\begin_layout Subsubsection
+Type Constraints
+\end_layout
+
+\begin_layout Standard
+Type constraints are mentions of a type-class used to constraint type variables.
+ Type constraints are used in type signatures and in instance definitions.
+ Type constraints have the following syntax:
+\begin_inset Formula \[
+\tau\in class(\tau_{1},\dots,\tau_{n})\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $class$
+\end_inset
+
+ is a name of a type-class, 
+\begin_inset Formula $n$
+\end_inset
+
+ is the arity of 
+\begin_inset Formula $class$
+\end_inset
+
+, 
+\begin_inset Formula $\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+ are types or type variables, and 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is a type variable.
+\end_layout
+
+\begin_layout Standard
+Type constraints are used in type-signatures with the following syntax:
+\begin_inset Formula \[
+C_{1},\dots,C_{m}\Rightarrow name(\tau_{1},\dots,\tau_{n})::\tau\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $C_{1},\dots,C_{m}$
+\end_inset
+
+ are type constraints, 
+\begin_inset Formula $name$
+\end_inset
+
+ is the name of the concept, 
+\begin_inset Formula $n$
+\end_inset
+
+ is the arity, 
+\begin_inset Formula $\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+ are the argument types and 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is the type of the concept 
+\begin_inset Formula $name/n$
+\end_inset
+
+.
+ For example, the type signature for 
+\begin_inset Formula $parse/3$
+\end_inset
+
+ inferred by the example above should be this:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+p<-pattern(C) => parse(P, list(C), list(C)) :: pred
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Instance Definitions
+\end_layout
+
+\begin_layout Standard
+An instance definition associates concrete types with a type-class.
+ Instance definitions have the following form:
+\begin_inset Formula \[
+\begin{array}{l}
+\textrm{instance }C_{1},\dots,C_{m}\Rightarrow name(\upsilon_{1},\dots,\upsilon_{m})\in class(\tau_{1},\dots,\tau_{n}).\\
+clause_{1}\\
+\vdots\\
+clause_{k}\\
+\textrm{end.}\end{array}\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $C_{1},\dots,C_{m}$
+\end_inset
+
+ are type-constraints, 
+\begin_inset Formula $class$
+\end_inset
+
+ is a name of a type-class, 
+\begin_inset Formula $n$
+\end_inset
+
+ is the arity of 
+\begin_inset Formula $class$
+\end_inset
+
+, 
+\begin_inset Formula $name$
+\end_inset
+
+ is a concrete type name of arity 
+\begin_inset Formula $m$
+\end_inset
+
+, 
+\begin_inset Formula $\upsilon_{1},\dots,\upsilon_{m}$
+\end_inset
+
+ are type variables, 
+\begin_inset Formula $\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+ are types and type-variables, and 
+\begin_inset Formula $clause_{1},\dots,clause_{k}$
+\end_inset
+
+ are clauses for the predicates associated with 
+\begin_inset Formula $class$
+\end_inset
+
+ - at least one clause per predicate.
+ Instances definitions follow some strict rules to assure unambiguous interpreta
+tion of types: There can be only one instance of 
+\begin_inset Formula $name/m$
+\end_inset
+
+ for 
+\begin_inset Formula $class/n$
+\end_inset
+
+, regardless of 
+\begin_inset Formula $\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+.
+ All type-variables in 
+\begin_inset Formula $\tau_{1},\dots,\tau_{n}$
+\end_inset
+
+ must either be in 
+\begin_inset Formula $\upsilon_{1},\dots,\upsilon_{m}$
+\end_inset
+
+, or appear in 
+\begin_inset Formula $C_{1},\dots,C_{m}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Here is an example of an instance definition:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+% We assume that the following is defined somewhere:
+\end_layout
+
+\begin_layout Standard
+
+(A, B) :: pair(A, B).
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+instance T1<-pattern(C), T2<-pattern(C) => pair(T1, T2)<-pattern(C).
+\end_layout
+
+\begin_layout Standard
+
+parse((A, B), Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(A, Text, AfterA),
+\end_layout
+
+\begin_layout Standard
+
+    parse(B, AfterA, Residue).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Meta-Predicates and Rewrite-Rules
+\end_layout
+
+\begin_layout Standard
+Unlike type inferrence, type-constraint checking is a directional process.
+ As shown in 
+\begin_inset LatexCommand Citep
+key "Jeffery_typeclasses"
+
+\end_inset
+
+, type constraints are first checked for the head of clauses, collecting
+ the assertions - the things that can be assumed for the types of the variables
+ in the head of the clause, and then with these assertions they check that
+ the body of the clause meets the constraints.
+\end_layout
+
+\begin_layout Standard
+In our type-system we cannot stop with clauses.
+ Consider the 
+\begin_inset Formula $::=/2$
+\end_inset
+
+ predicate: it helps to define new concepts (such as 
+\begin_inset Formula $S$
+\end_inset
+
+ in the above example).
+ Semantically, the clause 
+\begin_inset Formula \[
+H::=B\]
+
+\end_inset
+
+ is equivalent to the clause 
+\begin_inset Formula \[
+parse(H,T,R):-parse(B,T,R)\]
+
+\end_inset
+
+where 
+\begin_inset Formula $H$
+\end_inset
+
+ appears in the head, and 
+\begin_inset Formula $B$
+\end_inset
+
+ appears in the body.
+ This means that the assumptions made by 
+\begin_inset Formula $B$
+\end_inset
+
+ can be weaker than the ones made by 
+\begin_inset Formula $H$
+\end_inset
+
+, but not vice versa.
+ If only considered deductions for this analysis, 
+\begin_inset Formula $H::=B$
+\end_inset
+
+ would have been counted as: 
+\begin_inset Formula $(H::=B):-\textrm{true}$
+\end_inset
+
+, and 
+\begin_inset Formula $H$
+\end_inset
+
+ and 
+\begin_inset Formula $B$
+\end_inset
+
+ would have been treated symmetrically.
+\end_layout
+
+\begin_layout Standard
+For this reason we introduce a new concept: a 
+\emph on
+meta-predicate
+\emph default
+.
+ Meta-predicates are predicates that are used in the extension of the language
+ into a new domain.
+ 
+\begin_inset Formula $::=/2$
+\end_inset
+
+ is an example for such a predicate.
+ Just like regular predicates, meta-predicates are also first-order elements
+ in the language and are therefore typed as 
+\begin_inset Formula $metapred$
+\end_inset
+
+.
+ Unlike predicates, meta-predicates give their first argument a special
+ meaning: It is called the 
+\emph on
+head argument
+\emph default
+, while the rest of its arguments are called the 
+\emph on
+body arguments
+\emph default
+.
+ This implies that the arity of a meta-predicate is at least 1.
+\end_layout
+
+\begin_layout Standard
+Meta-predicates can appear in the left-hand-side of a deduction (
+\begin_inset Formula $\vdash$
+\end_inset
+
+), but they cannot appear in goals.
+ Instead of goals meta-predicates are used with a special construct: rewrite
+ rules.
+ A rewrite-rule has the following syntax:
+\begin_inset Formula \[
+metapred(h,b_{1},\dots,b_{n})\rightsquigarrow clause.\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $metapred$
+\end_inset
+
+ is a name of a meta-predicate with arity 
+\begin_inset Formula $n+1$
+\end_inset
+
+, 
+\begin_inset Formula $h$
+\end_inset
+
+ is a variable, 
+\begin_inset Formula $b_{1},\dots,b_{n}$
+\end_inset
+
+ are the body arguments for 
+\begin_inset Formula $metapred$
+\end_inset
+
+ and 
+\begin_inset Formula $clause$
+\end_inset
+
+ is a clause.
+ The variable 
+\begin_inset Formula $h$
+\end_inset
+
+ can appear in 
+\begin_inset Formula $clause$
+\end_inset
+
+, but only in its head.
+ It may not appear in 
+\begin_inset Formula $b_{1},\dots,b_{n}$
+\end_inset
+
+.
+ Semantically, rewrite rules are interpreted as deductions, so that a rewrite
+ rule of the form:
+\begin_inset Formula \[
+metapred\rightsquigarrow head\vdash body\]
+
+\end_inset
+
+is equivalent to:
+\begin_inset Formula \[
+head\vdash metapred,body\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In the parsing example we can define the meaning of 
+\begin_inset Formula $::=/2$
+\end_inset
+
+ as a rewrite rule:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+NonTerminal ::= Pattern ~> (parse(NonTerminal, Text, Residue) :- 
+\end_layout
+
+\begin_layout Standard
+
+    parse(Pattern, Text, Residue)).
+\end_layout
+
+\end_inset
+
+This is equivalent to:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+parse(NonTerminal, Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    NonTerminal ::= Pattern,
+\end_layout
+
+\begin_layout Standard
+
+    parse(Pattern, Text, Residue).
+\end_layout
+
+\end_inset
+
+But it allows the type-system to evaluate type constraints in the correct
+ order.
+\end_layout
+
+\begin_layout Subsubsection
+Implementing the Parsing Example with Type Classes and Rewrite Rules
+\end_layout
+
+\begin_layout Standard
+In the previous example (using type-inference only) we defined 
+\begin_inset Formula $pattern(C)$
+\end_inset
+
+ to be a type.
+ This kind of definition paused some restrictions on our implementation
+ of the parsing example - it required some awkward modifications to the
+ syntax of our DSL, making it less expressive.
+ In this example we will eliminate these modifications and use a syntax
+ closer to the original - the one from the untyped implementation.
+\end_layout
+
+\begin_layout Standard
+In this implementation we will replace the use of a single type for all
+ patterns with a use of a type-class.
+ This type-class will provide a relation between the type of the predicate
+ and the type of the characters or tokens it accepts.
+ The different operators are now instances.
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+lstparams "numbers=left"
+inline false
+status open
+
+\begin_layout Standard
+
+unit [pair/2].
+\end_layout
+
+\begin_layout Standard
+
+(A, B) :: pair(A, B).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+class P<-pattern(C) where [parse(P, list(C), list(C)].
+\end_layout
+
+\begin_layout Standard
+
+:- op(700, xfx, '::=').
+\end_layout
+
+\begin_layout Standard
+
+(T ::= T) :: metapred.
+\end_layout
+
+\begin_layout Standard
+
+(H ::= B) ~> (parse(H, T, R) :- parse(B, T, R)).
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+instance list(C)<-pattern(C).
+\end_layout
+
+\begin_layout Standard
+
+parse([First | Pattern], [First | Text], Rest) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(Pattern, Text, Rest).
+\end_layout
+
+\begin_layout Standard
+
+parse([], Rest, Rest).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+instance TA<-pattern(C), TB<-pattern(C) => 
+\end_layout
+
+\begin_layout Standard
+
+    pair(TA, TB)<-pattern(C).
+\end_layout
+
+\begin_layout Standard
+
+parse((A, B), Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(A, Text, AfterA),
+\end_layout
+
+\begin_layout Standard
+
+    parse(B, AfterA, Residue).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+:- op(800, yfx, ';;').
+\end_layout
+
+\begin_layout Standard
+
+unit [alt/0].
+\end_layout
+
+\begin_layout Standard
+
+A<-pattern(C), B<-pattern(C) => (A ;; B) :: alt(C).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Standard
+
+instance alt(C)<-pattern(C).
+\end_layout
+
+\begin_layout Standard
+
+parse(A;;B, Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(A, Text, Residue).
+\end_layout
+
+\begin_layout Standard
+
+parse(A;;B, Text, Residue) :-
+\end_layout
+
+\begin_layout Standard
+
+    parse(B, Text, Residue).
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Lines 1-3 are supposed to be defined somewhre global, as this is the general
+ definition of the comma (,) operator.
+ Since we do not support overloading, there is just one chance to define
+ each operator - so we assume this is it for comma.
+ Line 5 provides the class definition for 
+\begin_inset Formula $pattern$
+\end_inset
+
+ that we already discussed, followed by the definition of 
+\begin_inset Formula $::=/2$
+\end_inset
+
+ in lines 6-8.
+ These lines provide a syntactic definition (6), a type signature (7) and
+ a semantic definition using a rewrite rule (8).
+ Lines 10-13 provide the definition of the first instance - a list pattern.
+ This kind of pattern (a list of tokens) did not appear in the original
+ example (without types).
+ It actually replaces the rules:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+parse(First, [First | Rest], Rest).
+\end_layout
+
+\begin_layout Standard
+
+parse(empty, Text, Text).
+\end_layout
+
+\end_inset
+
+The reason for this is that the restrictions on instance definitions do
+ not allow us to use the character type as a pattern type.
+ Instead, we need to use a compound type that may take the character type
+ as a parameter.
+ 
+\begin_inset Formula $list(C)$
+\end_inset
+
+ is such a type.
+ This instance definition provides a solution for both a list of characters
+ and an empty string (which is a private case).
+\end_layout
+
+\begin_layout Standard
+Lines 16-21 define the comma operator applied on 2 patterns as a pattern,
+ providing an implementation of 
+\begin_inset Formula $parse/3$
+\end_inset
+
+ to support this kind of pattern.
+ On lines 23-26 we define a new operator - 
+\begin_inset Formula $;;$
+\end_inset
+
+, which is to be used as alternation of patterns.
+ In the previous implementations, alternation was implemented by providing
+ more than one production rules using the same symbol on the left hand side.
+ For example (using lists to wrap characters/tokens):
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+'S' ::= [].
+\end_layout
+
+\begin_layout Standard
+
+'S' ::= [1], 'S', [2].
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+On both previous implementations that would work perfectly - on the first
+ we do no type-checking, and on the second both sides of both equations
+ are typed 
+\begin_inset Formula $pattern(number)$
+\end_inset
+
+ thus there is no conflict.
+ When using type-classes, different patterns have different types.
+ Since 
+\begin_inset Formula $::=/2$
+\end_inset
+
+ is defined to take both sides with the same type, the first line above
+ will emit the signature: 
+\begin_inset Formula $S::list(X)$
+\end_inset
+
+, where 
+\begin_inset Formula $X$
+\end_inset
+
+ is an unbound type variable.
+ The second line however will emit: 
+\begin_inset Formula $S::pair\left(pair\left(list(number),\tau(S)\right),list(number)\right)$
+\end_inset
+
+, where 
+\begin_inset Formula $\tau(S)$
+\end_inset
+
+ represents the type of 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ This signature by itself is illegal because it is cyclic, but even if it
+ were not - it conflicts with the first definition of 
+\begin_inset Formula $S$
+\end_inset
+
+.
+ This is why we introduce alternation as an operator, so that each new concept
+ will be defined in a single clause and will have a single, non-conflicting
+ type.
+ For example:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+'S' ::= [] ;; [1], 'S', [2].
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The type of 
+\begin_inset Formula $;;/2$
+\end_inset
+
+ as defined on line 25 does not reflect the type of its arguments.
+ The types of its arguments are refferred to as 
+\emph on
+existential types
+\emph default
+ 
+\begin_inset LatexCommand citep
+key "laeufer1996tce"
+
+\end_inset
+
+, meannig that they are quantified by 
+\begin_inset Formula $\forall$
+\end_inset
+
+ in the type signature of 
+\begin_inset Formula $;;/2$
+\end_inset
+
+.
+ In our type-system this quantifier is implicit wherever a type variable
+ appears in the arguments' types but does not appear in the concetp's type.
+ Since predicates and meta-predicates are first order elements in our type-syste
+m, all polymorphic predicates and meta-predicates use existential types.
+ We'll discuss existential types further when we will discuss the type-inference
+ algorithm.
+\end_layout
+
+\begin_layout Standard
+The reason we use existential types here is because of the second problem
+ we demonstrated - the cyclic type emited by recursive definitions.
+ By giving 
+\begin_inset Formula $;;/2$
+\end_inset
+
+ a type that does not depend on its arguments we eliminate that problem
+ for any production rule for which any recursive production has an alternative.
+ This is a good thing, because if we have a recursive production that dosn't
+ have an alternative, the language this grammar describes does not accept
+ any finite input.
+\end_layout
+
+\begin_layout Standard
+To conclude this example, here is a usage example of the DSL defined above:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Standard
+
+unit ['S'/0].
+\end_layout
+
+\begin_layout Standard
+
+'S' ::= [] ;; [1], 'S', [2].
+\end_layout
+
+\begin_layout Standard
+
+end.
+\end_layout
+
+\begin_layout Standard
+
+:- parse('S', [1, 1, 2, 2], []).
+\end_layout
+
+\begin_layout Standard
+
+yes.
+\end_layout
+
+\begin_layout Standard
+
+:- parse('S', [1, 1, 2], []).
+\end_layout
+
+\begin_layout Standard
+
+no.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The Type Inference Algorithm
+\begin_inset LatexCommand label
+name "sec:Algorithm"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So far we introduced the language extensions we need to support the kind
+ of type inference we want.
+ In this section we shall discuss the type inference algorithm iteself,
+ providing a more complete and formal definition of correctness, and the
+ kinds type errors that can be produced.
+ We will start with a formal definition of the overall syntax of the language,
+ describe the data structures used by type-inferrence, and finally describe
+ the phases of the algorithm.
+\end_layout
+
+\begin_layout Subsection
+A Formal Definition of the Language
+\begin_inset LatexCommand label
+name "sub:formal-definition"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to calibrate the reader on the terminology we use, we provide a
+ simplified definition of the (untyped) Prolog language:
+\begin_inset Formula \begin{equation}
+theory\rightarrow clause_{1}\cdots clause_{n}\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+clause\rightarrow pred|pred\vdash goal\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+goal\rightarrow pred|pred,goal\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+pred\rightarrow name(term_{1},\dots,term_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+term\rightarrow atom|var|number|name(term_{1},\dots,term_{n})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now define the modified version to support types.
+ We use the term 
+\emph on
+statement
+\emph default
+ as a generalization of 
+\emph on
+clause
+\emph default
+ that also captures explicit type signatures and class definitions.
+ Accordingly we also use the term 
+\emph on
+program
+\emph default
+ instead of 
+\emph on
+theory
+\emph default
+ as the main entity.
+\end_layout
+
+\begin_layout Standard
+A 
+\emph on
+program
+\emph default
+ consists of 
+\emph on
+units
+\emph default
+.
+ 
+\begin_inset Formula \begin{equation}
+program\rightarrow unit_{1}\cdots unit_{n}\end{equation}
+
+\end_inset
+
+
+\emph on
+Units
+\emph default
+ are the scope in which type-inferrence occurs.
+ A unit can consist of a single 
+\emph on
+statement
+\emph default
+, or have multiple statements grouped together with an explicit header specifyin
+g the concepts to be defined by this unit.
+ A 
+\emph on
+unit
+\emph default
+ can also be an 
+\emph on
+instance definition
+\emph default
+, where no new concept is defined.
+ 
+\begin_inset Formula \begin{equation}
+unit\rightarrow\left\{ \begin{array}{c}
+statement\\
+unitHead\, statement_{1}\cdots statement_{n}\,\textrm{end}\\
+instanceDefinition\end{array}\right.\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+unitHead\rightarrow\textrm{unit }[name_{1}/arity_{1},\dots,name_{n}/arity_{n}]\end{equation}
+
+\end_inset
+
+A statement can be either a 
+\emph on
+clause
+\emph default
+, an explicit 
+\emph on
+type-signature
+\emph default
+ or a 
+\emph on
+class definition
+\emph default
+.
+ 
+\begin_inset Formula \begin{equation}
+statement\rightarrow\left\{ \begin{array}{c}
+clause\\
+signature\\
+\textrm{class}\: constraint\:\textrm{where }[signature_{1},\dots,signature_{k}]\end{array}\right.\end{equation}
+
+\end_inset
+
+An 
+\emph on
+instance definition
+\emph default
+ consists of a deduction of 
+\emph on
+constraints
+\emph default
+, followed by a collection of 
+\emph on
+clauses
+\emph default
+.
+\begin_inset Formula \begin{equation}
+instanceDefinition\rightarrow\begin{array}{l}
+\textrm{instance }constraint_{1},\dots,constraint_{k}\Rightarrow constraint\\
+clause{}_{1}\cdots clause{}_{n}\\
+\textrm{end}\end{array}\end{equation}
+
+\end_inset
+
+A 
+\emph on
+clause
+\emph default
+ can either be a 
+\emph on
+predicate
+\emph default
+, a 
+\emph on
+meta-predicate
+\emph default
+ or a 
+\emph on
+rewrite rule
+\emph default
+.
+ A deduction is a private case of a 
+\emph on
+meta-predicate
+\emph default
+.
+ 
+\begin_inset Formula \begin{equation}
+clause\rightarrow pred|metapred|metapred\rightsquigarrow metapred\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+metapred\rightarrow\left\{ \begin{array}{c}
+(pred|metapred)\vdash goal\\
+name(term_{1},\dots,term_{n})\end{array}\right.\end{equation}
+
+\end_inset
+
+Type constraints and explicit type signatures are of the form described
+ in 
+\begin_inset LatexCommand ref
+reference "sub:Type-Classes"
+
+\end_inset
+
+, where types are denoted by 
+\emph on
+terms
+\emph default
+.
+\begin_inset Formula \begin{equation}
+constraint\rightarrow var\in name(term_{1},\dots,term_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+signature\rightarrow constraint_{1},\dots,constraint_{k}\Rightarrow name(term_{1},\dots,term_{n})::term\end{equation}
+
+\end_inset
+
+The definitions of 
+\emph on
+predicates
+\emph default
+, 
+\emph on
+goals
+\emph default
+ and 
+\emph on
+terms
+\emph default
+ are unchaged relative to the ones in Prolog.
+\begin_inset Formula \begin{equation}
+pred\rightarrow name(term_{1},\dots,term_{n})\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+goal\rightarrow pred|pred,goal\end{equation}
+
+\end_inset
+
+
+\begin_inset Formula \begin{equation}
+term\rightarrow atom|var|number|name(term_{1},\dots,term_{n})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Data Structures used for Type Inferrence
+\begin_inset LatexCommand label
+name "sub:Data-Structures"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now define the data structures used in the type inferrence process.
+\end_layout
+
+\begin_layout Subsubsection
+Type Signature and the Environment
+\end_layout
+
+\begin_layout Standard
+A type signature of a concept is represented by the following tupple:
+\begin_inset Formula \[
+\sigma=\left\langle \tau,\bar{\tau},V,C\right\rangle \]
+
+\end_inset
+
+Where 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is the concept's type, 
+\begin_inset Formula $\bar{\tau}$
+\end_inset
+
+ is a vector of the arguments' types, 
+\begin_inset Formula $V$
+\end_inset
+
+ is a set containing the exsitential type variables for this concept, and
+ 
+\begin_inset Formula $C$
+\end_inset
+
+ is a set of type constraints constraining the variables in 
+\begin_inset Formula $\bar{\tau}$
+\end_inset
+
+.
+ We write 
+\begin_inset Formula $V$
+\end_inset
+
+ here as a convenience, though it can be calculated with the following equation:
+\begin_inset Formula \[
+V=vars(\bar{\tau})\smallsetminus vars(\tau)\]
+
+\end_inset
+
+Were 
+\begin_inset Formula $vars(term)$
+\end_inset
+
+ returns the variables in 
+\begin_inset Formula $term$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A signature exsists per concept, meaning that for each given 
+\begin_inset Formula $name/arity$
+\end_inset
+
+ pair there is at most one signature.
+ Therefore a function can be defined for providing signatures for concepts.
+ The domain of this function are all the defined concepts, and the range
+ consists of all the valid signatures with the correct arity.
+ We will define the function 
+\begin_inset Formula $ENV$
+\end_inset
+
+ the following way:
+\begin_inset Formula \[
+ENV(name/n)=\left\langle \tau,\bar{\tau},V,C\right\rangle \]
+
+\end_inset
+
+Where 
+\begin_inset Formula $\sigma=\left\langle \tau,\bar{\tau},V,C\right\rangle $
+\end_inset
+
+ is the signature defined for 
+\begin_inset Formula $name/n$
+\end_inset
+
+ in the scope visible to 
+\begin_inset Formula $ENV$
+\end_inset
+
+.
+ 
+\begin_inset Formula \[
+domain(ENV)=\left\{ name/n|name/n\textrm{ is defined in the scope visible to }ENV\right\} \]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Type-Assigning Tree
+\end_layout
+
+\begin_layout Standard
+An important representation of the code is using a type-assigning-tree.
+ This is a tree that inherits the structure of a clause and assigns a type
+ for each node.
+ Each node in this tree has the following structure:
+\begin_inset Formula \[
+\left\langle name,\tau,\bar{\tau},V,C,\overline{args}\right\rangle \]
+
+\end_inset
+
+Where 
+\begin_inset Formula $name$
+\end_inset
+
+ is the name of the represented concept (or its value in case of a number
+ or a variable), 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is the type assigned to it, 
+\begin_inset Formula $\bar{\tau}$
+\end_inset
+
+ is a vector of the types of the arguments of this node, 
+\begin_inset Formula $V$
+\end_inset
+
+ is the set of existential type-variables 
+\begin_inset Quotes eld
+\end_inset
+
+boxed
+\begin_inset Quotes erd
+\end_inset
+
+ underneith this node, 
+\begin_inset Formula $C$
+\end_inset
+
+ is the set of constraints on 
+\begin_inset Formula $\bar{\tau}$
+\end_inset
+
+ and 
+\begin_inset Formula $\overline{args}$
+\end_inset
+
+ contains the children of this node.
+ The length of 
+\begin_inset Formula $\bar{\tau}$
+\end_inset
+
+ and of 
+\begin_inset Formula $\overline{args}$
+\end_inset
+
+ is the same and represents the arity of the concept.
+\end_layout
+
+\begin_layout Subsubsection
+Defined Instances
+\end_layout
+
+\begin_layout Standard
+All instances defined up to a point in the program are collected in a set
+ - 
+\begin_inset Formula $INST$
+\end_inset
+
+.
+ Each element in this set is of the form:
+\begin_inset Formula \[
+\left\langle C\Rightarrow c\right\rangle \]
+
+\end_inset
+
+Where 
+\begin_inset Formula $C$
+\end_inset
+
+ is a set of constraints, and 
+\begin_inset Formula $c$
+\end_inset
+
+ is a single constraint.
+\end_layout
+
+\begin_layout Subsection
+An Overview of the Algorithm
+\end_layout
+
+\begin_layout Standard
+The type-inferrence algorithm consists of 3 phases: 
+\end_layout
+
+\begin_layout Itemize
+The structural phase: This phase checks the validity of the structure of
+ the units
+\end_layout
+
+\begin_layout Itemize
+The 
+\noun on
+Hindley-Milner
+\noun default
+ type unification phase.
+ This phase transforms the unit into a type-assigning tree
+\end_layout
+
+\begin_layout Itemize
+The constraint checking phase: This phase validates the type constraints
+ and transforms the tree back into a list of clauses or untyped Prolog.
+\end_layout
+
+\begin_layout Subsection
+The Structural Phase
+\begin_inset LatexCommand label
+name "sub:The-Structural-Phase"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The purpose of this phase is to make sure assumptions we make along the
+ way (mainly in the constraint checking phase - 
+\begin_inset LatexCommand ref
+reference "sub:Constraint-Checking-Phase"
+
+\end_inset
+
+) are valid.
+ These apply to 2 constructs: 
+\emph on
+instance definitions
+\emph default
+ and 
+\emph on
+rewrite rules
+\emph default
+.
+\end_layout
+
+\begin_layout Subsubsection
+Stractural checks for Instance Definitions
+\end_layout
+
+\begin_layout Standard
+Here we need to check that the given instance is unique and unambiguous.
+ The input is the instance header:
+\begin_inset Formula \begin{equation}
+\textrm{instance }\tau^{1}\in class_{1}(\tau_{1}^{1},\dots,\tau_{m_{1}}^{1}),\dots,\tau^{l}\in class_{l}(\tau_{1}^{l},\dots,\tau_{m_{l}}^{l})\Rightarrow\tau\in class(\tau_{1},\dots,\tau_{m})\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We check the following:
+\end_layout
+
+\begin_layout Enumerate
+For each 
+\begin_inset Formula $i$
+\end_inset
+
+ in 
+\begin_inset Formula $[1\dots k]$
+\end_inset
+
+, 
+\begin_inset Formula $\tau^{i}$
+\end_inset
+
+ is a type variable.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\tau$
+\end_inset
+
+ has the structure: 
+\begin_inset Formula $name(\upsilon_{1},\dots,\upsilon_{n})$
+\end_inset
+
+, where 
+\begin_inset Formula $\upsilon_{1},\dots,\upsilon_{n}$
+\end_inset
+
+ are all variables.
+\end_layout
+
+\begin_layout Enumerate
+The set 
+\begin_inset Formula $\left\{ \tau`|\left\langle C\Rightarrow\tau`\in class(\upsilon`_{1},\dots,\upsilon`_{m})\right\rangle \in INST\right\} $
+\end_inset
+
+ where 
+\begin_inset Formula $\upsilon`_{1},\dots,\upsilon`_{m}$
+\end_inset
+
+ are unbound variables, does not contain an element that can be unified
+ with 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+ If such element exists, we emit an 
+\emph on
+ambiguous instance declaration
+\emph default
+ error, providing 
+\begin_inset Formula $\tau$
+\end_inset
+
+ and 
+\begin_inset Formula $\tau`$
+\end_inset
+
+ as evidence.
+\end_layout
+
+\begin_layout Enumerate
+For each 
+\begin_inset Formula $i$
+\end_inset
+
+ in 
+\begin_inset Formula $[1\dots k]$
+\end_inset
+
+, for each 
+\begin_inset Formula $\upsilon\in vars(\tau_{i})$
+\end_inset
+
+, 
+\begin_inset Formula $\upsilon\in vars(\upsilon_{1},\dots,\upsilon_{n})$
+\end_inset
+
+ or there exist 
+\begin_inset Formula $j$
+\end_inset
+
+ and 
+\begin_inset Formula $k$
+\end_inset
+
+, 
+\begin_inset Formula $1\le j\le l;1\le k\le m_{l}$
+\end_inset
+
+ where 
+\begin_inset Formula $\upsilon\in vars(\tau_{k}^{j})$
+\end_inset
+
+.
+ If this does not happen for some 
+\begin_inset Formula $\upsilon$
+\end_inset
+
+ and 
+\begin_inset Formula $i$
+\end_inset
+
+, an error is emited, stating that variable 
+\begin_inset Formula $\upsilon$
+\end_inset
+
+ in 
+\begin_inset Formula $\tau_{i}$
+\end_inset
+
+ does not depend on 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Structural checkes for Rewrite Rules
+\end_layout
+
+\begin_layout Standard
+Here we need to check that a rewrite rule does not violate the directionality
+ of constraint checking.
+ This means that the head argument of the meta-predicate on the left hand
+ side must be checked to be a variable, and this variable must not appear
+ in the body of the clause on the right hand side.
+ The input is a rewrite-rule:
+\begin_inset Formula \[
+name(h,b_{1},\dots,b_{n})\rightsquigarrow metapred\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We check:
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $h$
+\end_inset
+
+ is a variable.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $h\notin vars(body(metapred))$
+\end_inset
+
+ where 
+\begin_inset Formula $body(x)$
+\end_inset
+
+ returns the list of body elements in 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+The Type Unification Phase
+\end_layout
+
+\begin_layout Standard
+In this phase we start with code and transform it into a type-assigning
+ tree.
+ This phase also builds the 
+\begin_inset Formula $ENV$
+\end_inset
+
+ database and uses it.
+ We will describe this algorithm as such a transformation.
+ Let us define the function 
+\begin_inset Formula $buildTree(code)$
+\end_inset
+
+ for the different inputs it can take.
+\end_layout
+
+\begin_layout Subsubsection
+Explicit Unit
+\end_layout
+
+\begin_layout Enumerate
+Input:
+\begin_inset Formula \[
+\begin{array}{l}
+\textrm{unit }[name_{1}/arity_{1},\dots,name_{n}/arity_{n}]\\
+statement_{1}\cdots statement_{m}\\
+\textrm{end}\end{array}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+For each 
+\begin_inset Formula $i\in[1\dots n]$
+\end_inset
+
+, add a mapping 
+\begin_inset Formula $(name_{i}/arity_{i})\rightarrow\left\langle \tau,\bar{\tau},V,C\right\rangle $
+\end_inset
+
+ to 
+\begin_inset Formula $ENV$
+\end_inset
+
+, where 
+\begin_inset Formula $\tau$
+\end_inset
+
+ is an unbound type variable, 
+\begin_inset Formula $\bar{\tau}$
+\end_inset
+
+ is a vector of size 
+\begin_inset Formula $n$
+\end_inset
+
+ of unbound type variables, and 
+\begin_inset Formula $V$
+\end_inset
+
+ and 
+\begin_inset Formula $C$
+\end_inset
+
+ are unbound variables.
+ Keep these mappings open for this unit, meaning that the same variables
+ will be used for processing all the statements in the unit, and if a variable
+ is unified with a type, this unification is visible throughout the unit.
+\end_layout
+
+\begin_layout Enumerate
+Returns: 
+\begin_inset Formula $[buildTree(statement_{1}),\dots,buildTree(statement_{m})]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Explicit Type Signature
+\end_layout
+
+\begin_layout Enumerate
+Input:
+\begin_inset Formula \[
+constraint_{1},\dots,constraint_{m}\Rightarrow name(\tau_{1},\dots,\tau_{n})::\tau\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+For each 
+\begin_inset Formula $\tau`\in\left\{ \tau,\tau_{1},\dots,\tau_{n}\right\} $
+\end_inset
+
+, run 
+\begin_inset Formula $buildTree(\tau`)$
+\end_inset
+
+.
+ Report an error if the top-level does not have the type 
+\begin_inset Formula $type$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+For each 
+\begin_inset Formula $\left(\tilde{\tau}\in class(\tilde{\tau}_{1},\dots,\tilde{\tau}_{n})\right)\in\left\{ constraint_{1},\dots,constraint_{m}\right\} $
+\end_inset
+
+, see that 
+\begin_inset Formula $class$
+\end_inset
+
+ is defined as a type-class of arity 
+\begin_inset Formula $n$
+\end_inset
+
+, and that for each 
+\begin_inset Formula $\tilde{\tau}`\in\left\{ \tilde{\tau},\tilde{\tau}_{1},\dots,\tilde{\tau}_{n}\right\} $
+\end_inset
+
+, 
+\begin_inset Formula $buildTree(\tilde{\tau}`)$
+\end_inset
+
+ emits a tree where the root type is 
+\begin_inset Formula $type$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Add 
+\begin_inset Formula $(name/n)\rightarrow\left\langle \tau,\left\langle \tau_{1},\dots,\tau_{n}\right\rangle ,V,\left\langle constraint_{1},\dots,constraint_{m}\right\rangle \right\rangle $
+\end_inset
+
+ to 
+\begin_inset Formula $ENV$
+\end_inset
+
+, where 
+\begin_inset Formula $V=vars\left(\left\langle \tau_{1},\dots,\tau_{n}\right\rangle \right)\smallsetminus vars(\tau)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Returns: 
+\begin_inset Formula $nil$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Clause, Predicate, Meta-Predicate, Goal or Compound Term
+\end_layout
+
+\begin_layout Enumerate
+Input:
+\begin_inset Formula \[
+name(term_{1},\dots,term_{n})\]
+
+\end_inset
+
+Where 
+\begin_inset Formula $name$
+\end_inset
+
+ can also be an operator such as 
+\begin_inset Formula $\vdash,\rightsquigarrow$
+\end_inset
+
+ etc.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $\left\langle \tau,\bar{\tau},V,C\right\rangle \leftarrow ENV(name/n)$
+\end_inset
+
+.
+ If 
+\begin_inset Formula $name/n$
+\end_inset
+
+ is not in the domain for 
+\begin_inset Formula $ENV$
+\end_inset
+
+, emit an error stating that 
+\begin_inset Formula $name/n$
+\end_inset
+
+ is undefined in this scope.
+\end_layout
+
+\begin_layout Enumerate
+Returns: 
+\begin_inset Formula $\left\langle name,\tau,\bar{\tau},V,C,\overline{args}\right\rangle $
+\end_inset
+
+, where 
+\begin_inset Formula $\overline{args}=\left\langle buildTree(term_{1}),\dots,buildTree(term_{n})\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Numbers
+\end_layout
+
+\begin_layout Enumerate
+Input:
+\begin_inset Formula \[
+num\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Returns: 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+
+\begin_inset Formula $\left\langle num,\textrm{number},nil,\emptyset,\emptyset,nil\right\rangle $
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Variables
+\end_layout
+
+\begin_layout Enumerate
+Input:
+\begin_inset Formula \[
+var\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+Check if 
+\begin_inset Formula $var\in domain(VarType)$
+\end_inset
+
+.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If yes, returns 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+
+\begin_inset Formula $\left\langle var,VarType(var),nil,\emptyset,\emptyset,nil\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+If not, add 
+\begin_inset Formula $(var\rightarrow\upsilon)$
+\end_inset
+
+ to 
+\begin_inset Formula $VarType$
+\end_inset
+
+, where 
+\begin_inset Formula $\upsilon$
+\end_inset
+
+ is an unbound type variable, and return 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+
+\begin_inset Formula $\left\langle var,\upsilon,nil,\emptyset,\emptyset,nil\right\rangle $
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Subsection
+The Constraint Checking Phase
+\begin_inset LatexCommand label
+name "sub:Constraint-Checking-Phase"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Discussion
+\begin_inset LatexCommand label
+name "sec:Discussion"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand bibtex
+options "plain"
+bibfiles "cedalion"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

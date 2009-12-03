@@ -136,3 +136,12 @@ replaceAt([First|Olds], Index, NewContent, [First|News]) :-
 	IndexMinus1 is Index-1,
 	replaceAt(Olds, IndexMinus1, NewContent, News).
 
+% Visualization
+visualize(TTerm, Vis) :-
+	visualization(TTerm, OrigVis),
+	transformTerm(OrigVis, Vis, visualization, set(pair(vis(TChild), ChildVis), visualize(TChild, ChildVis)), visualization).
+
+% Test.....
+:- dynamic loadedFile/3.
+loadedFile(a, [pair(x,x)], []).
+

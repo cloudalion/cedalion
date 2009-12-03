@@ -1,0 +1,6 @@
+#!/bin/bash
+
+baseName=`shift`
+echo Hello, $baseName
+echo "buildResults('$baseName')." | yap -l unittest.pl
+

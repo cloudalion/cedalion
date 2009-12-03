@@ -1,0 +1,7 @@
+require(base, 'base.cdln').
+
+a(X) :-
+	base:a(X).
+a(X) :-
+	:a(X).
+

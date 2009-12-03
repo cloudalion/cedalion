@@ -1,0 +1,30 @@
+
+unit [sum/2, prod/2, diff/2, ratio/2, pair/2].
+(A+B) ---> sum(A, B).
+(A*B) ---> prod(A, B).
+(A-B) ---> diff(A, B).
+(A/B) ---> ratio(A, B).
+(A,B) ---> pair(A, B).
+end.
+
+unit [exprOf/2].
+pred exprOf(E, V) => eval(E, V).
+end.
+
+pred T := T.
+
+instance exprOf(number, number).
+eval(X, X).
+end.
+
+instance exprOf(sum(A, B), number) :-
+	exprOf(A, number),
+	exprOf(B, number).
+eval(X+Y, V) :-
+	eval(X, XV),
+	eval(Y, YV),
+	'+'(XV, YV, V).
+end.
+
+
+

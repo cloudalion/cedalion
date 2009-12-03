@@ -1,0 +1,11 @@
+testResult(s(member1), [1, 2, 3]).
+testResult(s(member2), [t(1), t(2), t(3)]).
+testResult(s(if1), [s(yes)]).
+testResult(s(if2), [s(yes)]).
+testResult(s(mapList1), [[2, 4, 6]::list(number)]).
+testResult(s(firstElements1), [x([1::number, s(a)::string], [[2, 3]::list(number), [s(b), s(c)]::list(string)])]).
+testResult(s(transformTerm), [a(t, c(_G870))]).
+testResult(s(parseTerm1), [x(a, [b::_G874, c::_G880, 3::_G886, _G891::_G892])]).
+testResult(s(parseTerm2), [hello(1, s(world))::_G871]).
+testResult(s(pathExtract), [x(x::_G884, []), x(x::_G875, [])]).
+testResult(s(pathModify), [doBoth(remove(loadedFile(a, _G944, _G945)), insert(loadedFile(a, [pair(t, x)], []))), doBoth(remove(loadedFile(a, _G920, _G921)), insert(loadedFile(a, [pair(t, x)], []))), doBoth(remove(loadedFile(a, _G896, _G897)), insert(loadedFile(a, [pair(t, x)], []))), doBoth(remove(loadedFile(a, _G872, _G873)), insert(loadedFile(a, [pair(t, x)], [])))]).

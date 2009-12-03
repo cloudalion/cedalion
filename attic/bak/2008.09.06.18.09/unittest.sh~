@@ -1,0 +1,5 @@
+#!/bin/bash
+
+baseName = shift
+echo "unitTest('$baseName')." | yap -l unittest.pl
+

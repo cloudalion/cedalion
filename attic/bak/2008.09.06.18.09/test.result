@@ -1,0 +1,29 @@
+testResult('Arithmetics',[3]).
+testResult('One Two Three',[1,2,3]).
+testResult('Do List',[[5,5,5]]).
+testResult('Do List - Singleton',[[1*4,2*3,3*2]]).
+testResult('Set union',[1,2,3,4,5,6,7,8,9]).
+testResult('Transform term',[2+4*6/8]).
+testResult('Transform term - variables',[a(a(1)+a(a(_270*a(3))/a(4)))]).
+testResult(forall1,[]).
+testResult(forall2,[true]).
+testResult(append1,[[1,2,3]]).
+testResult(append2,[[3]]).
+testResult(removeTypeDefinitions,[1+2]).
+testResult(removeTypeDefinitions2,[1+2]).
+testResult(removeTypeDefinitions3,[1+2]).
+testResult(checkType1,[[marker([],foundType(goal)),marker([3],error(unclassified)),marker([1,unclassified],foundType(thing)),_276=thing,marker([2,unclassified],foundType(type)),marker([2,unclassified],defined(thing,[],type))]]).
+testResult(checkType2,[[marker([],foundType(goal)),marker([],defined(dosomething,[number,thing],goal)),marker([1,2],foundType(thing)),_279=thing,marker([2,2],foundType(type)),marker([2,2],defined(thing,[],type))]]).
+testResult(checkType3,[[marker([],foundType(goal)),marker([1],foundType(goal+visual(a+b))),marker([1],defined(member,[_293,list(_293)],goal+visual(a+b))),marker([2,2,1],foundType(list(_293))),_325=list(_293),marker([1,2,1],foundType(_293)),marker([1,1,1],foundType(_293)),_358=_293,marker([2,1,1],foundType(type)),_293=type,marker([2],foundType(type)),marker([2,2],foundType(type)),marker([1,2,2],foundType(visualization)),marker([2,1,2,2],foundType(visualization)),marker([2,1,2,2],defined(b,[],visualization)),marker([1,1,2,2],foundType(visualization)),marker([1,1,2,2],defined(a,[],visualization)),marker([1,2],foundType(type)),goal=type]]).
+testResult(checkType4,[[marker([],foundType(goal)),marker([1],foundType(goal)),marker([1],defined(a,[type],goal)),marker([2],foundType(type)),goal=type]]).
+testResult(checkType5,[_248]).
+testResult(definition,[definition(+,[_245,_245],_245,[]),definition(::<,[type,type],goal,[]),definition(member,[set(_270)],type,[]),definition('.',[_278,list(_278)],list(_278),[]),definition([],[],list(_294),[]),definition(goal,[],type,[]),definition(visual,[visualization],type,[])]).
+testResult(isOfType1,[]).
+testResult(isOfType2,[]).
+testResult(isOfType3,[]).
+testResult(isOfType4,[]).
+testResult(isOfType5,[false]).
+testResult(checkSet1,[[marker([],foundType(_253)),marker([],foundType(number)),marker([set],foundType(set(number))),marker([2,set],foundType(list(number))),marker([2,2,set],foundType(list(number))),marker([2,2,2,set],foundType(list(number))),marker([1,2,2,set],foundType(number)),marker([1,2,set],foundType(number)),marker([1,set],foundType(number))]]).
+testResult(checkSet2,[[marker([],foundType(_253)),marker([],error(notMemberOf([1,2,3]))),marker([],foundType(number)),marker([set],foundType(set(number))),marker([2,set],foundType(list(number))),marker([2,2,set],foundType(list(number))),marker([2,2,2,set],foundType(list(number))),marker([1,2,2,set],foundType(number)),marker([1,2,set],foundType(number)),marker([1,set],foundType(number))]]).
+testResult(loadFile1,[[[require(base,'base.cdln'),(a(_256):-base:a(_256)),(a(_268):- :a(_268)),end_of_file],['X'=_256,'X'=_268]]]).
+testResult(loadModel1,[[[('hello:a'(_258):-'base.cdln:a'(_258)),('hello:a'(_267):-a(_267)),'hello:end_of_file'],['X'=_258,'X'=_267]]]).

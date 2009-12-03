@@ -1,0 +1,31 @@
+testResult('Arithmetics',[3]).
+testResult('One Two Three',[1,2,3]).
+testResult('Do List',[[5,5,5]]).
+testResult('Do List - Singleton',[[1*4,2*3,3*2]]).
+testResult('Set union',[1,2,3,4,5,6,7,8,9]).
+testResult('Transform term',[2+4*6/8]).
+testResult('Transform term - variables',[a(a(1)+a(a(_270*a(3))/a(4)))]).
+testResult(forall1,[]).
+testResult(forall2,[true]).
+testResult(append1,[[1,2,3]]).
+testResult(append2,[[3]]).
+testResult(removeTypeDefinitions,[1+2]).
+testResult(removeTypeDefinitions2,[1+2]).
+testResult(removeTypeDefinitions3,[1+2]).
+testResult(checkType1,[[marker(root,foundType(goal)),marker(root/3,error(unclassified)),marker(unclassified/1,foundType(thing)),_276=thing,marker(unclassified/2,foundType(type)),marker(unclassified/2,defined(thing,[],type))]]).
+testResult(checkType2,[[marker(root,foundType(goal)),marker(root,defined(dosomething,[number,thing],goal)),marker(root/2/1,foundType(thing)),_281=thing,marker(root/2/2,foundType(type)),marker(root/2/2,defined(thing,[],type))]]).
+testResult(checkType3,[[marker(root,foundType(goal)),marker(root/1,foundType(goal+visual(a+b))),marker(root/1,defined(member,[_295,list(_295)],goal+visual(a+b))),marker(root/1/2/2,foundType(list(_295))),_330=list(_295),marker(root/1/2/1,foundType(_295)),marker(root/1/1/1,foundType(_295)),_369=_295,marker(root/1/1/2,foundType(type)),_295=type,marker(root/2,foundType(type)),marker(root/2/2,foundType(type)),marker(root/2/2/1,foundType(visualization)),marker(root/2/2/1/2,foundType(visualization)),marker(root/2/2/1/2,defined(b,[],visualization)),marker(root/2/2/1/1,foundType(visualization)),marker(root/2/2/1/1,defined(a,[],visualization)),marker(root/2/1,foundType(type)),goal=type]]).
+testResult(checkType4,[[marker(root,foundType(goal)),marker(root/1,foundType(goal)),marker(root/1,defined(a,[type],goal)),marker(root/2,foundType(type)),goal=type]]).
+testResult(checkType5,[_248]).
+testResult(definition,[definition(+,[_245,_245],_245,[]),definition(::<,[type,type],goal,[]),definition(member,[set(_270)],type,[]),definition('.',[_278,list(_278)],list(_278),[]),definition([],[],list(_294),[]),definition(goal,[],type,[]),definition(visual,[visualization],type,[])]).
+testResult(isOfType1,[]).
+testResult(isOfType2,[]).
+testResult(isOfType3,[]).
+testResult(isOfType4,[]).
+testResult(isOfType5,[false]).
+testResult(checkSet1,[[marker(root,foundType(_253)),marker(root,foundType(number)),marker(root/set,foundType(set(number))),marker(root/set/2,foundType(list(number))),marker(root/set/2/2,foundType(list(number))),marker(root/set/2/2/2,foundType(list(number))),marker(root/set/2/2/1,foundType(number)),marker(root/set/2/1,foundType(number)),marker(root/set/1,foundType(number))]]).
+testResult(checkSet2,[[marker(root,foundType(_253)),marker(root,error(notMemberOf([1,2,3]))),marker(root,foundType(number)),marker(root/set,foundType(set(number))),marker(root/set/2,foundType(list(number))),marker(root/set/2/2,foundType(list(number))),marker(root/set/2/2/2,foundType(list(number))),marker(root/set/2/2/1,foundType(number)),marker(root/set/2/1,foundType(number)),marker(root/set/1,foundType(number))]]).
+testResult(isPathPrefix1,[true]).
+testResult(isPathPrefix2,[1/2/3,1/2,1]).
+testResult(loadFile1,[[[require(base,'base.cdln'),(a(_256):-base:a(_256)),(a(_268):- :a(_268)),end_of_file],['X'=_256,'X'=_268]]]).
+testResult(loadModel1,[[[('hello:a'(_258):-'base.cdln:a'(_258)),('hello:a'(_267):-a(_267)),'hello:end_of_file'],['X'=_258,'X'=_267]]]).

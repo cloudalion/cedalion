@@ -1,0 +1,24 @@
+\begin{thebibliography}{1}
+
+\bibitem{Jeffery_typeclasses}
+{\sc Jeffery, D., Henderson, F., and Somogyi, Z.}
+\newblock Type classes in mercury draft.
+
+\bibitem{mycroft1984pts}
+{\sc Mycroft, A., and O'Keefe, R.}
+\newblock {A polymorphic type system for PROLOG.}
+\newblock {\em Artificial Intelligence 23}, 3 (1984), 295--307.
+
+\bibitem{schrijvers:ttp}
+{\sc Schrijvers, T., Santos~Costa, V., Wielemaker, J., and Demoen, B.}
+\newblock {Towards typed Prolog}.
+\newblock {\em status: accepted\/}.
+
+\bibitem{somogyi1995mep}
+{\sc Somogyi, Z., Henderson, F., and Conway, T.}
+\newblock {Mercury, an efficient purely declarative logic programming
+  language}.
+\newblock {\em AUSTRALIAN COMPUTER SCIENCE COMMUNICATIONS 17\/} (1995),
+  499--512.
+
+\end{thebibliography}

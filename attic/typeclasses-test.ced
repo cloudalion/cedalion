@@ -1,0 +1,85 @@
+unit [member/2, setOf/1].
+def setOf(S, E) => member(E, S) ---> pred.
+end.
+
+unit [list/1, '.'/2, []/0].
+def [] ---> list(_).
+def [T|list(T)] ---> list(T).
+setOf(list(T), T).
+
+member(X, [X | _]).
+member(X, [_ | L]) :-
+	member(X, L).
+end.
+
+unit [test/0].
+test :-
+	member(X, [1, 2, 3]),
+	write(X), nl,
+	fail.
+test.
+end.
+
+unit [expr/1, eval/2].
+exprOf(E, T) => eval(E, T).
+
+unit ['+'/2, sum/2].
+def A+B ---> sum(A, B).
+end.
+
+exprOf(T, T).
+eval(X, X).
+
+exprOf(sum(T1, T2), number) :-
+	exprOf(T1, number), 
+	exprOf(T2, number).
+
+eval(A+B, V) :-
+	eval(A, VA),
+	eval(B, VB),
+	'+'(VA, VB, V).
+
+unit [defined/2, function/1].
+def exprOf(E, V) => defined(function(V), E) ---> pred.
+exprOf(function(T), T).
+eval(F, V) :-
+	defined(F, E),
+	eval(E, V).
+end.
+
+unit [f/1].
+defined(f(X), X+2).
+end.
+
+
+unit [comparable/2, equals/2].
+comparable(X, Y) => equals(X, Y).
+end.
+
+instance comparable(number, number).
+equals(Num1, Num2) :-
+	'+'(Num1, 0, Num2).
+end.
+
+instance (comparable(E1, E2) :-
+	exprOf(E1, C1),
+	exprOf(E2, C2),
+	comparable(C1, C2)).
+equals(E1, E2) :-
+	eval(E1, V1),
+	eval(E2, V2),
+	equals(V1, V2).
+end.
+
+unit [greaterInTwo/2].
+greaterInTwo(X, Y) :-
+	equals(X+2, Y). % comparable(sum(<X>, number), <Y>)
+end.
+
+unit [greaterInTwo/2].
+compareAndAdd(X, Y, Z) :-
+	equals(X, Y),	% comparable(<X>, <Y>)
+	eval(X+Y, Z).	% expr(sum(<X>, <Y>), <Z>)
+end.
+
+

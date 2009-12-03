@@ -1,0 +1,49 @@
+unit [member/2, set/1].
+requires(set(T), Set, member(_ :: T, _ :: Set)).
+
+unit [list/1, '.'/2, []/0].
+def [] :: list(_).
+def [_ :: T | _ :: list(T)] :: list(T).
+list(T) belongsTo set(T).
+
+member(X, [X | _]).
+member(X, [_ | L]) :-
+	member(X, L).
+
+
+unit [test/0].
+test :-
+	member(X, [1, 2, 3]),
+	write(X), nl,
+	fail.
+test.
+
+unit [expr/1, eval/2].
+require(expr(T), E, eval(_::E, _::T)).
+
+unit ['+'/2, sum/2].
+def (_::T1+_::T2)::sum(T1, T2).
+
+unit [].
+belongsTo(number, expr(number), []).
+eval(X::number, X).
+
+unit [].
+belongsTo(sum(T1, T2), expr(number), [T1 belongsTo expr(number), T2 belongsTo expr(number)]).
+[T1 belongsTo expr(number), T2 belongsTo expr(number)] =>
+eval(A+B, V) :-
+	eval(A::T1, VA),
+	eval(B::T2, VB),
+	'+'(VA, VB, V).
+
+unit [defined/2, function/1].
+function(T) belongsTo expr(T).
+[Expr belongsTo expr(T)] =>
+eval(F, V) :-
+	defined(F::function(T), E),
+	eval(E::Expr, V).
+
+unit [f/1].
+[T belongsTo expr(number)] =>
+defined(f(X::T), X+2).
+
