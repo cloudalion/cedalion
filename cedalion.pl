@@ -1,5 +1,5 @@
 % Debugging
-:- op(200, xfx, '::').
+:- op(700, xfx, '::').
 :- op(200, fx, '?').
 ? Term:-
         write('? '),
