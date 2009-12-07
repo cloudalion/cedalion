@@ -36,7 +36,7 @@ public class PrologProxy {
      * @throws PrologException 
      */
     private boolean hasMoreSolutions() throws IOException, PrologException {
-//        readNext();
+    	Map<String, Variable> varMap = new HashMap<String, Variable>();
         while(!isAtEOF()) {
             switch(getNextChar()) {
             case '.':
@@ -47,7 +47,7 @@ public class PrologProxy {
                 return true;
             case '!':
                 readNext();
-                throw new PrologException(readTerm());
+                throw new PrologException(readTerm(varMap));
             default:
                 readNext();
             }
@@ -62,7 +62,8 @@ public class PrologProxy {
             // Read all results
             List<Map<Variable, Object> > results = new ArrayList<Map<Variable, Object> >();
             while(hasMoreSolutions()) {
-                Object term = readTerm();
+                Map<String, Variable> varMap = new HashMap<String, Variable>();
+				Object term = readTerm(varMap );
                 
                 Map<Variable, Object> result = new HashMap<Variable, Object>();
                 while(term instanceof Compound && ((Compound)term).name().equals(".")) {
@@ -93,7 +94,7 @@ public class PrologProxy {
         output.flush();
 //        write("query(ok, halt).\n");
     }
-    public Object readTerm() throws IOException {
+    public Object readTerm(Map<String, Variable> varMap) throws IOException {
         skipWhiteSpace();
         String atom;
         if(getNextChar() == '\'') {
@@ -102,7 +103,7 @@ public class PrologProxy {
         } else if(getNextChar() == '(') {
             // An enclosed term
             readNext();
-            Object term = readTerm();
+            Object term = readTerm(varMap);
             skipWhiteSpace();
             if(getNextChar() != ')')
                 throw new IOException("Protocol error: expected: ')', found: " + getNextChar());
@@ -110,7 +111,7 @@ public class PrologProxy {
             return term;
         } else if(isVarBeginning(getNextChar())) {
             // A variable
-            return readVar();
+            return readVar(varMap);
         } else {
             // A normal atom
             atom = readAtom();
@@ -121,7 +122,7 @@ public class PrologProxy {
             readNext();
             List<Object> args = new ArrayList<Object>();
             while(true) {
-                args.add(readTerm());
+                args.add(readTerm(varMap));
                 skipWhiteSpace();
                 if(getNextChar() == ')') {
                     readNext();
@@ -173,8 +174,15 @@ public class PrologProxy {
             return true;
         return false;
     }
-    private Object readVar() throws IOException {
-        return new Variable(readAtom());
+    private Object readVar(Map<String, Variable> varMap) throws IOException {
+        String varName = readAtom();
+        if(varMap.get(varName) != null)
+        	return varMap.get(varName);
+        else {
+    		Variable variable = new Variable(varName);
+    		varMap.put(varName, variable);
+    		return variable;        	
+        }
     }
     private boolean isVarBeginning(char c) {
         if(c == '_')

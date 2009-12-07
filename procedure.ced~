@@ -22,7 +22,7 @@ commandClass(assign(_, _, _), s('net.nansore.cedalion.cmd.Assign')).
 signature(doProc(Proc)::command, [Proc::procedure]).
 commandClass(doProc(_), s('net.nansore.cedalion.cmd.DoProc')).
 
-signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::string]).
+signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
 commandClass(readFile(FileName, Namespace, FileContent), s('net.nansore.cedalion.cmd.ReadFile')).
 
 procedure(openFile(FileName, ResourceName, Namespace), 

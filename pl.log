@@ -11,3 +11,5 @@
 'query'('.'('='(s('VarName'),VarName),'.'('='(s('T'),T),'.'('='(s('_G72'),_G72),s('[]')))),'once'('cedalion#termClass'('::'('cedalion#readFile'(s('grammer-example.pl'),s('gram'),_G72),T),VarName))).
 |: -'.'(=(s('VarName'), s('net.nansore.cedalion.cmd.ReadFile')), '.'(=(s('T'), 'cedalion#command'), '.'(=(s('_G72'), _G175), s([]))))
 .
+'query'('.'('='(s('VarName'),VarName),'.'('='(s('T'),T),'.'('='(s('_G72'),_G72),'.'('='(s('_G77'),_G77),s('[]'))))),'once'('cedalion#termClass'('::'('cedalion#assignFinal'(_G77,'cedalion#fileToModel'(_G72),'cedalion#model'),T),VarName))).
+|: .
