@@ -12,10 +12,10 @@ public class Test {
 	public static void main(String[] args) throws IOException, PrologException, TermInstantiationException {
 		PrologProxy p = new PrologProxy(new File("service.pl"));
 		
-		p.getSolution(new Compound("loadFile", "procedure.ced", "cedalion"));
+		p.getSolution(new Compound(p, "loadFile", "procedure.ced", "cedalion"));
 		
 		ExecutionContext exe = new ExecutionContext(p);
-		exe.runProcedure(new Compound("cedalion#openFile", "grammer-example.pl", "gram"));
+		exe.runProcedure(new Compound(p, "cedalion#openFile", "grammer-example.pl", "grammar.ced", "gram"));
 		
 	}
 }

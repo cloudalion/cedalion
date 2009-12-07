@@ -86,9 +86,9 @@ public class PrologProxy {
         Object pattern = "[]";
         for(Iterator<Variable> i = vars.iterator(); i.hasNext(); ) {
             Variable var = i.next();
-            pattern = new Compound(".", new Compound("=", var.name(), var), pattern);
+            pattern = new Compound(this, ".", new Compound(this, "=", var.name(), var), pattern);
         }
-        writeTerm(new Compound("query", pattern, query));
+        writeTerm(new Compound(this, "query", pattern, query));
         write(".\r\n");
         output.flush();
 //        write("query(ok, halt).\n");
@@ -134,7 +134,7 @@ public class PrologProxy {
             if(atom.equals("s") && args.size() == 1)
             	return ((Compound)args.get(0)).name();
             else
-            	return new Compound(atom, args.toArray());
+            	return new Compound(this, atom, args.toArray());
         } else {
             // Check for numeric values
             try {
@@ -146,7 +146,7 @@ public class PrologProxy {
                     return Float.valueOf(atom);
                 } catch (RuntimeException e1) {
                     // Default: compound with arity 0
-                    return new Compound(atom);
+                    return new Compound(this, atom);
                 }
             }
         }
@@ -220,8 +220,12 @@ public class PrologProxy {
     private void writeTerm(Object term) throws IOException {
         if(term instanceof String)
             writeString((String)term);
-        else if(term instanceof Variable)
-            write(((Variable)term).name());
+        else if(term instanceof Variable) {
+        	if(((Variable)term).isBound())
+        		writeTerm(((Variable)term).boundTo());
+        	else
+        		write(((Variable)term).name());
+        }
         else if(term instanceof Compound)
             writeCompound((Compound)term);
         else
@@ -309,15 +313,15 @@ public class PrologProxy {
     public static void main(String[] args) throws IOException, PrologException {
         PrologProxy p = new PrologProxy(new File("/home/boaz/workspace/VisualTermPlugin/prolog/semantics.pl"));
         Variable varX = new Variable("X");
-        Iterator<Map<Variable, Object>> i = p.getSolutions(new Compound("a", varX));
+        Iterator<Map<Variable, Object>> i = p.getSolutions(new Compound(p, "a", varX));
         while(i.hasNext()) {
             System.out.println("Result : " + i.next().get(varX));
         }
-        i = p.getSolutions(new Compound("=", varX, "x"));
+        i = p.getSolutions(new Compound(p, "=", varX, "x"));
         while(i.hasNext()) {
             System.out.println("Result : " + i.next().get(varX));
         }
-        i = p.getSolutions(new Compound("a", varX));
+        i = p.getSolutions(new Compound(p, "a", varX));
         while(i.hasNext()) {
             System.out.println("Result : " + i.next().get(varX));
         }
@@ -336,7 +340,7 @@ public class PrologProxy {
     }
     
     public boolean hasSolution(Compound q) throws PrologException {
-        Iterator<Map<Variable, Object> > i = getSolutions(new Compound("once", q));
+        Iterator<Map<Variable, Object> > i = getSolutions(new Compound(this, "once", q));
         if(i.hasNext()) {
             i.next();
             return true;
@@ -346,10 +350,13 @@ public class PrologProxy {
     }
 
     public Map<Variable, Object> getSolution(Compound q) throws PrologException {
-        Iterator<Map<Variable, Object> > i = getSolutions(new Compound("once", q));
+        Iterator<Map<Variable, Object> > i = getSolutions(new Compound(this, "once", q));
         if(i.hasNext())
             return i.next();
         else
-            throw new PrologException("Query " + q + " has no solutions");
+            throw new NoSolutionsException("Query " + q + " has no solutions");
     }
+	public Compound createCompound(String name, Object... args) {
+		return new Compound(this, name, args);
+	}
 }

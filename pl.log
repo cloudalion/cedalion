@@ -2,9 +2,12 @@
 |:'query'(s('[]'),'once'('loadFile'(s('procedure.ced'),s('cedalion')))).
  -s([])
 .
-'query'('.'('='(s('Command'),Command),s('[]')),'once'('cedalion#procedureCommand'('cedalion#openFile'(s('grammer-example.pl'),s('gram')),Command))).
-|: -'.'(=(s('Command'), 'cedalion#doall'([])), s([]))
+'query'('.'('='(s('Command'),Command),s('[]')),'once'('cedalion#procedureCommand'('cedalion#openFile'(s('grammer-example.pl'),s('grammar.ced'),s('gram')),Command))).
+|: -'.'(=(s('Command'), 'cedalion#doAll'('.'('cedalion#readFile'(s('grammer-example.pl'), s(gram), _G72), '.'('cedalion#assignFinal'(_G77, 'cedalion#fileToModel'(_G72), 'cedalion#model'), '.'('cedalion#insert'('cedalion#loadedFile'(s('grammar.ced'), _G77)), []))))), s([]))
 .
-'query'('.'('='(s('VarName'),VarName),'.'('='(s('T'),T),s('[]'))),'once'('cedalion#termClass'('::'('cedalion#doall'('[]'),T),VarName))).
-|: -'.'(=(s('VarName'), s('net.nansore.cedalion.cmd.DoAll')), '.'(=(s('T'), 'cedalion#command'), s([])))
+'query'('.'('='(s('VarName'),VarName),'.'('='(s('T'),T),'.'('='(s('_G77'),_G77),'.'('='(s('_G72'),_G72),'.'('='(s('_G77'),_G77),'.'('='(s('_G72'),_G72),s('[]'))))))),'once'('cedalion#termClass'('::'('cedalion#doAll'('.'('cedalion#readFile'(s('grammer-example.pl'),s('gram'),_G72),'.'('cedalion#assignFinal'(_G77,'cedalion#fileToModel'(_G72),'cedalion#model'),'.'('cedalion#insert'('cedalion#loadedFile'(s('grammar.ced'),_G77)),'[]')))),T),VarName))).
+|: -'.'(=(s('VarName'), s('net.nansore.cedalion.cmd.DoAll')), '.'(=(s('T'), 'cedalion#command'), '.'(=(s('_G77'), _G78), '.'(=(s('_G72'), _G83), '.'(=(s('_G77'), _G78), '.'(=(s('_G72'), _G83), s([])))))))
+.
+'query'('.'('='(s('VarName'),VarName),'.'('='(s('T'),T),'.'('='(s('_G72'),_G72),s('[]')))),'once'('cedalion#termClass'('::'('cedalion#readFile'(s('grammer-example.pl'),s('gram'),_G72),T),VarName))).
+|: -'.'(=(s('VarName'), s('net.nansore.cedalion.cmd.ReadFile')), '.'(=(s('T'), 'cedalion#command'), '.'(=(s('_G72'), _G175), s([]))))
 .

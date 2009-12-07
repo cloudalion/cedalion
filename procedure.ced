@@ -13,12 +13,22 @@ signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::stri
 commandClass(Cmd, ClassName) ~> termClass(Cmd::command, ClassName) :- true.
 
 
-signature(doall(List)::command, [List::list(command)]).
-commandClass(doall(_), s('net.nansore.cedalion.cmd.DoAll')).
+signature(doAll(List)::command, [List::list(command)]).
+commandClass(doAll(_), s('net.nansore.cedalion.cmd.DoAll')).
 
 signature(assign(Ref, Expr, Type)::command, [Ref::ref(Type), Expr::expr(Type), Type::type]).
 commandClass(assign(_, _, _), s('net.nansore.cedalion.cmd.Assign')).
 
-procedure(openFile(FileName, Namespace), doall([])).
-function(X+Y, plus(X, Y, Z), Z, number).
+signature(doProc(Proc)::command, [Proc::procedure]).
+commandClass(doProc(_), s('net.nansore.cedalion.cmd.DoProc')).
+
+signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
+commandClass(readFile(FileName, Namespace, FileContent), s('net.nansore.cedalion.cmd.ReadFile')).
+
+procedure(openFile(FileName, ResourceName, Namespace), 
+	doAll([
+		readFile(FileName, Namespace, FileContent),
+		assignFinal(Model, fileToModel(FileContent), model),
+		insert(loadedFile(ResourceName, Model))
+	])).
 

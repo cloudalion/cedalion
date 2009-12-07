@@ -13,33 +13,35 @@ public class Compound implements Serializable {
     private static final long serialVersionUID = 1L;
     private List<Object> args = new ArrayList<Object>();
 	private String name;
+	private PrologProxy prolog;
 	
-	public Compound(String name) {
+	public Compound(PrologProxy prolog, String name) {
 		this.name = name;
+		this.prolog = prolog;
 	}
-	public Compound(String name, Object[] args) {
-		this(name);
+	public Compound(PrologProxy prolog, String name, Object[] args) {
+		this(prolog, name);
 		this.args = Arrays.asList(args);
 	}
-	public Compound(String name, Object arg1) {
-		this(name, new Object[] {arg1});
+	public Compound(PrologProxy prolog, String name, Object arg1) {
+		this(prolog, name, new Object[] {arg1});
 	}
-	public Compound(String name, Object arg1, Object arg2) {
-		this(name, new Object[] {arg1, arg2});
+	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2) {
+		this(prolog, name, new Object[] {arg1, arg2});
 	}
-	public Compound(String name, Object arg1, Object arg2, Object arg3) {
-		this(name, new Object[] {arg1, arg2, arg3});
+	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3) {
+		this(prolog, name, new Object[] {arg1, arg2, arg3});
 	}
-	public Compound(String name, Object arg1, Object arg2, Object arg3, Object arg4) {
-		this(name, new Object[] {arg1, arg2, arg3, arg4});
-	}
-	
-	public Compound(String name, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5) {
-		this(name, new Object[] {arg1, arg2, arg3, arg4, arg5});
+	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3, Object arg4) {
+		this(prolog, name, new Object[] {arg1, arg2, arg3, arg4});
 	}
 	
-	public Compound(String name, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6) {
-		this(name, new Object[] {arg1, arg2, arg3, arg4, arg5, arg6});
+	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5) {
+		this(prolog, name, new Object[] {arg1, arg2, arg3, arg4, arg5});
+	}
+	
+	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6) {
+		this(prolog, name, new Object[] {arg1, arg2, arg3, arg4, arg5, arg6});
 	}
 	
 	public int arity() {
@@ -72,7 +74,7 @@ public class Compound implements Serializable {
 		}
 		return buff.toString();
 	}
-	public String localName() {
-		return PrologClient.toLocalName(name());
+	public PrologProxy getProlog() {
+		return prolog;
 	}
 }

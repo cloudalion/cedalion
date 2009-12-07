@@ -8,7 +8,8 @@ public class Variable implements Serializable {
      */
     private static final long serialVersionUID = 1L;
     private static int genNumber = 0;
-	private String name;;
+	private String name;
+	private Object boundTo = null;
 
 	public Variable() {
 		this("Var" + generateNumber());
@@ -34,5 +35,17 @@ public class Variable implements Serializable {
 	
 	public int hashCode() {
 		return name.hashCode();
+	}
+
+	public void bind(Object term) {
+		boundTo  = term;
+	}
+	
+	public boolean isBound() {
+		return boundTo != null;
+	}
+	
+	public Object boundTo() {
+		return boundTo;
 	}
 }
