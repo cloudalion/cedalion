@@ -35,8 +35,7 @@ loadFile(FileName, Namespace) :-
 insertTermsFromSteam(Stream, Term, FileName, NsList) :-
 	if(Term=end_of_file,
 		(
-			close(Stream),
-			assert(loadedNamespaces(FileName, NsList))
+			close(Stream)
 		),
 		(
 			interpretTerm(Term, FileName, NsList, NewNsList),
@@ -51,6 +50,8 @@ interpretTerm(Term, FileName, NsList, NewNsList) :-
 			NewNsList = NsList,
 			localToGlobal(Term, NsList, GTerm),
 			assert(loadedStatement(FileName, GTerm)),
+			if(GTerm = (Statement ~> _), % Avoid exception if not implemented
+				assert((Statement :- fail))),
 			insert(GTerm)
 
 		)).

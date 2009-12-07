@@ -254,4 +254,5 @@ untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args]) :-
 	untrimTerm(TrimmedArg, Arg),
 	untrimTerms(TrimmedArgs, Args).
 
+% Test: readFile('grammar-example.ced', gram, 'cedalion-services:fileContent'([_, _, 'cedalion-services:statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 
