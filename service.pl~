@@ -256,3 +256,34 @@ untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args]) :-
 
 % Test: readFile('grammar-example.ced', gram, 'cedalion-services:fileContent'([_, _, 'cedalion-services:statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 
+
+
+
+% Query protocol
+qryStart :-
+    write('*\n'),
+    read(Query),
+    qryContinue(Query).
+qryContinue(end_of_file) :-
+    !.
+qryContinue(Query) :-
+    catch(qryHandleQuery(Query), Exception, handleException(Exception)),
+    read(NewQuery),
+    qryContinue(NewQuery).
+    
+qryHandleQuery(query(Pattern, Goal)) :-
+    call(Goal),
+    write(-),
+    write_term(Pattern, [ignore_ops(true), quoted(true)]),
+    nl,
+    fail.
+qryHandleQuery(_) :-
+    write('.'),
+    nl.
+handleException(Exception) :-
+    write('!'),
+    write_term(Exception, [ignore_ops(true), quoted(true)]),
+    nl.
+% The basics
+'cedalion#true' :- true.
+

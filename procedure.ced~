@@ -1,0 +1,24 @@
+% Procedures
+signature(procedureCommand(Proc, Command) :: proc, [Proc::procedure, Command::command]).
+
+signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]).
+procedure(Proc, Command) ~> procedureCommand(Proc, Command) :- true.
+
+signature(function(Expr, Command, Result, T) :: statement, [Proc::procedure, Command::command, Result::ref(T), T::type]).
+signature(func(Proc, Result, T) :: procedure, [Proc::procedure, Result::ref(T), T::type]).
+function(Expr, Command, Result, T) ~> procedure(func(Proc, Result, T), Command).
+
+signature(termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
+signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
+commandClass(Cmd, ClassName) ~> termClass(Cmd::command, ClassName) :- true.
+
+
+signature(doall(List)::command, [List::list(command)]).
+commandClass(doall(_), s('net.nansore.cedalion.cmd.DoAll')).
+
+signature(assign(Ref, Expr, Type)::command, [Ref::ref(Type), Expr::expr(Type), Type::type]).
+commandClass(assign(_, _, _)::command, s('net.nansore.cedalion.cmd.Assign')).
+
+procedure(openFile(FileName, Namespace), doall([])).
+function(X+Y, plus(X, Y, Z), Z, number).
+

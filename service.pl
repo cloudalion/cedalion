@@ -26,7 +26,7 @@ translateRewrite(Head, Body, Clause) :-
 		Clause = (Body :- Head)).
 
 % Load/Reload a file to the database
-loadFile(FileName, Namespace) :-
+loadFile(s(FileName), s(Namespace)) :-
 	forall(retract(loadedStatement(FileName, Statement)), remove(Statement)),
 	open(FileName, read, Stream),
 	read(Stream, Term),
@@ -102,7 +102,7 @@ dontConvertFunc(Func) :- \+atom(Func).
 
 
 % Read a file into a list of terms and variable names (translates to global terms).
-readFile(FileName, Namespace, 'cedalion-services:fileContent'(Terms, NsListOut)) :-
+readFile(s(FileName), s(Namespace), 'cedalion-services:fileContent'(Terms, NsListOut)) :-
 	open(FileName, read, Stream),
 	read_term(Stream, Term, [variable_names(VarNames)]),
 	readFromSteam(Stream, Term, VarNames, FileName, [default=Namespace], NsListOut, Terms).
@@ -135,7 +135,7 @@ convertVarNames([Name=Var | RestIn], ['cedalion-services:varName'(Var::_, Name) 
 	convertVarNames(RestIn, RestOut).
 
 % Write a cedalion file
-writeFile(FileName, 'cedalion-services:fileContent'(Terms, NsList)) :-
+writeFile(s(FileName), 'cedalion-services:fileContent'(Terms, NsList)) :-
 	open(FileName, write, Stream),
 	writeToStream(Stream, Terms, NsList).
 
@@ -255,5 +255,36 @@ untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args]) :-
 	untrimTerm(TrimmedArg, Arg),
 	untrimTerms(TrimmedArgs, Args).
 
-% Test: readFile('grammar-example.ced', gram, 'cedalion-services:fileContent'([_, _, 'cedalion-services:statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
+% Test: readFile(s('grammar-example.ced'), s(gram), 'cedalion-services:fileContent'([_, _, 'cedalion-services:statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
+
+
+
+
+% Query protocol
+qryStart :-
+    write('*\n'),
+    read(Query),
+    qryContinue(Query).
+qryContinue(end_of_file) :-
+    !.
+qryContinue(Query) :-
+    catch(qryHandleQuery(Query), Exception, handleException(Exception)),
+    read(NewQuery),
+    qryContinue(NewQuery).
+    
+qryHandleQuery(query(Pattern, Goal)) :-
+    call(Goal),
+    write(-),
+    write_term(Pattern, [ignore_ops(true), quoted(true)]),
+    nl,
+    fail.
+qryHandleQuery(_) :-
+    write('.'),
+    nl.
+handleException(Exception) :-
+    write('!'),
+    write_term(Exception, [ignore_ops(true), quoted(true)]),
+    nl.
+% The basics
+'cedalion#true' :- true.
 

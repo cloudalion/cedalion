@@ -1,0 +1,10 @@
+*
+|:'query'(s('[]'),'once'('loadFile'(s('procedure.ced'),s('cedalion')))).
+ -s([])
+.
+'query'('.'('='(s('Command'),Command),s('[]')),'once'('cedalion#procedureCommand'('cedalion#openFile'(s('grammer-example.pl'),s('gram')),Command))).
+|: -'.'(=(s('Command'), 'cedalion#doall'([])), s([]))
+.
+'query'('.'('='(s('VarName'),VarName),'.'('='(s('T'),T),s('[]'))),'once'('cedalion#termClass'('::'('cedalion#doall'('[]'),T),VarName))).
+|: -'.'(=(s('VarName'), s('net.nansore.cedalion.cmd.DoAll')), '.'(=(s('T'), 'cedalion#command'), s([])))
+.
