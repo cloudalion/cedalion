@@ -46,6 +46,8 @@ public class Variable implements Serializable {
 	}
 	
 	public Object boundTo() {
+		while(boundTo != null && boundTo instanceof Variable)
+			boundTo = ((Variable)boundTo).boundTo();
 		return boundTo;
 	}
 }

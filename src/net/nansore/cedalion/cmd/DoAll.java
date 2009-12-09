@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.nansore.cedalion.execution.ExecutionContext;
+import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.ICommand;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
@@ -18,7 +19,7 @@ public class DoAll implements ICommand {
 		}
 	}
 
-	public void run(ExecutionContext executionContext) throws PrologException, TermInstantiationException {
+	public void run(ExecutionContext executionContext) throws PrologException, TermInstantiationException, ExecutionContextException {
 		for(ICommand cmd : commands) {
 			cmd.run(executionContext);
 		}

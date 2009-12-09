@@ -1,6 +1,7 @@
 package net.nansore.cedalion.cmd;
 
 import net.nansore.cedalion.execution.ExecutionContext;
+import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.ICommand;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.prolog.Compound;
@@ -13,7 +14,7 @@ public class DoProc implements ICommand {
 		proc = (Compound)term.arg(1);
 	}
 
-	public void run(ExecutionContext executionContext) throws PrologException, TermInstantiationException {
+	public void run(ExecutionContext executionContext) throws PrologException, TermInstantiationException, ExecutionContextException {
 		executionContext.runProcedure(proc);
 	}
 }

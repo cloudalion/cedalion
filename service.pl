@@ -102,7 +102,7 @@ dontConvertFunc(Func) :- \+atom(Func).
 
 
 % Read a file into a list of terms and variable names (translates to global terms).
-readFile(s(FileName), s(Namespace), 'cedalion-services:fileContent'(Terms, NsListOut)) :-
+readFile(s(FileName), s(Namespace), 'cedalion#fileContent'(Terms, NsListOut)) :-
 	open(FileName, read, Stream),
 	read_term(Stream, Term, [variable_names(VarNames)]),
 	readFromSteam(Stream, Term, VarNames, FileName, [default=Namespace], NsListOut, Terms).
@@ -127,22 +127,22 @@ readFromSteam(Stream, Term, VarNames, FileName, NsList, NsListOut, Terms) :-
 			read_term(Stream, NewTerm, [variable_names(NewVarNames)]),
 			readFromSteam(Stream, NewTerm, NewVarNames, FileName, NewNsList, NsListOut, OtherTerms),
 			convertVarNames(VarNames, ConvVarNames),
-			Terms = ['cedalion-services:statement'(GTerm, ConvVarNames) | OtherTerms]
+			Terms = ['cedalion#statement'(GTerm, ConvVarNames) | OtherTerms]
 		)).
 
 convertVarNames([], []).
-convertVarNames([Name=Var | RestIn], ['cedalion-services:varName'(Var::_, Name) | RestOut]) :-
+convertVarNames([Name=Var | RestIn], ['cedalion#varName'(Var::_, Name) | RestOut]) :-
 	convertVarNames(RestIn, RestOut).
 
 % Write a cedalion file
-writeFile(s(FileName), 'cedalion-services:fileContent'(Terms, NsList)) :-
+writeFile(s(FileName), 'cedalion#fileContent'(Terms, NsList)) :-
 	open(FileName, write, Stream),
 	writeToStream(Stream, Terms, NsList).
 
 writeToStream(Stream, [], _) :-
 	close(Stream).
 
-writeToStream(Stream, ['cedalion-services:statement'(GTerm, VarNames) | OtherTerms], NsList) :-
+writeToStream(Stream, ['cedalion#statement'(GTerm, VarNames) | OtherTerms], NsList) :-
 	globalToLocal(GTerm, NsList, Term),
 	writeTerm(Stream, Term, VarNames),
 	writeToStream(Stream, OtherTerms, NsList).
@@ -255,7 +255,7 @@ untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args]) :-
 	untrimTerm(TrimmedArg, Arg),
 	untrimTerms(TrimmedArgs, Args).
 
-% Test: readFile(s('grammar-example.ced'), s(gram), 'cedalion-services:fileContent'([_, _, 'cedalion-services:statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
+% Test: readFile(s('grammar-example.ced'), s(gram), 'cedalion#fileContent'([_, _, 'cedalion#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 
 
 
@@ -287,4 +287,7 @@ handleException(Exception) :-
     nl.
 % The basics
 'cedalion#true' :- true.
+'cedalion#equals'(A, B, _) :- A == B.
+'cedalion#if'(C, T, E) :- if(C, T, E).
+'cedalion#if'(C, T) :- if(C, T).
 

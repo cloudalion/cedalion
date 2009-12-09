@@ -25,11 +25,38 @@ commandClass(doProc(_), s('net.nansore.cedalion.cmd.DoProc')).
 signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
 commandClass(readFile(FileName, Namespace, FileContent), s('net.nansore.cedalion.cmd.ReadFile')).
 
+signature(assignFinal(Var, Expr, T)::command, [Var::T, Expr::expr(T), T::type]).
+commandClass(assignFinal(Var, Expr, T), s('net.nansore.cedalion.cmd.AssignFinal')).
+
+signature(dbInsert(Statement)::command, [Statement::statement]).
+commandClass(dbInsert(Statement), s('net.nansore.cedalion.cmd.DBInsert')).
+
 procedure(openFile(FileName, ResourceName, Namespace), 
 	doAll([
 		readFile(FileName, Namespace, FileContent),
 		assignFinal(Model, fileToModel(FileContent), model),
-		insert(loadedFile(ResourceName, Model))
+		dbInsert(loadedFile(ResourceName, Model))
 	])).
 
+procedureCommand(func(fileToModel(fileContent(Terms, _)), ModelRef, model), assign(ModelRef, constExpr(model(Statements, VarNames)), model)) :-
+	fileModel(Terms, Statements, VarNames).
+
+signature(fileModel(Terms, Statements, VarNames)::pred, [Terms::list(annotatedTerm), Statements::list(statement), VarNames::list(varName)]).
+fileModel([], [], []) :- true.
+fileModel([statement(S, VN1) | Terms], [S | Statements], VarNames) :-
+	fileModel(Terms, Statements, VN2),
+	mergeVarNames(VN1, VN2, VarNames).
+
+
+mergeVarNames([], VarNames, VarNames) :- true.
+mergeVarNames([varName(Var::T, Name) | VN1], VN2, VarNames) :-
+	if(varInVarNames(Var, VN2),
+		mergeVarNames(VN1, VN2, VarNames),
+		%else
+		mergeVarNames(VN1, [varName(Var::T, Name) | VN2], VarNames)).
+
+varInVarNames(Var, [varName(Var1::T, _) | _]) :-
+	equals(Var1, Var, T).
+varInVarNames(Var, [_ | VN]) :-
+	varInVarNames(Var, VN).
 

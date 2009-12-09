@@ -4,6 +4,6 @@ import net.nansore.prolog.PrologException;
 
 public interface ICommand {
 
-	void run(ExecutionContext executionContext) throws PrologException, TermInstantiationException;
+	void run(ExecutionContext executionContext) throws PrologException, TermInstantiationException, ExecutionContextException;
 
 }
