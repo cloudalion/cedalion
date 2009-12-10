@@ -70,7 +70,7 @@ quoteAtomIfNeeded(Atom, Atom) :-
 	simpleAtom(Atom),
 	!.
 quoteAtomIfNeeded(Atom, Atom) :-
-	current_op(_, _, Atom),
+	dontConvertFunc(Atom),
 	!.
 quoteAtomIfNeeded(Atom, QAtom) :-
 	quote(Atom, QAtom).

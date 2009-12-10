@@ -19,14 +19,20 @@ public class Test {
 		p.getSolution(new Compound(p, "loadFile", "procedure.ced", "cedalion"));
 		
 		ExecutionContext exe = new ExecutionContext(p);
-		exe.runProcedure(new Compound(p, "cedalion#openFile", "grammer-example.ced", "grammar", "gram"));
+		exe.runProcedure(new Compound(p, "cbi#openFile", "grammer-example.ced", "grammar", "gram"));
 		
 		Variable model = new Variable("Model");
-		Iterator<Map<Variable, Object>> results = p.getSolutions(p.createCompound("cedalion#loadedFile", "grammar", model));
+		Variable x = new Variable("X");
+		Variable y = new Variable("Y");
+		Variable z = new Variable("Z");
+		Iterator<Map<Variable, Object>> results = p.getSolutions(p.createCompound("cedalion#loadedFile", "grammar", z, model, x, y));
 		while(results.hasNext()) {
 			Map<Variable, Object> result = results.next();
 			System.out.println(result.get(model));
 		}
+
+		exe.runProcedure(p.createCompound("cbi#saveFile", "grammar", "g2.ced"));
+		
 		p.terminate();
 	}
 }

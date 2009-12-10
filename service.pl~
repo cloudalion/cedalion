@@ -286,6 +286,11 @@ handleException(Exception) :-
     write_term(Exception, [ignore_ops(true), quoted(true)]),
     nl.
 % The basics
-'cedalion#true' :- true.
-'cedalion#equals'(A, B, _) :- A == B.
+'builtin#true' :- true.
+'builtin#equals'(A::T, B::T) :- A == B.
+'builtin#if'(C, T, E) :- if(C, T, E).
+'builtin#if'(C, T) :- if(C, T).
+'builtin#var'(V) :- var(V).
+'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = s(_)).
+'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 

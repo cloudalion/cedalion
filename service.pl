@@ -181,13 +181,6 @@ findNamespaceAlias(Namespace, [Alias1 = Namespace1 | NsList], Alias) :-
 		Alias = Alias1,
 		findNamespaceAlias(Namespace, NsList, Alias)).
 
-writeImports(_, []).
-writeImports(Stream, [Alias = Namespace | NsList]) :-
-	if(Alias = default,
-		true,
-		writeTerm(Stream, import(s(Alias), s(Namespace)), [])),
-	writeImports(Stream, NsList).
-
 % Take a term (global), trim it to a given depth, storing the trimmed subterms to the database,
 % convert it to local and represent it textually as a string.
 termToString(GTerm, VarNames, Depth, NsList, s(Atom)) :-
@@ -286,8 +279,11 @@ handleException(Exception) :-
     write_term(Exception, [ignore_ops(true), quoted(true)]),
     nl.
 % The basics
-'cedalion#true' :- true.
-'cedalion#equals'(A, B, _) :- A == B.
-'cedalion#if'(C, T, E) :- if(C, T, E).
-'cedalion#if'(C, T) :- if(C, T).
+'builtin#true' :- true.
+'builtin#equals'(A::T, B::T) :- A == B.
+'builtin#if'(C, T, E) :- if(C, T, E).
+'builtin#if'(C, T) :- if(C, T).
+'builtin#var'(V) :- var(V).
+'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = s(_)).
+'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 

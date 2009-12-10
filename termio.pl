@@ -28,7 +28,7 @@ convertTermsToWritable([Term | Terms], VarNames, [WTerm | WTerms]) :-
 	convertTermsToWritable(Terms, VarNames, WTerms).
 
 % Find the name of a varialbe in a list of Name=Var
-findVarName(Var, ['cedalion-services:varName'(Var1::_, Name) | _], Name) :-
+findVarName(Var, ['cedalion#varName'(Var1::_, Name) | _], Name) :-
 	Var == Var1.
 
 findVarName(Var, [_| VarNames], Name) :-

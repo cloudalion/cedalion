@@ -1,16 +1,16 @@
 % Procedures
-signature(procedureCommand(Proc, Command) :: proc, [Proc::procedure, Command::command]).
+signature(cbi:procedureCommand(Proc, Command) :: proc, [Proc::procedure, Command::command]).
 
 signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]).
-procedure(Proc, Command) ~> procedureCommand(Proc, Command) :- true.
+procedure(Proc, Command) ~> cbi:procedureCommand(Proc, Command) :- builtin:true.
 
 signature(function(Expr, Command, Result, T) :: statement, [Proc::procedure, Command::command, Result::ref(T), T::type]).
-signature(func(Proc, Result, T) :: procedure, [Proc::procedure, Result::ref(T), T::type]).
-function(Expr, Command, Result, T) ~> procedure(func(Proc, Result, T), Command).
+signature(cbi:func(Proc, Result, T) :: procedure, [Proc::procedure, Result::ref(T), T::type]).
+function(Expr, Command, Result, T) ~> procedure(cbi:func(Proc, Result, T), Command).
 
-signature(termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
+signature(cbi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
-commandClass(Cmd, ClassName) ~> termClass(Cmd::command, ClassName) :- true.
+commandClass(Cmd, ClassName) ~> cbi:termClass(Cmd::command, ClassName) :- builtin:true.
 
 
 signature(doAll(List)::command, [List::list(command)]).
@@ -25,38 +25,79 @@ commandClass(doProc(_), s('net.nansore.cedalion.cmd.DoProc')).
 signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
 commandClass(readFile(FileName, Namespace, FileContent), s('net.nansore.cedalion.cmd.ReadFile')).
 
+signature(writeFile(FileName, FileContent)::command, [FileName::string, FileContent::fileContent]).
+commandClass(writeFile(FileName, FileContent), s('net.nansore.cedalion.cmd.WriteFile')).
+
 signature(assignFinal(Var, Expr, T)::command, [Var::T, Expr::expr(T), T::type]).
 commandClass(assignFinal(Var, Expr, T), s('net.nansore.cedalion.cmd.AssignFinal')).
 
 signature(dbInsert(Statement)::command, [Statement::statement]).
 commandClass(dbInsert(Statement), s('net.nansore.cedalion.cmd.DBInsert')).
 
-procedure(openFile(FileName, ResourceName, Namespace), 
+% Open a file
+procedure(cbi:openFile(FileName, ResourceName, Namespace), 
 	doAll([
 		readFile(FileName, Namespace, FileContent),
 		assignFinal(Model, fileToModel(FileContent), model),
-		dbInsert(loadedFile(ResourceName, Model))
+		dbInsert(loadedFile(ResourceName, FileName, Model, [], []))
 	])).
 
-procedureCommand(func(fileToModel(fileContent(Terms, _)), ModelRef, model), assign(ModelRef, constExpr(model(Statements, VarNames)), model)) :-
+cbi:procedureCommand(cbi:func(fileToModel(fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, cbi:constExpr(model(Statements, VarNames, NsList)), model)) :-
 	fileModel(Terms, Statements, VarNames).
 
 signature(fileModel(Terms, Statements, VarNames)::pred, [Terms::list(annotatedTerm), Statements::list(statement), VarNames::list(varName)]).
-fileModel([], [], []) :- true.
+fileModel([], [], []) :- builtin:true.
 fileModel([statement(S, VN1) | Terms], [S | Statements], VarNames) :-
 	fileModel(Terms, Statements, VN2),
 	mergeVarNames(VN1, VN2, VarNames).
 
 
-mergeVarNames([], VarNames, VarNames) :- true.
+mergeVarNames([], VarNames, VarNames) :- builtin:true.
 mergeVarNames([varName(Var::T, Name) | VN1], VN2, VarNames) :-
-	if(varInVarNames(Var, VN2),
+	builtin:if(varInVarNames(Var::T, VN2),
 		mergeVarNames(VN1, VN2, VarNames),
 		%else
 		mergeVarNames(VN1, [varName(Var::T, Name) | VN2], VarNames)).
 
-varInVarNames(Var, [varName(Var1::T, _) | _]) :-
-	equals(Var1, Var, T).
-varInVarNames(Var, [_ | VN]) :-
-	varInVarNames(Var, VN).
+varInVarNames(Var::T, [varName(Var1::T, _) | _]) :-
+	builtin:equals(Var1::T, Var::T).
+varInVarNames(Var::T, [_ | VN]) :-
+	varInVarNames(Var::T, VN).
+
+
+% Save a file
+loadedFile(ResourceName, _, Model, _, _) ~> cbi:procedureCommand(cbi:saveFile(ResourceName, FileName), writeFile(FileName, Content)) :-
+	modelToContent(Model, Content).
+
+modelToContent(model(Statements, VarNames, NsList), fileContent(AnnoStatements, NsList)) :-
+	annotateStatements(Statements, VarNames, AnnoStatements).
+
+
+annotateStatements([], _, []) :- builtin:true.
+annotateStatements([Statement | Statements], VarNames, [statement(Statement, VN1) | AnnoStatements]) :-
+	selectVarNamesFor(Statement, VarNames, VN1),
+	annotateStatements(Statements, VarNames, AnnoStatements).
+
+selectVarNamesFor(_, [], []) :- builtin:true.
+selectVarNamesFor(Statement, [varName(Var::T, Name) | VarNames], VN) :-
+	selectVarNamesFor(Statement, VarNames, VN1),
+	builtin:if(varIn(Var::T, Statement::statement),
+		VN = [varName(Var::T, Name) | VN1],
+		% else
+		VN = VN1).
+
+varIn(Var::VarType, Term::TermType) :-
+	builtin:if(builtin:var(Term),
+		builtin:equals(Var::VarType, Term::TermType),
+		(% else
+			builtin:compound(Term::TermType),
+			builtin:parseTerm(Term::TermType, _, Args),
+			varInList(Var::VarType, Args)
+		)).
+
+varInList(Var::VarType, [First::FirstType | _]) :-
+	varIn(Var::VarType, First::FirstType).
+
+varInList(Var::VarType, [_ | Tail]) :-
+	varInList(Var::VarType, Tail).
 
