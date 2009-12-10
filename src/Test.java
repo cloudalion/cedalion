@@ -19,19 +19,35 @@ public class Test {
 		p.getSolution(new Compound(p, "loadFile", "procedure.ced", "cedalion"));
 		
 		ExecutionContext exe = new ExecutionContext(p);
-		exe.runProcedure(new Compound(p, "cbi#openFile", "grammer-example.ced", "grammar", "gram"));
+		// Open file
+		exe.runProcedure(new Compound(p, "cpi#openFile", "grammer-example.ced", "grammar", "gram"));
 		
+		// Print model
 		Variable model = new Variable("Model");
 		Variable x = new Variable("X");
 		Variable y = new Variable("Y");
 		Variable z = new Variable("Z");
-		Iterator<Map<Variable, Object>> results = p.getSolutions(p.createCompound("cedalion#loadedFile", "grammar", z, model, x, y));
+		Iterator<Map<Variable, Object>> results = p.getSolutions(p.createCompound("cedalion#loadedFile", "grammar", z, model));
 		while(results.hasNext()) {
 			Map<Variable, Object> result = results.next();
 			System.out.println(result.get(model));
 		}
 
-		exe.runProcedure(p.createCompound("cbi#saveFile", "grammar", "g2.ced"));
+		// Print the third term
+		Compound list = p.createCompound("[]");
+		list = p.createCompound(".", 2, list);
+		list = p.createCompound(".", 2, list);
+		list = p.createCompound(".", 1, list);
+		Compound path = p.createCompound("cpi#path", "grammar", list);
+		Map<Variable, Object> result = p.getSolution(p.createCompound("cpi#termAtPath", path, x, y));
+		System.out.println(result.get(x));
+		System.out.println(result.get(y));
+
+		// Modify the third statement
+		exe.runProcedure(p.createCompound("cpi#setAtPath", path, p.createCompound("::", p.createCompound("[]"), new Variable()), p.createCompound("[]")));
+		
+		// Save file
+		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g2.ced"));
 		
 		p.terminate();
 	}

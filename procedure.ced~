@@ -1,16 +1,16 @@
 % Procedures
-signature(cbi:procedureCommand(Proc, Command) :: proc, [Proc::procedure, Command::command]).
+signature(cpi:procedureCommand(Proc, Command) :: proc, [Proc::procedure, Command::command]).
 
 signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]).
-procedure(Proc, Command) ~> cbi:procedureCommand(Proc, Command) :- builtin:true.
+procedure(Proc, Command) ~> cpi:procedureCommand(Proc, Command) :- builtin:true.
 
 signature(function(Expr, Command, Result, T) :: statement, [Proc::procedure, Command::command, Result::ref(T), T::type]).
-signature(cbi:func(Proc, Result, T) :: procedure, [Proc::procedure, Result::ref(T), T::type]).
-function(Expr, Command, Result, T) ~> procedure(cbi:func(Proc, Result, T), Command).
+signature(cpi:func(Proc, Result, T) :: procedure, [Proc::procedure, Result::ref(T), T::type]).
+function(Expr, Command, Result, T) ~> procedure(cpi:func(Proc, Result, T), Command).
 
-signature(cbi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
+signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
-commandClass(Cmd, ClassName) ~> cbi:termClass(Cmd::command, ClassName) :- builtin:true.
+commandClass(Cmd, ClassName) ~> cpi:termClass(Cmd::command, ClassName) :- builtin:true.
 
 
 signature(doAll(List)::command, [List::list(command)]).
@@ -34,15 +34,27 @@ commandClass(assignFinal(Var, Expr, T), s('net.nansore.cedalion.cmd.AssignFinal'
 signature(dbInsert(Statement)::command, [Statement::statement]).
 commandClass(dbInsert(Statement), s('net.nansore.cedalion.cmd.DBInsert')).
 
+signature(dbRemove(Statement)::command, [Statement::statement]).
+commandClass(dbRemove(Statement), s('net.nansore.cedalion.cmd.DBRemove')).
+
 % Open a file
-procedure(cbi:openFile(FileName, ResourceName, Namespace), 
+procedure(cpi:openFile(FileName, ResourceName, Namespace), 
 	doAll([
 		readFile(FileName, Namespace, FileContent),
 		assignFinal(Model, fileToModel(FileContent), model),
-		dbInsert(loadedFile(ResourceName, FileName, Model, [], []))
+		dbInsert(loadedFile(ResourceName, FileName, Model)),
+		dbInsert(editState(ResourceName, [], [], 0))
 	])).
 
-cbi:procedureCommand(cbi:func(fileToModel(fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, constExpr(model(Statements, VarNames, NsList)), model)) :-
+procedure(cpi:closeFile(ResourceName), 
+	doAll([
+		dbRemove(loadedFile(ResourceName, _, _)),
+		dbRemove(editState(ResourceName, _, _, _))
+	])).
+
+loadedFile(ResourceName, FileName, Model) ~> fileIsLoaded(ResourceName, FileName, Model) :- builtin:true.
+
+cpi:procedureCommand(cpi:func(fileToModel(fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, cpi:constExpr(model(Statements, VarNames, NsList)), model)) :-
 	fileModel(Terms, Statements, VarNames).
 
 signature(fileModel(Terms, Statements, VarNames)::pred, [Terms::list(annotatedTerm), Statements::list(statement), VarNames::list(varName)]).
@@ -66,7 +78,8 @@ varInVarNames(Var::T, [_ | VN]) :-
 
 
 % Save a file
-loadedFile(ResourceName, _, Model, _, _) ~> cbi:procedureCommand(cbi:saveFile(ResourceName, FileName), writeFile(FileName, Content)) :-
+cpi:procedureCommand(cpi:saveFile(ResourceName, FileName), writeFile(FileName, Content)) :-
+	fileIsLoaded(ResourceName, _, Model),
 	modelToContent(Model, Content).
 
 modelToContent(model(Statements, VarNames, NsList), fileContent(AnnoStatements, NsList)) :-
@@ -75,13 +88,13 @@ modelToContent(model(Statements, VarNames, NsList), fileContent(AnnoStatements, 
 
 annotateStatements([], _, []) :- builtin:true.
 annotateStatements([Statement | Statements], VarNames, [statement(Statement, VN1) | AnnoStatements]) :-
-	selectVarNamesFor(Statement, VarNames, VN1),
+	selectVarNamesFor(Statement::statement, VarNames, VN1),
 	annotateStatements(Statements, VarNames, AnnoStatements).
 
 selectVarNamesFor(_, [], []) :- builtin:true.
-selectVarNamesFor(Statement, [varName(Var::T, Name) | VarNames], VN) :-
-	selectVarNamesFor(Statement, VarNames, VN1),
-	builtin:if(varIn(Var::T, Statement::statement),
+selectVarNamesFor(TTerm, [varName(Var::T, Name) | VarNames], VN) :-
+	selectVarNamesFor(TTerm, VarNames, VN1),
+	builtin:if(varIn(Var::T, TTerm),
 		VN = [varName(Var::T, Name) | VN1],
 		% else
 		VN = VN1).
@@ -100,4 +113,44 @@ varInList(Var::VarType, [First::FirstType | _]) :-
 
 varInList(Var::VarType, [_ | Tail]) :-
 	varInList(Var::VarType, Tail).
+
+% Retrieve a term at a given path
+cpi:termAtPath(cpi:path(ResourceName, []), Statements::list(statement), VarNames) :-
+	fileIsLoaded(ResourceName, _, model(Statements, VarNames, _)).
+
+cpi:termAtPath(cpi:path(ResourceName, [Innermost | Rest]), TTerm, CroppedVarNames) :-
+	cpi:termAtPath(cpi:path(ResourceName, Rest), TParent, VarNames),
+	builtin:parseTerm(TParent, _, TArgs),
+	element(TTerm, Innermost, TArgs, typedTerm),
+	selectVarNamesFor(TTerm, VarNames, CroppedVarNames).
+
+% The n'th element of a list (1-based)
+signature(element(Elem, Index, List, Type)::pred, [Elem::Type, Index::number, List::list(Type), Type::type]).
+element(First, 1, [First | _], _) :- builtin:true.
+element(Elem, Index, [_ | Rest], Type) :-
+	builtin:succ(IndexMinusOne, Index),
+	element(Elem, IndexMinusOne, Rest, Type).
+
+% Modify the n'th element of a list (1-based) to produce a new list
+signature(setElement(Index, List, Elem, NewList, Type)::pred, [Index::number, List::list(Type), Elem::Type, NewList::Type, Type::type]).
+setElement(1, [_ | Rest], Elem, [Elem | Rest], _) :- builtin:true.
+setElement(Index, [First | Rest], Elem, [First | ModRest], Type) :-
+	builtin:succ(IndexMinusOne, Index),
+	setElement(IndexMinusOne, Rest, Elem, ModRest, Type).
+
+% Modify a term at a given path
+cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, []), Statements::list(statement), VarNames2), doAll([
+		dbRemove(loadedFile(ResourceName, _, _)),
+		dbInsert(loadedFile(ResourceName, FileName, model(Statements, VarNames, NsList)))])) :-
+	fileIsLoaded(ResourceName, FileName, model(_, VarNames1, NsList)),
+	mergeVarNames(VarNames1, VarNames2, VarNames).
+
+cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, [Innermost | Rest]), TTerm, VarNames1), Command) :-
+	cpi:termAtPath(cpi:path(ResourceName, Rest), TParent, VarNames2),
+	mergeVarNames(VarNames1, VarNames2, VarNames),
+	builtin:parseTerm(TParent, Func, TArgs),
+	setElement(Innermost, TArgs, TTerm, TModArgs, typedTerm),
+	builtin:parseTerm(TModParent, Func, TModArgs),
+	cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, Rest), TModParent, VarNames), Command).
+
 

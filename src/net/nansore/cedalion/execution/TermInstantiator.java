@@ -53,7 +53,7 @@ public class TermInstantiator {
 		Class<?> clazz = classCache.get(term.name());
 		if(clazz == null) {
 			Variable classNameVar = new Variable("VarName");
-			Compound query = new Compound(prolog, "cbi#termClass", new Compound(prolog, "::", term, new Variable("T")), classNameVar);
+			Compound query = new Compound(prolog, "cpi#termClass", new Compound(prolog, "::", term, new Variable("T")), classNameVar);
 			Map<Variable, Object> result;
 			try {
 				result = prolog.getSolution(query);

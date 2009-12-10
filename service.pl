@@ -286,4 +286,5 @@ handleException(Exception) :-
 'builtin#var'(V) :- var(V).
 'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = s(_)).
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
+'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
 

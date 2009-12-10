@@ -23,7 +23,7 @@ public class ExecutionContext {
 		Variable command = new Variable("Command");
 		Map<Variable, Object> result;
 		try {
-			result = prolog.getSolution(new Compound(prolog, "cbi#procedureCommand", proc, command));
+			result = prolog.getSolution(new Compound(prolog, "cpi#procedureCommand", proc, command));
 		} catch (NoSolutionsException e) {
 			throw new PrologException("Undefined procedure: " + proc);
 		}
@@ -53,11 +53,11 @@ public class ExecutionContext {
 			((Variable)result).bind(prolog.createCompound("ref", ref));
 		}
 		// Handle a const expression
-		if(expression.name().equals("cbi#constExpr")) {
+		if(expression.name().equals("cpi#constExpr")) {
 			storeValue(result, expression.arg(1));
 		} else {
 			// Execute the function
-			runProcedure(prolog.createCompound("cbi#func", expression, result, type));
+			runProcedure(prolog.createCompound("cpi#func", expression, result, type));
 		}
 	}
 
