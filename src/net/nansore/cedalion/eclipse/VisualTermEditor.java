@@ -6,7 +6,6 @@
  */
 package net.nansore.cedalion.eclipse;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,13 +15,12 @@ import java.util.Map;
 import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.TermInstantiationException;
-import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 import net.nansore.prolog.Variable;
 import net.nansore.visualterm.figures.TermFigure;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -202,31 +200,42 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
 
 		update.registerEditor(this);
 	    
-	    open();
+	    try {
+			open();
+		} catch (PrologException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TermInstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TermVisualizationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         new ContentProposalAdapter(getTextEditor(), new TextContentAdapter(), new VisualtermProposalProvider(), KeyStroke.getInstance(SWT.CTRL, ' '), new char[] {'$'});
 		
 
 	}
 
-	private void open() {
-		try {
-		    IResource res = input.getFile();
-		    Variable termVar = new Variable();
-			Map solution = PrologClient.getSolution(new Compound("vtbiOpen", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString(), termVar));
-			editorWidget.setTerm((Compound)solution.get(termVar), this);
-		} catch (PrologException e) {
-			e.printStackTrace();
-		} catch (TermVisualizationException e) {
-			e.printStackTrace();
-		}
+	private void open() throws PrologException, TermInstantiationException, ExecutionContextException, TermVisualizationException {
+		// Open the file
+		IFile res = input.getFile();
+		PrologProxy prolog = Activator.getProlog();
+		ExecutionContext exe = new ExecutionContext(prolog);
+		exe.runProcedure(prolog.createCompound("cpi#openFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
+		// Set the root path
+		editorWidget.setTerm(prolog.createCompound("cpi#vis", prolog.createCompound("cpi#path", getResource(), prolog.createCompound("[]"))), this);
 	}
 
 	private Font createFont(final String fontType) {
 		String fontDesc = Activator.getDefault().getPreferenceStore().getString(fontType);
 		if(fontDesc.equals(""))
 			return editorWidget.getFont();
-		FontData fontData = PreferenceConverter.getFontData(VisualTermPluginPlugin.getDefault().getPreferenceStore(), fontType);
+		FontData fontData = PreferenceConverter.getFontData(Activator.getDefault().getPreferenceStore(), fontType);
 		Font normalFont = new Font(editorWidget.getDisplay(), fontData);
 		return normalFont;
 	}
@@ -265,8 +274,8 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
      */
     public void setSelection(ISelection selection) {
         this.selection = selection;
-        for(Iterator i = listeners.iterator(); i.hasNext(); ) {
-            ((ISelectionChangedListener)i.next()).selectionChanged(new SelectionChangedEvent(this, selection));
+        for(Iterator<ISelectionChangedListener> i = listeners.iterator(); i.hasNext(); ) {
+            i.next().selectionChanged(new SelectionChangedEvent(this, selection));
         }
     }
 
@@ -275,15 +284,25 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
      */
     public void dispose() {
         System.out.println("Disposing editor for " + input.getFile() + " resource: " + getResource());
-        close();
+        try {
+			close();
+		} catch (PrologException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TermInstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
-	private void close() {
-		try {
-            PrologClient.hasSolution(new Compound("vtbiClose", getResource()));
-        } catch (PrologException e) {
-            e.printStackTrace();
-        }
+	private void close() throws PrologException, TermInstantiationException, ExecutionContextException {
+		IFile res = input.getFile();
+		PrologProxy prolog = Activator.getProlog();
+		ExecutionContext exe = new ExecutionContext(prolog);
+		exe.runProcedure(prolog.createCompound("cpi#closeFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
 	}
     /* (non-Javadoc)
      * @see net.nansore.visualterm.TermContext#getTextEditor()
@@ -329,12 +348,13 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
     /**
      * @param termID
      * @throws TermVisualizationException
+     * @throws TermInstantiationException 
      */
-    public synchronized void updateFigure(int termID) throws TermVisualizationException {
-        List figures = (List) termFigures.get(new Integer(termID));
+    public synchronized void updateFigure(int termID) throws TermVisualizationException, TermInstantiationException {
+        List<TermFigure> figures = (List<TermFigure>) termFigures.get(new Integer(termID));
         if(figures != null) {
-            for(Iterator i = figures.iterator(); i.hasNext(); ) {
-                ((TermFigure)i.next()).updateFigure();                
+            for(Iterator<TermFigure> i = figures.iterator(); i.hasNext(); ) {
+                i.next().updateFigure();                
             }
             
         }
@@ -370,7 +390,8 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
      * @see net.nansore.visualterm.TermContext#figureUpdated()
      */
     public synchronized void figureUpdated() {
-        try {
+    	// TODO: Replace the update logic...
+/*        try {
             // Query for all changes to this resource and make the updates
             Variable idVar = new Variable();
             Iterator changes = PrologClient.getSolutions(new Compound("vtbiCheckModified", idVar));
@@ -383,14 +404,14 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
             e.printStackTrace();
         } catch (TermVisualizationException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     /* (non-Javadoc)
      * @see net.nansore.visualterm.TermContext#unregisterTermFigure(int, net.nansore.visualterm.figures.TermFigure)
      */
     public synchronized void unregisterTermFigure(Object termID, TermFigure figure) {
-        List figures = (List) termFigures.get(termID);
+        List<TermFigure> figures = (List<TermFigure>) termFigures.get(termID);
         if(figures != null) {
             figures.remove(figure);
         }
@@ -414,7 +435,7 @@ public class VisualTermEditor extends EditorPart implements ISelectionProvider, 
     public void performDefaultAction() {
     }
 
-    public void refresh() throws TermVisualizationException {
+    public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
         editorWidget.refresh();
     }
 
