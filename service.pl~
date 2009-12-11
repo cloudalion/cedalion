@@ -249,6 +249,13 @@ untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args], VarNames) :-
 	untrimTerm(TrimmedArg, Arg, VarNames),
 	untrimTerms(TrimmedArgs, Args, VarNames).
 
+joinVarNamesByName([], VarNames, VarNames).
+joinVarNamesByName(['cedalion#varName'(Var::_, Name) | VarNames1], VarNames2, VarNames) :-
+	if(member('cedalion#varName'(Var::_, Name), VarNames2),
+		joinVarNamesByName(VarNames1, VarNames2, VarNames),
+		% else
+		joinVarNamesByName(VarNames1, ['cedalion#varName'(Var::_, Name) | VarNames2], VarNames)).
+
 % Test: readFile(s('grammar-example.ced'), s(gram), 'cedalion#fileContent'([_, _, 'cedalion#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 
 
@@ -284,7 +291,9 @@ handleException(Exception) :-
 'builtin#equals'(A::T, B::T) :- A == B.
 'builtin#if'(C, T, E) :- if(C, T, E).
 'builtin#if'(C, T) :- if(C, T).
-'builtin#var'(V) :- var(V).
+'builtin#var'(V::_) :- var(V).
+'builtin#number'(N::number) :- number(V).
+'builtin#string'(s(Atom)::string) :- atom(Atom).
 'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = s(_)).
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).

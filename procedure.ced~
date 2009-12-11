@@ -107,7 +107,7 @@ selectVarNamesFor(TTerm, [varName(Var::T, Name) | VarNames], VN) :-
 		VN = VN1).
 
 varIn(Var::VarType, Term::TermType) :-
-	builtin:if(builtin:var(Term),
+	builtin:if(builtin:var(Term::TermType),
 		builtin:equals(Var::VarType, Term::TermType),
 		(% else
 			builtin:compound(Term::TermType),
@@ -209,8 +209,63 @@ cpi:procedureCommand(cpi:func(cpi:termAsString(cpi:path(ResourceName, Path), Dep
 
 % Edit a certain path with the given string
 cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef), doAll([
-		stringToTerm(StringRef, NsList, Term, VarNames),
-		doProc(cpi:edit(cpi:path(ResourceName, Path), Term::_, VarNames))
+		stringToTerm(StringRef, NsList, TTerm, VarNames),
+		doProc(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames))
 	])) :-
 	fileIsLoaded(ResourceName, _, model(_, _, NsList)).
+
+%%%%% Visualization %%%%%%%
+
+cpi:visualizePath(Path, Vis) :-
+	cpi:termAtPath(Path, Term::Type, VarNames),
+	builtin:if(builtin:var(Term::Type),
+		visualizeVar(Term::Type, VarNames, Vis),
+		% else
+		builtin:if(builtin:number(Term::Type),
+			visualizeNumber(Term::Type, Vis),
+			% else
+			builtin:if(builtin:string(Term::Type),
+				visualizeString(Term::Type, Vis),
+				% else
+				visualizeCompound(Path, Term::Type, Vis)
+			)
+		)
+	).
+
+visualizeVar(_, [varName(_, Name)], italic(color(label(Name), rgb(0, 128, 0)))) :- builtin:true.
+visualizeNumber(Num::number, numLabel(Num)) :- builtin:true.
+visualizeString(Str::string, label(Str)) :- builtin:true.
+
+visualizeCompound(Path, TTerm, Vis) :-
+	builtin:parseTerm(TTerm, Func, TArgs),
+	builtin:length(TArgs, typedTerm, Arity),
+	subPaths(Path, 0, Arity, SubPaths),
+	visualizeNameSubpaths(Func, SubPaths, Vis).
+
+subPaths(_, Last, Last, []) :- builtin:true.
+subPaths(cpi:path(Res, Path), BeforeFirst, Last, [cpi:path(Res, [First | Path]) | SubPaths]) :-
+	builtin:succ(BeforeFirst, First),
+	subPaths(cpi:path(Res, Path), First, Last, SubPaths).
+
+visualizeNameSubpaths(Func, SubPaths, Vis) :-
+	builtin:if(userVisualization(Func, SubPaths, Vis),
+		builtin:true,
+		% else
+		defaultVisualization(Func, SubPaths, Vis)).
+
+defaultVisualization(Func, SubPaths, Vis) :-
+	if(SubPaths::list(cpi:path) = []::list(cpi:path),
+		Vis::visualization = label(Func)::visualization,
+		(% else
+			argListForPathList(SubPaths, ArgList),
+			Vis::visualization = horiz([label(Func), label(s('(')), horiz(ArgList), label(s(')'))])::visualization
+		)
+	).
+
+argListForPathList([Path], [vis(Path)]) :- builtin:true.
+argListForPathList([First | Rest], [vis(First), label(s(',')) | ArgList]) :-
+	argListForPathList(Rest, ArgList).
+
+signature(visualize(Func, Args, Vis)::statement, [Func::string, Args::list(cpi:path), Vis::visualization]).
+visualize(Func, Args, Vis) ~> userVisualization(Func, Args, Vis) :- builtin:true.
 

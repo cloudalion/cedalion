@@ -66,6 +66,11 @@ public class Test {
 		exe.runProcedure(p.createCompound("cpi#editFromString", path, p.createCompound("cpi#constExpr", oldContent)));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g5.ced"));
 		
+		// Test visualization
+		Variable vis = new Variable();
+		result = p.getSolution(p.createCompound("cpi#visualizePath", path, vis));
+		System.out.println(result.get(vis));
+		
 		p.terminate();
 	}
 }

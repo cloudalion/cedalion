@@ -291,8 +291,11 @@ handleException(Exception) :-
 'builtin#equals'(A::T, B::T) :- A == B.
 'builtin#if'(C, T, E) :- if(C, T, E).
 'builtin#if'(C, T) :- if(C, T).
-'builtin#var'(V) :- var(V).
+'builtin#var'(V::_) :- var(V).
+'builtin#number'(N::number) :- number(V).
+'builtin#string'(s(Atom)::string) :- atom(Atom).
 'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = s(_)).
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
+'builtin#length'(List, _Type, Len) :- length(List, Len).
 
