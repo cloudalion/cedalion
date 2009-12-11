@@ -24,11 +24,16 @@ public class TermInstantiator {
 		return instance;
 	}
 	
-	public synchronized Object instantiate(Compound term) throws TermInstantiationException, PrologException {
-		Class<?> clazz = termClass(term);
+	public synchronized Object instantiate(Object... args) throws TermInstantiationException, PrologException {
+		if(!(args[0] instanceof Compound))
+			throw new TermInstantiationException("First argument must be a compound term");
+		Class<?> clazz = termClass((Compound)args[0]);
 		try {
-			Constructor<?> constructor = clazz.getConstructor(Compound.class);
-			return constructor.newInstance(term);
+			Class<?>[] argTypes = new Class<?>[args.length];
+			for(int i = 0; i < args.length; i++)
+				argTypes[i] = args[i].getClass();
+			Constructor<?> constructor = clazz.getConstructor(argTypes);
+			return constructor.newInstance(args);
 		} catch (SecurityException e) {
 			throw new TermInstantiationException(e);
 		} catch (NoSuchMethodException e) {

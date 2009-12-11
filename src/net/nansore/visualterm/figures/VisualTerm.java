@@ -1,0 +1,392 @@
+/*
+ * Created on Jan 21, 2006
+ */
+package net.nansore.visualterm.figures;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import net.nansore.cedalion.eclipse.Activator;
+import net.nansore.cedalion.eclipse.MenuItemFactory;
+import net.nansore.cedalion.eclipse.TermContext;
+import net.nansore.cedalion.eclipse.TermVisualizationException;
+import net.nansore.cedalion.execution.ExecutionContext;
+import net.nansore.cedalion.execution.ExecutionContextException;
+import net.nansore.cedalion.execution.TermInstantiationException;
+import net.nansore.cedalion.execution.TermInstantiator;
+import net.nansore.prolog.Compound;
+import net.nansore.prolog.PrologException;
+import net.nansore.prolog.PrologProxy;
+import net.nansore.prolog.Variable;
+
+import org.eclipse.core.runtime.Status;
+import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.FocusBorder;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.MouseEvent;
+import org.eclipse.draw2d.MouseListener;
+import org.eclipse.draw2d.Panel;
+import org.eclipse.draw2d.geometry.Point;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPart;
+
+/**
+ * @author boaz
+ */
+public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener {
+
+    private static final String TEXT_CONTENT_FILENAME = ".tmpContent";
+    private TermContext context;
+    private IFigure contentFigure;
+    private List<TermFigure> disposables = new ArrayList<TermFigure>();
+	private Object path;
+
+    /**
+     * @param term
+     * @param context
+     * @throws TermVisualizationException
+     * @throws TermInstantiationException 
+     */
+    public VisualTerm(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException {
+    	context = parent;
+        // The first argument is the path
+        path = term.arg(1);
+        
+        try {
+            // Set up the GUI
+            setLayoutManager(new FlowLayout());
+            setRequestFocusEnabled(true);
+            // Create the child figures
+            contentFigure = createContentFigure(path);
+            add(contentFigure);
+            
+            // Register this object with the content
+            context.registerTermFigure(path, this);
+            context.registerDispose(this);
+        } catch (TermVisualizationException e) {
+            e.printStackTrace();
+            Label label = new Label("<<<" + e.getMessage() + ">>>");
+            label.setForegroundColor(new Color(context.getTextEditor().getDisplay(), 255, 0, 0));
+            add(label);
+        }
+    }
+
+    /**
+     * @param content
+     * @return
+     * @throws TermVisualizationException
+     * @throws TermInstantiationException 
+     */
+    private IFigure createContentFigure(Object path) throws TermVisualizationException, TermInstantiationException {
+        // Query for the annotated term's visualization
+	    Variable vis = new Variable();
+	    PrologProxy prolog = Activator.getProlog();
+		Compound q = prolog.createCompound("cpi#visualizePath", path, vis);
+	    // If successful, build the GUI
+        try {
+			Map s = prolog.getSolution(q);
+		    return (IFigure) TermInstantiator.instance().instantiate((Compound)s.get(vis), this);
+		} catch (PrologException e) {
+			throw new TermVisualizationException(e);
+		}
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#getTextEditor()
+     */
+    public Text getTextEditor() {
+        return context.getTextEditor();
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#bindFigure(net.nansore.visualterm.figures.TermFigure)
+     */
+    public void bindFigure(TermFigure figure) {
+        figure.addMouseListener(this);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.draw2d.MouseListener#mousePressed(org.eclipse.draw2d.MouseEvent)
+     */
+    public void mousePressed(MouseEvent me) {
+        if(canFocus()) {
+            requestFocus();
+            context.getTextEditor().setEnabled(true);
+            context.getTextEditor().addFocusListener(this);
+            context.getTextEditor().setFocus();
+        } else {
+            context.handleClick(me);
+        }
+        /////////// Test /////////////
+        if(me.button == 3) {
+            try {
+				createContextMenu(me);
+			} catch (TermInstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}                   
+        }
+    }
+
+	private void createContextMenu(MouseEvent me) throws TermInstantiationException {
+		System.out.println("Right button click");
+		Display display = context.getCanvas().getDisplay();
+		Menu menu = new Menu(context.getCanvas().getShell(), SWT.POP_UP);
+		try {
+			Variable varAction = new Variable("Action");
+			PrologProxy prolog = Activator.getProlog();
+			Iterator<Map<Variable, Object>> results = prolog.getSolutions(prolog.createCompound("cpi#contextMenuEntry", getResource(), path, varAction));
+			while(results.hasNext()) {
+				Map<Variable, Object> result = (Map<Variable, Object>)results.next();
+				Compound action = (Compound)result.get(varAction);
+				TermInstantiator.instance().instantiate(action, menu, context);
+			}
+		} catch (PrologException e1) {
+			e1.printStackTrace();
+		}
+		Point absLocation = me.getLocation().getCopy();
+		translateToAbsolute(absLocation);
+		org.eclipse.swt.graphics.Point point = display.map(context.getCanvas(), null, new org.eclipse.swt.graphics.Point(absLocation.x, absLocation.y));
+		menu.setLocation(point);
+		menu.setVisible(true);
+		while (!menu.isDisposed() && menu.isVisible()) {
+		    if (!display.readAndDispatch())
+		        display.sleep();
+		}
+	}
+
+    private boolean canFocus() {
+    	return canModify();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.draw2d.MouseListener#mouseReleased(org.eclipse.draw2d.MouseEvent)
+     */
+    public void mouseReleased(MouseEvent me) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.draw2d.MouseListener#mouseDoubleClicked(org.eclipse.draw2d.MouseEvent)
+     */
+    public void mouseDoubleClicked(MouseEvent me) {
+        performDefaultAction();
+    }
+
+    /**
+     * 
+     */
+    public void performDefaultAction() {
+/*        try {
+            Variable varCmd = new Variable("Cmd");
+            Map solution = PrologClient.getSolution(new Compound("vtbiDefaultAction", getResource(), content, type, varCmd));
+            if(solution == null) {
+                context.performDefaultAction();
+            } else {
+                Command cmd = CommandFactory.createCommand((Compound)solution.get(varCmd));
+                cmd.run(this);
+                figureUpdated();
+            }
+        } catch (PrologException e) {
+            e.printStackTrace();
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }*/
+    }
+
+
+    private String termToText() throws IOException, PrologException, TermInstantiationException, ExecutionContextException {
+    	PrologProxy prolog = Activator.getProlog();
+		ExecutionContext exe = new ExecutionContext(prolog);
+    	return (String) exe.evaluate(prolog.createCompound("cpi#termAsString", path, prolog.createCompound("cpi#constExpr", 5)), new Variable());
+    }
+
+    public String getPackage() {
+		return context.getPackage();
+	}
+
+	/* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#focusChanged(net.nansore.visualterm.figures.TermFigure)
+     */
+    public void selectionChanged(TermFigure figure) {
+        context.selectionChanged(figure);
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#registerTermFigure(long, net.nansore.visualterm.figures.TermFigure)
+     */
+    public void registerTermFigure(Object termID, TermFigure figure) {
+        context.registerTermFigure(termID, figure);
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.figures.TermFigure#updateFigure()
+     */
+    public void updateFigure() throws TermVisualizationException, TermInstantiationException {
+		disposeChildFigures();
+		if(contentFigure != null)
+		    remove(contentFigure);
+        contentFigure = createContentFigure(path);
+        add(contentFigure);
+        requestFocus();
+        setFocus();
+    }
+
+	public void setFocus() {
+		context.setFocus();
+	}
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#getColor()
+     */
+    public Color getColor() {
+        return context.getColor();
+    }
+    
+    public Font getFont(int fontType) {
+        return context.getFont(fontType);
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#registerDispose(net.nansore.visualterm.Disposable)
+     */
+    public void registerDispose(TermFigure disp) {
+        disposables.add(disp);
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.Disposable#dispose()
+     */
+    public void dispose() {
+		unregisterTermFigure(path, this);
+        disposeChildFigures();
+    }
+
+	private void disposeChildFigures() {
+		for(Iterator<TermFigure> i = disposables.iterator(); i.hasNext(); )
+		    i.next().dispose();
+		disposables.clear();
+	}
+
+    /**
+     * 
+     */
+    public void figureUpdated() {
+        context.figureUpdated();
+    }
+
+    /* (non-Javadoc)
+     * @see net.nansore.visualterm.TermContext#unregisterTermFigure(int, net.nansore.visualterm.figures.TermFigure)
+     */
+    public void unregisterTermFigure(Object termID, TermFigure figure) {
+        context.unregisterTermFigure(termID, figure);
+    }
+
+	public String getResource() {
+		return context.getResource();
+	}
+
+    public void focusGained(org.eclipse.swt.events.FocusEvent arg0) {
+        setBorder(new FocusBorder());
+        context.selectionChanged(this);
+        if(canModify()) {
+            try {
+                String text = termToText();
+				context.getTextEditor().setText(text);
+                context.getTextEditor().setEnabled(true);
+                context.getTextEditor().setSelection(0, text.length());
+                context.getTextEditor().addKeyListener(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (PrologException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TermInstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionContextException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+    }
+
+    private boolean canModify() {
+        try {
+        	PrologProxy prolog = Activator.getProlog();
+			ExecutionContext exe = new ExecutionContext(prolog);
+        	return exe.isProcDefined(prolog.createCompound("cpi#edit", path, new Variable(), new Variable()));
+        } catch (PrologException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public void focusLost(org.eclipse.swt.events.FocusEvent arg0) {
+        setBorder(null);
+        context.getTextEditor().setText("");
+        context.getTextEditor().setEnabled(false);
+        context.getTextEditor().removeFocusListener(this);
+        context.getTextEditor().removeKeyListener(this);
+    }
+
+    public void keyPressed(KeyEvent event) {
+        if(event.keyCode == 13 && event.stateMask == 0) {
+            try {
+                setContentFromString(context.getTextEditor().getText());
+            } catch (TermVisualizationException e) {
+                ErrorDialog.openError(context.getTextEditor().getShell(), "Error Updating Element", "The following error has occured: " + e.getMessage(), Status.OK_STATUS);
+            } catch (PrologException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TermInstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionContextException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+    }
+
+    private void setContentFromString(String text) throws TermVisualizationException, PrologException, TermInstantiationException, ExecutionContextException {
+    	PrologProxy prolog = Activator.getProlog();
+		ExecutionContext exe = new ExecutionContext(prolog);
+		exe.runProcedure(prolog.createCompound("cpi#exitFromString", path, prolog.createCompound("cpi#constExpr", text)));
+        figureUpdated();
+    }
+
+    public void keyReleased(KeyEvent arg0) {
+    }
+
+    public void handleClick(MouseEvent me) {
+        mousePressed(me);
+    }
+
+    public Control getCanvas() {
+        return context.getCanvas();
+    }
+
+	public IWorkbenchPart getWorkbenchPart() {
+		return context.getWorkbenchPart();
+	}
+}

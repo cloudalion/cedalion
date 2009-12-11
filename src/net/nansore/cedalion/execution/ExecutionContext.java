@@ -98,4 +98,8 @@ public class ExecutionContext {
 		return getValue(result.boundTo());
 	}
 
+	public boolean isProcDefined(Compound procedure) throws PrologException {
+		return prolog.hasSolution(prolog.createCompound("cpi#procedureCommand", procedure, new Variable()));
+	}
+
 }

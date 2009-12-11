@@ -2,7 +2,6 @@ package net.nansore.cedalion.cmd;
 
 import java.util.Map;
 
-import sun.net.www.content.text.plain;
 import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.ICommand;

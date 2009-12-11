@@ -129,7 +129,8 @@ cpi:termAtPath(cpi:path(ResourceName, [Innermost | Rest]), TTerm, CroppedVarName
 	cpi:termAtPath(cpi:path(ResourceName, Rest), TParent, VarNames),
 	builtin:parseTerm(TParent, _, TArgs),
 	element(TTerm, Innermost, TArgs, typedTerm),
-	selectVarNamesFor(TTerm, VarNames, CroppedVarNames).
+%	selectVarNamesFor(TTerm, VarNames, CroppedVarNames).
+	CroppedVarNames = VarNames.
 
 % The n'th element of a list (1-based)
 signature(element(Elem, Index, List, Type)::pred, [Elem::Type, Index::number, List::list(Type), Type::type]).
@@ -254,7 +255,7 @@ visualizeNameSubpaths(Func, SubPaths, Vis) :-
 		defaultVisualization(Func, SubPaths, Vis)).
 
 defaultVisualization(Func, SubPaths, Vis) :-
-	if(SubPaths::list(cpi:path) = []::list(cpi:path),
+	builtin:if(SubPaths::list(cpi:path) = []::list(cpi:path),
 		Vis::visualization = label(Func)::visualization,
 		(% else
 			argListForPathList(SubPaths, ArgList),
