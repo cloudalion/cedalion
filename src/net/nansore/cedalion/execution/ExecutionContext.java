@@ -61,8 +61,8 @@ public class ExecutionContext {
 		}
 	}
 
-	public void storeValue(Object result, Object value) throws ExecutionContextException {
-		int ref = getRef(result);
+	public void storeValue(Object resultTarget, Object value) throws ExecutionContextException {
+		int ref = getRef(resultTarget);
 		variables.set(ref, value);
 	}
 
@@ -88,6 +88,14 @@ public class ExecutionContext {
 
 	public PrologProxy prolog() {
 		return prolog;
+	}
+
+	public Object evaluate(Object expr, Object type) throws PrologException, TermInstantiationException, ExecutionContextException {
+		Variable result = new Variable();
+		if(expr instanceof Variable)
+			expr = ((Variable)expr).boundTo();
+		runFunction((Compound)expr, result, type);
+		return getValue(result.boundTo());
 	}
 
 }

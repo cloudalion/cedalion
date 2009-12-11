@@ -4,9 +4,9 @@ signature(cpi:procedureCommand(Proc, Command) :: proc, [Proc::procedure, Command
 signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]).
 procedure(Proc, Command) ~> cpi:procedureCommand(Proc, Command) :- builtin:true.
 
-signature(function(Expr, Command, Result, T) :: statement, [Proc::procedure, Command::command, Result::ref(T), T::type]).
+signature(function(Expr, T, Result, Command) :: statement, [Expr::expr(T), T::type, Result::ref(T), Command::command]).
 signature(cpi:func(Proc, Result, T) :: procedure, [Proc::procedure, Result::ref(T), T::type]).
-function(Expr, Command, Result, T) ~> procedure(cpi:func(Proc, Result, T), Command).
+function(Expr, T, Result, Command) ~> procedure(cpi:func(Expr, Result, T), Command).
 
 signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
@@ -53,6 +53,7 @@ procedure(cpi:closeFile(ResourceName),
 	])).
 
 loadedFile(ResourceName, FileName, Model) ~> fileIsLoaded(ResourceName, FileName, Model) :- builtin:true.
+editState(ResourceName, UndoStack, RedoStack, ModifiedCounter) ~> editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter) :- builtin:true.
 
 cpi:procedureCommand(cpi:func(fileToModel(fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, cpi:constExpr(model(Statements, VarNames, NsList)), model)) :-
 	fileModel(Terms, Statements, VarNames).
@@ -153,4 +154,45 @@ cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, [Innermost | Rest]), T
 	builtin:parseTerm(TModParent, Func, TModArgs),
 	cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, Rest), TModParent, VarNames), Command).
 
+% Edit operation: Modify and update the undo stack
+cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), doAll([
+		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames)),
+		dbRemove(editState(ResourceName, _, _, _)),
+		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], [], NewModifiedCounter))
+	])) :-
+	editStateIs(ResourceName, UndoStack, _, OldModifiedCounter),
+	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames),
+	builtin:if(OldModifiedCounter < 0,
+		NewModifiedCounter::number = 99999::number,
+		%else
+		builtin:succ(OldModifiedCounter, NewModifiedCounter)).
+
+% Undo editing
+procedureCommand(cpi:undo(ResourceName), doAll([
+		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)),
+		assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter) - cpi:constExpr(1), number),
+		dbRemove(editState(ResourceName, _, _, _)),
+		dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | RedoStack], NewModifiedCounter))
+	])) :-
+	editStateIs(ResourceName, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames) | UndoStack], RedoStack, OldModifiedCounter),
+	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames).
+
+% Redo editing
+procedureCommand(cpi:redo(ResourceName), doAll([
+		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)),
+		assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter) - cpi:constExpr(1), number),
+		dbRemove(editState(ResourceName, _, _, _)),
+		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], RedoStack, NewModifiedCounter))
+	])) :-
+	editStateIs(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames) | RedoStack], OldModifiedCounter),
+	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames).
+
+% Arithmetic functions
+signature((X+Y)::number, [X::number, Y::number]).
+function(X+Y, number, Z, plus(X, Y, Z)).
+commandClass(plus(X, Y, Z), s('net.nansore.cedalion.cmd.Plus')).
+
+signature((X-Y)::number, [X::number, Y::number]).
+function(X-Y, number, Z, minus(X, Y, Z)).
+commandClass(minus(X, Y, Z), s('net.nansore.cedalion.cmd.Minus')).
 

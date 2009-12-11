@@ -43,11 +43,20 @@ public class Test {
 		System.out.println(result.get(x));
 		System.out.println(result.get(y));
 
-		// Modify the third statement
-		exe.runProcedure(p.createCompound("cpi#setAtPath", path, p.createCompound("::", p.createCompound("[]"), new Variable()), p.createCompound("[]")));
-		
 		// Save file
+		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g1.ced"));
+
+		// Modify the third statement and save
+		exe.runProcedure(p.createCompound("cpi#edit", path, p.createCompound("::", p.createCompound("[]"), new Variable()), p.createCompound("[]")));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g2.ced"));
+		
+		// Undo the change and save
+		exe.runProcedure(p.createCompound("cpi#undo", "grammar"));
+		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g3.ced"));
+		
+		// Redo the change and save
+		exe.runProcedure(p.createCompound("cpi#redo", "grammar"));
+		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g4.ced"));
 		
 		p.terminate();
 	}
