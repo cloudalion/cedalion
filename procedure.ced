@@ -37,6 +37,12 @@ commandClass(dbInsert(Statement), s('net.nansore.cedalion.cmd.DBInsert')).
 signature(dbRemove(Statement)::command, [Statement::statement]).
 commandClass(dbRemove(Statement), s('net.nansore.cedalion.cmd.DBRemove')).
 
+signature(termToString(TTerm, VarNames, Depth, NsList, Str)::command, [TTerm::typedTerm, VarNames::list(varName), Depth::number, NsList::list(namespacePair), Str::ref(string)]).
+commandClass(termToString(TTerm, VarNames, Depth, NsList, Str), s('net.nansore.cedalion.cmd.TermToString')).
+
+signature(stringToTerm(StringRef, NsList, TTerm, VarNames)::command, [StringRef::ref(string), NsList::list(namespacePair), TTerm::typedTerm, VarNames::list(varName)]).
+commandClass(stringToTerm(StringRef, NsList, TTerm, VarNames), s('net.nansore.cedalion.cmd.StringToTerm')).
+
 % Open a file
 procedure(cpi:openFile(FileName, ResourceName, Namespace), 
 	doAll([
@@ -195,4 +201,16 @@ commandClass(plus(X, Y, Z), s('net.nansore.cedalion.cmd.Plus')).
 signature((X-Y)::number, [X::number, Y::number]).
 function(X-Y, number, Z, minus(X, Y, Z)).
 commandClass(minus(X, Y, Z), s('net.nansore.cedalion.cmd.Minus')).
+
+% Path to string
+cpi:procedureCommand(cpi:func(cpi:termAsString(cpi:path(ResourceName, Path), Depth), Str, string), termToString(TTerm, VarNames, Depth, NsList, Str)) :-
+	cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames),
+	fileIsLoaded(ResourceName, _, model(_, _, NsList)).
+
+% Edit a certain path with the given string
+cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef), doAll([
+		stringToTerm(StringRef, NsList, TTerm, VarNames),
+		doProc(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames))
+	])) :-
+	fileIsLoaded(ResourceName, _, model(_, _, NsList)).
 

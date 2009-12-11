@@ -184,36 +184,36 @@ findNamespaceAlias(Namespace, [Alias1 = Namespace1 | NsList], Alias) :-
 % Take a term (global), trim it to a given depth, storing the trimmed subterms to the database,
 % convert it to local and represent it textually as a string.
 termToString(GTerm, VarNames, Depth, NsList, s(Atom)) :-
-	trimTerm(GTerm, Depth, TrimmedGTerm),
+	trimTerm(GTerm, Depth, TrimmedGTerm, VarNames),
 	globalToLocal(TrimmedGTerm, NsList, TrimmedTerm),
 	with_output_to(atom(Atom), writeTerm(current_output, TrimmedTerm, VarNames)).
 
-trimTerm(Term, Depth, TrimmedTerm) :-
+trimTerm(Term, Depth, TrimmedTerm, VarNames) :-
 	if(nonCompoundTerm(Term),
 		TrimmedTerm = Term,
 		( % else
 			if(Depth = 0,
 				(
-					storeTrimmedSubterm(Term, ID),
+					storeTrimmedSubterm(Term, ID, VarNames),
 					TrimmedTerm = $ID
 				),
 				( % else
 					Term =.. [Func | Args],
 					NewDepth is Depth - 1,
-					trimTerms(Args, NewDepth, TrimmedArgs),
+					trimTerms(Args, NewDepth, TrimmedArgs, VarNames),
 					TrimmedTerm =.. [Func | TrimmedArgs]
 				))
 		)).
 
-trimTerms([], _, []).
-trimTerms([Term | Terms], Depth, [TrimmedTerm | TrimmedTerms]) :-
-	trimTerm(Term, Depth, TrimmedTerm),
-	trimTerms(Terms, Depth, TrimmedTerms).
+trimTerms([], _, [], _).
+trimTerms([Term | Terms], Depth, [TrimmedTerm | TrimmedTerms], VarNames) :-
+	trimTerm(Term, Depth, TrimmedTerm, VarNames),
+	trimTerms(Terms, Depth, TrimmedTerms, VarNames).
 
 
-storeTrimmedSubterm(Term, ID) :-
+storeTrimmedSubterm(Term, ID, VarNames) :-
 	uniqueTrimmedID(ID),
-	assert(storedTrimmedSubterm(ID, Term)).
+	assert(storedTrimmedSubterm(ID, Term, VarNames)).
 
 uniqueTrimmedID(ID) :-
 	if(retract(lastTrimmedID(LastID)),
@@ -226,27 +226,35 @@ uniqueTrimmedID(ID) :-
 % Take a string representing a local, potentially trimmed term, and reconstruct the global term it represents.
 stringToTerm(s(Atom), NsList, GTerm, VarNames) :-
 	atom_to_term(Atom, LTerm, Bindings),
-	convertVarNames(Bindings, VarNames),
+	convertVarNames(Bindings, VarNames1),
 	localToGlobal(LTerm, NsList, TrimmedGTerm),
-	untrimTerm(TrimmedGTerm, GTerm).
+	untrimTerm(TrimmedGTerm, GTerm, VarNames2),
+	joinVarNamesByName(VarNames1, VarNames2, VarNames).
 
-untrimTerm(TrimmedTerm, Term) :-
+untrimTerm(TrimmedTerm, Term, VarNames) :-
 	if(nonCompoundTerm(TrimmedTerm),
 		Term = TrimmedTerm,
 		% else
 		if(TrimmedTerm = $ID,
-			storedTrimmedSubterm(ID, Term),
+			storedTrimmedSubterm(ID, Term, VarNames),
 			% else
 			(
 				TrimmedTerm =.. [Func | TrimmedArgs],
-				untrimTerms(TrimmedArgs, Args),
+				untrimTerms(TrimmedArgs, Args, VarNames),
 				Term =.. [Func | Args]
 			))).
 
-untrimTerms([], []).
-untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args]) :-
-	untrimTerm(TrimmedArg, Arg),
-	untrimTerms(TrimmedArgs, Args).
+untrimTerms([], [], _).
+untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args], VarNames) :-
+	untrimTerm(TrimmedArg, Arg, VarNames),
+	untrimTerms(TrimmedArgs, Args, VarNames).
+
+joinVarNamesByName([], VarNames, VarNames).
+joinVarNamesByName(['cedalion#varName'(Var::_, Name) | VarNames1], VarNames2, VarNames) :-
+	if(member('cedalion#varName'(Var::_, Name), VarNames2),
+		joinVarNamesByName(VarNames1, VarNames2, VarNames),
+		% else
+		joinVarNamesByName(VarNames1, ['cedalion#varName'(Var::_, Name) | VarNames2], VarNames)).
 
 % Test: readFile(s('grammar-example.ced'), s(gram), 'cedalion#fileContent'([_, _, 'cedalion#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 

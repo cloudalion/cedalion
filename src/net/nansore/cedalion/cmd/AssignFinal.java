@@ -21,9 +21,7 @@ public class AssignFinal implements ICommand {
 
 	public void run(ExecutionContext executionContext) throws PrologException,
 			TermInstantiationException, ExecutionContextException {
-		Variable result = new Variable();
-		executionContext.runFunction(expression, result, type);
-		target.bind(executionContext.getValue(result.boundTo()));
+		target.bind(executionContext.evaluate(expression, type));
 	}
 	
 	

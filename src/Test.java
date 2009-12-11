@@ -54,9 +54,17 @@ public class Test {
 		exe.runProcedure(p.createCompound("cpi#undo", "grammar"));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g3.ced"));
 		
+		// Print third statement as a string
+		String oldContent = (String)exe.evaluate(p.createCompound("cpi#termAsString", path, p.createCompound("cpi#constExpr", 3)), new Variable());
+		System.out.println(oldContent);
+
 		// Redo the change and save
 		exe.runProcedure(p.createCompound("cpi#redo", "grammar"));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g4.ced"));
+		
+		// Restore the old content from the string we saved earlier, and save
+		exe.runProcedure(p.createCompound("cpi#editFromString", path, p.createCompound("cpi#constExpr", oldContent)));
+		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g5.ced"));
 		
 		p.terminate();
 	}
