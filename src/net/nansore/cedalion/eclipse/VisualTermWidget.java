@@ -6,9 +6,9 @@ package net.nansore.cedalion.eclipse;
 import java.io.IOException;
 
 import net.nansore.cedalion.execution.TermInstantiationException;
+import net.nansore.cedalion.figures.FontResize;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
-import net.nansore.visualterm.figures.fontResize;
 
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.FlowLayout;
@@ -39,7 +39,7 @@ public class VisualTermWidget extends Composite {
     private int fontSizeOffset = 0;
 	private Compound term;
 	private TermContext context;
-	private fontResize resizer;
+	private FontResize resizer;
 
     /**
      * @param parent
@@ -184,7 +184,7 @@ public class VisualTermWidget extends Composite {
 		if(resizer != null)
 			resizer.dispose();
     	Compound compound = term.getProlog().createCompound("fontResize", term, new Integer(fontSizeOffset));
-		resizer = new fontResize(compound, context);
+		resizer = new FontResize(compound, context);
 		panel.add(resizer);
 	}
     /**

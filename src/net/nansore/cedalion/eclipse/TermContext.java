@@ -3,7 +3,7 @@
  */
 package net.nansore.cedalion.eclipse;
 
-import net.nansore.visualterm.figures.TermFigure;
+import net.nansore.cedalion.figures.TermFigure;
 
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.swt.graphics.Color;

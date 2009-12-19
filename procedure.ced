@@ -232,9 +232,9 @@ cpi:visualizePath(Path, Vis) :-
 		)
 	).
 
-visualizeVar(_, [varName(_, Name)], italic(color(label(Name), rgb(0, 128, 0)))) :- builtin:true.
-visualizeNumber(Num::number, numLabel(Num)) :- builtin:true.
-visualizeString(Str::string, label(Str)) :- builtin:true.
+visualizeVar(_, [varName(_, Name)], italic(color(label(Name), cpi:rgb(0, 128, 0)))) :- builtin:true.
+visualizeNumber(Num::_, numLabel(Num)) :- builtin:true. %TODO: Add real types
+visualizeString(Str::_, label(Str)) :- builtin:true. %TODO: Add real types
 
 visualizeCompound(Path, TTerm, Vis) :-
 	builtin:parseTerm(TTerm, Func, TArgs),
@@ -269,3 +269,16 @@ argListForPathList([First | Rest], [vis(First), label(s(',')) | ArgList]) :-
 signature(visualize(Func, Args, Vis)::statement, [Func::string, Args::list(cpi:path), Vis::visualization]).
 visualize(Func, Args, Vis) ~> userVisualization(Func, Args, Vis) :- builtin:true.
 
+visClass(Vis, Class) ~> cpi:termClass(Vis::visualization, Class) :- builtin:true.
+visClass(cpi:vis(_), s('net.nansore.cedalion.figures.VisualTerm')).
+visClass(vis(_), s('net.nansore.cedalion.figures.VisualTerm')).
+visClass(horiz(_), s('net.nansore.cedalion.figures.HorizontalFlow')).
+visClass(vert(_), s('net.nansore.cedalion.figures.VerticalFlow')).
+visClass(label(_), s('net.nansore.cedalion.figures.LabelFigure')).
+visClass(italic(_), s('net.nansore.cedalion.figures.Italic')).
+visClass(bold(_), s('net.nansore.cedalion.figures.Bold')).
+visClass(color(_, _), s('net.nansore.cedalion.figures.TextColor')).
+
+
+visualize(s('[]'), [], label(s('.'))).
+visualize(s('.'), [F, R], vert([vis(F), vis(R)])).

@@ -61,11 +61,13 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
         try {
             prolog = new PrologProxy(loadToFileSystem(context, "service.pl"));
-            super.start(context);
+    		prolog.getSolution(prolog.createCompound("loadFile", loadToFileSystem(context, "procedure.ced").toString(), "cedalion"));
+
+    		super.start(context);
             this.context = context;
 
             IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            loadResources(root);
+            //loadResources(root);
             
             Proxy proxy = null;
             if(getPreferenceStore().getBoolean("useProxy")) {
@@ -85,7 +87,7 @@ public class Activator extends AbstractUIPlugin {
 //	}
 
     private File loadToFileSystem(BundleContext context, String fileName) throws IOException, FileNotFoundException, PrologException {
-		File tmpFile = File.createTempFile("tmp", ".pl");
+		File tmpFile = File.createTempFile("tmp", ".ced");
 		URL prologFileURL = context.getBundle().getEntry(fileName);
 		URLConnection connection = prologFileURL.openConnection();
 		InputStream input = connection.getInputStream();
@@ -107,7 +109,7 @@ public class Activator extends AbstractUIPlugin {
 		IResource[] members = container.members(true);
 		for(int i = 0; i < members.length; i++) {
 			String ext = members[i].getFileExtension();
-			if(ext != null && ext.equals("pl")) {
+			if(ext != null && ext.equals("ced")) {
 				loadResource(members[i]);
 			}
 			if(members[i] instanceof IContainer) {

@@ -29,10 +29,7 @@ public class TermInstantiator {
 			throw new TermInstantiationException("First argument must be a compound term");
 		Class<?> clazz = termClass((Compound)args[0]);
 		try {
-			Class<?>[] argTypes = new Class<?>[args.length];
-			for(int i = 0; i < args.length; i++)
-				argTypes[i] = args[i].getClass();
-			Constructor<?> constructor = clazz.getConstructor(argTypes);
+			Constructor<?> constructor = findConstructorFor(clazz, args);
 			return constructor.newInstance(args);
 		} catch (SecurityException e) {
 			throw new TermInstantiationException(e);
@@ -51,6 +48,27 @@ public class TermInstantiator {
 				throw (PrologException) e.getTargetException();
 			throw new TermInstantiationException(e);
 		}		
+	}
+
+	private static Constructor<?> findConstructorFor(Class<?> clazz,
+			Object[] args) throws NoSuchMethodException {
+		Constructor<?>[] constructors = clazz.getConstructors();
+		for(Constructor<?> c : constructors) {
+			Class<?>[] argTypes = c.getParameterTypes();
+			if(argTypes.length != args.length)
+				continue;
+			if(argsMatchTypes(args, argTypes))
+				return c;
+		}
+		throw new NoSuchMethodException(clazz.toString());
+	}
+
+	private static boolean argsMatchTypes(Object[] args, Class<?>[] argTypes) {
+		for(int i = 0; i < args.length; i++) {
+			if(!argTypes[i].isAssignableFrom(args[i].getClass()))
+				return false;
+		}
+		return true;
 	}
 
 	private Class<?> termClass(Compound term) throws PrologException, TermInstantiationException {

@@ -22,7 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 public class update implements ICommand {
 
     private int termID;
-    private static List<VisualTermEditor> editors = new ArrayList<VisualTermEditor>();
+    private static List<CedalionEditor> editors = new ArrayList<CedalionEditor>();
     
     public update(Compound term) throws ExecutionContextException {
         if(!(term.arg(1) instanceof Integer))
@@ -34,7 +34,7 @@ public class update implements ICommand {
      */
     public void run(TermContext context) {
         try {
-            for(Iterator<VisualTermEditor>  i = editors.iterator(); i.hasNext(); ) {
+            for(Iterator<CedalionEditor>  i = editors.iterator(); i.hasNext(); ) {
                 i.next().updateFigure(termID);
             }
         } catch (TermVisualizationException e) {
@@ -48,13 +48,13 @@ public class update implements ICommand {
     /**
      * @param editor
      */
-    public static synchronized void registerEditor(VisualTermEditor editor) {
+    public static synchronized void registerEditor(CedalionEditor editor) {
         editors.add(editor);
     }
     /**
      * @param editor
      */
-    public static synchronized void unregisterEditor(VisualTermEditor editor) {
+    public static synchronized void unregisterEditor(CedalionEditor editor) {
         editors.remove(editor);
     }
 	@Override
