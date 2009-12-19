@@ -63,7 +63,7 @@ public class Test {
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g4.ced"));
 		
 		// Restore the old content from the string we saved earlier, and save
-		exe.runProcedure(p.createCompound("cpi#editFromString", path, p.createCompound("cpi#constExpr", oldContent)));
+		exe.runProcedure(p.createCompound("cpi#editFromString", path, p.createCompound("cpi#constExpr", "s(hello)")));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g5.ced"));
 		
 		// Test visualization

@@ -3,20 +3,13 @@
  */
 package net.nansore.cedalion.figures;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import net.nansore.cedalion.eclipse.Activator;
-import net.nansore.cedalion.eclipse.MenuItemFactory;
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.ExecutionContext;
@@ -55,7 +48,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener {
 
-    private static final String TEXT_CONTENT_FILENAME = ".tmpContent";
+//    private static final String TEXT_CONTENT_FILENAME = ".tmpContent";
     private TermContext context;
     private IFigure contentFigure;
     private List<TermFigure> disposables = new ArrayList<TermFigure>();
@@ -83,6 +76,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             // Register this object with the content
             context.registerTermFigure(path, this);
             context.registerDispose(this);
+            context.bindFigure(this);
         } catch (TermVisualizationException e) {
             e.printStackTrace();
             Label label = new Label("<<<" + e.getMessage() + ">>>");
@@ -104,7 +98,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		Compound q = prolog.createCompound("cpi#visualizePath", path, vis);
 	    // If successful, build the GUI
         try {
-			Map s = prolog.getSolution(q);
+			Map<Variable, Object> s = prolog.getSolution(q);
 		    return (IFigure) TermInstantiator.instance().instantiate((Compound)s.get(vis), this);
 		} catch (PrologException e) {
 			throw new TermVisualizationException(e);
@@ -371,7 +365,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     private void setContentFromString(String text) throws TermVisualizationException, PrologException, TermInstantiationException, ExecutionContextException {
     	PrologProxy prolog = Activator.getProlog();
 		ExecutionContext exe = new ExecutionContext(prolog);
-		exe.runProcedure(prolog.createCompound("cpi#exitFromString", path, prolog.createCompound("cpi#constExpr", text)));
+		exe.runProcedure(prolog.createCompound("cpi#editFromString", path, prolog.createCompound("cpi#constExpr", text)));
         figureUpdated();
     }
 

@@ -42,7 +42,7 @@ public class Variable implements Serializable {
 	}
 	
 	public boolean isBound() {
-		return boundTo != null;
+		return boundTo() != null;
 	}
 	
 	public Object boundTo() {

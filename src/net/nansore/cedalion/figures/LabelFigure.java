@@ -18,6 +18,7 @@ public class LabelFigure extends Label implements TermFigure {
         setForegroundColor(context.getColor());
         setFont(context.getFont(TermContext.NORMAL_FONT));
         setText(translateString(term));
+        context.bindFigure(this);
     }
 
 	private String translateString(Compound term) throws TermVisualizationException {

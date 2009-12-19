@@ -59,6 +59,7 @@ public abstract class TermContextProxy extends Figure implements TermContext, Te
     public TermContextProxy(TermContext parent) {
         context = parent;
         setLayoutManager(new FlowLayout());
+        context.bindFigure(this);
     }
     /* (non-Javadoc)
      * @see net.nansore.visualterm.TermContext#getTextEditor()

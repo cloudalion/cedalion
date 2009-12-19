@@ -302,7 +302,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		IFile res = input.getFile();
 		PrologProxy prolog = Activator.getProlog();
 		ExecutionContext exe = new ExecutionContext(prolog);
-		exe.runProcedure(prolog.createCompound("cpi#closeFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
+		exe.runProcedure(prolog.createCompound("cpi#closeFile", getResource()));
 	}
     /* (non-Javadoc)
      * @see net.nansore.visualterm.TermContext#getTextEditor()

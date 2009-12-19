@@ -17,6 +17,7 @@ public class Symbol extends Label implements TermFigure {
             StringBuffer buff = new StringBuffer();
             buff.append(character);
             setText(buff.toString());
+            context.bindFigure(this);
         } catch (ClassCastException e) {
             setText("<symbol>");
         }

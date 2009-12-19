@@ -129,7 +129,7 @@ dontConvertFunc(Func) :- \+atom(Func).
 
 
 % Read a file into a list of terms and variable names (translates to global terms).
-readFile(s(FileName), s(Namespace), 'cedalion#fileContent'(Terms, NsListOut)) :-
+readFile(s(FileName), s(Namespace), 'builtin#fileContent'(Terms, NsListOut)) :-
 	open(FileName, read, Stream),
 	read_term(Stream, Term, [variable_names(VarNames)]),
 	readFromSteam(Stream, Term, VarNames, FileName, [default=Namespace], NsListOut, Terms).
@@ -154,22 +154,22 @@ readFromSteam(Stream, Term, VarNames, FileName, NsList, NsListOut, Terms) :-
 			read_term(Stream, NewTerm, [variable_names(NewVarNames)]),
 			readFromSteam(Stream, NewTerm, NewVarNames, FileName, NewNsList, NsListOut, OtherTerms),
 			convertVarNames(VarNames, ConvVarNames),
-			Terms = ['cedalion#statement'(GTerm, ConvVarNames) | OtherTerms]
+			Terms = ['builtin#statement'(GTerm, ConvVarNames) | OtherTerms]
 		)).
 
 convertVarNames([], []).
-convertVarNames([Name=Var | RestIn], ['cedalion#varName'(Var::_, Name) | RestOut]) :-
+convertVarNames([Name=Var | RestIn], ['builtin#varName'(Var::_, s(Name)) | RestOut]) :-
 	convertVarNames(RestIn, RestOut).
 
 % Write a cedalion file
-writeFile(s(FileName), 'cedalion#fileContent'(Terms, NsList)) :-
+writeFile(s(FileName), 'builtin#fileContent'(Terms, NsList)) :-
 	open(FileName, write, Stream),
 	writeToStream(Stream, Terms, NsList).
 
 writeToStream(Stream, [], _) :-
 	close(Stream).
 
-writeToStream(Stream, ['cedalion#statement'(GTerm, VarNames) | OtherTerms], NsList) :-
+writeToStream(Stream, ['builtin#statement'(GTerm, VarNames) | OtherTerms], NsList) :-
 	globalToLocal(GTerm, NsList, Term),
 	writeTerm(Stream, Term, VarNames),
 	writeToStream(Stream, OtherTerms, NsList).
@@ -213,7 +213,8 @@ findNamespaceAlias(Namespace, [Alias1 = Namespace1 | NsList], Alias) :-
 termToString(GTerm, VarNames, Depth, NsList, s(Atom)) :-
 	trimTerm(GTerm, Depth, TrimmedGTerm, VarNames),
 	globalToLocal(TrimmedGTerm, NsList, TrimmedTerm),
-	with_output_to(atom(Atom), writeTerm(current_output, TrimmedTerm, VarNames)).
+	convertTermToWritable(TrimmedTerm, VarNames, WTerm),
+	with_output_to(atom(Atom), write_term(current_output, WTerm, [quoted(false)])).
 
 trimTerm(Term, Depth, TrimmedTerm, VarNames) :-
 	if(nonCompoundTerm(Term),
@@ -277,13 +278,13 @@ untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args], VarNames) :-
 	untrimTerms(TrimmedArgs, Args, VarNames).
 
 joinVarNamesByName([], VarNames, VarNames).
-joinVarNamesByName(['cedalion#varName'(Var::_, Name) | VarNames1], VarNames2, VarNames) :-
-	if(member('cedalion#varName'(Var::_, Name), VarNames2),
+joinVarNamesByName(['builtin#varName'(Var::_, Name) | VarNames1], VarNames2, VarNames) :-
+	if(member('builtin#varName'(Var::_, Name), VarNames2),
 		joinVarNamesByName(VarNames1, VarNames2, VarNames),
 		% else
-		joinVarNamesByName(VarNames1, ['cedalion#varName'(Var::_, Name) | VarNames2], VarNames)).
+		joinVarNamesByName(VarNames1, ['builtin#varName'(Var::_, Name) | VarNames2], VarNames)).
 
-% Test: readFile(s('grammar-example.ced'), s(gram), 'cedalion#fileContent'([_, _, 'cedalion#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
+% Test: readFile(s('grammar-example.ced'), s(gram), 'builtin#fileContent'([_, _, 'builtin#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 
 
 
@@ -357,7 +358,7 @@ convertTermsToWritable([Term | Terms], VarNames, [WTerm | WTerms]) :-
 	convertTermsToWritable(Terms, VarNames, WTerms).
 
 % Find the name of a varialbe in a list of Name=Var
-findVarName(Var, ['cedalion#varName'(Var1::_, Name) | _], Name) :-
+findVarName(Var, ['builtin#varName'(Var1::_, s(Name)) | _], Name) :-
 	Var == Var1.
 
 findVarName(Var, [_| VarNames], Name) :-
