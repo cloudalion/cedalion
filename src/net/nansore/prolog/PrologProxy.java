@@ -132,7 +132,7 @@ public class PrologProxy {
                 }
                 readNext();
             }
-            if(atom.equals("s") && args.size() == 1)
+            if(atom.equals("!") && args.size() == 1)
             	return ((Compound)args.get(0)).name();
             else
             	return new Compound(this, atom, args.toArray());
@@ -241,7 +241,7 @@ public class PrologProxy {
             
     }
     private void writeString(String str) throws IOException {
-    	write("s(");
+    	write("!(");
     	writeAtom(str);
     	write(")");
 	}

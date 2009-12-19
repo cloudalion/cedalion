@@ -14,6 +14,7 @@ import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
+import net.nansore.cedalion.execution.Notifier;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
@@ -77,6 +78,20 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             context.registerTermFigure(path, this);
             context.registerDispose(this);
             context.bindFigure(this);
+            PrologProxy p = term.getProlog();
+			Notifier.instance().register(p.createCompound("::", path, p.createCompound("cpi#path")), new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						updateFigure();
+					} catch (TermVisualizationException e) {
+						e.printStackTrace();
+					} catch (TermInstantiationException e) {
+						e.printStackTrace();
+					}
+				}
+			});
         } catch (TermVisualizationException e) {
             e.printStackTrace();
             Label label = new Label("<<<" + e.getMessage() + ">>>");

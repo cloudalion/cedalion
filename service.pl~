@@ -3,6 +3,7 @@
 :- op(100, xfx, ':').
 :- op(100, fx, '$').
 :- op(650, xfx, '::').
+:- op(1, fx, '!').
 
 % If predicate
 if(Cond, Then, _) :-
@@ -326,6 +327,7 @@ handleException(Exception) :-
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
 'builtin#length'(List, _Type, Len) :- length(List, Len).
+'builtin#charCodes'(s(Atom), Codes) :- atom_codes(Atom, Codes).
 
 
 % Write a term to a stream from a term(Term, VarNames) tupple

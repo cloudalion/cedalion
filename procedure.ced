@@ -14,34 +14,37 @@ commandClass(Cmd, ClassName) ~> cpi:termClass(Cmd::command, ClassName) :- builti
 
 
 signature(doAll(List)::command, [List::list(command)]).
-commandClass(doAll(_), s('net.nansore.cedalion.cmd.DoAll')).
+commandClass(doAll(_), !('net.nansore.cedalion.cmd.DoAll')).
 
 signature(assign(Ref, Expr, Type)::command, [Ref::ref(Type), Expr::expr(Type), Type::type]).
-commandClass(assign(_, _, _), s('net.nansore.cedalion.cmd.Assign')).
+commandClass(assign(_, _, _), !('net.nansore.cedalion.cmd.Assign')).
 
 signature(doProc(Proc)::command, [Proc::procedure]).
-commandClass(doProc(_), s('net.nansore.cedalion.cmd.DoProc')).
+commandClass(doProc(_), !('net.nansore.cedalion.cmd.DoProc')).
 
 signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
-commandClass(readFile(FileName, Namespace, FileContent), s('net.nansore.cedalion.cmd.ReadFile')).
+commandClass(readFile(FileName, Namespace, FileContent), !('net.nansore.cedalion.cmd.ReadFile')).
 
 signature(writeFile(FileName, FileContent)::command, [FileName::string, FileContent::fileContent]).
-commandClass(writeFile(FileName, FileContent), s('net.nansore.cedalion.cmd.WriteFile')).
+commandClass(writeFile(FileName, FileContent), !('net.nansore.cedalion.cmd.WriteFile')).
 
 signature(assignFinal(Var, Expr, T)::command, [Var::T, Expr::expr(T), T::type]).
-commandClass(assignFinal(Var, Expr, T), s('net.nansore.cedalion.cmd.AssignFinal')).
+commandClass(assignFinal(Var, Expr, T), !('net.nansore.cedalion.cmd.AssignFinal')).
 
 signature(dbInsert(Statement)::command, [Statement::statement]).
-commandClass(dbInsert(Statement), s('net.nansore.cedalion.cmd.DBInsert')).
+commandClass(dbInsert(Statement), !('net.nansore.cedalion.cmd.DBInsert')).
 
 signature(dbRemove(Statement)::command, [Statement::statement]).
-commandClass(dbRemove(Statement), s('net.nansore.cedalion.cmd.DBRemove')).
+commandClass(dbRemove(Statement), !('net.nansore.cedalion.cmd.DBRemove')).
 
 signature(termToString(TTerm, VarNames, Depth, NsList, Str)::command, [TTerm::typedTerm, VarNames::list(varName), Depth::number, NsList::list(namespacePair), Str::ref(string)]).
-commandClass(termToString(TTerm, VarNames, Depth, NsList, Str), s('net.nansore.cedalion.cmd.TermToString')).
+commandClass(termToString(TTerm, VarNames, Depth, NsList, Str), !('net.nansore.cedalion.cmd.TermToString')).
 
 signature(stringToTerm(StringRef, NsList, TTerm, VarNames)::command, [StringRef::ref(string), NsList::list(namespacePair), TTerm::typedTerm, VarNames::list(varName)]).
-commandClass(stringToTerm(StringRef, NsList, TTerm, VarNames), s('net.nansore.cedalion.cmd.StringToTerm')).
+commandClass(stringToTerm(StringRef, NsList, TTerm, VarNames), !('net.nansore.cedalion.cmd.StringToTerm')).
+
+signature(notify(TTerm)::command, [TTerm::typedTerm]).
+commandClass(notify(TTerm), !'net.nansore.cedalion.cmd.Notify').
 
 % Open a file
 procedure(cpi:openFile(FileName, ResourceName, Namespace), 
@@ -164,7 +167,8 @@ cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, [Innermost | Rest]), T
 cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), doAll([
 		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames)),
 		dbRemove(editState(ResourceName, _, _, _)),
-		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], [], NewModifiedCounter))
+		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], [], NewModifiedCounter)),
+		notify(cpi:path(ResourceName, Path)::cpi:path)
 	])) :-
 	editStateIs(ResourceName, UndoStack, _, OldModifiedCounter),
 	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames),
@@ -178,7 +182,8 @@ cpi:procedureCommand(cpi:undo(ResourceName), doAll([
 		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)),
 		assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter) - cpi:constExpr(1), number),
 		dbRemove(editState(ResourceName, _, _, _)),
-		dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | RedoStack], NewModifiedCounter))
+		dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | RedoStack], NewModifiedCounter)),
+		notify(cpi:path(ResourceName, Path)::cpi:path)
 	])) :-
 	editStateIs(ResourceName, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames) | UndoStack], RedoStack, OldModifiedCounter),
 	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames).
@@ -188,7 +193,8 @@ cpi:procedureCommand(cpi:redo(ResourceName), doAll([
 		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)),
 		assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter) - cpi:constExpr(1), number),
 		dbRemove(editState(ResourceName, _, _, _)),
-		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], RedoStack, NewModifiedCounter))
+		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], RedoStack, NewModifiedCounter)),
+		notify(cpi:path(ResourceName, Path)::cpi:path)
 	])) :-
 	editStateIs(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames) | RedoStack], OldModifiedCounter),
 	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames).
@@ -201,11 +207,11 @@ cpi:isModified(ResourceName) :-
 % Arithmetic functions
 signature((X+Y)::number, [X::number, Y::number]).
 function(X+Y, number, Z, plus(X, Y, Z)).
-commandClass(plus(X, Y, Z), s('net.nansore.cedalion.cmd.Plus')).
+commandClass(plus(X, Y, Z), !('net.nansore.cedalion.cmd.Plus')).
 
 signature((X-Y)::number, [X::number, Y::number]).
 function(X-Y, number, Z, minus(X, Y, Z)).
-commandClass(minus(X, Y, Z), s('net.nansore.cedalion.cmd.Minus')).
+commandClass(minus(X, Y, Z), !('net.nansore.cedalion.cmd.Minus')).
 
 % Path to string
 cpi:procedureCommand(cpi:func(cpi:termAsString(cpi:path(ResourceName, Path), Depth), Str, string), termToString(TTerm, VarNames, Depth, NsList, Str)) :-
@@ -266,12 +272,12 @@ defaultVisualization(Func, SubPaths, Vis) :-
 		Vis::visualization = label(LFunc)::visualization,
 		(% else
 			argListForPathList(SubPaths, ArgList),
-			Vis::visualization = horiz([label(LFunc), label(s('(')), horiz(ArgList), label(s(')'))])::visualization
+			Vis::visualization = horiz([label(LFunc), label(!('(')), horiz(ArgList), label(!(')'))])::visualization
 		)
 	).
 
 argListForPathList([Path], [vis(Path)]) :- builtin:true.
-argListForPathList([First | Rest], [vis(First), label(s(',')) | ArgList]) :-
+argListForPathList([First | Rest], [vis(First), label(!(',')) | ArgList]) :-
 	argListForPathList(Rest, ArgList).
 
 localName(Func, LFunc) :-
@@ -287,15 +293,15 @@ signature(visualize(Func, Args, Vis)::statement, [Func::string, Args::list(cpi:p
 visualize(Func, Args, Vis) ~> userVisualization(Func, Args, Vis) :- builtin:true.
 
 visClass(Vis, Class) ~> cpi:termClass(Vis::visualization, Class) :- builtin:true.
-visClass(cpi:vis(_), s('net.nansore.cedalion.figures.VisualTerm')).
-visClass(vis(_), s('net.nansore.cedalion.figures.VisualTerm')).
-visClass(horiz(_), s('net.nansore.cedalion.figures.HorizontalFlow')).
-visClass(vert(_), s('net.nansore.cedalion.figures.VerticalFlow')).
-visClass(label(_), s('net.nansore.cedalion.figures.LabelFigure')).
-visClass(italic(_), s('net.nansore.cedalion.figures.Italic')).
-visClass(bold(_), s('net.nansore.cedalion.figures.Bold')).
-visClass(color(_, _), s('net.nansore.cedalion.figures.TextColor')).
+visClass(cpi:vis(_), !('net.nansore.cedalion.figures.VisualTerm')).
+visClass(vis(_), !('net.nansore.cedalion.figures.VisualTerm')).
+visClass(horiz(_), !('net.nansore.cedalion.figures.HorizontalFlow')).
+visClass(vert(_), !('net.nansore.cedalion.figures.VerticalFlow')).
+visClass(label(_), !('net.nansore.cedalion.figures.LabelFigure')).
+visClass(italic(_), !('net.nansore.cedalion.figures.Italic')).
+visClass(bold(_), !('net.nansore.cedalion.figures.Bold')).
+visClass(color(_, _), !('net.nansore.cedalion.figures.TextColor')).
 
 
-visualize(s('[]'), [], label(s('.'))).
-visualize(s('.'), [F, R], vert([vis(F), vis(R)])).
+visualize(!('[]'), [], label(!('.'))).
+visualize(!('.'), [F, R], vert([vis(F), vis(R)])).

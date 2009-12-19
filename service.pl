@@ -3,6 +3,7 @@
 :- op(100, xfx, ':').
 :- op(100, fx, '$').
 :- op(650, xfx, '::').
+:- op(1, fx, '!').
 
 % If predicate
 if(Cond, Then, _) :-
@@ -16,7 +17,7 @@ if(Cond, Then) :-
 	if(Cond, Then, true).
 
 % Parse a typed term to its name and arguments, or vice versa
-parseTerm(Term::_, s(Func), TArgs) :-
+parseTerm(Term::_, !(Func), TArgs) :-
 	if(var(Term), 
 		(
 			makeTyped(Args, TArgs),
@@ -53,7 +54,7 @@ translateRewrite(Head, Body, Clause) :-
 		Clause = (Body :- Head)).
 
 % Load/Reload a file to the database
-loadFile(s(FileName), s(Namespace)) :-
+loadFile(!(FileName), !(Namespace)) :-
 	forall(retract(loadedStatement(FileName, Statement)), remove(Statement)),
 	open(FileName, read, Stream),
 	read(Stream, Term),
@@ -71,7 +72,7 @@ insertTermsFromSteam(Stream, Term, FileName, NsList) :-
 		)).
 
 interpretTerm(Term, FileName, NsList, NewNsList) :-
-	if(Term = import(s(Alias), s(FullNs)),
+	if(Term = import(!(Alias), !(FullNs)),
 		NewNsList = [Alias=FullNs | NsList],
 		(
 			NewNsList = NsList,
@@ -100,7 +101,7 @@ nonCompoundTerm(Term) :-
 	var(Term).
 nonCompoundTerm(Term) :-
 	number(Term).
-nonCompoundTerm(s(X)) :-
+nonCompoundTerm(!(X)) :-
 	atom(X).
 
 termLocalToGlobal(Term, Namespace, NsList, Global) :-
@@ -129,7 +130,7 @@ dontConvertFunc(Func) :- \+atom(Func).
 
 
 % Read a file into a list of terms and variable names (translates to global terms).
-readFile(s(FileName), s(Namespace), 'builtin#fileContent'(Terms, NsListOut)) :-
+readFile(!(FileName), !(Namespace), 'builtin#fileContent'(Terms, NsListOut)) :-
 	open(FileName, read, Stream),
 	read_term(Stream, Term, [variable_names(VarNames)]),
 	readFromSteam(Stream, Term, VarNames, FileName, [default=Namespace], NsListOut, Terms).
@@ -142,7 +143,7 @@ readFromSteam(Stream, Term, VarNames, FileName, NsList, NsListOut, Terms) :-
 			NsListOut = NsList
 		),
 		(
-			if(Term = import(s(Alias), s(Namespace)),
+			if(Term = import(!(Alias), !(Namespace)),
 				(
 					NewNsList = [Alias=Namespace | NsList],
 					GTerm = Term
@@ -158,11 +159,11 @@ readFromSteam(Stream, Term, VarNames, FileName, NsList, NsListOut, Terms) :-
 		)).
 
 convertVarNames([], []).
-convertVarNames([Name=Var | RestIn], ['builtin#varName'(Var::_, s(Name)) | RestOut]) :-
+convertVarNames([Name=Var | RestIn], ['builtin#varName'(Var::_, !(Name)) | RestOut]) :-
 	convertVarNames(RestIn, RestOut).
 
 % Write a cedalion file
-writeFile(s(FileName), 'builtin#fileContent'(Terms, NsList)) :-
+writeFile(!(FileName), 'builtin#fileContent'(Terms, NsList)) :-
 	open(FileName, write, Stream),
 	writeToStream(Stream, Terms, NsList).
 
@@ -210,7 +211,7 @@ findNamespaceAlias(Namespace, [Alias1 = Namespace1 | NsList], Alias) :-
 
 % Take a term (global), trim it to a given depth, storing the trimmed subterms to the database,
 % convert it to local and represent it textually as a string.
-termToString(GTerm, VarNames, Depth, NsList, s(Atom)) :-
+termToString(GTerm, VarNames, Depth, NsList, !(Atom)) :-
 	trimTerm(GTerm, Depth, TrimmedGTerm, VarNames),
 	globalToLocal(TrimmedGTerm, NsList, TrimmedTerm),
 	convertTermToWritable(TrimmedTerm, VarNames, WTerm),
@@ -252,7 +253,7 @@ uniqueTrimmedID(ID) :-
 	assert(lastTrimmedID(ID)).
 
 % Take a string representing a local, potentially trimmed term, and reconstruct the global term it represents.
-stringToTerm(s(Atom), NsList, GTerm, VarNames) :-
+stringToTerm(!(Atom), NsList, GTerm, VarNames) :-
 	atom_to_term(Atom, LTerm, Bindings),
 	convertVarNames(Bindings, VarNames1),
 	localToGlobal(LTerm, NsList, TrimmedGTerm),
@@ -284,7 +285,7 @@ joinVarNamesByName(['builtin#varName'(Var::_, Name) | VarNames1], VarNames2, Var
 		% else
 		joinVarNamesByName(VarNames1, ['builtin#varName'(Var::_, Name) | VarNames2], VarNames)).
 
-% Test: readFile(s('grammar-example.ced'), s(gram), 'builtin#fileContent'([_, _, 'builtin#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
+% Test: readFile(!('grammar-example.ced'), !(gram), 'builtin#fileContent'([_, _, 'builtin#statement'(T, V) | _], N)), termToString(T, V, 3, N, S).
 
 
 
@@ -321,12 +322,12 @@ handleException(Exception) :-
 'builtin#if'(C, T) :- if(C, T).
 'builtin#var'(V::_) :- var(V).
 'builtin#number'(N::number) :- number(N).
-'builtin#string'(s(Atom)::string) :- atom(Atom).
-'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = s(_)).
+'builtin#string'(!(Atom)::string) :- atom(Atom).
+'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = !(_)).
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
 'builtin#length'(List, _Type, Len) :- length(List, Len).
-'builtin#charCodes'(s(Atom), Codes) :- atom_codes(Atom, Codes).
+'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
 
 
 % Write a term to a stream from a term(Term, VarNames) tupple
@@ -359,7 +360,7 @@ convertTermsToWritable([Term | Terms], VarNames, [WTerm | WTerms]) :-
 	convertTermsToWritable(Terms, VarNames, WTerms).
 
 % Find the name of a varialbe in a list of Name=Var
-findVarName(Var, ['builtin#varName'(Var1::_, s(Name)) | _], Name) :-
+findVarName(Var, ['builtin#varName'(Var1::_, !(Name)) | _], Name) :-
 	Var == Var1.
 
 findVarName(Var, [_| VarNames], Name) :-
