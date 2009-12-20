@@ -262,7 +262,10 @@ stringToTerm(!(Atom), NsList, GTerm, VarNames) :-
 
 untrimTerm(TrimmedTerm, Term, VarNames) :-
 	if(nonCompoundTerm(TrimmedTerm),
-		Term = TrimmedTerm,
+		(
+			Term = TrimmedTerm,
+			VarNames = []
+		),
 		% else
 		if(TrimmedTerm = $ID,
 			storedTrimmedSubterm(ID, Term, VarNames),
@@ -317,6 +320,7 @@ handleException(Exception) :-
     nl.
 % The basics
 'builtin#true' :- true.
+'builtin#fail' :- fail.
 'builtin#equals'(A::T, B::T) :- A == B.
 'builtin#if'(C, T, E) :- if(C, T, E).
 'builtin#if'(C, T) :- if(C, T).

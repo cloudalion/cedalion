@@ -84,7 +84,7 @@ public class PrologProxy {
     private void writeQuery(Compound query) throws IOException {
         List<Variable> vars = new ArrayList<Variable>();
         findAllVars(query, vars);
-        Object pattern = "[]";
+        Object pattern = createCompound("[]");
         for(Iterator<Variable> i = vars.iterator(); i.hasNext(); ) {
             Variable var = i.next();
             pattern = new Compound(this, ".", new Compound(this, "=", var.name(), var), pattern);

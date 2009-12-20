@@ -125,14 +125,16 @@ varInList(Var::VarType, [_ | Tail]) :-
 	varInList(Var::VarType, Tail).
 
 % Retrieve a term at a given path
-cpi:termAtPath(cpi:path(ResourceName, []), Statements::list(statement), VarNames) :-
-	fileIsLoaded(ResourceName, _, model(Statements, VarNames, _)).
+cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames) :-
+	fileIsLoaded(ResourceName, _, model(Statements, AllVarNames, _)),
+	subTerm(Statements::list(statement), Path, TTerm),
+	selectVarNamesFor(TTerm, AllVarNames, VarNames).
 
-cpi:termAtPath(cpi:path(ResourceName, [Innermost | Rest]), TTerm, CroppedVarNames) :-
-	cpi:termAtPath(cpi:path(ResourceName, Rest), TParent, VarNames),
-	builtin:parseTerm(TParent, _, TArgs),
-	element(TTerm, Innermost, TArgs, typedTerm),
-	selectVarNamesFor(TTerm, VarNames, CroppedVarNames).
+subTerm(TTerm, [], TTerm) :- builtin:true.
+subTerm(TTerm, [First | Path], TSubTerm) :-
+	builtin:parseTerm(TTerm, _, TArgs),
+	element(TSubTerm1, First, TArgs, typedTerm),
+	subTerm(TSubTerm1, Path, TSubTerm).
 
 % The n'th element of a list (1-based)
 signature(element(Elem, Index, List, Type)::pred, [Elem::Type, Index::number, List::list(Type), Type::type]).
@@ -149,19 +151,25 @@ setElement(Index, [First | Rest], Elem, [First | ModRest], Type) :-
 	setElement(IndexMinusOne, Rest, Elem, ModRest, Type).
 
 % Modify a term at a given path
-cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, []), Statements::list(statement), VarNames2), doAll([
+cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames2), doAll([
 		dbRemove(loadedFile(ResourceName, _, _)),
 		dbInsert(loadedFile(ResourceName, FileName, model(Statements, VarNames, NsList)))])) :-
-	fileIsLoaded(ResourceName, FileName, model(_, VarNames1, NsList)),
+	fileIsLoaded(ResourceName, FileName, model(OldStatements, VarNames1, NsList)),
+	replaceSubterm(OldStatements::list(statement), Path, TTerm, Statements::list(statement)),
 	mergeVarNames(VarNames1, VarNames2, VarNames).
 
-cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, [Innermost | Rest]), TTerm, VarNames1), Command) :-
-	cpi:termAtPath(cpi:path(ResourceName, Rest), TParent, VarNames2),
-	mergeVarNames(VarNames1, VarNames2, VarNames),
-	builtin:parseTerm(TParent, Func, TArgs),
-	setElement(Innermost, TArgs, TTerm, TModArgs, typedTerm),
-	builtin:parseTerm(TModParent, Func, TModArgs),
-	cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, Rest), TModParent, VarNames), Command).
+replaceSubterm(_, [], TTerm, TTerm) :- builtin:true.
+replaceSubterm(OldTTerm, [First | Path], RepTTerm, TTerm) :-
+	builtin:parseTerm(OldTTerm, Func, OldTArgs),
+	replaceNthSubterm(OldTArgs, First, Path, RepTTerm, NewTArgs),
+	builtin:parseTerm(TTerm, Func, NewTArgs).
+
+replaceNthSubterm([OldTTerm | TArgs], 1, Path, RepTTerm, [TTerm | TArgs]) :-
+	replaceSubterm(OldTTerm, Path, RepTTerm, TTerm).
+replaceNthSubterm([First | TArgs], N, Path, RepTTerm, [First | TNewArgs]) :-
+	N > 1,
+	builtin:succ(NMinus1, N),
+	replaceNthSubterm(TArgs, NMinus1, Path, RepTTerm, TNewArgs).
 
 % Edit operation: Modify and update the undo stack
 cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), doAll([
@@ -254,8 +262,9 @@ visualizeCompound(Path, TTerm, Vis) :-
 	visualizeNameSubpaths(Func, SubPaths, Vis).
 
 subPaths(_, Last, Last, []) :- builtin:true.
-subPaths(cpi:path(Res, Path), BeforeFirst, Last, [cpi:path(Res, [First | Path]) | SubPaths]) :-
+subPaths(cpi:path(Res, Path), BeforeFirst, Last, [cpi:path(Res, NewPath) | SubPaths]) :-
 	builtin:succ(BeforeFirst, First),
+	append(Path, [First], NewPath),
 	subPaths(cpi:path(Res, Path), First, Last, SubPaths).
 
 visualizeNameSubpaths(Func, SubPaths, Vis) :-

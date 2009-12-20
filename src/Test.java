@@ -35,9 +35,9 @@ public class Test {
 
 		// Print the third term
 		Compound list = p.createCompound("[]");
-		list = p.createCompound(".", 2, list);
-		list = p.createCompound(".", 2, list);
 		list = p.createCompound(".", 1, list);
+		list = p.createCompound(".", 2, list);
+		list = p.createCompound(".", 2, list);
 		Compound path = p.createCompound("cpi#path", "grammar", list);
 		Map<Variable, Object> result = p.getSolution(p.createCompound("cpi#termAtPath", path, x, y));
 		System.out.println(result.get(x));
@@ -63,7 +63,7 @@ public class Test {
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g4.ced"));
 		
 		// Restore the old content from the string we saved earlier, and save
-		exe.runProcedure(p.createCompound("cpi#editFromString", path, p.createCompound("cpi#constExpr", "s(hello)")));
+		exe.runProcedure(p.createCompound("cpi#editFromString", path, p.createCompound("cpi#constExpr", "!(hello)")));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g5.ced"));
 		
 		// Test visualization

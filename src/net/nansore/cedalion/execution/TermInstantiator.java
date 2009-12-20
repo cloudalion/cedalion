@@ -89,6 +89,7 @@ public class TermInstantiator {
 			} catch (ClassNotFoundException e) {
 				throw new TermInstantiationException(e);
 			}
+			classCache.put(term.name(), clazz);
 		}
 		return clazz;
 	}
