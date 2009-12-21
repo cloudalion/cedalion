@@ -276,10 +276,11 @@ untrimTerm(TrimmedTerm, Term, VarNames) :-
 				Term =.. [Func | Args]
 			))).
 
-untrimTerms([], [], _).
+untrimTerms([], [], []).
 untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args], VarNames) :-
-	untrimTerm(TrimmedArg, Arg, VarNames),
-	untrimTerms(TrimmedArgs, Args, VarNames).
+	untrimTerm(TrimmedArg, Arg, VarNames1),
+	untrimTerms(TrimmedArgs, Args, VarNames2),
+	joinVarNamesByName(VarNames1, VarNames2, VarNames).
 
 joinVarNamesByName([], VarNames, VarNames).
 joinVarNamesByName(['builtin#varName'(Var::_, Name) | VarNames1], VarNames2, VarNames) :-

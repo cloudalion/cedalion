@@ -278,8 +278,9 @@ untrimTerm(TrimmedTerm, Term, VarNames) :-
 
 untrimTerms([], [], _).
 untrimTerms([TrimmedArg | TrimmedArgs], [Arg | Args], VarNames) :-
-	untrimTerm(TrimmedArg, Arg, VarNames),
-	untrimTerms(TrimmedArgs, Args, VarNames).
+	untrimTerm(TrimmedArg, Arg, VarNames1),
+	untrimTerms(TrimmedArgs, Args, VarNames2),
+	joinVarNamesByName(VarNames1, VarNames2, VarNames).
 
 joinVarNamesByName([], VarNames, VarNames).
 joinVarNamesByName(['builtin#varName'(Var::_, Name) | VarNames1], VarNames2, VarNames) :-
@@ -320,6 +321,7 @@ handleException(Exception) :-
     nl.
 % The basics
 'builtin#true' :- true.
+'builtin#fail' :- fail.
 'builtin#equals'(A::T, B::T) :- A == B.
 'builtin#if'(C, T, E) :- if(C, T, E).
 'builtin#if'(C, T) :- if(C, T).
