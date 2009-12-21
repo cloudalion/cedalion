@@ -88,9 +88,14 @@ varInVarNames(Var::T, [_ | VN]) :-
 
 
 % Save a file
-cpi:procedureCommand(cpi:saveFile(ResourceName, FileName), writeFile(FileName, Content)) :-
+cpi:procedureCommand(cpi:saveFile(ResourceName, FileName), doAll([
+		writeFile(FileName, Content),
+		dbRemove(editState(ResourceName, _, _, _)),
+		dbInsert(editState(ResourceName, UndoStack, RedoStack, 0))	
+	])) :-
 	fileIsLoaded(ResourceName, _, Model),
-	modelToContent(Model, Content).
+	modelToContent(Model, Content),
+	editStateIs(ResourceName, UndoStack, RedoStack, _).
 
 modelToContent(model(Statements, VarNames, NsList), builtin:fileContent(AnnoStatements, NsList)) :-
 	annotateStatements(Statements, VarNames, AnnoStatements).
@@ -314,3 +319,15 @@ visClass(color(_, _), !('net.nansore.cedalion.figures.TextColor')).
 
 visualize(!('[]'), [], label(!('.'))).
 visualize(!('.'), [F, R], vert([vis(F), vis(R)])).
+
+% Context menu
+contextMenuEntry(TTerm, Path, Name, Proc) ~> cpi:contextMenuEntry(Path, menuItem(Name, Proc)) :- 
+	cpi:termAtPath(Path, TTerm, _),
+	cpi:procedureCommand(Proc, _).
+
+signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
+cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem').
+
+% Undo
+contextMenuEntry(_, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
+contextMenuEntry(_, cpi:path(Res, _), !'Redo', cpi:redo(Res)).

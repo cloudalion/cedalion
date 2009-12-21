@@ -164,7 +164,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		try {
 			Variable varAction = new Variable("Action");
 			PrologProxy prolog = Activator.getProlog();
-			Iterator<Map<Variable, Object>> results = prolog.getSolutions(prolog.createCompound("cpi#contextMenuEntry", getResource(), path, varAction));
+			Iterator<Map<Variable, Object>> results = prolog.getSolutions(prolog.createCompound("cpi#contextMenuEntry", path, varAction));
 			while(results.hasNext()) {
 				Map<Variable, Object> result = (Map<Variable, Object>)results.next();
 				Compound action = (Compound)result.get(varAction);
@@ -258,6 +258,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         add(contentFigure);
         requestFocus();
         setFocus();
+        context.figureUpdated();
     }
 
 	public void setFocus() {

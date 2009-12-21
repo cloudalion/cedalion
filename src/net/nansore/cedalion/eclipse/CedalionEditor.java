@@ -126,6 +126,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	    	PrologProxy prolog = Activator.getProlog();
 			ExecutionContext exe = new ExecutionContext(prolog);
 			exe.runProcedure(prolog.createCompound("cpi#saveFile", getResource(), input.getFile().getLocation().toString()));
+	        firePropertyChange(PROP_DIRTY);
         } catch (PrologException e) {
             e.printStackTrace();
 		} catch (TermInstantiationException e) {
@@ -345,22 +346,6 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
         figures.add(figure);        
     }
 
-    /**
-     * @param termID
-     * @throws TermVisualizationException
-     * @throws TermInstantiationException 
-     */
-    public synchronized void updateFigure(int termID) throws TermVisualizationException, TermInstantiationException {
-        List<TermFigure> figures = (List<TermFigure>) termFigures.get(new Integer(termID));
-        if(figures != null) {
-            for(Iterator<TermFigure> i = figures.iterator(); i.hasNext(); ) {
-                i.next().updateFigure();                
-            }
-            
-        }
-        firePropertyChange(PROP_DIRTY);
-    }
-
     /* (non-Javadoc)
      * @see net.nansore.visualterm.TermContext#getColor()
      */
@@ -390,21 +375,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
      * @see net.nansore.visualterm.TermContext#figureUpdated()
      */
     public synchronized void figureUpdated() {
-    	// TODO: Replace the update logic...
-/*        try {
-            // Query for all changes to this resource and make the updates
-            Variable idVar = new Variable();
-            Iterator changes = PrologClient.getSolutions(new Compound("vtbiCheckModified", idVar));
-            while(changes.hasNext()) {
-                Map solution = (Map) changes.next();
-                Integer id = (Integer) solution.get(idVar);
-                updateFigure(id.intValue());
-            }
-        } catch (PrologException e) {
-            e.printStackTrace();
-        } catch (TermVisualizationException e) {
-            e.printStackTrace();
-        }*/
+        firePropertyChange(PROP_DIRTY);
     }
 
     /* (non-Javadoc)
