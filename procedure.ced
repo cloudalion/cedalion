@@ -257,7 +257,7 @@ cpi:visualizePath(Path, Vis) :-
 	).
 
 visualizeVar(_, [builtin:varName(_, Name)], italic(color(label(Name), cpi:rgb(0, 128, 0)))) :- builtin:true.
-visualizeNumber(Num::_, numLabel(Num)) :- builtin:true. %TODO: Add real types
+visualizeNumber(Num::_, label(Num)) :- builtin:true. %TODO: Add real types
 visualizeString(Str::_, label(Str)) :- builtin:true. %TODO: Add real types
 
 visualizeCompound(Path, TTerm, Vis) :-

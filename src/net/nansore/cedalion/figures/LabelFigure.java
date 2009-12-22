@@ -23,7 +23,7 @@ public class LabelFigure extends Label implements TermFigure {
 
 	private String translateString(Compound term) throws TermVisualizationException {
 		try {
-			return (String)term.arg(1);			
+			return term.arg(1).toString();			
 		} catch(ClassCastException e) {
 			throw new TermVisualizationException("LabelFigure received non string: " + term.arg(1));
 		}

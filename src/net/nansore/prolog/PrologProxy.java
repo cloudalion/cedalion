@@ -132,8 +132,13 @@ public class PrologProxy {
                 }
                 readNext();
             }
-            if(atom.equals("!") && args.size() == 1)
-            	return ((Compound)args.get(0)).name();
+            if(atom.equals("!") && args.size() == 1) {
+            	Object str = args.get(0);
+            	if(str instanceof Compound)
+            		return ((Compound)str).name();
+            	else
+            		return str.toString();
+            }
             else
             	return new Compound(this, atom, args.toArray());
         } else {

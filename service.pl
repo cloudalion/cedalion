@@ -326,8 +326,8 @@ handleException(Exception) :-
 'builtin#if'(C, T, E) :- if(C, T, E).
 'builtin#if'(C, T) :- if(C, T).
 'builtin#var'(V::_) :- var(V).
-'builtin#number'(N::number) :- number(N).
-'builtin#string'(!(Atom)::string) :- atom(Atom).
+'builtin#number'(N::_) :- number(N).
+'builtin#string'(!(Atom)::_) :- atom(Atom).
 'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = !(_)).
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
