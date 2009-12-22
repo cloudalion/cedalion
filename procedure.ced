@@ -240,8 +240,9 @@ cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef)
 
 %%%%% Visualization %%%%%%%
 
-cpi:visualizePath(Path, Vis) :-
+cpi:visualizeDescriptor(cpi:descriptor(Path, Markers), MVis) :-
 	cpi:termAtPath(Path, Term::Type, VarNames),
+	applyCheckers(cpi:descriptor(Path, Markers), Term::Type, Desc),
 	builtin:if(builtin:var(Term::Type),
 		visualizeVar(Term::Type, VarNames, Vis),
 		% else
@@ -251,26 +252,50 @@ cpi:visualizePath(Path, Vis) :-
 			builtin:if(builtin:string(Term::Type),
 				visualizeString(Term::Type, Vis),
 				% else
-				visualizeCompound(Path, Term::Type, Vis)
+				visualizeCompound(Desc, Term::Type, Vis)
 			)
 		)
-	).
+	),
+	applyMarkers(Desc, Vis, MVis).
 
 visualizeVar(_, [builtin:varName(_, Name)], italic(color(label(Name), cpi:rgb(0, 128, 0)))) :- builtin:true.
 visualizeNumber(Num::_, label(Num)) :- builtin:true. %TODO: Add real types
 visualizeString(Str::_, label(Str)) :- builtin:true. %TODO: Add real types
 
-visualizeCompound(Path, TTerm, Vis) :-
+visualizeCompound(Desc, TTerm, Vis) :-
 	builtin:parseTerm(TTerm, Func, TArgs),
 	builtin:length(TArgs, typedTerm, Arity),
-	subPaths(Path, 0, Arity, SubPaths),
-	visualizeNameSubpaths(Func, SubPaths, Vis).
+	subDescriptors(Desc, 0, Arity, SubDescs),
+	visualizeNameSubpaths(Func, SubDescs, Vis).
 
-subPaths(_, Last, Last, []) :- builtin:true.
-subPaths(cpi:path(Res, Path), BeforeFirst, Last, [cpi:path(Res, NewPath) | SubPaths]) :-
+applyCheckers(cpi:descriptor(Path, OldMarkers), TTerm, cpi:descriptor(Path, Markers)) :-
+	builtin:findall(Marker, marker, check(Path, TTerm, Marker), NewMarkers),
+	append(OldMarkers, NewMarkers, Markers).
+
+
+subDescriptors(_, Last, Last, []) :- builtin:true.
+subDescriptors(cpi:descriptor(cpi:path(Res, Path), Markers), BeforeFirst, Last, [cpi:descriptor(cpi:path(Res, NewPath), MarkersForPath) | SubDescs]) :-
 	builtin:succ(BeforeFirst, First),
 	append(Path, [First], NewPath),
-	subPaths(cpi:path(Res, Path), First, Last, SubPaths).
+	markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft),
+	subDescriptors(cpi:descriptor(cpi:path(Res, Path), MarkersLeft), First, Last, SubDescs).
+
+markersForPath([], _, [], []) :- builtin:true.
+markersForPath([marker(Path, Mark) | Markers], BasePath, MarkersForPath, MarkersLeft) :-
+	markersForPath(Markers, BasePath, MarkersForPath1, MarkersLeft1),
+	builtin:if(pathIsPrefix(BasePath, Path),
+		(
+			MarkersForPath = [marker(Path, Mark) | MarkersForPath1],
+			MarkersLeft = MarkersLeft1
+		),
+		( %else
+			MarkersForPath = MarkersForPath1,
+			MarkersLeft = [marker(Path, Mark) | MarkersLeft1]
+		)).			
+
+pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)) :- builtin:true.
+pathIsPrefix(cpi:path(Res, [First | Base]), cpi:path(Res, [First | Path])) :-
+	pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 
 visualizeNameSubpaths(Func, SubPaths, Vis) :-
 	builtin:if(userVisualization(Func, SubPaths, Vis),
@@ -315,6 +340,8 @@ visClass(label(_), !('net.nansore.cedalion.figures.LabelFigure')).
 visClass(italic(_), !('net.nansore.cedalion.figures.Italic')).
 visClass(bold(_), !('net.nansore.cedalion.figures.Bold')).
 visClass(color(_, _), !('net.nansore.cedalion.figures.TextColor')).
+visClass(lineBorder(_, _, _), !('net.nansore.cedalion.figures.LineBorderFigure')).
+visClass(symbol(_), !('net.nansore.cedalion.figures.Symbol')).
 
 
 visualize(!('[]'), [], label(!('.'))).
@@ -331,3 +358,31 @@ cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.Ce
 % Undo
 contextMenuEntry(_, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
 contextMenuEntry(_, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
+
+% Markers
+applyMarkers(cpi:descriptor(_, []), Vis, Vis) :- builtin:true.
+applyMarkers(cpi:descriptor(Path, [marker(MPath, Mark) | Markers]), Vis, MVis) :-
+	builtin:if(MPath = Path,
+		applyMarker(Mark, Vis, MVis1),
+		%else
+		MVis1 = Vis),
+	applyMarkers(cpi:descriptor(Path, Markers), MVis1, MVis).
+
+applyMarker(Mark, Vis, MVis) :-
+	builtin:if(markerVisualization(Mark, Vis, MVis),
+		builtin:true,
+		MVis = Vis).
+
+markerVis(Mark, Vis, MVis) ~> markerVisualization(Mark, Vis, MVis) :- builtin:true.
+
+markerVis(dummyMarker, Vis, lineBorder(Vis, 1, cpi:rgb(0,0,255))).
+markerVis(redMarker, Vis, color(Vis, cpi:rgb(255,0,128))).
+
+% Checkers
+check(cpi:path(Res, Path), TTerm, marker(cpi:path(Res, SubPath), dummyMarker)) :-
+	\+builtin:var(TTerm),
+	builtin:parseTerm(TTerm, _, [_]),
+	append(Path, [1], SubPath).
+
+check(Path, TTerm, marker(Path, redMarker)) :-
+	builtin:string(TTerm).

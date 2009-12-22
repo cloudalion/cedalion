@@ -53,6 +53,10 @@ public class Test {
 		// Undo the change and save
 		exe.runProcedure(p.createCompound("cpi#undo", "grammar"));
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g3.ced"));
+
+		Variable vis = new Variable();
+		result = p.getSolution(p.createCompound("cpi#visualizeDescriptor", p.createCompound("cpi#descriptor", path, p.createCompound("[]")), vis));
+		System.out.println(result.get(vis));
 		
 		// Print third statement as a string
 		String oldContent = (String)exe.evaluate(p.createCompound("cpi#termAsString", path, p.createCompound("cpi#constExpr", 3)), new Variable());
@@ -67,8 +71,7 @@ public class Test {
 		exe.runProcedure(p.createCompound("cpi#saveFile", "grammar", "g5.ced"));
 		
 		// Test visualization
-		Variable vis = new Variable();
-		result = p.getSolution(p.createCompound("cpi#visualizePath", path, vis));
+		result = p.getSolution(p.createCompound("cpi#visualizeDescriptor", p.createCompound("cpi#descriptor", path, p.createCompound("[]")), vis));
 		System.out.println(result.get(vis));
 		
 		p.terminate();

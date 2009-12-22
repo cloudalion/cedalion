@@ -61,7 +61,7 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
         try {
             prolog = new PrologProxy(loadToFileSystem(context, "service.pl"));
-    		prolog.getSolution(prolog.createCompound("loadFile", loadToFileSystem(context, "procedure.ced").toString(), "cedalion"));
+    		prolog.getSolution(prolog.createCompound("loadFile", loadToFileSystem(context, "procedure.ced").toString(), "cedalion1"));
 
     		super.start(context);
             this.context = context;

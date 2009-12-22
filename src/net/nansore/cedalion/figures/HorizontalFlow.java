@@ -24,6 +24,7 @@ public class HorizontalFlow extends Panel implements TermFigure {
     public HorizontalFlow(Compound term, final TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {
         setLayout();
         
+        context.bindFigure(this);
         Object list = term.arg(1);
         while(list instanceof Compound && ((Compound)list).arity() == 2) {
             Compound compound = ((Compound)list);

@@ -16,6 +16,7 @@ import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.TermFigure;
+import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 import net.nansore.prolog.Variable;
@@ -229,7 +230,9 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		ExecutionContext exe = new ExecutionContext(prolog);
 		exe.runProcedure(prolog.createCompound("cpi#openFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
 		// Set the root path
-		editorWidget.setTerm(prolog.createCompound("cpi#vis", prolog.createCompound("cpi#path", getResource(), prolog.createCompound("[]"))), this);
+		Compound path = prolog.createCompound("cpi#path", getResource(), prolog.createCompound("[]"));
+		Compound descriptor = prolog.createCompound("cpi#descriptor", path, prolog.createCompound("[]"));
+		editorWidget.setTerm(prolog.createCompound("cpi#vis", descriptor), this);
 	}
 
 	private Font createFont(final String fontType) {

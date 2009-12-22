@@ -54,6 +54,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     private IFigure contentFigure;
     private List<TermFigure> disposables = new ArrayList<TermFigure>();
 	private Object path;
+	private Compound descriptor;
 
     /**
      * @param term
@@ -63,21 +64,21 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      */
     public VisualTerm(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException {
     	context = parent;
-        // The first argument is the path
-        path = term.arg(1);
+        // The first argument is the descriptor, containing the path and additional information
+    	descriptor = (Compound)term.arg(1); 
+        path = descriptor.arg(1);
         
         try {
             // Set up the GUI
             setLayoutManager(new FlowLayout());
             setRequestFocusEnabled(true);
             // Create the child figures
-            contentFigure = createContentFigure(path);
+            contentFigure = createContentFigure(descriptor);
             add(contentFigure);
             
             // Register this object with the content
             context.registerTermFigure(path, this);
             context.registerDispose(this);
-            context.bindFigure(this);
             PrologProxy p = term.getProlog();
 			Notifier.instance().register(p.createCompound("::", path, p.createCompound("cpi#path")), new Runnable() {
 				
@@ -110,7 +111,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         // Query for the annotated term's visualization
 	    Variable vis = new Variable();
 	    PrologProxy prolog = Activator.getProlog();
-		Compound q = prolog.createCompound("cpi#visualizePath", path, vis);
+		Compound q = prolog.createCompound("cpi#visualizeDescriptor", path, vis);
 	    // If successful, build the GUI
         try {
 			Map<Variable, Object> s = prolog.getSolution(q);
@@ -254,7 +255,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		disposeChildFigures();
 		if(contentFigure != null)
 		    remove(contentFigure);
-        contentFigure = createContentFigure(path);
+        contentFigure = createContentFigure(descriptor);
         add(contentFigure);
         requestFocus();
         setFocus();

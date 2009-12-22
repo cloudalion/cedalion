@@ -333,6 +333,8 @@ handleException(Exception) :-
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
 'builtin#length'(List, _Type, Len) :- length(List, Len).
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
+'builtin#throw'(Exception) :- throw(Exception).
+'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
 
 
 % Write a term to a stream from a term(Term, VarNames) tupple

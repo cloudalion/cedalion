@@ -327,13 +327,13 @@ handleException(Exception) :-
 'builtin#if'(C, T) :- if(C, T).
 'builtin#var'(V::_) :- var(V).
 'builtin#number'(N::_) :- number(N).
-'builtin#string'(!(Atom)::string) :- atom(Atom).
+'builtin#string'(!(Atom)::_) :- atom(Atom).
 'builtin#compound'(Term::_) :- \+var(Term), \+number(Term), \+(Term = !(_)).
 'builtin#parseTerm'(TTerm, Func, TArgs) :- parseTerm(TTerm, Func, TArgs).
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
 'builtin#length'(List, _Type, Len) :- length(List, Len).
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
-
+'builtin#throw'(Exception) :- throw(Exception).
 
 % Write a term to a stream from a term(Term, VarNames) tupple
 writeTerm(Stream, Term, VarNames) :-
