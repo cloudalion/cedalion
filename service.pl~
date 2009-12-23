@@ -334,6 +334,8 @@ handleException(Exception) :-
 'builtin#length'(List, _Type, Len) :- length(List, Len).
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
 'builtin#throw'(Exception) :- throw(Exception).
+'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
+
 
 % Write a term to a stream from a term(Term, VarNames) tupple
 writeTerm(Stream, Term, VarNames) :-

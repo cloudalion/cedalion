@@ -67,7 +67,7 @@ public class Activator extends AbstractUIPlugin {
             this.context = context;
 
             IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            //loadResources(root);
+            loadResources(root);
             
             Proxy proxy = null;
             if(getPreferenceStore().getBoolean("useProxy")) {
@@ -121,6 +121,7 @@ public class Activator extends AbstractUIPlugin {
 
 	private void loadResource(IResource resource) {
 		String resourcePath = resource.getFullPath().toString();
+		System.out.println("Loading: " + resourcePath);
 		String filePath = resource.getLocation().toString();
 		String pkg = resource.getParent().getFullPath().toString();
 		try {

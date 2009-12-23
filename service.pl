@@ -335,7 +335,7 @@ handleException(Exception) :-
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
 'builtin#throw'(Exception) :- throw(Exception).
 'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
-
+'builtin#safeUnify'(A, B) :- unify_with_occurs_check(A,B).
 
 % Write a term to a stream from a term(Term, VarNames) tupple
 writeTerm(Stream, Term, VarNames) :-
