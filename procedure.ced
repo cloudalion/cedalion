@@ -76,7 +76,7 @@ fileModel([builtin:statement(S, VN1) | Terms], [S | Statements], VarNames) :-
 
 mergeVarNames([], VarNames, VarNames) :- builtin:true.
 mergeVarNames([builtin:varName(Var::T, Name) | VN1], VN2, VarNames) :-
-	builtin:if(varInVarNames(Var::T, VN2),
+	builtin:if(listMember(builtin:varName(Var::T, Name), typedTerm, VN2),		%varInVarNames(Var::T, VN2),
 		mergeVarNames(VN1, VN2, VarNames),
 		%else
 		mergeVarNames(VN1, [builtin:varName(Var::T, Name) | VN2], VarNames)).
@@ -181,14 +181,15 @@ cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), do
 		doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames)),
 		dbRemove(editState(ResourceName, _, _, _)),
 		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], [], NewModifiedCounter)),
-		notify(cpi:path(ResourceName, Path)::cpi:path)
+		notify(cpi:path(ResourceName, StatementPath)::cpi:path)
 	])) :-
 	editStateIs(ResourceName, UndoStack, _, OldModifiedCounter),
 	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames),
 	builtin:if(OldModifiedCounter < 0,
 		NewModifiedCounter::number = 99999::number,
 		%else
-		builtin:succ(OldModifiedCounter, NewModifiedCounter)).
+		builtin:succ(OldModifiedCounter, NewModifiedCounter)),
+	containingStatementPath(Path, StatementPath).
 
 % Undo editing
 cpi:procedureCommand(cpi:undo(ResourceName), doAll([
@@ -196,10 +197,11 @@ cpi:procedureCommand(cpi:undo(ResourceName), doAll([
 		assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter) - cpi:constExpr(1), number),
 		dbRemove(editState(ResourceName, _, _, _)),
 		dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | RedoStack], NewModifiedCounter)),
-		notify(cpi:path(ResourceName, Path)::cpi:path)
+		notify(cpi:path(ResourceName, StatementPath)::cpi:path)
 	])) :-
 	editStateIs(ResourceName, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames) | UndoStack], RedoStack, OldModifiedCounter),
-	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames).
+	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames),
+	containingStatementPath(Path, StatementPath).
 
 % Redo editing
 cpi:procedureCommand(cpi:redo(ResourceName), doAll([
@@ -207,10 +209,11 @@ cpi:procedureCommand(cpi:redo(ResourceName), doAll([
 		assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter) - cpi:constExpr(1), number),
 		dbRemove(editState(ResourceName, _, _, _)),
 		dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames) | UndoStack], RedoStack, NewModifiedCounter)),
-		notify(cpi:path(ResourceName, Path)::cpi:path)
+		notify(cpi:path(ResourceName, StatementPath)::cpi:path)
 	])) :-
 	editStateIs(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames) | RedoStack], OldModifiedCounter),
-	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames).
+	cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames),
+	containingStatementPath(Path, StatementPath).
 
 % Is a resource modified?
 cpi:isModified(ResourceName) :-
@@ -344,6 +347,8 @@ visClass(color(_, _), !('net.nansore.cedalion.figures.TextColor')).
 visClass(lineBorder(_, _, _), !('net.nansore.cedalion.figures.LineBorderFigure')).
 visClass(symbol(_), !('net.nansore.cedalion.figures.Symbol')).
 visClass(tooltip(_, _), !('net.nansore.cedalion.figures.Tooltip')).
+visClass(halfSize(_), !('net.nansore.cedalion.figures.HalfSize')).
+visClass(smaller(_), !('net.nansore.cedalion.figures.Smaller')).
 
 
 visualize(!('[]'), [], label(!('.'))).
@@ -392,10 +397,17 @@ check(Path, TTerm, _, marker(Path, stringMarker)) :-
 	builtin:string(TTerm).
 markerVis(stringMarker, Vis, color(Vis, cpi:rgb(255,0,128))).
 
-check(cpi:path(Res, []), Content::list(statement), VarNames, Marker) :-
-	true(checkTypes(cpi:path(Res, []), Content::list(statement), VarNames, [], Markers)),
+%%%%%%%%%%%%%%% Type System %%%%%%%%%%%%%5555
+
+check(StatementPath, Statement::statement, VarNames, Marker) :-
+	statementPath(StatementPath),
+	true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)),
 	listMember(Marker, marker, Markers).
-	
+
+statementPath(cpi:path(_, [1])) :- builtin:true.
+statementPath(cpi:path(Res, [2 | Path])) :-
+	statementPath(cpi:path(Res, Path)).
+
 listMember(X, _T, [X|_]) :- builtin:true.
 listMember(X, T, [_|L]) :-
 	listMember(X, T, L).
@@ -419,14 +431,14 @@ validateType(Path, _::ExType, ActType, OrigPath, MarkIn, MarkOut) :-
 		%else
 		MarkOut::list(locMarker) = [marker(Path, error(typeMimatch(ExType, ActType, OrigPath), [])) | MarkIn]::list(locMarker)).
 
-checkVarType(Path, Var::ExType, MarkIn, MarkOut) :-
+checkVarType(Path, Var::ExType, MarkIn, [marker(Path, typeOf(Var::ExType, VarNames)) | MarkOut]) :-
 	builtin:if(findVarType(MarkIn, Var::ExType, ActType, OrigPath),
 		validateType(Path, Var::ExType, ActType, OrigPath, MarkIn, MarkOut),
 		% else
 		MarkOut::list(locMarker) = [marker(Path, varType(Var::ExType)) | MarkIn]::list(locMarker)).
 
-findVarType([marker(Path, varType(Var::Type)) | _], TVar1, Type, Path) :-
-	builtin:equals(Var::Type, TVar1).
+findVarType([marker(Path, varType(Var::Type)) | _], TVar, Type, Path) :-
+	builtin:equals(Var::Type, TVar).
 findVarType([_ | Markers], TVar, Type, Path) :-
 	findVarType(Markers, TVar, Type, Path).
 
@@ -451,6 +463,8 @@ checkArgTypes(cpi:path(Res, Path), Index, [TArg | TArgs], VarNames, MarkIn, Mark
 	checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 
 markerVis(error(X, VarNames), V, tooltip(lineBorder(V, 1, cpi:rgb(255, 0, 0)), vis(cpi:immediateDescriptor(X::error, VarNames)))).
+markerVis(typeOf(Term::Type, VarNames), V, vert([V, halfSize(vis(cpi:immediateDescriptor(Type::type, VarNames)))])).
+markerVis(varType(_), V, bold(V)).
 
 signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
 signature((Term::Type)::typedTerm, [Term::Type, Type::type]).
@@ -459,6 +473,10 @@ signature((A,B)::pred, [A::pred, B::pred]).
 signature((Head ~> Body) :: statement, [Head::statement, Body::statement]).
 signature([]::list(_), []).
 signature([X|L]::list(T), [X::T, L::list(T)]).
+signature(type::type, []).
+signature(string::type, []).
+signature(pred::type, []).
+signature(list(T)::type, [T::type]).
 
 true(X) :-
 	builtin:if(X,
@@ -489,3 +507,8 @@ subDescriptors(cpi:immediateDescriptor(TTerm, VarNames), BeforeFirst, Last, [cpi
 	element(SubTTerm, First, TArgs, typedTerm),
 	selectVarNamesFor(SubTTerm, VarNames, VarNames1),
 	subDescriptors(cpi:immediateDescriptor(TTerm, VarNames), First, Last, SubDescs).
+
+containingStatementPath([], []) :- builtin:true.
+containingStatementPath([2 | Path], [2 | StatementPath]) :-
+	containingStatementPath(Path, StatementPath).
+containingStatementPath([1 | Path], [1]) :- builtin:true.

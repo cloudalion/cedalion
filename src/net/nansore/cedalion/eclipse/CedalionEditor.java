@@ -128,12 +128,18 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 			ExecutionContext exe = new ExecutionContext(prolog);
 			exe.runProcedure(prolog.createCompound("cpi#saveFile", getResource(), input.getFile().getLocation().toString()));
 	        firePropertyChange(PROP_DIRTY);
+	        // Reload the content
+	        Activator.getDefault().loadResource(input.getFile());
+	        refresh();
         } catch (PrologException e) {
             e.printStackTrace();
 		} catch (TermInstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExecutionContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TermVisualizationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

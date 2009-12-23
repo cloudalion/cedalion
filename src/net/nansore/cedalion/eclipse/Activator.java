@@ -119,7 +119,7 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
-	private void loadResource(IResource resource) {
+	public void loadResource(IResource resource) {
 		String resourcePath = resource.getFullPath().toString();
 		System.out.println("Loading: " + resourcePath);
 		String filePath = resource.getLocation().toString();
