@@ -66,7 +66,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     	context = parent;
         // The first argument is the descriptor, containing the path and additional information
     	descriptor = (Compound)term.arg(1); 
-        path = descriptor.arg(1);
+        path = ((Compound)descriptor.arg(1)).arg(1);
         
         try {
             // Set up the GUI

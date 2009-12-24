@@ -243,9 +243,11 @@ cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef)
 
 %%%%% Visualization %%%%%%%
 
-cpi:visualizeDescriptor(cpi:descriptor(Path, Markers), MVis) :-
+signature(cpi:descriptor(Path, Term, Markers)::Type, [Path::path, Term::Type, Markers::list(locMarker)]).
+
+cpi:visualizeDescriptor(cpi:descriptor(Path, Term, Markers)::Type, MVis) :-
 	cpi:termAtPath(Path, Term::Type, VarNames),
-	true(applyCheckers(cpi:descriptor(Path, Markers), Term::Type, VarNames, Desc)),
+	true(applyCheckers(cpi:descriptor(Path, Term, Markers)::Type, Term::Type, VarNames, Desc)),
 	builtin:if(builtin:var(Term::Type),
 		visualizeVar(Term::Type, VarNames, Vis),
 		% else
@@ -267,22 +269,22 @@ visualizeNumber(Num::_, label(Num)) :- builtin:true. %TODO: Add real types
 visualizeString(Str::_, label(Str)) :- builtin:true. %TODO: Add real types
 
 visualizeCompound(Desc, TTerm, Vis) :-
-	builtin:parseTerm(TTerm, Func, TArgs),
-	builtin:length(TArgs, typedTerm, Arity),
-	subDescriptors(Desc, 0, Arity, SubDescs),
-	visualizeNameSubpaths(Func, SubDescs, Vis).
+	true(builtin:parseTerm(TTerm, Func, TArgs)),
+	true(subDescriptors(Desc, 0, TArgs, SubDescs)),
+	true(builtin:parseTerm(TTerm2Vis, Func, SubDescs)),
+	true(visualizeTerm(TTerm2Vis, Vis)).
 
-applyCheckers(cpi:descriptor(Path, OldMarkers), TTerm, VarNames, cpi:descriptor(Path, Markers)) :-
+applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type) :-
 	builtin:findall(Marker, marker, check(Path, TTerm, VarNames, Marker), NewMarkers),
 	append(OldMarkers, NewMarkers, Markers).
 
 
-subDescriptors(_, Last, Last, []) :- builtin:true.
-subDescriptors(cpi:descriptor(cpi:path(Res, Path), Markers), BeforeFirst, Last, [cpi:descriptor(cpi:path(Res, NewPath), MarkersForPath) | SubDescs]) :-
-	builtin:succ(BeforeFirst, First),
-	append(Path, [First], NewPath),
+subDescriptors(_, _, [], []) :- builtin:true.
+subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType | TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType | SubDescs]) :-
+	builtin:succ(BeforeIndex, Index),
+	append(Path, [Index], NewPath),
 	markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft),
-	subDescriptors(cpi:descriptor(cpi:path(Res, Path), MarkersLeft), First, Last, SubDescs).
+	subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).
 
 markersForPath([], _, [], []) :- builtin:true.
 markersForPath([marker(Path, Mark) | Markers], BasePath, MarkersForPath, MarkersLeft) :-
@@ -301,15 +303,17 @@ pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)) :- builtin:true.
 pathIsPrefix(cpi:path(Res, [First | Base]), cpi:path(Res, [First | Path])) :-
 	pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 
-visualizeNameSubpaths(Func, SubPaths, Vis) :-
-	builtin:if(userVisualization(Func, SubPaths, Vis),
+visualizeTerm(TTerm2Vis, Vis) :-
+	builtin:if(userVisualization(TTerm2Vis, Vis),
 		builtin:true,
 		% else
-		defaultVisualization(Func, SubPaths, Vis)).
+		defaultVisualization(TTerm2Vis, Vis)).
 
-defaultVisualization(Func, SubPaths, Vis) :-
+defaultVisualization(TTerm, Vis) :-
+	builtin:parseTerm(TTerm, Func, SubPaths),
 	builtin:if(localName(Func, LFunc),
 		builtin:true,
+		% else
 		LFunc::string = Func::string),
 	builtin:if(SubPaths::list(cpi:path) = []::list(cpi:path),
 		Vis::visualization = label(LFunc)::visualization,
@@ -333,7 +337,7 @@ append([X | A], B, [X | L]) :-
 	append(A, B, L).
 
 signature(visualize(Func, Args, Vis)::statement, [Func::string, Args::list(cpi:path), Vis::visualization]).
-visualize(Func, Args, Vis) ~> userVisualization(Func, Args, Vis) :- builtin:true.
+visualize(TTerm, Vis) ~> userVisualization(TTerm, Vis) :- builtin:true.
 
 visClass(Vis, Class) ~> cpi:termClass(Vis::visualization, Class) :- builtin:true.
 visClass(cpi:vis(_), !('net.nansore.cedalion.figures.VisualTerm')).
@@ -351,17 +355,17 @@ visClass(halfSize(_), !('net.nansore.cedalion.figures.HalfSize')).
 visClass(smaller(_), !('net.nansore.cedalion.figures.Smaller')).
 
 
-visualize(!('[]'), [], label(!('.'))).
-visualize(!('.'), [F, R], vert([vis(F), vis(R)])).
-visualize(!('~>'), [H,B], horiz([vis(H), label(!('~>')), vis(B)])).
-visualize(!('::'), [H,B], horiz([vis(H), label(!('::')), vis(B)])).
-visualize(!(','), [A,B], vert([
-		horiz([vis(A), label(!(','))]),
-		vis(B)
+visualize([]::list(_), label(!('.'))).
+visualize([F|R]::list(T), vert([vis(F::T), vis(R::list(T))])).
+visualize((H~>B)::statement, horiz([vis(H::statement), label(!('~>')), vis(B::statement)])).
+visualize((Term::Type)::typedTerm, horiz([vis(Term::Type), label(!('::')), vis(Type::type)])).
+visualize((A,B)::pred, vert([
+		horiz([vis(A::pred), label(!(','))]),
+		vis(B::pred)
 	])).
-visualize(!(':-'), [H,B], vert([
-	horiz([vis(H), label(!(':-'))]),
-	horiz([label(!'    '), vis(B)])
+visualize((H:-B)::statement, vert([
+	horiz([vis(H::pred), label(!(':-'))]),
+	horiz([label(!'    '), vis(B::pred)])
 	])).
 
 % Context menu
@@ -377,13 +381,13 @@ contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
 contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
 
 % Markers
-applyMarkers(cpi:descriptor(_, []), Vis, Vis) :- builtin:true.
-applyMarkers(cpi:descriptor(Path, [marker(MPath, Mark) | Markers]), Vis, MVis) :-
+applyMarkers(cpi:descriptor(_, _, [])::_, Vis, Vis) :- builtin:true.
+applyMarkers(cpi:descriptor(Path, Term, [marker(MPath, Mark) | Markers])::Type, Vis, MVis) :-
 	builtin:if(MPath = Path,
 		applyMarker(Mark, Vis, MVis1),
 		%else
 		MVis1 = Vis),
-	applyMarkers(cpi:descriptor(Path, Markers), MVis1, MVis).
+	applyMarkers(cpi:descriptor(Path, Term, Markers)::Type, MVis1, MVis).
 
 applyMarker(Mark, Vis, MVis) :-
 	builtin:if(markerVisualization(Mark, Vis, MVis),
@@ -462,8 +466,8 @@ checkArgTypes(cpi:path(Res, Path), Index, [TArg | TArgs], VarNames, MarkIn, Mark
 	builtin:succ(Index, NextIndex),
 	checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 
-markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(label(!'E'), cpi:rgb(255,0,0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X::error, VarNames)))).
-markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type::type, VarNames)))).
+markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(label(!'E'), cpi:rgb(255,0,0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
+markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type, VarNames)::type))).
 markerVis(varType(_), V, bold(V)).
 
 signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
@@ -484,29 +488,28 @@ true(X) :-
 		builtin:throw(false(X))).
 
 % Immediate descriptor
+signature(cpi:immediateDescriptor(Term, VarNames)::Type, [Term::Type, VarNames::list(varName)]).
+
 % Visualization of an immediate descriptor
-cpi:visualizeDescriptor(cpi:immediateDescriptor(TTerm, VarNames), Vis) :-
-	builtin:if(builtin:var(TTerm),
-		true(visualizeVar(TTerm, VarNames, Vis)),
+cpi:visualizeDescriptor(cpi:immediateDescriptor(Term, VarNames)::Type, Vis) :-
+	builtin:if(builtin:var(Term::Type),
+		true(visualizeVar(Term::Type, VarNames, Vis)),
 		% else
-		builtin:if(builtin:number(TTerm),
-			true(visualizeNumber(TTerm, Vis)),
+		builtin:if(builtin:number(Term::Type),
+			true(visualizeNumber(Term::Type, Vis)),
 			% else
-			builtin:if(builtin:string(TTerm),
-				true(visualizeString(TTerm, Vis)),
+			builtin:if(builtin:string(Term::Type),
+				true(visualizeString(Term::Type, Vis)),
 				% else
-				true(visualizeCompound(cpi:immediateDescriptor(TTerm, VarNames), TTerm, Vis))
+				true(visualizeCompound(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, Vis))
 			)
 		)
 	).
 	
-subDescriptors(_, Last, Last, []) :- builtin:true.
-subDescriptors(cpi:immediateDescriptor(TTerm, VarNames), BeforeFirst, Last, [cpi:immediateDescriptor(SubTTerm, VarNames1) | SubDescs]) :-
-	builtin:parseTerm(TTerm, _, TArgs),
-	builtin:succ(BeforeFirst, First),
-	element(SubTTerm, First, TArgs, typedTerm),
-	selectVarNamesFor(SubTTerm, VarNames, VarNames1),
-	subDescriptors(cpi:immediateDescriptor(TTerm, VarNames), First, Last, SubDescs).
+subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, BeforeFirst, [SubTerm::SubType | TArgs], [cpi:immediateDescriptor(SubTerm, VarNames1)::SubType | SubDescs]) :-
+	true(builtin:succ(BeforeFirst, First)),
+	true(selectVarNamesFor(SubTerm::SubTypes, VarNames, VarNames1)),
+	true(subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, First, TArgs, SubDescs)).
 
 containingStatementPath([], []) :- builtin:true.
 containingStatementPath([2 | Path], [2 | StatementPath]) :-
