@@ -365,16 +365,16 @@ visualize(!(':-'), [H,B], vert([
 	])).
 
 % Context menu
-contextMenuEntry(TTerm, Path, Name, Proc) ~> cpi:contextMenuEntry(Path, menuItem(Name, Proc)) :- 
-	cpi:termAtPath(Path, TTerm, _),
+contextMenuEntry(TTerm, VarNames, Path, Name, Proc) ~> cpi:contextMenuEntry(Path, menuItem(Name, Proc)) :- 
+	cpi:termAtPath(Path, TTerm, VarNames),
 	cpi:procedureCommand(Proc, _).
 
 signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
 cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem').
 
 % Undo
-contextMenuEntry(_, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
-contextMenuEntry(_, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
+contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
+contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
 
 % Markers
 applyMarkers(cpi:descriptor(_, []), Vis, Vis) :- builtin:true.
@@ -397,7 +397,7 @@ check(Path, TTerm, _, marker(Path, stringMarker)) :-
 	builtin:string(TTerm).
 markerVis(stringMarker, Vis, color(Vis, cpi:rgb(255,0,128))).
 
-%%%%%%%%%%%%%%% Type System %%%%%%%%%%%%%5555
+%%%%%%%%%%%%%%% Type System %%%%%%%%%%%%%
 
 check(StatementPath, Statement::statement, VarNames, Marker) :-
 	statementPath(StatementPath),
@@ -462,8 +462,8 @@ checkArgTypes(cpi:path(Res, Path), Index, [TArg | TArgs], VarNames, MarkIn, Mark
 	builtin:succ(Index, NextIndex),
 	checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 
-markerVis(error(X, VarNames), V, tooltip(lineBorder(V, 1, cpi:rgb(255, 0, 0)), vis(cpi:immediateDescriptor(X::error, VarNames)))).
-markerVis(typeOf(Term::Type, VarNames), V, vert([V, halfSize(vis(cpi:immediateDescriptor(Type::type, VarNames)))])).
+markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(label(!'E'), cpi:rgb(255,0,0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X::error, VarNames)))).
+markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type::type, VarNames)))).
 markerVis(varType(_), V, bold(V)).
 
 signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
@@ -512,3 +512,8 @@ containingStatementPath([], []) :- builtin:true.
 containingStatementPath([2 | Path], [2 | StatementPath]) :-
 	containingStatementPath(Path, StatementPath).
 containingStatementPath([1 | Path], [1]) :- builtin:true.
+
+% List operations
+contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First | Rest]::list(T), VarNames)).
+contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _ | Rest]::list(T), VarNames)).
+contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
