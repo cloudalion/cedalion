@@ -355,9 +355,12 @@ visClass(halfSize(_), !('net.nansore.cedalion.figures.HalfSize')).
 visClass(smaller(_), !('net.nansore.cedalion.figures.Smaller')).
 
 
-visualize([]::list(_), label(!('.'))).
-visualize([F|R]::list(T), vert([vis(F::T), vis(R::list(T))])).
-visualize((H~>B)::statement, horiz([vis(H::statement), label(!('~>')), vis(B::statement)])).
+visualize([]::list(_), symbol(8718)).
+visualize([F|R]::list(T), vert([
+	horiz([symbol(8729), vis(F::T)]), 
+	vis(R::list(T))
+	])).
+visualize((H~>B)::statement, horiz([vis(H::statement), symbol(8669), vis(B::statement)])).
 visualize((Term::Type)::typedTerm, horiz([vis(Term::Type), label(!('::')), vis(Type::type)])).
 visualize((A,B)::pred, vert([
 		horiz([vis(A::pred), label(!(','))]),
@@ -520,3 +523,12 @@ containingStatementPath([1 | Path], [1]) :- builtin:true.
 contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First | Rest]::list(T), VarNames)).
 contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _ | Rest]::list(T), VarNames)).
 contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
+
+
+% Display view
+signature(showView(Vis)::command, [Vis::visualization]).
+commandClass(showView(Vis), !('net.nansore.cedalion.cmd.ShowView')).
+
+contextMenuEntry(TTerm, VarNames, Path, !'Show in View', showInView(TTerm, VarNames)).
+procedure(showInView(Term::Type, VarNames), showView(vis(cpi:immediateDescriptor(Term, VarNames)::Type))).
+

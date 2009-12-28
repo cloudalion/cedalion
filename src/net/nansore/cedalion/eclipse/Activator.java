@@ -25,6 +25,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -45,7 +47,11 @@ public class Activator extends AbstractUIPlugin {
     
 //    private PackageLoader pkgLoader;
 
-	private PrologProxy prolog; 
+	private PrologProxy prolog;
+
+	private IViewOpener viewOpener;
+
+	private TermContext currContext; 
 	
 	/**
 	 * The constructor.
@@ -216,5 +222,21 @@ public class Activator extends AbstractUIPlugin {
 	public static PrologProxy getProlog() {
 		return getDefault().prolog;
 	}
-
+	
+	public void registerViewOpener(IViewOpener opener) {
+		viewOpener = opener;
+	}
+	
+	public void registerCurrentContext(TermContext currContext) {
+		this.currContext = currContext;
+	}
+	
+	public CedalionView openView() throws PartInitException {
+		return viewOpener.openView();
+	}
+	
+	public TermContext currentContext() {
+		return currContext;
+	}
+	
 }

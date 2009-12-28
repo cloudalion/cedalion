@@ -59,7 +59,7 @@ import org.eclipse.ui.part.EditorPart;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CedalionEditor extends EditorPart implements ISelectionProvider, TermContext, DisposeListener {
+public class CedalionEditor extends EditorPart implements ISelectionProvider, TermContext, DisposeListener, IViewOpener {
 
 	private final class VisualtermProposalProvider implements IContentProposalProvider {
 		public IContentProposal[] getProposals(String incompleteText, int pos) {
@@ -256,6 +256,8 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	 */
 	public void setFocus() {
 		getSite().getPage().activate(this);
+		Activator.getDefault().registerViewOpener(this);
+		Activator.getDefault().registerCurrentContext(this);
 	}
 
     /* (non-Javadoc)
@@ -422,5 +424,10 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 
 	public String getPackage() {
 		return input.getFile().getParent().getFullPath().toString();
+	}
+
+	@Override
+	public CedalionView openView() throws PartInitException {
+		return (CedalionView)getSite().getPage().showView("net.nansore.cedalion.CedalionView");
 	}
 }
