@@ -8,6 +8,8 @@ import net.nansore.prolog.PrologException;
 
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
@@ -57,5 +59,6 @@ public class CedalionView extends ViewPart {
 	public void setVisualization(Compound visualization) throws TermInstantiationException, PrologException {
 		IFigure figure = (IFigure)TermInstantiator.instance().instantiate(visualization, Activator.getDefault().currentContext());
 		canvas.setContents(figure);
+		canvas.setBackground(new Color(canvas.getDisplay(), new RGB(255, 255, 255)));
 	}
 }
