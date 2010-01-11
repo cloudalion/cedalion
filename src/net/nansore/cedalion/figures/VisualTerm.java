@@ -55,6 +55,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     private List<TermFigure> disposables = new ArrayList<TermFigure>();
 	private Object path;
 	private Compound descriptor;
+	private Compound projType;
 
     /**
      * @param term
@@ -67,6 +68,11 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         // The first argument is the descriptor, containing the path and additional information
     	descriptor = (Compound)term.arg(1); 
         path = ((Compound)descriptor.arg(1)).arg(1);
+        if(term.arity() > 1) {
+        	projType = (Compound)term.arg(2);
+        } else {
+        	projType = term.getProlog().createCompound("cpi#default");
+        }
         
         try {
             // Set up the GUI
@@ -111,7 +117,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         // Query for the annotated term's visualization
 	    Variable vis = new Variable();
 	    PrologProxy prolog = Activator.getProlog();
-		Compound q = prolog.createCompound("cpi#visualizeDescriptor", path, vis);
+		Compound q = prolog.createCompound("cpi#visualizeDescriptor", path, projType, vis);
 	    // If successful, build the GUI
         try {
 			Map<Variable, Object> s = prolog.getSolution(q);
