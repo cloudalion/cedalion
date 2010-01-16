@@ -21,13 +21,19 @@ public class Notifier {
 		return instance;
 	}
 	
-	public synchronized void register(Compound term, Runnable command) {
+	public synchronized Runnable register(final Compound term, final Runnable command) {
 		List<Runnable> l = cmdMap.get(term);
 		if(l == null) {
 			l = new ArrayList<Runnable>();
 			cmdMap.put(term, l);
 		}
 		l.add(command);
+		return new Runnable() {
+			@Override
+			public void run() {
+				cmdMap.get(term).remove(command);
+			}
+		};
 	}
 	
 	public synchronized void notify(Compound term) {
@@ -37,5 +43,13 @@ public class Notifier {
 				r.run();
 			}
 		}
+	}
+
+	public void printRefCount() {
+		int total = 0;
+		for(List<Runnable> l : cmdMap.values()) {
+			total += l.size();
+		}
+		System.out.println("Notifiables: " + total);
 	}
 }

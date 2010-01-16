@@ -14,6 +14,7 @@ import java.util.Map;
 
 import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
+import net.nansore.cedalion.execution.Notifier;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.TermFigure;
 import net.nansore.prolog.Compound;
@@ -131,6 +132,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	        // Reload the content
 	        Activator.getDefault().loadResource(input.getFile());
 	        refresh();
+	        System.gc();
         } catch (PrologException e) {
             e.printStackTrace();
 		} catch (TermInstantiationException e) {
@@ -420,6 +422,8 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 
     public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
         editorWidget.refresh();
+        Notifier.instance().printRefCount();
+        System.gc();
     }
 
 	public String getPackage() {

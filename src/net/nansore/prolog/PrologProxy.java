@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 public class PrologProxy {
@@ -23,6 +24,8 @@ public class PrologProxy {
     private OutputStreamWriter output;
     private int nextChar = -2;
     private Writer log;
+    private Pattern intRegex = Pattern.compile("-?[0-9]+");
+    private Pattern floatRegex = Pattern.compile("-?[0-9]+(\\.[0-9]+)?([eE][+\\-][0-9]+)?");
     public PrologProxy(File file) throws IOException {
         proc = Runtime.getRuntime().exec("pl -s " + file.toString() + " -t qryStart");
         input = new InputStreamReader(proc.getInputStream());
@@ -143,17 +146,13 @@ public class PrologProxy {
             	return new Compound(this, atom, args.toArray());
         } else {
             // Check for numeric values
-            try {
-                // Try integer
+        	if(intRegex.matcher(atom).matches()) {
                 return Integer.valueOf(atom);
-            } catch (RuntimeException e) {
-                try {
-                    // Try float
-                    return Float.valueOf(atom);
-                } catch (RuntimeException e1) {
-                    // Default: compound with arity 0
-                    return new Compound(this, atom);
-                }
+            } else if(floatRegex.matcher(atom).matches()) {
+                // Try float
+                return Float.valueOf(atom);
+            } else {
+                return new Compound(this, atom);
             }
         }
         

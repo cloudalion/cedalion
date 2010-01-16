@@ -3,7 +3,9 @@
  */
 package net.nansore.cedalion.figures;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.nansore.cedalion.eclipse.TermContext;
@@ -24,7 +26,7 @@ abstract public class FontModifier extends TermContextProxy {
     private TermFigure figure;
 	private Font symbolFont;
     private static Map<String, FontElement> fontRegistry = new HashMap<String, FontElement>();
-//	private ArrayList disposables = new ArrayList();
+	private ArrayList<TermFigure> disposables = new ArrayList<TermFigure>();
 
     /**
      * @param parent
@@ -135,18 +137,12 @@ abstract public class FontModifier extends TermContextProxy {
         return fontDataDesc;
     }
 	public void dispose() {
-/*	    if(font == null) {
-	        throw new RuntimeException("Figure already disposed");
-	    }
-		for(Iterator i = disposables.iterator(); i.hasNext(); )
-			((TermFigure)i.next()).dispose();
-        disposeFont(font);
-        font = null;*/
-//        System.out.println("Font has been disposed");
+		for(Iterator<TermFigure> i = disposables.iterator(); i.hasNext(); )
+			i.next().dispose();
 	}
 
-/*	public void registerDispose(TermFigure disp) {
+	public void registerDispose(TermFigure disp) {
 		disposables.add(disp);
-	}*/
+	}
 
 }

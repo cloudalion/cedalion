@@ -1,0 +1,28 @@
+cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames):-fileIsLoaded(ResourceName, _, model(Statements, AllVarNames, _)), subTerm(Statements::list(statement), Path, TTerm), selectVarNamesFor(TTerm, AllVarNames, VarNames).
+subTerm(TTerm, [], TTerm):-builtin:true.
+subTerm(TTerm, [First|Path], TSubTerm):-builtin:parseTerm(TTerm, _, TArgs), element(TSubTerm1, First, TArgs, typedTerm), subTerm(TSubTerm1, Path, TSubTerm).
+signature(element(Elem, Index, List, Type)::pred, [Elem::Type, Index::number, List::list(Type), Type::type]).
+element(First, 1, [First|_], _):-builtin:true.
+element(Elem, Index, [_|Rest], Type):-builtin:succ(IndexMinusOne, Index), element(Elem, IndexMinusOne, Rest, Type).
+signature(setElement(Index, List, Elem, NewList, Type)::pred, [Index::number, List::list(Type), Elem::Type, NewList::Type, Type::type]).
+setElement(1, [_|Rest], Elem, [Elem|Rest], _):-builtin:true.
+setElement(Index, [First|Rest], Elem, [First|ModRest], Type):-builtin:succ(IndexMinusOne, Index), setElement(IndexMinusOne, Rest, Elem, ModRest, Type).
+cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames2), doAll([dbRemove(loadedFile(ResourceName, _, _)), dbInsert(loadedFile(ResourceName, FileName, model(Statements, VarNames, NsList)))])):-fileIsLoaded(ResourceName, FileName, model(OldStatements, VarNames1, NsList)), replaceSubterm(OldStatements::list(statement), Path, TTerm, Statements::list(statement)), mergeVarNames(VarNames1, VarNames2, VarNames).
+replaceSubterm(_, [], TTerm, TTerm):-builtin:true.
+replaceSubterm(OldTTerm, [First|Path], RepTTerm, TTerm):-builtin:parseTerm(OldTTerm, Func, OldTArgs), replaceNthSubterm(OldTArgs, First, Path, RepTTerm, NewTArgs), builtin:parseTerm(TTerm, Func, NewTArgs).
+replaceNthSubterm([OldTTerm|TArgs], 1, Path, RepTTerm, [TTerm|TArgs]):-replaceSubterm(OldTTerm, Path, RepTTerm, TTerm).
+replaceNthSubterm([First|TArgs], N, Path, RepTTerm, [First|TNewArgs]):-N>1, builtin:succ(NMinus1, N), replaceNthSubterm(TArgs, NMinus1, Path, RepTTerm, TNewArgs).
+projection(builtin:if(Cond, Then, Else)::pred, vert([horiz([label(!if), vis(Cond::pred), label(! (:))]), horiz([label(!'    '), vis(Then::pred)]), label(!'else:'), horiz([label(!'    '), vis(Else::pred)])])).
+signature(builtin:if(Cond, Then, Else)::pred, [Cond::pred, Then::pred, Else::pred]).
+cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames)), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|UndoStack], [], NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, UndoStack, _, OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), builtin:if(OldModifiedCounter<0, NewModifiedCounter::number=99999::number, builtin:succ(OldModifiedCounter, NewModifiedCounter)), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
+cpi:procedureCommand(cpi:undo(ResourceName), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)), assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter)-cpi:constExpr(1), number), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|RedoStack], NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames)|UndoStack], RedoStack, OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
+cpi:procedureCommand(cpi:redo(ResourceName), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)), assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter)-cpi:constExpr(1), number), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|UndoStack], RedoStack, NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames)|RedoStack], OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
+cpi:isModified(ResourceName):-editStateIs(ResourceName, _, _, ModifiedCounter), \+ModifiedCounter::number==0::number.
+signature(X+Y::number, [X::number, Y::number]).
+function(X+Y, number, Z, plus(X, Y, Z)).
+commandClass(plus(X, Y, Z), !'net.nansore.cedalion.cmd.Plus').
+signature(X-Y::number, [X::number, Y::number]).
+function(X-Y, number, Z, minus(X, Y, Z)).
+commandClass(minus(X, Y, Z), !'net.nansore.cedalion.cmd.Minus').
+cpi:procedureCommand(cpi:func(cpi:termAsString(cpi:path(ResourceName, Path), Depth), Str, string), termToString(TTerm, VarNames, Depth, NsList, Str)):-cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames), fileIsLoaded(ResourceName, _, model(_, _, NsList)).
+cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef), doAll([stringToTerm(StringRef, NsList, TTerm, VarNames), doProc(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames))])):-fileIsLoaded(ResourceName, _, model(_, _, NsList)).

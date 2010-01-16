@@ -1,0 +1,83 @@
+% Open a file
+procedure(cpi:openFile(FileName, ResourceName, Namespace), 
+	doAll([
+		readFile(FileName, Namespace, FileContent),
+		assignFinal(Model, fileToModel(FileContent), model),
+		dbInsert(loadedFile(ResourceName, FileName, Model)),
+		dbInsert(editState(ResourceName, [], [], 0))
+	])).
+
+procedure(cpi:closeFile(ResourceName), 
+	doAll([
+		dbRemove(loadedFile(ResourceName, _, _)),
+		dbRemove(editState(ResourceName, _, _, _))
+	])).
+
+loadedFile(ResourceName, FileName, Model) ~> fileIsLoaded(ResourceName, FileName, Model) :- builtin:true.
+editState(ResourceName, UndoStack, RedoStack, ModifiedCounter) ~> editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter) :- builtin:true.
+
+cpi:procedureCommand(cpi:func(fileToModel(builtin:fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, cpi:constExpr(model(Statements, VarNames, NsList)), model)) :-
+	fileModel(Terms, Statements, VarNames).
+
+signature(fileModel(Terms, Statements, VarNames)::pred, [Terms::list(annotatedTerm), Statements::list(statement), VarNames::list(varName)]).
+fileModel([], [], []) :- builtin:true.
+fileModel([builtin:statement(S, VN1) | Terms], [S | Statements], VarNames) :-
+	fileModel(Terms, Statements, VN2),
+	mergeVarNames(VN1, VN2, VarNames).
+
+
+mergeVarNames([], VarNames, VarNames) :- builtin:true.
+mergeVarNames([builtin:varName(Var::T, Name) | VN1], VN2, VarNames) :-
+	builtin:if(listMember(builtin:varName(Var::T, Name), typedTerm, VN2),		%varInVarNames(Var::T, VN2),
+		mergeVarNames(VN1, VN2, VarNames),
+		%else
+		mergeVarNames(VN1, [builtin:varName(Var::T, Name) | VN2], VarNames)).
+
+varInVarNames(Var::T, [builtin:varName(Var1::T, _) | _]) :-
+	builtin:equals(Var1::T, Var::T).
+varInVarNames(Var::T, [_ | VN]) :-
+	varInVarNames(Var::T, VN).
+
+
+% Save a file
+cpi:procedureCommand(cpi:saveFile(ResourceName, FileName), doAll([
+		writeFile(FileName, Content),
+		dbRemove(editState(ResourceName, _, _, _)),
+		dbInsert(editState(ResourceName, UndoStack, RedoStack, 0))	
+	])) :-
+	fileIsLoaded(ResourceName, _, Model),
+	modelToContent(Model, Content),
+	editStateIs(ResourceName, UndoStack, RedoStack, _).
+
+modelToContent(model(Statements, VarNames, NsList), builtin:fileContent(AnnoStatements, NsList)) :-
+	annotateStatements(Statements, VarNames, AnnoStatements).
+
+
+annotateStatements([], _, []) :- builtin:true.
+annotateStatements([Statement | Statements], VarNames, [builtin:statement(Statement, VN1) | AnnoStatements]) :-
+	selectVarNamesFor(Statement::statement, VarNames, VN1),
+	annotateStatements(Statements, VarNames, AnnoStatements).
+
+selectVarNamesFor(_, [], []) :- builtin:true.
+selectVarNamesFor(TTerm, [builtin:varName(Var::T, Name) | VarNames], VN) :-
+	selectVarNamesFor(TTerm, VarNames, VN1),
+	builtin:if(varIn(Var::T, TTerm),
+		VN = [builtin:varName(Var::T, Name) | VN1],
+		% else
+		VN = VN1).
+
+varIn(Var::VarType, Term::TermType) :-
+	builtin:if(builtin:var(Term::TermType),
+		builtin:equals(Var::VarType, Term::TermType),
+		(% else
+			builtin:compound(Term::TermType),
+			builtin:parseTerm(Term::TermType, _, Args),
+			varInList(Var::VarType, Args)
+		)).
+
+varInList(Var::VarType, [First::FirstType | _]) :-
+	varIn(Var::VarType, First::FirstType).
+
+varInList(Var::VarType, [_ | Tail]) :-
+	varInList(Var::VarType, Tail).
+

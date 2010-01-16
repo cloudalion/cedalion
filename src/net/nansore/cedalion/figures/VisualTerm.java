@@ -56,6 +56,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	private Object path;
 	private Compound descriptor;
 	private Compound projType;
+	private Runnable unreg;
 
     /**
      * @param term
@@ -86,7 +87,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             context.registerTermFigure(path, this);
             context.registerDispose(this);
             PrologProxy p = term.getProlog();
-			Notifier.instance().register(p.createCompound("::", path, p.createCompound("cpi#path")), new Runnable() {
+			unreg = Notifier.instance().register(p.createCompound("::", path, p.createCompound("cpi#path")), new Runnable() {
 				
 				@Override
 				public void run() {
@@ -259,8 +260,10 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      */
     public void updateFigure() throws TermVisualizationException, TermInstantiationException {
 		disposeChildFigures();
-		if(contentFigure != null)
-		    remove(contentFigure);
+		if(contentFigure != null) {
+			contentFigure.erase();
+		    remove(contentFigure);			
+		}
         contentFigure = createContentFigure(descriptor);
         add(contentFigure);
         requestFocus();
@@ -295,6 +298,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      */
     public void dispose() {
 		unregisterTermFigure(path, this);
+		unreg.run();
         disposeChildFigures();
     }
 
