@@ -1,83 +1,47 @@
-% Open a file
-procedure(cpi:openFile(FileName, ResourceName, Namespace), 
-	doAll([
-		readFile(FileName, Namespace, FileContent),
-		assignFinal(Model, fileToModel(FileContent), model),
-		dbInsert(loadedFile(ResourceName, FileName, Model)),
-		dbInsert(editState(ResourceName, [], [], 0))
-	])).
-
-procedure(cpi:closeFile(ResourceName), 
-	doAll([
-		dbRemove(loadedFile(ResourceName, _, _)),
-		dbRemove(editState(ResourceName, _, _, _))
-	])).
-
-loadedFile(ResourceName, FileName, Model) ~> fileIsLoaded(ResourceName, FileName, Model) :- builtin:true.
-editState(ResourceName, UndoStack, RedoStack, ModifiedCounter) ~> editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter) :- builtin:true.
-
-cpi:procedureCommand(cpi:func(fileToModel(builtin:fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, cpi:constExpr(model(Statements, VarNames, NsList)), model)) :-
-	fileModel(Terms, Statements, VarNames).
-
+signature(cpi:openFile(FileName, ResourceName, Namespace)::procedure, [FileName::string, ResourceName::string, Namespace::string]).
+signature(loadedFile(ResourceName, FileName, Model)::statement, [ResourceName::string, FileName::string, Model::model]).
+signature(undoFrame::type, []).
+signature(editState(ResourceName, UndoStack, RedoStack, DirtyFlag)::statement, [ResourceName::string, UndoStack::list(undoFrame), RedoStack::list(undoFrame), DirtyFlag::number]).
+procedure(cpi:openFile(FileName, ResourceName, Namespace), doAll([readFile(FileName, Namespace, FileContent), assignFinal(Model, fileToModel(FileContent), model), dbInsert(loadedFile(ResourceName, FileName, Model)), dbInsert(editState(ResourceName, [], [], 0))])).
+signature(cpi:closeFile(ResourceName)::procedure, [ResourceName::string]).
+procedure(cpi:closeFile(ResourceName), doAll([dbRemove(loadedFile(ResourceName, _, _)), dbRemove(editState(ResourceName, _, _, _))])).
+signature(fileIsLoaded(ResourceName, FileName, Model)::pred, [ResourceName::string, FileName::string, Model::model]).
+loadedFile(ResourceName, FileName, Model)~>fileIsLoaded(ResourceName, FileName, Model):-builtin:true.
+signature(editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter)::pred, [ResourceName::string, UndoStack::list(undoFrame), RedoStack::list(undoFrame), ModifiedCounter::number]).
+editState(ResourceName, UndoStack, RedoStack, ModifiedCounter)~>editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter):-builtin:true.
+signature(model::type, []).
+signature(fileToModel(Content)::expr(model), [Content::fileContent]).
+signature(nsElem::type, []).
+signature(annotatedTerm::type, []).
+signature(builtin:fileContent(Terms, NsList)::fileContent, [Terms::list(annotatedTerm), NsList::list(nsElem)]).
+signature(model(Statements, VarNames, NsList)::model, [Statements::list(statement), VarNames::list(varName), NsList::list(nsElem)]).
+signature(cpi:constExpr(Const)::expr(T), [Const::T]).
+projection(cpi:constExpr(Const)::expr(T), horiz([halfSize(label(!const)), vis(Const::T)])).
+cpi:procedureCommand(cpi:func(fileToModel(builtin:fileContent(Terms, NsList)), ModelRef, model), assign(ModelRef, cpi:constExpr(model(Statements, VarNames, NsList)), model)):-fileModel(Terms, Statements, VarNames).
 signature(fileModel(Terms, Statements, VarNames)::pred, [Terms::list(annotatedTerm), Statements::list(statement), VarNames::list(varName)]).
-fileModel([], [], []) :- builtin:true.
-fileModel([builtin:statement(S, VN1) | Terms], [S | Statements], VarNames) :-
-	fileModel(Terms, Statements, VN2),
-	mergeVarNames(VN1, VN2, VarNames).
-
-
-mergeVarNames([], VarNames, VarNames) :- builtin:true.
-mergeVarNames([builtin:varName(Var::T, Name) | VN1], VN2, VarNames) :-
-	builtin:if(listMember(builtin:varName(Var::T, Name), typedTerm, VN2),		%varInVarNames(Var::T, VN2),
-		mergeVarNames(VN1, VN2, VarNames),
-		%else
-		mergeVarNames(VN1, [builtin:varName(Var::T, Name) | VN2], VarNames)).
-
-varInVarNames(Var::T, [builtin:varName(Var1::T, _) | _]) :-
-	builtin:equals(Var1::T, Var::T).
-varInVarNames(Var::T, [_ | VN]) :-
-	varInVarNames(Var::T, VN).
-
-
-% Save a file
-cpi:procedureCommand(cpi:saveFile(ResourceName, FileName), doAll([
-		writeFile(FileName, Content),
-		dbRemove(editState(ResourceName, _, _, _)),
-		dbInsert(editState(ResourceName, UndoStack, RedoStack, 0))	
-	])) :-
-	fileIsLoaded(ResourceName, _, Model),
-	modelToContent(Model, Content),
-	editStateIs(ResourceName, UndoStack, RedoStack, _).
-
-modelToContent(model(Statements, VarNames, NsList), builtin:fileContent(AnnoStatements, NsList)) :-
-	annotateStatements(Statements, VarNames, AnnoStatements).
-
-
-annotateStatements([], _, []) :- builtin:true.
-annotateStatements([Statement | Statements], VarNames, [builtin:statement(Statement, VN1) | AnnoStatements]) :-
-	selectVarNamesFor(Statement::statement, VarNames, VN1),
-	annotateStatements(Statements, VarNames, AnnoStatements).
-
-selectVarNamesFor(_, [], []) :- builtin:true.
-selectVarNamesFor(TTerm, [builtin:varName(Var::T, Name) | VarNames], VN) :-
-	selectVarNamesFor(TTerm, VarNames, VN1),
-	builtin:if(varIn(Var::T, TTerm),
-		VN = [builtin:varName(Var::T, Name) | VN1],
-		% else
-		VN = VN1).
-
-varIn(Var::VarType, Term::TermType) :-
-	builtin:if(builtin:var(Term::TermType),
-		builtin:equals(Var::VarType, Term::TermType),
-		(% else
-			builtin:compound(Term::TermType),
-			builtin:parseTerm(Term::TermType, _, Args),
-			varInList(Var::VarType, Args)
-		)).
-
-varInList(Var::VarType, [First::FirstType | _]) :-
-	varIn(Var::VarType, First::FirstType).
-
-varInList(Var::VarType, [_ | Tail]) :-
-	varInList(Var::VarType, Tail).
-
+fileModel([], [], []):-builtin:true.
+signature(builtin:statement(S, VN)::annotatedTerm, [S::statement, VN::list(varName)]).
+signature(mergeVarNames(VN1, VN2, VarNames)::pred, [VN1::list(varName), VN2::list(varName), VarNames::list(varName)]).
+fileModel([builtin:statement(S, VN1)|Terms], [S|Statements], VarNames):-fileModel(Terms, Statements, VN2), mergeVarNames(VN1, VN2, VarNames).
+mergeVarNames([], VarNames, VarNames):-builtin:true.
+signature(builtin:varName(Var::T, Name)::varName, [ (Var::T)::typedTerm, Name::_]).
+signature(listMember(Elem, Type, List)::pred, [Elem::Type, Type::type, List::list(Type)]).
+mergeVarNames([builtin:varName(Var::T, Name)|VN1], VN2, VarNames):-builtin:if(listMember(builtin:varName(Var::T, Name), varName, VN2), mergeVarNames(VN1, VN2, VarNames), mergeVarNames(VN1, [builtin:varName(Var::T, Name)|VN2], VarNames)).
+signature(varInVarNames(TVar, VN)::pred, [TVar::typedTerm, VN::list(varName)]).
+signature(builtin:equals(TVar1, TVar2)::pred, [TVar1::typedTerm, TVar2::typedTerm]).
+varInVarNames(Var::T, [builtin:varName(Var1::T, _)|_]):-builtin:equals(Var1::T, Var::T).
+varInVarNames(Var::T, [_|VN]):-varInVarNames(Var::T, VN).
+signature(cpi:saveFile(ResourceName, FileName)::procedure, [ResourceName::string, FileName::string]).
+signature(modelToContent(Model, Content)::pred, [Model::model, Content::fileContent]).
+cpi:procedureCommand(cpi:saveFile(ResourceName, FileName), doAll([writeFile(FileName, Content), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, UndoStack, RedoStack, 0))])):-fileIsLoaded(ResourceName, _, Model), modelToContent(Model, Content), editStateIs(ResourceName, UndoStack, RedoStack, _).
+signature(annotateStatements(Statements, VarNames, AnnoStatements)::pred, [Statements::list(statement), VarNames::list(varName), AnnoStatements::list(annotatedTerm)]).
+modelToContent(model(Statements, VarNames, NsList), builtin:fileContent(AnnoStatements, NsList)):-annotateStatements(Statements, VarNames, AnnoStatements).
+annotateStatements([], _, []):-builtin:true.
+signature(selectVarNamesFor(TTerm, VN1, VN2)::pred, [TTerm::typedTerm, VN1::list(varName), VN2::list(varName)]).
+annotateStatements([Statement|Statements], VarNames, [builtin:statement(Statement, VN1)|AnnoStatements]):-selectVarNamesFor(Statement::statement, VarNames, VN1), annotateStatements(Statements, VarNames, AnnoStatements).
+selectVarNamesFor(_, [], []):-builtin:true.
+signature(varIn(TVar, TTerm)::pred, [TVar::typedTerm, TTerm::typedTerm]).
+selectVarNamesFor(TTerm, [builtin:varName(Var::T, Name)|VarNames], VN):-selectVarNamesFor(TTerm, VarNames, VN1), builtin:if(varIn(Var::T, TTerm), VN=[builtin:varName(Var::T, Name)|VN1], VN=VN1).
+varIn(Var::VarType, Term::TermType):-builtin:if(builtin:var(Term::TermType), builtin:equals(Var::VarType, Term::TermType), (builtin:compound(Term::TermType), builtin:parseTerm(Term::TermType, _, Args), varInList(Var::VarType, Args))).
+varInList(Var::VarType, [First::FirstType|_]):-varIn(Var::VarType, First::FirstType).
+varInList(Var::VarType, [_|Tail]):-varInList(Var::VarType, Tail).

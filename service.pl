@@ -55,7 +55,7 @@ translateRewrite(Head, Body, Clause) :-
 
 % Load/Reload a file to the database
 loadFile(!(FileName), !(Namespace)) :-
-	forall(retract(loadedStatement(FileName, Statement)), remove(Statement)),
+	forall(retract('builtin#loadedStatement'(FileName, Statement)), remove(Statement)),
 	open(FileName, read, Stream),
 	read(Stream, Term),
 	insertTermsFromSteam(Stream, Term, FileName, [default=Namespace]).
@@ -77,7 +77,7 @@ interpretTerm(Term, FileName, NsList, NewNsList) :-
 		(
 			NewNsList = NsList,
 			localToGlobal(Term, NsList, GTerm),
-			assert(loadedStatement(FileName, GTerm)),
+			assert('builtin#loadedStatement'(FileName, GTerm)),
 			if(GTerm = (Statement ~> _), % Avoid exception if not implemented
 				assert((Statement :- fail))),
 			insert(GTerm)

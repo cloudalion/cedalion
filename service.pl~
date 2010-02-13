@@ -322,7 +322,7 @@ handleException(Exception) :-
 % The basics
 'builtin#true' :- true.
 'builtin#fail' :- fail.
-'builtin#equals'(A::T, B::T) :- A == B.
+'builtin#equals'(A::_, B::_) :- A == B.
 'builtin#if'(C, T, E) :- if(C, T, E).
 'builtin#if'(C, T) :- if(C, T).
 'builtin#var'(V::_) :- var(V).

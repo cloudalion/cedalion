@@ -1,91 +1,33 @@
-
-%%%%%%%%%%%%%%% Type System %%%%%%%%%%%%%
-
-check(StatementPath, Statement::statement, VarNames, Marker) :-
-	statementPath(StatementPath),
-	true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)),
-	listMember(Marker, marker, Markers).
-
-statementPath(cpi:path(_, [1])) :- builtin:true.
-statementPath(cpi:path(Res, [2 | Path])) :-
-	statementPath(cpi:path(Res, Path)).
-
-listMember(X, _T, [X|_]) :- builtin:true.
-listMember(X, T, [_|L]) :-
-	listMember(X, T, L).
-
-checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut) :-
-	builtin:if(builtin:var(TTerm),
-		checkVarType(Path, TTerm, MarkIn, MarkOut),
-		% else
-		builtin:if(builtin:string(TTerm),
-			true(validateType(Path, TTerm, string, Path, MarkIn, MarkOut)),
-			% else
-			builtin:if(builtin:number(TTerm),
-				true(validateType(Path, TTerm, number, Path, MarkIn, MarkOut)),
-				%else
-				true(checkCompoundType(Path, TTerm, VarNames, MarkIn, MarkOut))))).
-
-
-validateType(Path, _::ExType, ActType, OrigPath, MarkIn, MarkOut) :-
-	builtin:if(builtin:safeUnify(ExType::type, ActType::type),
-		MarkOut::list(locMarker) = MarkIn::list(locMarker),
-		%else
-		MarkOut::list(locMarker) = [marker(Path, error(typeMimatch(ExType, ActType, OrigPath), [])) | MarkIn]::list(locMarker)).
-
-checkVarType(Path, Var::ExType, MarkIn, [marker(Path, typeOf(Var::ExType, VarNames)) | MarkOut]) :-
-	builtin:if(findVarType(MarkIn, Var::ExType, ActType, OrigPath),
-		validateType(Path, Var::ExType, ActType, OrigPath, MarkIn, MarkOut),
-		% else
-		MarkOut::list(locMarker) = [marker(Path, varType(Var::ExType)) | MarkIn]::list(locMarker)).
-
-findVarType([marker(Path, varType(Var::Type)) | _], TVar, Type, Path) :-
-	builtin:equals(Var::Type, TVar).
-findVarType([_ | Markers], TVar, Type, Path) :-
-	findVarType(Markers, TVar, Type, Path).
-
-checkCompoundType(Path, Term::ExType, VarNames, MarkIn, MarkOut) :-
-	builtin:if(checkSignature(Term::ActType, TArgs),
-		(
-			true(validateType(Path, Term::ExType, ActType, Path, MarkIn, MarkMid))
-		),
-		( %else
-			true(builtin:parseTerm(Term::ExType, _, TArgs)),
-			true(MarkMid = [marker(Path, error(missingSignature(Term::ExType, TArgs, Path), VarNames)) | MarkIn])
-		)),
-		true(checkArgTypes(Path, 1, TArgs, VarNames, MarkMid, MarkOut)).
-
-signature(TTerm, TArgs) ~> checkSignature(TTerm, TArgs) :- builtin:true.
-
-checkArgTypes(_, _, [], _, Markers, Markers) :- builtin:true.
-checkArgTypes(cpi:path(Res, Path), Index, [TArg | TArgs], VarNames, MarkIn, MarkOut) :-
-	append(Path, [Index], SubPath),
-	checkTypes(cpi:path(Res, SubPath), TArg, VarNames, MarkIn, MarkMid),
-	builtin:succ(Index, NextIndex),
-	checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
-
+signature(marker::type, []).
+signature(check(Path, TTerm, VarNames, Marker)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName), Marker::marker]).
+check(StatementPath, Statement::statement, VarNames, Marker):-statementPath(StatementPath), true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)), listMember(Marker, marker, Markers).
+statementPath(cpi:path(_, [1])):-builtin:true.
+statementPath(cpi:path(Res, [2|Path])):-statementPath(cpi:path(Res, Path)).
+listMember(X, _T, [X|_]):-builtin:true.
+listMember(X, T, [_|L]):-listMember(X, T, L).
+checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut):-builtin:if(builtin:var(TTerm), checkVarType(Path, TTerm, MarkIn, MarkOut), builtin:if(builtin:string(TTerm), true(validateType(Path, TTerm, string, Path, MarkIn, MarkOut)), builtin:if(builtin:number(TTerm), true(validateType(Path, TTerm, number, Path, MarkIn, MarkOut)), true(checkCompoundType(Path, TTerm, VarNames, MarkIn, MarkOut))))).
+validateType(Path, _::ExType, ActType, OrigPath, MarkIn, MarkOut):-builtin:if(builtin:safeUnify(ExType::type, ActType::type), MarkOut::list(locMarker)=MarkIn::list(locMarker), MarkOut::list(locMarker)=[marker(Path, error(typeMimatch(ExType, ActType, OrigPath), []))|MarkIn]::list(locMarker)).
+checkVarType(Path, Var::ExType, MarkIn, [marker(Path, typeOf(Var::ExType, VarNames))|MarkOut]):-builtin:if(findVarType(MarkIn, Var::ExType, ActType, OrigPath), validateType(Path, Var::ExType, ActType, OrigPath, MarkIn, MarkOut), MarkOut::list(locMarker)=[marker(Path, varType(Var::ExType))|MarkIn]::list(locMarker)).
+findVarType([marker(Path, varType(Var::Type))|_], TVar, Type, Path):-builtin:equals(Var::Type, TVar).
+findVarType([_|Markers], TVar, Type, Path):-findVarType(Markers, TVar, Type, Path).
+checkCompoundType(Path, Term::ExType, VarNames, MarkIn, MarkOut):-builtin:if(checkSignature(Term::ActType, TArgs), true(validateType(Path, Term::ExType, ActType, Path, MarkIn, MarkMid)), (true(builtin:parseTerm(Term::ExType, _, TArgs)), true(MarkMid=[marker(Path, error(missingSignature(Term::ExType, TArgs, Path), VarNames))|MarkIn]))), true(checkArgTypes(Path, 1, TArgs, VarNames, MarkMid, MarkOut)).
+signature(TTerm, TArgs)~>checkSignature(TTerm, TArgs):-builtin:true.
+checkArgTypes(_, _, [], _, Markers, Markers):-builtin:true.
+checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, MarkIn, MarkOut):-append(Path, [Index], SubPath), checkTypes(cpi:path(Res, SubPath), TArg, VarNames, MarkIn, MarkMid), builtin:succ(Index, NextIndex), checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type, VarNames)::type))).
 markerVis(varType(_), V, bold(V)).
-
 signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
 signature((Term::Type)::typedTerm, [Term::Type, Type::type]).
-signature((Head :- Body) :: statement, [Head::pred, Body::pred]).
-signature((A,B)::pred, [A::pred, B::pred]).
-signature((Head ~> Body) :: statement, [Head::statement, Body::statement]).
+signature((Head:-Body)::statement, [Head::pred, Body::pred]).
+signature((A, B)::pred, [A::pred, B::pred]).
+signature((Head~>Body)::statement, [Head::statement, Body::statement]).
 signature([]::list(_), []).
 signature([X|L]::list(T), [X::T, L::list(T)]).
 signature(type::type, []).
 signature(string::type, []).
 signature(pred::type, []).
 signature(list(T)::type, [T::type]).
-
-true(X) :-
-	builtin:if(X,
-		builtin:true,
-		builtin:throw(false(X))).
-
-containingStatementPath(cpi:path(Res, []), cpi:path(Res, [])) :- builtin:true.
-containingStatementPath(cpi:path(Res, [2 | Path]), cpi:path(Res, [2 | StatementPath])) :-
-	containingStatementPath(cpi:path(Res, Path), cpi:path(Res, StatementPath)).
-containingStatementPath(cpi:path(Res, [1 | Path]), cpi:path(Res, [1])) :- builtin:true.
-
+true(X):-builtin:if(X, builtin:true, builtin:throw(false(X))).
+containingStatementPath(cpi:path(Res, []), cpi:path(Res, [])):-builtin:true.
+containingStatementPath(cpi:path(Res, [2|Path]), cpi:path(Res, [2|StatementPath])):-containingStatementPath(cpi:path(Res, Path), cpi:path(Res, StatementPath)).
+containingStatementPath(cpi:path(Res, [1|Path]), cpi:path(Res, [1])):-builtin:true.

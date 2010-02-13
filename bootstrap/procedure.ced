@@ -1,6 +1,7 @@
 signature(procedure::type, []).
 signature(command::type, []).
 signature(cpi:procedureCommand(Proc, Command)::pred, [Proc::procedure, Command::command]).
+projection(cpi:procedureCommand(Proc, Command)::pred, vert([horiz([bold(label(!procedure)), halfSize(label(!pred)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
 signature(statement::type, []).
 signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]).
 projection(procedure(Proc, Command)::statement, vert([horiz([bold(label(!procedure)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
@@ -8,8 +9,10 @@ signature(builtin:true::pred, []).
 procedure(Proc, Command)~>cpi:procedureCommand(Proc, Command):-builtin:true.
 signature(expr(T)::type, [T::type]).
 signature(function(Expr, T, Result, Command)::statement, [Expr::expr(T), T::type, Result::ref(T), Command::command]).
+projection(function(Expr, T, Result, Command)::statement, vert([horiz([bold(label(!function)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))]), horiz([label(!'    '), vis(Command::command)])])).
 signature(ref(T)::type, [T::type]).
 signature(cpi:func(Expr, Result, T)::procedure, [Expr::expr(T), Result::ref(T), T::type]).
+projection(cpi:func(Expr, Result, T)::procedure, horiz([bold(label(!func)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))])).
 function(Expr, T, Result, Command)~>procedure(cpi:func(Expr, Result, T), Command).
 signature(typedTerm::type, []).
 signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
@@ -17,10 +20,13 @@ signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::stri
 signature(commandClass(Cmd, ClassName)::statement, [Cmd::command, ClassName::string]).
 commandClass(Cmd, ClassName)~>cpi:termClass(Cmd::command, ClassName):-builtin:true.
 signature(doAll(List)::command, [List::list(command)]).
+projection(doAll(List)::command, horiz([halfSize(label(!do)), vis(List::list(command))])).
 commandClass(doAll(_), !'net.nansore.cedalion.cmd.DoAll').
 signature(assign(Ref, Expr, Type)::command, [Ref::ref(Type), Expr::expr(Type), Type::type]).
+projection(assign(Ref, Expr, Type)::command, horiz([vis(Ref::ref(Type)), label(!':='), halfSize(vis(Type::type)), vis(Expr::expr(Type))])).
 commandClass(assign(_, _, _), !'net.nansore.cedalion.cmd.Assign').
 signature(doProc(Proc)::command, [Proc::procedure]).
+projection(doProc(Proc)::command, horiz([halfSize(label(!p)), vis(Proc::procedure)])).
 commandClass(doProc(_), !'net.nansore.cedalion.cmd.DoProc').
 signature(fileContent::type, []).
 signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
