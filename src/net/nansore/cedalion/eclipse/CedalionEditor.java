@@ -17,6 +17,7 @@ import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.Notifier;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.TermFigure;
+import net.nansore.cedalion.figures.VisualTerm;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
@@ -62,53 +63,11 @@ import org.eclipse.ui.part.EditorPart;
  */
 public class CedalionEditor extends EditorPart implements ISelectionProvider, TermContext, DisposeListener, IViewOpener {
 
-	private final class VisualtermProposalProvider implements IContentProposalProvider {
+	private final class CedalionProposalProvider implements IContentProposalProvider {
 		public IContentProposal[] getProposals(String incompleteText, int pos) {
-		    List<IContentProposal> proposals = new ArrayList<IContentProposal>();
-		    try {
-		        // Find the beginning of the current atom
-		        int begin;
-		        for(begin = pos - 1; begin >= 0; begin--) {
-		        	char c = incompleteText.charAt(begin);
-		        	if(!Character.isDigit(c) && !Character.isLetter(c) && c != '$' && c != '_')
-		        		break;
-		        }
-		        Variable varCompletion = new Variable();
-				final String substring = incompleteText.substring(begin+1, pos);
-				PrologProxy prolog = Activator.getProlog();
-				Iterator<Map<Variable, Object>> solutions = prolog.getSolutions(prolog.createCompound("cpi#autocomplete", getResource(), getPackage(), substring, varCompletion));
-				while(solutions.hasNext()) {
-					Map<Variable, Object> solution = solutions.next();
-					final String completion = solution.get(varCompletion).toString();
-					proposals.add(new IContentProposal() {
-		
-						public String getContent() {
-							return completion;
-						}
-		
-						public int getCursorPosition() {
-							int pos;
-							for(pos = 0; pos < completion.length(); pos++) {
-								if(completion.charAt(pos) == '(')
-									return pos + 1;
-							}
-							return pos;
-						}
-		
-						public String getDescription() {
-							return null;
-						}
-		
-						public String getLabel() {
-							return substring + completion;
-						}});
-				}
-				
-			} catch (PrologException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return proposals.toArray(new IContentProposal[] {}); 
+			if(currentTermFigure == null)
+				return new IContentProposal[]{};
+			return currentTermFigure.getProposals(incompleteText, pos);
 		}
 	}
 
@@ -119,6 +78,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
     private IFileEditorInput input;
 	private Font normalFont;
 	protected Font symbolFont;
+	private VisualTerm currentTermFigure;
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
@@ -226,7 +186,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 			e.printStackTrace();
 		}
 
-        new ContentProposalAdapter(getTextEditor(), new TextContentAdapter(), new VisualtermProposalProvider(), KeyStroke.getInstance(SWT.CTRL, ' '), new char[] {'$'});
+        new ContentProposalAdapter(getTextEditor(), new CedalionTextContentAdapter(), new CedalionProposalProvider(), KeyStroke.getInstance(SWT.CTRL, ' '), new char[] {});
 		
 
 	}
@@ -337,7 +297,9 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
      * @see net.nansore.visualterm.TermContext#focusChanged(net.nansore.visualterm.figures.TermFigure)
      */
     public void selectionChanged(TermFigure figure) {
-        setSelection(new StructuredSelection(figure));        
+        setSelection(new StructuredSelection(figure));
+        if(figure instanceof VisualTerm)
+        	currentTermFigure = (VisualTerm)figure;
     }
 
     /* (non-Javadoc)

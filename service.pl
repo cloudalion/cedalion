@@ -72,7 +72,7 @@ insertTermsFromSteam(Stream, Term, FileName, NsList) :-
 		)).
 
 interpretTerm(Term, FileName, NsList, NewNsList) :-
-	if(Term = import(!(Alias), !(FullNs)),
+	if(Term = builtin:import(!(Alias), !(FullNs)),
 		NewNsList = [Alias=FullNs | NsList],
 		(
 			NewNsList = NsList,
@@ -143,15 +143,14 @@ readFromSteam(Stream, Term, VarNames, FileName, NsList, NsListOut, Terms) :-
 			NsListOut = NsList
 		),
 		(
-			if(Term = import(!(Alias), !(Namespace)),
+			if(Term = builtin:import(!(Alias), !(Namespace)),
 				(
-					NewNsList = [Alias=Namespace | NsList],
-					GTerm = Term
+					NewNsList = [Alias=Namespace | NsList]
 				),
 				(
-					NewNsList = NsList,
-					localToGlobal(Term, NsList, GTerm)
+					NewNsList = NsList
 				)),
+				localToGlobal(Term, NsList, GTerm),
 			read_term(Stream, NewTerm, [variable_names(NewVarNames)]),
 			readFromSteam(Stream, NewTerm, NewVarNames, FileName, NewNsList, NsListOut, OtherTerms),
 			convertVarNames(VarNames, ConvVarNames),
@@ -333,9 +332,11 @@ handleException(Exception) :-
 'builtin#succ'(X, XPlus1) :- if(var(XPlus1), XPlus1 is X+1, X is XPlus1 - 1).
 'builtin#length'(List, _Type, Len) :- length(List, Len).
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
+'builtin#strcat'(!S1, !S2, !S3) :- atom_concat(S1, S2, S3).
 'builtin#throw'(Exception) :- throw(Exception).
 'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
 'builtin#safeUnify'(A, B) :- unify_with_occurs_check(A,B).
+'builtin#termToString'(GTerm::_, VarNames, Depth, NsList, String) :-  termToString(GTerm, VarNames, Depth, NsList, String).
 
 % Write a term to a stream from a term(Term, VarNames) tupple
 writeTerm(Stream, Term, VarNames) :-

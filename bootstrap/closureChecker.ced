@@ -1,0 +1,3 @@
+signature(checkClosure(S1, S, VarNames, Mark)::pred, [S1::statement, S::statement, VarNames::list(varName), Mark::mark]).
+check(Path, S::statement, VarNames, marker(Path, Mark)):-statementPath(Path), member(S1, closure(S), statement), checkClosure(S1, S, VarNames, Mark).
+checkClosure(S1, S, VarNames, Mark):-builtin:fail.

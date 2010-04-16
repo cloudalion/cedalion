@@ -1,0 +1,11 @@
+signature(statements::set(statement), []).
+signature(builtin:loadedStatement(FileName, Statement)::pred, [FileName::string, Statement::statement]).
+setDef(statements, set(Statement, builtin:loadedStatement(_, Statement)), statement).
+signature(closure(S)::set(statement), [S::statement]).
+setDef(closure(S), union(singleton(S), set(Y, (member((S~>X), statements, statement), member(Y, closure(X), statement)))), statement).
+signature(closure::set(statement), []).
+setDef(closure, set(Y, (member(X, statements, statement), member(Y, closure(X), statement))), statement).
+signature(myStatementSet::set(statement), []).
+unitTest(member((member(X, myStatementSet, statement):-member(X, singleton(setDef(_, _, _)), statement)), closure(setDef(myStatementSet, singleton(setDef(_, _, _)), statement)), statement)).
+unitTest(member(setDef(myStatementSet, singleton(setDef(_, _, _)), statement), closure(setDef(myStatementSet, singleton(setDef(_, _, _)), statement)), statement)).
+unitTest(\+member((member(X, myStatementSet, statement):-member(X, singleton((_:-_)), statement)), closure(setDef(myStatementSet, singleton(setDef(_, _, _)), statement)), statement)).

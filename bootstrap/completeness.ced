@@ -1,0 +1,10 @@
+signature(requires(S1, S2)::statement, [S1::statement, S2::statement]).
+projection(requires(S1, S2)::statement, horiz([vis(S1::statement), symbol(8826), vis(S2::statement)])).
+signature(missing(S2)::error, [S2::statement]).
+projection(missing(S2)::error, horiz([label(!'Missing statement:'), vis(S2::statement)])).
+signature(saturate(TTerm, IndexIn, IndexOut)::pred, [TTerm::typedTerm, IndexIn::number, IndexOut::number]).
+checkClosure(S1, S, VarNames, error(missing(S2), VarNames)):-member(requires(S1, S2), statements, statement), saturate(S1::statement, 0, _), \+member(S2, closure, statement).
+signature(saturateList(TArgs, IndexIn, IndexOut)::pred, [TArgs::list(typedTerm), IndexIn::number, IndexOut::number]).
+saturate(TTerm, IndexIn, IndexOut):-builtin:if(builtin:var(TTerm), (TTerm='$SAT$'(IndexIn)::_, builtin:succ(IndexIn, IndexOut)), builtin:if(builtin:compound(TTerm), (builtin:parseTerm(TTerm, _, TArgs), saturateList(TArgs, IndexIn, IndexOut)), IndexOut::number=IndexIn::number)).
+saturateList([], Index, Index):-builtin:true.
+saturateList([First|Rest], IndexIn, IndexOut):-saturate(First, IndexIn, IndexMid), saturateList(Rest, IndexMid, IndexOut).

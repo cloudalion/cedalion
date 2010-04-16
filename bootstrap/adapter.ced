@@ -1,0 +1,6 @@
+signature(adapter(TTerm, WrappedTTerm)::statement, [TTerm::typedTerm, WrappedTTerm::typedTerm]).
+projection(adapter(TTerm, WrappedTTerm)::statement, horiz([vis(TTerm::typedTerm), label(!'is adapted by'), vis(WrappedTTerm::typedTerm)])).
+signature(checkAdapter(X, Y)::pred, [X::typedTerm, Y::typedTerm]).
+adapter(X, Y)~>checkAdapter(X, Y):-builtin:true.
+adapter(X::Type, X::Type).
+adapter(X::Type, (X::Type)::typedTerm).

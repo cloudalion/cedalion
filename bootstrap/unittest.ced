@@ -1,0 +1,9 @@
+signature(unitTest(Goal)::statement, [Goal::pred]).
+projection(unitTest(Goal)::statement, horiz([label(!'Unit Test:'), vis(Goal::pred)])).
+unitTest(builtin:true).
+signature(builtin:fail::pred, []).
+signature((\+Goal)::pred, [Goal::pred]).
+projection((\+Goal)::pred, horiz([symbol(172), vis(Goal::pred)])).
+unitTest(\+builtin:fail).
+signature(failedTest(Goal)::error, [Goal::pred]).
+check(Path, unitTest(Goal)::statement, _, marker(Path, error(failedTest(Goal), []))):- \+builtin:var(Goal::pred), \+Goal.

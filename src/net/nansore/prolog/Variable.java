@@ -50,4 +50,9 @@ public class Variable implements Serializable {
 			boundTo = ((Variable)boundTo).boundTo();
 		return boundTo;
 	}
+	
+	public String toString()
+	{
+		return name;
+	}
 }

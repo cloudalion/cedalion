@@ -28,6 +28,8 @@ signature(visClass(Vis, Class)::statement, [Vis::visualization, Class::string]).
 visClass(Vis, Class)~>cpi:termClass(Vis::visualization, Class):-builtin:true.
 signature(cpi:vis(TTerm)::visualization, [TTerm::typedTerm]).
 visClass(cpi:vis(_), !'net.nansore.cedalion.figures.VisualTerm').
+signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode]).
+projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
 visClass(cpi:vis(_, _), !'net.nansore.cedalion.figures.VisualTerm').
 visClass(vis(_), !'net.nansore.cedalion.figures.VisualTerm').
 visClass(horiz(_), !'net.nansore.cedalion.figures.HorizontalFlow').
@@ -44,6 +46,7 @@ signature(halfSize(V)::visualization, [V::visualization]).
 visClass(halfSize(_), !'net.nansore.cedalion.figures.HalfSize').
 visClass(smaller(_), !'net.nansore.cedalion.figures.Smaller').
 visClass(action(_, _), !'net.nansore.cedalion.figures.ActionFigure').
+signature(horiz::mode, []).
 projection(horiz(List)::visualization, horiz([halfSize(label(!h)), vis(List::list(visualization), horiz)])).
 projection(projection(TTerm, Vis)::statement, horiz([vis(TTerm::typedTerm), symbol(8608), vis(Vis::visualization)])).
 projection([]::list(_), cpi:default, symbol(8718)).

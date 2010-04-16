@@ -1,0 +1,11 @@
+signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
+signature((Term::Type)::typedTerm, [Term::Type, Type::type]).
+signature((Head:-Body)::statement, [Head::pred, Body::pred]).
+signature((A, B)::pred, [A::pred, B::pred]).
+signature((Head~>Body)::statement, [Head::statement, Body::statement]).
+signature([]::list(_), []).
+signature([X|L]::list(T), [X::T, L::list(T)]).
+signature(type::type, []).
+signature(string::type, []).
+signature(pred::type, []).
+signature(list(T)::type, [T::type]).

@@ -1,37 +1,18 @@
-% List operations
-contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First | Rest]::list(T), VarNames)).
-contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _ | Rest]::list(T), VarNames)).
-contextMenuEntry([First | Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
-
-
-% Display view
+contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First|Rest]::list(T), VarNames)).
+contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _|Rest]::list(T), VarNames)).
+contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
 signature(showView(Vis)::command, [Vis::visualization]).
-commandClass(showView(Vis), !('net.nansore.cedalion.cmd.ShowView')).
-
+commandClass(showView(Vis), !'net.nansore.cedalion.cmd.ShowView').
 contextMenuEntry(TTerm, VarNames, Path, !'Show in View', showInView(TTerm, VarNames)).
 procedure(showInView(Term::Type, VarNames), showView(vis(cpi:immediateDescriptor(Term, VarNames)::Type))).
-
-% Solutions for errors
-markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(action(label(!'E'), showSolutions(X, VarNames)), cpi:rgb(255,0,0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
-cpi:procedureCommand(showSolutions(Error, VarNames), showView(vert(Solutions))) :-
-	builtin:findall(Proc, procedure, errorSolution(Error, VarNames, Proc), Procs),
-	visualizeSolutions(Procs, VarNames, Solutions).
-
-visualizeSolutions([], _, []) :- builtin:true.
-visualizeSolutions([Proc | Procs], VarNames, [lineBorder(action(horiz([label(!(>)), vis(cpi:immediateDescriptor(Proc, VarNames)::procedure)]), Proc), 1, cpi:rgb(0,0,0)) | Solutions]) :-
-	visualizeSolutions(Procs, VarNames, Solutions).
-
-solution(Error, VarNames, Solution) ~> errorSolution(Error, VarNames, Solution) :- builtin:true.
+markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(action(label(!'E'), showSolutions(X, VarNames)), cpi:rgb(255, 0, 0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
+cpi:procedureCommand(showSolutions(Error, VarNames), showView(vert(Solutions))):-builtin:findall(Proc, procedure, errorSolution(Error, VarNames, Proc), Procs), visualizeSolutions(Procs, VarNames, Solutions).
+visualizeSolutions([], _, []):-builtin:true.
+visualizeSolutions([Proc|Procs], VarNames, [lineBorder(action(horiz([label(! (>)), vis(cpi:immediateDescriptor(Proc, VarNames)::procedure)]), Proc), 1, cpi:rgb(0, 0, 0))|Solutions]):-visualizeSolutions(Procs, VarNames, Solutions).
+solution(Error, VarNames, Solution)~>errorSolution(Error, VarNames, Solution):-builtin:true.
+signature(insertStatement(Statement, Path, VarNames)::procedure, [Statement::statement, Path::cpi:path, VarNames::list(varName)]).
+projection(insertStatement(Statement, Path, VarNames)::procedure, horiz([label(!'Insert:'), vis(Statement::statement)])).
 solution(missingSignature(TTerm, TArgs, Path), VarNames, insertStatement(signature(TTerm, TArgs), Path, VarNames)).
-
-cpi:procedureCommand(insertStatement(Statement, Path, VarNames1), doProc(cpi:edit(ListPath, [Statement | List]::list(statement), VarNames))) :-
-	 true(containingStatementPath(Path, StatementPath)),
-	 true(parentPath(StatementPath, ListPath)),
-	 true(cpi:termAtPath(ListPath, List::list(statement), VarNames2)),
-	 true(mergeVarNames(VarNames1, VarNames2, VarNames)).
-	 
-parentPath(cpi:path(Res, Path), cpi:path(Res, ParentPath)) :-
-	append(ParentPath, [_], Path).
-
-% Backwards compatibility
-visualize(T, V) ~> projection(T, V).
+cpi:procedureCommand(insertStatement(Statement, Path, VarNames1), doProc(cpi:edit(ListPath, [Statement|List]::list(statement), VarNames))):-true(containingStatementPath(Path, StatementPath)), true(parentPath(StatementPath, ListPath)), true(cpi:termAtPath(ListPath, List::list(statement), VarNames2)), true(mergeVarNames(VarNames1, VarNames2, VarNames)).
+parentPath(cpi:path(Res, Path), cpi:path(Res, ParentPath)):-append(ParentPath, [_], Path).
+visualize(T, V)~>projection(T, V).

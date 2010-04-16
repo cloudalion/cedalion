@@ -31,5 +31,5 @@ public interface TermFigure extends IFigure {
      * 
      */
     void dispose();
-    
+
 }

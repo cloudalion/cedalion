@@ -32,6 +32,7 @@ import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -409,5 +410,58 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 
 	public IWorkbenchPart getWorkbenchPart() {
 		return context.getWorkbenchPart();
+	}
+
+	public IContentProposal[] getProposals(String substring, int pos) {
+	    List<IContentProposal> proposals = new ArrayList<IContentProposal>();
+	    try {
+			Variable varCompletion = new Variable();
+			PrologProxy prolog = Activator.getProlog();
+			Iterator<Map<Variable, Object>> solutions = prolog.getSolutions(prolog.createCompound("cpi#autocomplete", descriptor, substring, varCompletion));
+			while(solutions.hasNext()) {
+				Map<Variable, Object> solution = solutions.next();
+				final String completion = (String)solution.get(varCompletion);
+				proposals.add(new IContentProposal() {
+	
+					public String getContent() {
+						return completion;
+					}
+	
+					public int getCursorPosition() {
+						int pos;
+						for(pos = 0; pos < completion.length(); pos++) {
+							if(completion.charAt(pos) == '(')
+								return pos + 1;
+						}
+						return pos;
+					}
+	
+					public String getDescription() {
+						return null;
+					}
+	
+					public String getLabel() {
+						return completion;
+					}});
+			}
+			
+		} catch (PrologException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return proposals.toArray(new IContentProposal[] {}); 
+	}
+
+	private String toLocalString(String string) {
+		String name = string;
+		String args = "";
+		if(string.contains("(")) {
+			name = string.substring(0, string.indexOf("("));
+			args = string.substring(string.indexOf("("));
+		}
+		if(name.contains("#")) {
+			name = "'" + name.substring(0, name.indexOf("#")) + "':'" + name.substring(name.indexOf("#") + 1) + "'";
+		}
+		return name + args;
 	}
 }

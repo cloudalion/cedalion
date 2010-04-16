@@ -1,0 +1,10 @@
+signature(autocomplete(Type, Prefix, Completion)::pred, [Type::type, Prefix::string, Completion::Type]).
+signature(builtin:strcat(X, Y, Z)::pred, [X::string, Y::string, Z::string]).
+signature(defaultRepresentation(TTerm)::pred, [TTerm::typedTerm]).
+autocomplete(Type, Prefix, Completion):-checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
+signature(cpi:autocomplete(TTerm, Prefix, Completion)::pred, [TTerm::typedTerm, Prefix::string, Completion::string]).
+cpi:autocomplete(_::Type, Prefix, CompletionString):-autocomplete(Type, Prefix, Completion), builtin:termToString(Completion::Type, [], 5, [], CompletionString).
+signature(default(X)::statement, [X::typedTerm]).
+default(X)~>defaultRepresentation(X):-builtin:true.
+default(projection(_::_, horiz([]))::statement).
+projection(default(TTerm)::statement, horiz([label(!'Use'), vis(TTerm::typedTerm), label(!'by default')])).

@@ -45,3 +45,5 @@ selectVarNamesFor(TTerm, [builtin:varName(Var::T, Name)|VarNames], VN):-selectVa
 varIn(Var::VarType, Term::TermType):-builtin:if(builtin:var(Term::TermType), builtin:equals(Var::VarType, Term::TermType), (builtin:compound(Term::TermType), builtin:parseTerm(Term::TermType, _, Args), varInList(Var::VarType, Args))).
 varInList(Var::VarType, [First::FirstType|_]):-varIn(Var::VarType, First::FirstType).
 varInList(Var::VarType, [_|Tail]):-varInList(Var::VarType, Tail).
+signature(builtin:import(Alias, NS)::statement, [Alias::string, NS::string]).
+projection(builtin:import(Alias, NS)::statement, horiz([label(!import), vis(NS::string), label(! (as)), vis(Alias::string)])).
