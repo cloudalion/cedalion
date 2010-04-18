@@ -47,3 +47,5 @@ varInList(Var::VarType, [First::FirstType|_]):-varIn(Var::VarType, First::FirstT
 varInList(Var::VarType, [_|Tail]):-varInList(Var::VarType, Tail).
 signature(builtin:import(Alias, NS)::statement, [Alias::string, NS::string]).
 projection(builtin:import(Alias, NS)::statement, horiz([label(!import), vis(NS::string), label(! (as)), vis(Alias::string)])).
+cpi:rootType(list(statement)).
+

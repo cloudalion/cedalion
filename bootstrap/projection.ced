@@ -4,7 +4,7 @@ visualizeVar(_, [builtin:varName(_, Name)], italic(color(label(Name), cpi:rgb(0,
 visualizeVar(_, [], italic(color(label(!'_'), cpi:rgb(0, 128, 0)))):-builtin:true.
 visualizeNumber(Num::_, label(Num)):-builtin:true.
 visualizeString(Str::_, label(Str)):-builtin:true.
-visualizeCompound(Desc, TTerm, ProjType, Vis):-true(builtin:parseTerm(TTerm, Func, TArgs)), true(subDescriptors(Desc, 0, TArgs, SubDescs)), true(builtin:parseTerm(TTerm2Vis, Func, SubDescs)), true(visualizeTerm(TTerm2Vis, ProjType, Vis)).
+visualizeCompound(Desc, Term::Type, ProjType, Vis):-true(builtin:parseTerm(Term::Type, Func, TArgs)), true(subDescriptors(Desc, 0, TArgs, SubDescs)), true(builtin:parseTerm(Term2Vis::Type, Func, SubDescs)), true(visualizeTerm(Term2Vis::Type, ProjType, Vis)).
 applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type):-builtin:findall(Marker, marker, check(Path, TTerm, VarNames, Marker), NewMarkers), append(OldMarkers, NewMarkers, Markers).
 subDescriptors(_, _, [], []):-builtin:true.
 subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType|TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType|SubDescs]):-builtin:succ(BeforeIndex, Index), append(Path, [Index], NewPath), markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft), subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).

@@ -197,10 +197,13 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		PrologProxy prolog = Activator.getProlog();
 		ExecutionContext exe = new ExecutionContext(prolog);
 		exe.runProcedure(prolog.createCompound("cpi#openFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
+		// Get the root type
+		Variable varType = new Variable("RootType");
+		Object rootType = prolog.getSolution(prolog.createCompound("cpi#rootType", varType)).get(varType);
 		// Set the root path
 		Compound path = prolog.createCompound("cpi#path", getResource(), prolog.createCompound("[]"));
 		Compound descriptor = prolog.createCompound("cpi#descriptor", path, new Variable(), prolog.createCompound("[]"));
-		Compound tterm = prolog.createCompound("::", descriptor, new Variable());
+		Compound tterm = prolog.createCompound("::", descriptor, rootType);
 		editorWidget.setTerm(prolog.createCompound("cpi#vis", tterm), this);
 	}
 
