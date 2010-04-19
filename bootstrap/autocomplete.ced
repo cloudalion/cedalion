@@ -1,10 +1,10 @@
-signature(autocomplete(Type, Prefix, Completion)::pred, [Type::type, Prefix::string, Completion::Type]).
+signature(autocomplete(Type, Prefix, Completion, Alias)::pred, [Type::type, Prefix::string, Completion::Type, Alias::string]).
 signature(builtin:strcat(X, Y, Z)::pred, [X::string, Y::string, Z::string]).
 signature(defaultRepresentation(TTerm)::pred, [TTerm::typedTerm]).
-autocomplete(Type1, Prefix, Completion):-fixType(Type1, Type), checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
-autocomplete(Type, Prefix, autocomp(Type, Prefix)):-builtin:true.
-signature(cpi:autocomplete(TTerm, Prefix, Completion)::pred, [TTerm::typedTerm, Prefix::string, Completion::string]).
-cpi:autocomplete(_::Type, Prefix, CompletionString):-autocomplete(Type, Prefix, Completion), builtin:termToString(Completion::Type, [], 5, [], CompletionString).
+autocomplete(Type, Prefix, Completion, Alias):-fixType(Type1, Type), checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
+autocomplete(Type, Prefix, autocomp(Type, Prefix), !'DEBUG'):-builtin:true.
+signature(cpi:autocomplete(_::Type, Prefix, CompletionString, Alias)::pred, [TTerm::typedTerm, Prefix::string, Completion::string, Alias::string]).
+cpi:autocomplete(_::Type, Prefix, CompletionString, Alias):-autocomplete(Type, Prefix, Completion, Alias), builtin:termToString(Completion::Type, [], 5, [], CompletionString).
 signature(default(X)::statement, [X::typedTerm]).
 default(X)~>defaultRepresentation(X):-builtin:true.
 default(projection(_::_, horiz([]))::statement).

@@ -57,7 +57,7 @@ projection([F|R]::list(T), horiz, horiz([label(!'['), vis(F::T), vis(R::list(T),
 projection([]::list(_), horizCont, horiz([])).
 projection([F|R]::list(T), horizCont, horiz([label((,)), vis(F::T), vis(R::list(T), horizCont)])).
 projection((H~>B)::statement, horiz([vis(H::statement), symbol(8669), vis(B::statement)])).
-projection((Term::Type)::typedTerm, horiz([vis(Term::_Type), label(! (::)), vis(Type::type)])).
+projection((Term::Type)::typedTerm, horiz([vis(Term::Type), label(! (::)), vis(Type::type)])).
 projection((A, B)::pred, vert([horiz([vis(A::pred), label(! (,))]), vis(B::pred)])).
 projection((H:-B)::statement, vert([horiz([vis(H::pred), label(! (:-))]), horiz([label(!'    '), vis(B::pred)])])).
 projection(signature(TTerm, TArgs)::statement, horiz([vis(TTerm::typedTerm), symbol(8618), vis(TArgs::list(typedTerm), horiz)])).

@@ -418,11 +418,13 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	    List<IContentProposal> proposals = new ArrayList<IContentProposal>();
 	    try {
 			Variable varCompletion = new Variable();
+			Variable varAlias = new Variable();
 			PrologProxy prolog = Activator.getProlog();
-			Iterator<Map<Variable, Object>> solutions = prolog.getSolutions(prolog.createCompound("cpi#autocomplete", descriptor, substring, varCompletion));
+			Iterator<Map<Variable, Object>> solutions = prolog.getSolutions(prolog.createCompound("cpi#autocomplete", descriptor, substring, varCompletion, varAlias));
 			while(solutions.hasNext()) {
 				Map<Variable, Object> solution = solutions.next();
 				final String completion = (String)solution.get(varCompletion);
+				final String alias = (String)solution.get(varAlias);
 				proposals.add(new IContentProposal() {
 	
 					public String getContent() {
@@ -443,7 +445,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 					}
 	
 					public String getLabel() {
-						return completion;
+						return alias + "\t[" + completion + "]";
 					}});
 			}
 			
