@@ -1,10 +1,12 @@
 signature(autocomplete(Type, Prefix, Completion, Alias)::pred, [Type::type, Prefix::string, Completion::Type, Alias::string]).
 signature(builtin:strcat(X, Y, Z)::pred, [X::string, Y::string, Z::string]).
 signature(defaultRepresentation(TTerm)::pred, [TTerm::typedTerm]).
-autocomplete(Type, Prefix, Completion, Alias):-fixType(Type1, Type), checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
+autocomplete(Type, Prefix, Completion, Alias):-checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
 autocomplete(Type, Prefix, autocomp(Type, Prefix), !'DEBUG'):-builtin:true.
-signature(cpi:autocomplete(_::Type, Prefix, CompletionString, Alias)::pred, [TTerm::typedTerm, Prefix::string, Completion::string, Alias::string]).
-cpi:autocomplete(_::Type, Prefix, CompletionString, Alias):-autocomplete(Type, Prefix, Completion, Alias), builtin:termToString(Completion::Type, [], 5, [], CompletionString).
+signature(cpi:autocomplete(TTerm, Prefix, CompletionString, Alias)::pred, [TTerm::typedTerm, Prefix::string, Completion::string, Alias::string]).
+cpi:autocomplete(Desc::Type1, Prefix, CompletionString, Alias):-fixType(Type1, Type), autocomplete(Type, Prefix, Completion, Alias), descriptorContent(Desc::Type, Content::Type, VarNames), builtin:if(injectContent(Completion, Content, Type), builtin:true, builtin:true), builtin:termToString(Completion::Type, VarNames, 5, [], CompletionString).
+signature(injectContent(Completion, Content, Type)::pred, [Completion::Type, Content::Type, Type::type]).
+injectContent(Completion, Content, Type):-checkSignature(Completion::Type, [FirstArg::ArgType|Args]), checkAdapter(Content::Type, FirstArg::ArgType).
 signature(default(X)::statement, [X::typedTerm]).
 default(X)~>defaultRepresentation(X):-builtin:true.
 default(projection(_::_, horiz([]))::statement).

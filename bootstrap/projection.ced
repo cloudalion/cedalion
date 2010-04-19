@@ -19,7 +19,7 @@ argListForPathList([First|Rest], [vis(First), label(! (,))|ArgList]):-argListFor
 localName(Func, LFunc):-builtin:charCodes(Func, Codes), append(PrefCodes, [35|LocalCodes], Codes), builtin:charCodes(LFunc, LocalCodes).
 append([], B, B):-builtin:true.
 append([X|A], B, [X|L]):-append(A, B, L).
-signature(projection(Func, Args, Vis)::statement, [Func::string, Args::list(cpi:path), Vis::visualization]).
+signature(projection(TTerm, ProjType, Vis)::statement, [TTerm::typedTerm, ProjType::projectionType, Vis::visualization]).
 projection(TTerm, Vis)~>userVisualization(TTerm, cpi:default, _, Vis):-builtin:true.
 projection(TTerm, ProjType, Vis)~>userVisualization(TTerm, ProjType, _, Vis):-builtin:true.
 signature(userVisualization(TTerm, ProjType, Hist, VisNew)::pred, [TTerm::typedTerm, ProjType::projectionType, Hist::list(projectionType), VisNew::visualization]).
@@ -79,4 +79,6 @@ isDescriptor(cpi:immediateDescriptor(_, _)::_).
 isDescriptor(cpi:descriptor(_, _, _)::_).
 descriptorContent(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, VarNames).
 descriptorContent(cpi:descriptor(Path, _, Markers)::Type, Term::Type, VarNames) :- cpi:termAtPath(Path, Term::Type, VarNames).
-fixType(Type1, Type) :- builtin:if(isDescriptor(Type1::type), descriptorContent(Type1::type, Type::type, _), Type::type = Type1::type).
+fixType(Type1, Type) :- builtin:if(isDescriptor(Type1::type), descriptorContent(Type1::type, Type::type, _), (builtin:parseTerm(Type1::type, Func, Args), fixTypes(Args, FixedArgs), builtin:parseTerm(Type::type, Func, FixedArgs))).
+fixTypes([], []) :- builtin:true.
+fixTypes([Type1::type | Args], [Type::type | FixedArgs]) :- fixType(Type1, Type), fixTypes(Args, FixedArgs).

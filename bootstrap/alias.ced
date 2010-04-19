@@ -10,3 +10,4 @@ aliasString(TTerm, String):-builtin:parseTerm(TTerm, Func, _), localString(Func,
 unitTest(localString(!'aa#bb', !bb)).
 unitTest(aliasString(alias(TTerm, String)::statement, !alias)).
 alias(projection(_, _)::statement, !'->>').
+alias((\+X)::pred, !not).

@@ -24,3 +24,6 @@ signature(singleton(S)::set(T), [S::T]).
 projection(singleton(S)::set(T), horiz([label(!'{'), vis(S::T), label(!'}')])).
 member(E, singleton(E), T):-builtin:true.
 requires(signature(S::set(T), _), (member(_, S, T):-_)).
+signature(listSet(L)::set(T), [L::list(T)]).
+projection(listSet(L)::set(T), horiz([label(!'{'), cpi:vis(L::list(T), horiz), label(!'}')])).
+member(X, listSet(L), T):-listMember(X, T, L).

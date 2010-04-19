@@ -4,3 +4,4 @@ signature(checkAdapter(X, Y)::pred, [X::typedTerm, Y::typedTerm]).
 adapter(X, Y)~>checkAdapter(X, Y):-builtin:true.
 adapter(X::Type, X::Type).
 adapter(X::Type, (X::Type)::typedTerm).
+adapter(Pred::pred, (Pred:-builtin:true)::statement).
