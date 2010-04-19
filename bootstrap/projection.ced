@@ -1,5 +1,5 @@
-signature(cpi:descriptor(Path, Term, Markers)::Type, [Path::path, Term::Type, Markers::list(locMarker)]).
-cpi:visualizeDescriptor(cpi:descriptor(Path, Term, Markers)::Type, ProjType, MVis):-cpi:termAtPath(Path, Term::Type, VarNames), true(applyCheckers(cpi:descriptor(Path, Term, Markers)::Type, Term::Type, VarNames, Desc)), builtin:if(builtin:var(Term::Type), visualizeVar(Term::Type, VarNames, Vis), builtin:if(builtin:number(Term::Type), visualizeNumber(Term::Type, Vis), builtin:if(builtin:string(Term::Type), visualizeString(Term::Type, Vis), visualizeCompound(Desc, Term::Type, ProjType, Vis)))), true(applyMarkers(Desc, Vis, MVis)).
+signature(cpi:descriptor(Path, Term, Markers)::Type, [Path::cpi:path, Term::Type, Markers::list(locMarker)]).
+cpi:visualizeDescriptor(cpi:descriptor(Path, Term, Markers)::Type1, ProjType, MVis):-fixType(Type1, Type), cpi:termAtPath(Path, Term::Type, VarNames), true(applyCheckers(cpi:descriptor(Path, Term, Markers)::Type, Term::Type, VarNames, Desc)), builtin:if(builtin:var(Term::Type), visualizeVar(Term::Type, VarNames, Vis), builtin:if(builtin:number(Term::Type), visualizeNumber(Term::Type, Vis), builtin:if(builtin:string(Term::Type), visualizeString(Term::Type, Vis), visualizeCompound(Desc, Term::Type, ProjType, Vis)))), true(applyMarkers(Desc, Vis, MVis)).
 visualizeVar(_, [builtin:varName(_, Name)], italic(color(label(Name), cpi:rgb(0, 128, 0)))):-builtin:true.
 visualizeVar(_, [], italic(color(label(!'_'), cpi:rgb(0, 128, 0)))):-builtin:true.
 visualizeNumber(Num::_, label(Num)):-builtin:true.
@@ -22,6 +22,7 @@ append([X|A], B, [X|L]):-append(A, B, L).
 signature(projection(Func, Args, Vis)::statement, [Func::string, Args::list(cpi:path), Vis::visualization]).
 projection(TTerm, Vis)~>userVisualization(TTerm, cpi:default, _, Vis):-builtin:true.
 projection(TTerm, ProjType, Vis)~>userVisualization(TTerm, ProjType, _, Vis):-builtin:true.
+signature(userVisualization(TTerm, ProjType, Hist, VisNew)::pred, [TTerm::typedTerm, ProjType::projectionType, Hist::list(projectionType), VisNew::visualization]).
 asProjection(VisOrig, ProjOrig, VisNew, ProjNew)~>userVisualization(TTerm, ProjNew, Hist, VisNew):- \+listMember(ProjOrig, projectionType, Hist), userVisualization(TTerm, ProjOrig, [ProjOrig|Hist], VisOrig).
 signature(visualization::type, []).
 signature(visClass(Vis, Class)::statement, [Vis::visualization, Class::string]).
@@ -56,7 +57,7 @@ projection([F|R]::list(T), horiz, horiz([label(!'['), vis(F::T), vis(R::list(T),
 projection([]::list(_), horizCont, horiz([])).
 projection([F|R]::list(T), horizCont, horiz([label((,)), vis(F::T), vis(R::list(T), horizCont)])).
 projection((H~>B)::statement, horiz([vis(H::statement), symbol(8669), vis(B::statement)])).
-projection((Term::Type)::typedTerm, horiz([vis(Term::Type), label(! (::)), vis(Type::type)])).
+projection((Term::Type)::typedTerm, horiz([vis(Term::_Type), label(! (::)), vis(Type::type)])).
 projection((A, B)::pred, vert([horiz([vis(A::pred), label(! (,))]), vis(B::pred)])).
 projection((H:-B)::statement, vert([horiz([vis(H::pred), label(! (:-))]), horiz([label(!'    '), vis(B::pred)])])).
 projection(signature(TTerm, TArgs)::statement, horiz([vis(TTerm::typedTerm), symbol(8618), vis(TArgs::list(typedTerm), horiz)])).
@@ -74,3 +75,8 @@ markerVis(stringMarker, Vis, color(Vis, cpi:rgb(255, 0, 128))).
 signature(cpi:immediateDescriptor(Term, VarNames)::Type, [Term::Type, VarNames::list(varName)]).
 cpi:visualizeDescriptor(cpi:immediateDescriptor(Term, VarNames)::Type, ProjType, Vis):-builtin:if(builtin:var(Term::Type), true(visualizeVar(Term::Type, VarNames, Vis)), builtin:if(builtin:number(Term::Type), true(visualizeNumber(Term::Type, Vis)), builtin:if(builtin:string(Term::Type), true(visualizeString(Term::Type, Vis)), true(visualizeCompound(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, ProjType, Vis))))).
 subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, BeforeFirst, [SubTerm::SubType|TArgs], [cpi:immediateDescriptor(SubTerm, VarNames1)::SubType|SubDescs]):-true(builtin:succ(BeforeFirst, First)), true(selectVarNamesFor(SubTerm::SubTypes, VarNames, VarNames1)), true(subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, First, TArgs, SubDescs)).
+isDescriptor(cpi:immediateDescriptor(_, _)::_).
+isDescriptor(cpi:descriptor(_, _, _)::_).
+descriptorContent(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, VarNames).
+descriptorContent(cpi:descriptor(Path, _, Markers)::Type, Term::Type, VarNames) :- cpi:termAtPath(Path, Term::Type, VarNames).
+fixType(Type1, Type) :- builtin:if(isDescriptor(Type1::type), descriptorContent(Type1::type, Type::type, _), Type::type = Type1::type).

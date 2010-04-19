@@ -68,7 +68,9 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     public VisualTerm(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException {
     	context = parent;
         // The first argument is the descriptor, containing the path and additional information
-    	descriptor = (Compound)term.arg(1); 
+    	descriptor = (Compound)term.arg(1);
+    	if(!descriptor.name().equals("::"))
+    		System.err.println("Bad descriptor: " + descriptor.name());
         path = ((Compound)descriptor.arg(1)).arg(1);
         if(term.arity() > 1) {
         	projType = (Compound)term.arg(2);
