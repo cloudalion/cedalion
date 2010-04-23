@@ -1,22 +1,34 @@
 signature(marker::type, []).
-signature(check(Path, TTerm, VarNames, Marker)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName), Marker::marker]).
+signature(check(Path, _::statement, VarNames, Marker)::pred, [Path::cpi:path, (_::statement)::typedTerm, VarNames::list(varName), Marker::marker]).
+signature(statementPath(StatementPath)::pred, [StatementPath::cpi:path]).
+signature(true(Goal)::pred, [Goal::pred]).
+projection(true(Goal)::pred, horiz([vis(Goal::pred), label(! (!))])).
+signature(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)::pred, [StatementPath::cpi:path, (Statement::statement)::typedTerm, VarNames::list(varName), []::list(_), Markers::list(marker)]).
 check(StatementPath, Statement::statement, VarNames, Marker):-statementPath(StatementPath), true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)), listMember(Marker, marker, Markers).
 statementPath(cpi:path(_, [1])):-builtin:true.
 statementPath(cpi:path(Res, [2|Path])):-statementPath(cpi:path(Res, Path)).
 listMember(X, _T, [X|_]):-builtin:true.
 listMember(X, T, [_|L]):-listMember(X, T, L).
-checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut):-builtin:if(builtin:var(TTerm), checkVarType(Path, TTerm, MarkIn, MarkOut), builtin:if(builtin:string(TTerm), true(validateType(Path, TTerm, string, Path, MarkIn, MarkOut)), builtin:if(builtin:number(TTerm), true(validateType(Path, TTerm, number, Path, MarkIn, MarkOut)), true(checkCompoundType(Path, TTerm, VarNames, MarkIn, MarkOut))))).
-validateType(Path, _::ExType, ExType, OrigPath, MarkIn, MarkOut):-builtin:if(builtin:safeUnify(ExType::type, ExType::type), MarkOut::list(locMarker)=MarkIn::list(locMarker), MarkOut::list(locMarker)=[marker(Path, error(typeMimatch(ExType, ExType, OrigPath), []))|MarkIn]::list(locMarker)).
-checkVarType(Path, Var::ExType, MarkIn, [marker(Path, typeOf(Var::ExType, VarNames))|MarkOut]):-builtin:if(findVarType(MarkIn, Var::ExType, ExType, OrigPath), validateType(Path, Var::ExType, ExType, OrigPath, MarkIn, MarkOut), MarkOut::list(locMarker)=[marker(Path, varType(Var::ExType))|MarkIn]::list(locMarker)).
+signature(builtin:var(TTerm)::pred, [TTerm::typedTerm]).
+checkTypes(Path, TTerm, VarNames, [], MarkOut):-
+	builtin:if(builtin:var(TTerm), 
+		checkVarType(Path, TTerm, [], MarkOut), 
+		builtin:if(builtin:string(TTerm), 
+			true(validateType(Path, TTerm, string, Path, [], MarkOut)), 
+			builtin:if(builtin:number(TTerm), 
+				true(validateType(Path, TTerm, number, Path, [], MarkOut)), 
+				true(checkCompoundType(Path, TTerm, VarNames, [], MarkOut))))).
+validateType(Path, _::ExType, ExType, OrigPath, [], MarkOut):-builtin:if(builtin:safeUnify(ExType::type, ExType::type), MarkOut::list(locMarker)=[]::list(locMarker), MarkOut::list(locMarker)=[marker(Path, error(typeMimatch(ExType, ExType, OrigPath), []))]::list(locMarker)).
+checkVarType(Path, Var::ExType, [], [marker(Path, typeOf(Var::ExType, VarNames))|MarkOut]):-builtin:if(findVarType([], Var::ExType, ExType, OrigPath), validateType(Path, Var::ExType, ExType, OrigPath, [], MarkOut), MarkOut::list(locMarker)=[marker(Path, varType(Var::ExType))]::list(locMarker)).
 findVarType([marker(Path, varType(Var::Type))|_], TVar, Type, Path):-builtin:equals(Var::Type, TVar).
 findVarType([_|Markers], TVar, Type, Path):-findVarType(Markers, TVar, Type, Path).
-signature(missingSignature(TTerm, TArgs, Path)::error, [TTerm::typedTerm, TArgs::list(typedTerm), Path::cpi:path]).
-projection(missingSignature(TTerm, TArgs, Path)::error, horiz([label(!'Missing signature:'), vis(TTerm::typedTerm), symbol(8618), cpi:vis(TArgs::list(typedTerm), horiz)])).
-checkCompoundType(Path, Term::ExType, VarNames, MarkIn, MarkOut):-builtin:if(checkSignature(Term::ExType, TArgs), true(validateType(Path, Term::ExType, ExType, Path, MarkIn, MarkMid)), (true(builtin:parseTerm(Term::ExType, _, TArgs)), true(MarkMid=[marker(Path, error(missingSignature(Term::ExType, TArgs, Path), VarNames))|MarkIn]))), true(checkArgTypes(Path, 1, TArgs, VarNames, MarkMid, MarkOut)).
-signature(checkSignature(TTerm, TArgs)::pred, [TTerm::typedTerm, TArgs::list(typedTerm)]).
-signature(TTerm, TArgs)~>checkSignature(TTerm, TArgs):-builtin:true.
+signature(missingSignature(_::statement, TArgs, Path)::error, [ (_::statement)::typedTerm, TArgs::list(typedTerm), Path::cpi:path]).
+projection(missingSignature(_::statement, TArgs, Path)::error, horiz([label(!'Missing signature:'), vis((_::statement)::typedTerm), symbol(8618), cpi:vis(TArgs::list(typedTerm), horiz)])).
+checkCompoundType(Path, Term::ExType, VarNames, [], MarkOut):-builtin:if(checkSignature(Term::ExType, TArgs), true(validateType(Path, Term::ExType, ExType, Path, [], MarkMid)), (true(builtin:parseTerm(Term::ExType, _, TArgs)), true(MarkMid=[marker(Path, error(missingSignature(Term::ExType, TArgs, Path), VarNames))]))), true(checkArgTypes(Path, 1, TArgs, VarNames, MarkMid, MarkOut)).
+signature(checkSignature(_::statement, TArgs)::pred, [ (_::statement)::typedTerm, TArgs::list(typedTerm)]).
+signature(_::statement, TArgs)~>checkSignature(_::statement, TArgs):-builtin:true.
 checkArgTypes(_, _, [], _, Markers, Markers):-builtin:true.
-checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, MarkIn, MarkOut):-append(Path, [Index], SubPath), checkTypes(cpi:path(Res, SubPath), TArg, VarNames, MarkIn, MarkMid), builtin:succ(Index, NextIndex), checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
+checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, [], MarkOut):-append(Path, [Index], SubPath), checkTypes(cpi:path(Res, SubPath), TArg, VarNames, [], MarkMid), builtin:succ(Index, NextIndex), checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type, VarNames)::type))).
 markerVis(varType(_), V, bold(V)).
 true(X):-builtin:if(X, builtin:true, builtin:throw(false(X))).

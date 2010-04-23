@@ -8,8 +8,6 @@ visualizeCompound(Desc, Term::Type, ProjType, Vis):-true(builtin:parseTerm(Term:
 applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type):-builtin:findall(Marker, marker, check(Path, TTerm, VarNames, Marker), NewMarkers), append(OldMarkers, NewMarkers, Markers).
 subDescriptors(_, _, [], []):-builtin:true.
 subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType|TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType|SubDescs]):-builtin:succ(BeforeIndex, Index), append(Path, [Index], NewPath), markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft), subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).
-markersForPath([], _, [], []):-builtin:true.
-markersForPath([marker(Path, Mark)|Markers], BasePath, MarkersForPath, MarkersLeft):-markersForPath(Markers, BasePath, MarkersForPath1, MarkersLeft1), builtin:if(pathIsPrefix(BasePath, Path), (MarkersForPath=[marker(Path, Mark)|MarkersForPath1], MarkersLeft=MarkersLeft1), (MarkersForPath=MarkersForPath1, MarkersLeft=[marker(Path, Mark)|MarkersLeft1])).
 pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)):-builtin:true.
 pathIsPrefix(cpi:path(Res, [First|Base]), cpi:path(Res, [First|Path])):-pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 visualizeTerm(TTerm2Vis, ProjType, Vis):-builtin:if(userVisualization(TTerm2Vis, ProjType, [], Vis), builtin:true, defaultVisualization(TTerm2Vis, Vis)).
@@ -24,54 +22,6 @@ projection(TTerm, Vis)~>userVisualization(TTerm, cpi:default, _, Vis):-builtin:t
 projection(TTerm, ProjType, Vis)~>userVisualization(TTerm, ProjType, _, Vis):-builtin:true.
 signature(userVisualization(TTerm, ProjType, Hist, VisNew)::pred, [TTerm::typedTerm, ProjType::projectionType, Hist::list(projectionType), VisNew::visualization]).
 asProjection(VisOrig, ProjOrig, VisNew, ProjNew)~>userVisualization(TTerm, ProjNew, Hist, VisNew):- \+listMember(ProjOrig, projectionType, Hist), userVisualization(TTerm, ProjOrig, [ProjOrig|Hist], VisOrig).
-signature(visualization::type, []).
-signature(visClass(Vis, Class)::statement, [Vis::visualization, Class::string]).
-visClass(Vis, Class)~>cpi:termClass(Vis::visualization, Class):-builtin:true.
-signature(cpi:vis(TTerm)::visualization, [TTerm::typedTerm]).
-visClass(cpi:vis(_), !'net.nansore.cedalion.figures.VisualTerm').
-signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode]).
-projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
-visClass(cpi:vis(_, _), !'net.nansore.cedalion.figures.VisualTerm').
-visClass(vis(_), !'net.nansore.cedalion.figures.VisualTerm').
-visClass(horiz(_), !'net.nansore.cedalion.figures.HorizontalFlow').
-visClass(vert(_), !'net.nansore.cedalion.figures.VerticalFlow').
-visClass(label(_), !'net.nansore.cedalion.figures.LabelFigure').
-signature(italic(Vis)::visualization, [Vis::visualization]).
-visClass(italic(_), !'net.nansore.cedalion.figures.Italic').
-visClass(bold(_), !'net.nansore.cedalion.figures.Bold').
-visClass(color(_, _), !'net.nansore.cedalion.figures.TextColor').
-visClass(lineBorder(_, _, _), !'net.nansore.cedalion.figures.LineBorderFigure').
-visClass(symbol(_), !'net.nansore.cedalion.figures.Symbol').
-visClass(tooltip(_, _), !'net.nansore.cedalion.figures.Tooltip').
-signature(halfSize(V)::visualization, [V::visualization]).
-visClass(halfSize(_), !'net.nansore.cedalion.figures.HalfSize').
-visClass(smaller(_), !'net.nansore.cedalion.figures.Smaller').
-visClass(action(_, _), !'net.nansore.cedalion.figures.ActionFigure').
-signature(horiz::mode, []).
-projection(horiz(List)::visualization, horiz([halfSize(label(!h)), vis(List::list(visualization), horiz)])).
-projection(projection(TTerm, Vis)::statement, horiz([vis(TTerm::typedTerm), symbol(8608), vis(Vis::visualization)])).
-projection([]::list(_), cpi:default, symbol(8718)).
-projection([F|R]::list(T), cpi:default, vert([horiz([symbol(8729), vis(F::T)]), vis(R::list(T))])).
-projection([]::list(_), horiz, label(![])).
-projection([F|R]::list(T), horiz, horiz([label(!'['), vis(F::T), vis(R::list(T), horizCont), label(!']')])).
-projection([]::list(_), horizCont, horiz([])).
-projection([F|R]::list(T), horizCont, horiz([label((,)), vis(F::T), vis(R::list(T), horizCont)])).
-projection((H~>B)::statement, horiz([vis(H::statement), symbol(8669), vis(B::statement)])).
-projection((Term::Type)::typedTerm, horiz([vis(Term::Type), label(! (::)), vis(Type::type)])).
-projection((A, B)::pred, vert([horiz([vis(A::pred), label(! (,))]), vis(B::pred)])).
-projection((H:-B)::statement, vert([horiz([vis(H::pred), label(! (:-))]), horiz([label(!'    '), vis(B::pred)])])).
-projection(signature(TTerm, TArgs)::statement, horiz([vis(TTerm::typedTerm), symbol(8618), vis(TArgs::list(typedTerm), horiz)])).
-contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>cpi:contextMenuEntry(Path, menuItem(Name, Proc)):-cpi:termAtPath(Path, TTerm, VarNames), cpi:procedureCommand(Proc, _).
-signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
-cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem').
-contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
-contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
-applyMarkers(cpi:descriptor(_, _, [])::_, Vis, Vis):-builtin:true.
-applyMarkers(cpi:descriptor(Path, Term, [marker(MPath, Mark)|Markers])::Type, Vis, MVis):-builtin:if(MPath=Path, applyMarker(Mark, Vis, MVis1), MVis1=Vis), applyMarkers(cpi:descriptor(Path, Term, Markers)::Type, MVis1, MVis).
-applyMarker(Mark, Vis, MVis):-builtin:if(markerVisualization(Mark, Vis, MVis), builtin:true, MVis=Vis).
-markerVis(Mark, Vis, MVis)~>markerVisualization(Mark, Vis, MVis):-builtin:true.
-check(Path, TTerm, _, marker(Path, stringMarker)):-builtin:string(TTerm).
-markerVis(stringMarker, Vis, color(Vis, cpi:rgb(255, 0, 128))).
 signature(cpi:immediateDescriptor(Term, VarNames)::Type, [Term::Type, VarNames::list(varName)]).
 cpi:visualizeDescriptor(cpi:immediateDescriptor(Term, VarNames)::Type, ProjType, Vis):-builtin:if(builtin:var(Term::Type), true(visualizeVar(Term::Type, VarNames, Vis)), builtin:if(builtin:number(Term::Type), true(visualizeNumber(Term::Type, Vis)), builtin:if(builtin:string(Term::Type), true(visualizeString(Term::Type, Vis)), true(visualizeCompound(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, ProjType, Vis))))).
 subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, BeforeFirst, [SubTerm::SubType|TArgs], [cpi:immediateDescriptor(SubTerm, VarNames1)::SubType|SubDescs]):-true(builtin:succ(BeforeFirst, First)), true(selectVarNamesFor(SubTerm::SubTypes, VarNames, VarNames1)), true(subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, First, TArgs, SubDescs)).
