@@ -1,6 +1,6 @@
 signature(cpi:path::type, []).
 signature(cpi:path(ResourceName, Path)::cpi:path, [ResourceName::string, Path::list(number)]).
-projection(cpi:path(ResourceName, Path)::cpi:path, horiz([vis(ResourceName::string), label(! (/)), vis(Path::list(number), horiz)])).
+projection(cpi:path(ResourceName, Path)::cpi:path, horiz([vis(ResourceName::string), label(! (/)), cpi:vis(Path::list(number), horiz)])).
 signature(cpi:termAtPath(Path, TTerm, VarNames)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)]).
 cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames):-fileIsLoaded(ResourceName, _, model(Statements, AllVarNames, _)), subTerm(Statements::list(statement), Path, TTerm), selectVarNamesFor(TTerm, AllVarNames, VarNames).
 signature(subTerm(TTerm, Path, TSubTerm)::pred, [TTerm::typedTerm, Path::list(number), TSubTerm::typedTerm]).

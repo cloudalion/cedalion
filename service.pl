@@ -337,6 +337,7 @@ handleException(Exception) :-
 'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
 'builtin#safeUnify'(A, B) :- unify_with_occurs_check(A,B).
 'builtin#termToString'(GTerm::_, VarNames, Depth, NsList, String) :-  termToString(GTerm, VarNames, Depth, NsList, String).
+'builtin#ground'(Term::_) :- ground(Term).
 
 % Write a term to a stream from a term(Term, VarNames) tupple
 writeTerm(Stream, Term, VarNames) :-
