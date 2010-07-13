@@ -1,0 +1,28 @@
+'/bootstrap':signature(expr(T)::'/bootstrap':type, [T::'/bootstrap':type]).
+'/bootstrap':signature(eval(Expr, Type, Value)::'/bootstrap':pred, [Expr::expr(Type), Type::'/bootstrap':type, Value::Type]).
+'/bootstrap':projection(eval(Expr, Type, Value)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Value::Type), '/bootstrap':halfSize('/bootstrap':vis(Type::'/bootstrap':type)), '/bootstrap':symbol(8656), '/bootstrap':vis(Expr::expr(Type))])).
+'/bootstrap':signature(plus(A, B)::expr(T), [A::expr(T), B::expr(T)]).
+'/bootstrap':projection(plus(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (+)), '/bootstrap':vis(B::expr(T))])).
+'/bootstrap':alias(plus(A, B)::expr(T), ! (+)).
+'/bootstrap':signature(builtin:plus(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number]).
+eval(plus(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:plus(AV, BV, C).
+'/bootstrap':signature(minus(A, B)::expr(T), [A::expr(T), B::expr(T)]).
+'/bootstrap':projection(minus(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (-)), '/bootstrap':vis(B::expr(T))])).
+'/bootstrap':alias(minus(A, B)::expr(T), ! (-)).
+'/bootstrap':signature(builtin:minus(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number]).
+eval(minus(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:minus(AV, BV, C).
+'/bootstrap':signature(mult(A, B)::expr(T), [A::expr(T), B::expr(T)]).
+'/bootstrap':projection(mult(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (*)), '/bootstrap':vis(B::expr(T))])).
+'/bootstrap':alias(mult(A, B)::expr(T), ! (*)).
+'/bootstrap':signature(builtin:mult(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number]).
+eval(mult(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:mult(AV, BV, C).
+'/bootstrap':signature(div(A, B)::expr(T), [A::expr(T), B::expr(T)]).
+'/bootstrap':projection(div(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (/)), '/bootstrap':vis(B::expr(T))])).
+'/bootstrap':alias(div(A, B)::expr(T), ! (/)).
+'/bootstrap':signature(builtin:div(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number]).
+eval(div(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:div(AV, BV, C).
+'/bootstrap':signature(const(C)::expr(T), [C::T]).
+'/bootstrap':projection(const(C)::expr(T), '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(! (=))), '/bootstrap':vis(C::T)])).
+'/bootstrap':adapter(C::T, const(C)::expr(T)).
+eval(const(C), T, C):-builtin:true.
+'/bootstrap':unitTest(eval(plus(const(1), const(1)), _, 2)).

@@ -1,0 +1,12 @@
+'/bootstrap':signature(func(T1, T2)::'/bootstrap':type, [T1::'/bootstrap':type, T2::'/bootstrap':type]).
+'/bootstrap':projection(func(T1, T2)::'/bootstrap':type, '/bootstrap':horiz(['/bootstrap':vis(T1::'/bootstrap':type), '/bootstrap':symbol(8594), '/bootstrap':vis(T2::'/bootstrap':type)])).
+'/bootstrap':signature(lambda(X, Expr)::func(T1, T2), [X::expr(T1), Expr::expr(T2)]).
+'/bootstrap':projection(lambda(X, Expr)::func(T1, T2), '/bootstrap':horiz(['/bootstrap':symbol(955), '/bootstrap':vis(X::expr(T1)), '/bootstrap':label(!.), '/bootstrap':vis(Expr::expr(T2))])).
+'/bootstrap':signature(apply(Lambda, T1, X)::expr(T2), [Lambda::expr(func(T1, T2)), T1::'/bootstrap':type, X::expr(T1)]).
+'/bootstrap':projection(apply(Lambda, T1, X)::expr(T2), '/bootstrap':horiz(['/bootstrap':label(!'['), '/bootstrap':vis(Lambda::expr(func(T1, T2))), '/bootstrap':label(!']'), '/bootstrap':halfSize('/bootstrap':vis(T1::'/bootstrap':type)), '/bootstrap':label(!'('), '/bootstrap':vis(X::expr(T1)), '/bootstrap':label(!')')])).
+eval(apply(LambdaExpr, T1, X), T2, V):-eval(LambdaExpr, func(T1, T2), lambda(X, Expr)), eval(Expr, T2, V).
+'/bootstrap':signature(g(X)::expr(func('/bootstrap':number, '/bootstrap':number)), [X::expr('/bootstrap':number)]).
+def(g(X), func('/bootstrap':number, '/bootstrap':number), const(lambda(Y, plus(X, Y)))).
+'/bootstrap':unitTest(eval(apply(g(const(3)), '/bootstrap':number, const(2)), '/bootstrap':number, 5)).
+def(plus(A, B), func(T1, T2), const(lambda(X, plus(apply(A, T1, X), apply(B, T1, X))))).
+'/bootstrap':unitTest(eval(apply(plus(g(const(3)), g(const(2))), '/bootstrap':number, const(2)), '/bootstrap':number, 9)).

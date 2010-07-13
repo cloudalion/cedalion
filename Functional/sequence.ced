@@ -1,0 +1,14 @@
+'/bootstrap':signature(seq(T)::'/bootstrap':type, [T::'/bootstrap':type]).
+'/bootstrap':signature(seq(First, Next)::seq(T), [First::expr(T), Next::expr(seq(T))]).
+'/bootstrap':signature(first(SeqExpr)::expr(T), [SeqExpr::expr(seq(T))]).
+eval(first(SeqExpr), T, V):-eval(SeqExpr, seq(T), seq(First, Next)), eval(First, T, V).
+'/bootstrap':signature(next(SeqExpr)::expr(seq(T)), [SeqExpr::expr(seq(T))]).
+eval(next(SeqExpr), seq(T), V):-eval(SeqExpr, seq(T), seq(First, Next)), eval(Next, seq(T), V).
+'/bootstrap':signature(element(Seq, Index)::expr(T), [Seq::expr(seq(T)), Index::expr('/bootstrap':number)]).
+'/bootstrap':projection(element(Seq, Index)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(Seq::expr(seq(T))), '/bootstrap':label(!'['), '/bootstrap':vis(Index::expr('/bootstrap':number)), '/bootstrap':label(!']')])).
+def(element(Seq, Index), T, if(gt(Index, const(0), '/bootstrap':number), element(next(Seq), minus(Index, const(1))), first(Seq))).
+'/bootstrap':signature(fib::expr(seq('/bootstrap':number)), []).
+def(fib, seq('/bootstrap':number), fib(const(1), const(1))).
+'/bootstrap':signature(fib(X, Y)::expr(seq('/bootstrap':number)), [X::expr('/bootstrap':number), Y::expr('/bootstrap':number)]).
+def(fib(X, Y), seq('/bootstrap':number), const(seq(X, fib(Y, plus(X, Y))))).
+'/bootstrap':unitTest(eval(element(fib, const(5)), '/bootstrap':number, 8)).

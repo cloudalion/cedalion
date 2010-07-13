@@ -1,0 +1,14 @@
+'/bootstrap':signature(if(Cond, Then, Else)::expr(T), [Cond::'/bootstrap':pred, Then::expr(T), Else::expr(T)]).
+'/bootstrap':projection(if(Cond, Then, Else)::expr(T), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!if), '/bootstrap':vis(Cond::'/bootstrap':pred), '/bootstrap':label(! (:))]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Then::expr(T))]), '/bootstrap':horiz(['/bootstrap':label(!'else:')]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Else::expr(T))])])).
+eval(if(Cond, Then, Else), T, V):-builtin:if(Cond, eval(Then, T, V), eval(Else, T, V)).
+'/bootstrap':signature(eq(A, B, T)::'/bootstrap':pred, [A::expr(T), B::expr(T), T::'/bootstrap':type]).
+'/bootstrap':projection(eq(A, B, T)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (=)), '/bootstrap':halfSize('/bootstrap':vis(T::'/bootstrap':type)), '/bootstrap':vis(B::expr(T))])).
+eq(A, B, T):-eval(A, T, AV), eval(B, T, BV), builtin:equals(AV::T, BV::T).
+'/bootstrap':signature(builtin:greaterThen(AV, BV)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number]).
+'/bootstrap':signature(gt(A, B, T)::'/bootstrap':pred, [A::expr(T), B::expr(T), T::'/bootstrap':type]).
+'/bootstrap':projection(gt(A, B, T)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (>)), '/bootstrap':halfSize('/bootstrap':vis(T::'/bootstrap':type)), '/bootstrap':vis(B::expr(T))])).
+gt(A, B, '/bootstrap':number):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:greaterThen(AV, BV).
+'/bootstrap':signature(max(A, B)::expr(T), [A::expr(T), B::expr(T)]).
+def(max(A, B), T, if(gt(A, B, T), A, B)).
+'/bootstrap':unitTest(eval(max(const(2), const(3)), '/bootstrap':number, 3)).
+'/bootstrap':unitTest(\+eval(max(const(2), const(3)), '/bootstrap':number, 2)).
