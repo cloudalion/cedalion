@@ -3,11 +3,14 @@
  */
 package net.nansore.cedalion.eclipse;
 
+import java.io.IOException;
+
 import net.nansore.cedalion.figures.TermFigure;
 
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
@@ -76,4 +79,6 @@ public interface TermContext {
     void performDefaultAction();
 
 	String getPackage();
+
+	Image getImage(String imageName) throws IOException;
 }

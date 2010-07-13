@@ -21,8 +21,4 @@ eval(mult(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval
 '/bootstrap':alias(div(A, B)::expr(T), ! (/)).
 '/bootstrap':signature(builtin:div(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number]).
 eval(div(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:div(AV, BV, C).
-'/bootstrap':signature(const(C)::expr(T), [C::T]).
-'/bootstrap':projection(const(C)::expr(T), '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(! (=))), '/bootstrap':vis(C::T)])).
-'/bootstrap':adapter(C::T, const(C)::expr(T)).
-eval(const(C), T, C):-builtin:true.
-'/bootstrap':unitTest(eval(plus(const(1), const(1)), _, 2)).
+'/bootstrap':unitTest(eval(plus(wrap(1), wrap(1)), _, 2)).

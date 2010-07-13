@@ -238,5 +238,12 @@ public class Activator extends AbstractUIPlugin {
 	public TermContext currentContext() {
 		return currContext;
 	}
+
+	public Image getImage(String imageName, Display display) throws IOException {
+		URL prologFileURL = context.getBundle().getEntry("icons/" + imageName + ".gif");
+		URLConnection connection = prologFileURL.openConnection();
+		InputStream input = connection.getInputStream();
+        return new Image(display, input);
+	}
 	
 }

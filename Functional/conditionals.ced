@@ -10,5 +10,5 @@ eq(A, B, T):-eval(A, T, AV), eval(B, T, BV), builtin:equals(AV::T, BV::T).
 gt(A, B, '/bootstrap':number):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:greaterThen(AV, BV).
 '/bootstrap':signature(max(A, B)::expr(T), [A::expr(T), B::expr(T)]).
 def(max(A, B), T, if(gt(A, B, T), A, B)).
-'/bootstrap':unitTest(eval(max(const(2), const(3)), '/bootstrap':number, 3)).
-'/bootstrap':unitTest(\+eval(max(const(2), const(3)), '/bootstrap':number, 2)).
+'/bootstrap':unitTest(eval(max(wrap(2), wrap(3)), '/bootstrap':number, 3)).
+'/bootstrap':unitTest(\+eval(max(wrap(2), wrap(3)), '/bootstrap':number, 2)).

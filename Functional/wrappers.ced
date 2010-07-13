@@ -1,14 +1,15 @@
 '/bootstrap':signature(wrap(Term)::expr(T), [Term::T]).
 '/bootstrap':projection(wrap(Term)::expr(T), '/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(Term::T), cpi:rgb(192, 192, 255)), 2, cpi:rgb(192, 192, 255))).
-eval(wrap(Term), T, V):-builtin:parseTerm(Term::T, Name, Args), evalArgs(Args, EArgs), builtin:parseTerm(V::T, Name, EArgs).
+eval(wrap(Term), T, V):-builtin:if(builtin:compound(Term::T), builtin:if(Term::T=unwrap(Expr)::T, eval(Expr, T, V), (builtin:parseTerm(Term::T, Name, Args), evalArgs(Args, EArgs), builtin:parseTerm(V::T, Name, EArgs))), V::T=Term::T).
 evalArgs([], []):-builtin:true.
 '/bootstrap':signature(evalArgs(Args, ArgsV)::'/bootstrap':pred, [Args::'/bootstrap':list('/bootstrap':typedTerm), ArgsV::'/bootstrap':list('/bootstrap':typedTerm)]).
 '/bootstrap':checkSignature(unwrap(Expr)::T, [Expr::expr(T)]):-builtin:true.
 '/bootstrap':projection(unwrap(Expr)::T, '/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(Expr::expr(T)), cpi:rgb(255, 255, 255)), 2, cpi:rgb(192, 192, 255))).
 '/bootstrap':signature(builtin:compound(First::T)::'/bootstrap':pred, [ (First::T)::'/bootstrap':typedTerm]).
-evalArgs([First::T|Rest], [FirstV::T|RestV]):-builtin:if(First::T=unwrap(Expr)::T, eval(Expr, T, FirstV), builtin:if(builtin:compound(First::T), eval(wrap(First), T, FirstV), FirstV::T=First::T)), evalArgs(Rest, RestV).
+evalArgs([First::T|Rest], [FirstV::T|RestV]):-eval(wrap(First), T, FirstV), evalArgs(Rest, RestV).
 '/bootstrap':adapter(Term::T, wrap(Term)::expr(T)).
 '/bootstrap':adapter(Expr::expr(T), unwrap(Expr)::T).
 '/bootstrap':signature(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), [B::expr('/bootstrap':number), E::expr('/bootstrap':number)]).
-def(range(B, E), '/bootstrap':list('/bootstrap':number), if(gt(E, B, '/bootstrap':number), wrap([unwrap(B)|unwrap(range(plus(B, const(1)), E))]), wrap([]))).
-'/bootstrap':unitTest(eval(range(const(0), const(3)), '/bootstrap':list('/bootstrap':number), [0, 1, 2])).
+'/bootstrap':projection(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), '/bootstrap':horiz(['/bootstrap':label(!'['), '/bootstrap':vis(B::expr('/bootstrap':number)), '/bootstrap':label(! (,)), '/bootstrap':vis(E::expr('/bootstrap':number)), '/bootstrap':label(!')')])).
+def(range(B, E), '/bootstrap':list('/bootstrap':number), if(gt(E, B, '/bootstrap':number), wrap([unwrap(B)|unwrap(range(plus(B, wrap(1)), E))]), wrap([]))).
+'/bootstrap':unitTest(eval(range(wrap(0), wrap(3)), '/bootstrap':list('/bootstrap':number), [0, 1, 2])).

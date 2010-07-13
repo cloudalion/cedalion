@@ -3,6 +3,8 @@
  */
 package net.nansore.cedalion.figures;
 
+import java.io.IOException;
+
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 
@@ -11,6 +13,7 @@ import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
@@ -122,4 +125,10 @@ public abstract class TermContextProxy extends Figure implements TermContext, Te
 	public String getPackage() {
 		return context.getPackage();
 	}
+	@Override
+	public Image getImage(String imageName) throws IOException {
+		return context.getImage(imageName);
+	}
+	
+	
 }

@@ -6,6 +6,7 @@
  */
 package net.nansore.cedalion.eclipse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +46,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -398,5 +400,10 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	@Override
 	public CedalionView openView() throws PartInitException {
 		return (CedalionView)getSite().getPage().showView("net.nansore.cedalion.CedalionView");
+	}
+
+	@Override
+	public Image getImage(String imageName) throws IOException {
+		return Activator.getDefault().getImage(imageName, getEditorSite().getShell().getDisplay());
 	}
 }

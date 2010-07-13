@@ -39,6 +39,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -467,5 +468,10 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 			name = "'" + name.substring(0, name.indexOf("#")) + "':'" + name.substring(name.indexOf("#") + 1) + "'";
 		}
 		return name + args;
+	}
+
+	@Override
+	public Image getImage(String imageName) throws IOException {
+		return context.getImage(imageName);
 	}
 }
