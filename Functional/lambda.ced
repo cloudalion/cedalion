@@ -1,7 +1,7 @@
 '/bootstrap':signature(func(T1, T2)::'/bootstrap':type, [T1::'/bootstrap':type, T2::'/bootstrap':type]).
 '/bootstrap':projection(func(T1, T2)::'/bootstrap':type, '/bootstrap':horiz(['/bootstrap':vis(T1::'/bootstrap':type), '/bootstrap':symbol(8594), '/bootstrap':vis(T2::'/bootstrap':type)])).
 '/bootstrap':signature(lambda(X, Expr)::func(T1, T2), [X::expr(T1), Expr::expr(T2)]).
-'/bootstrap':projection(lambda(X, Expr)::func(T1, T2), '/bootstrap':horiz(['/bootstrap':symbol(955), '/bootstrap':vis(X::expr(T1)), '/bootstrap':label(!.), '/bootstrap':vis(Expr::expr(T2))])).
+'/bootstrap':projection(lambda(X, Expr)::func(T1, T2), '/bootstrap':horiz(['/bootstrap':symbol(955), '/bootstrap':background('/bootstrap':vis(X::expr(T1)), cpi:rgb(255, 255, 255)), '/bootstrap':label(!.), '/bootstrap':background('/bootstrap':vis(Expr::expr(T2)), cpi:rgb(255, 255, 255))])).
 '/bootstrap':signature(apply(Lambda, T1, X)::expr(T2), [Lambda::expr(func(T1, T2)), T1::'/bootstrap':type, X::expr(T1)]).
 '/bootstrap':projection(apply(Lambda, T1, X)::expr(T2), '/bootstrap':horiz(['/bootstrap':label(!'['), '/bootstrap':vis(Lambda::expr(func(T1, T2))), '/bootstrap':label(!']'), '/bootstrap':halfSize('/bootstrap':vis(T1::'/bootstrap':type)), '/bootstrap':label(!'('), '/bootstrap':vis(X::expr(T1)), '/bootstrap':label(!')')])).
 eval(apply(LambdaExpr, T1, X), T2, V):-eval(LambdaExpr, func(T1, T2), lambda(X, Expr)), eval(Expr, T2, V).
@@ -9,4 +9,7 @@ eval(apply(LambdaExpr, T1, X), T2, V):-eval(LambdaExpr, func(T1, T2), lambda(X, 
 def(g(X), func('/bootstrap':number, '/bootstrap':number), wrap(lambda(Y, plus(X, Y)))).
 '/bootstrap':unitTest(eval(apply(g(wrap(3)), '/bootstrap':number, wrap(2)), '/bootstrap':number, 5)).
 def(plus(A, B), func(T1, T2), wrap(lambda(X, plus(apply(A, T1, X), apply(B, T1, X))))).
+def(minus(A, B), func(T1, T2), wrap(lambda(X, minus(apply(A, T1, X), apply(B, T1, X))))).
+def(mult(A, B), func(T1, T2), wrap(lambda(X, mult(apply(A, T1, X), apply(B, T1, X))))).
+def(div(A, B), func(T1, T2), wrap(lambda(X, div(apply(A, T1, X), apply(B, T1, X))))).
 '/bootstrap':unitTest(eval(apply(plus(g(wrap(3)), g(wrap(2))), '/bootstrap':number, wrap(2)), '/bootstrap':number, 9)).

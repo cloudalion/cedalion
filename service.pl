@@ -49,9 +49,16 @@ translateStatement(Statement, Clause) :-
 		Clause = Statement).
 
 translateRewrite(Head, Body, Clause) :-
-	if(Body = (H :- B),
+	if(rewriteBodyToClause(Body, H, B),
 		Clause = (H :- Head, B),
 		Clause = (Body :- Head)).
+
+rewriteBodyToClause(Statement, H, B) :-
+	if(Statement = (H :- B),
+		true,
+		if(Statement = (S1 ~> S2),
+			translateRewrite((S1 ~> S2), Body, (H :- B)),
+			fail)).
 
 % Load/Reload a file to the database
 loadFile(!(FileName), !(Namespace)) :-

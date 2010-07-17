@@ -5,4 +5,4 @@ adapter(X, Y::T)~>checkAdapter(X, Y::T):- \+builtin:var(T::type).
 adapter(X::Type, X::Type).
 adapter(X::Type, (X::Type)::typedTerm).
 adapter(Pred::pred, (Pred:-builtin:true)::statement).
-errorSolution(typeMimatch(Expected, Given, Path), VarNames, cpi:edit(Path, Wrapped::Expected, VarNames)):-cpi:termAtPath(Path, Original::Given, _), true(checkAdapter(Original::Given, Wrapped::Expected)).
+errorSolution(typeMimatch(Expected, Given, Path), _, cpi:edit(Path, Wrapped::Expected, VarNames)):-cpi:termAtPath(Path, Original::Given, VarNames), true(checkAdapter(Original::Given, Wrapped::Expected)).

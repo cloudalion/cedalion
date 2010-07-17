@@ -9,7 +9,6 @@ procedure(showInView(Term::Type, VarNames), showView(vis(cpi:immediateDescriptor
 markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(action(label(!'E'), showSolutions(X, VarNames)), cpi:rgb(255, 0, 0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
 signature(showSolutions(Error, VarNames)::procedure, [Error::error, VarNames::list(varName)]).
 cpi:procedureCommand(showSolutions(Error, VarNames), showView(vert(Solutions))):-builtin:findall(Proc, procedure, errorSolution(Error, VarNames, Proc), Procs), visualizeSolutions(Procs, VarNames, Solutions).
-'visualizeSolutions1'(Procs, VarNames, [vis(cpi:immediateDescriptor(Procs, VarNames)::list(procedure))]):-builtin:true.
 signature(visualizeSolutions(Procs, VarNames, Solutions)::pred, [Procs::list(procedure), VarNames::list(varName), Solutions::list(visualization)]).
 visualizeSolutions([], _, []):-builtin:true.
 visualizeSolutions([Proc|Procs], VarNames, [lineBorder(action(horiz([label(! (>)), vis(cpi:immediateDescriptor(Proc, VarNames)::procedure)]), Proc), 1, cpi:rgb(0, 0, 0))|Solutions]):-visualizeSolutions(Procs, VarNames, Solutions).

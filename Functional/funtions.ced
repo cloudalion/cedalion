@@ -1,5 +1,5 @@
 '/bootstrap':signature(def(Func, T, Expr)::'/bootstrap':statement, [Func::expr(T), T::'/bootstrap':type, Expr::expr(T)]).
-'/bootstrap':projection(def(Func, T, Expr)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(T::'/bootstrap':type), '/bootstrap':vis(Func::expr(T)), '/bootstrap':symbol(8797), '/bootstrap':vis(Expr::expr(T))])).
+'/bootstrap':projection(def(Func, T, Expr)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(T::'/bootstrap':type), '/bootstrap':label(!' '), '/bootstrap':vis(Func::expr(T)), '/bootstrap':symbol(8797), '/bootstrap':vis(Expr::expr(T))])).
 def(Func, T, Expr)~>eval(Func, T, V):-eval(Expr, T, V).
 '/bootstrap':alias(def(Func, T, Expr)::'/bootstrap':statement, !'=def').
 '/bootstrap':signature(f(X)::expr('/bootstrap':number), [X::expr('/bootstrap':number)]).
