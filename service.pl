@@ -34,31 +34,24 @@ makeTyped([First | Rest], [First::_ | TRest]) :-
 
 % Insert a statement to the database
 insert(Statement) :-
-	translateStatement(Statement, Clause),
-	assert(Clause).
+	forall(translateStatement(Statement, Clause), assert(Clause)).
 
 % Remove a statement to the database
 remove(Statement) :-
-	translateStatement(Statement, Clause),
-	retract(Clause).
+	forall(translateStatement(Statement, Clause), retract(Clause)).
 
+translateStatement(Statement, Statement).
+translateStatement((Head ~> Body), (H:-B)) :-
+	translateRewrite(Head, Body, H, B).
 
-translateStatement(Statement, Clause) :-
-	if(Statement = (Head ~> Body),
-		translateRewrite(Head, Body, Clause),
-		Clause = Statement).
+translateRewrite(Head, Body, Body, Head) :-
+	\+Body = (_ :- _).
+translateRewrite(Head, Body, H, (Head, B)) :-
+	rewriteBodyToClause(Body, H, B).
 
-translateRewrite(Head, Body, Clause) :-
-	if(rewriteBodyToClause(Body, H, B),
-		Clause = (H :- Head, B),
-		Clause = (Body :- Head)).
-
-rewriteBodyToClause(Statement, H, B) :-
-	if(Statement = (H :- B),
-		true,
-		if(Statement = (S1 ~> S2),
-			translateRewrite((S1 ~> S2), Body, (H :- B)),
-			fail)).
+rewriteBodyToClause((H :- B), H, B).
+rewriteBodyToClause((S1 ~> S2), H, B) :-
+	translateRewrite(S1, S2, H, B).
 
 % Load/Reload a file to the database
 loadFile(!(FileName), !(Namespace)) :-
@@ -85,7 +78,7 @@ interpretTerm(Term, FileName, NsList, NewNsList) :-
 			NewNsList = NsList,
 			localToGlobal(Term, NsList, GTerm),
 			assert('builtin#loadedStatement'(FileName, GTerm)),
-			if(GTerm = (Statement ~> _), % Avoid exception if not implemented
+			if((GTerm = (Statement ~> _), \+var(Statement)), % Avoid exception if not implemented
 				assert((Statement :- fail))),
 			insert(GTerm)
 
