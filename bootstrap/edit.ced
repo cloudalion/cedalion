@@ -6,7 +6,9 @@ cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames):-fileIsLoaded(Reso
 signature(subTerm(TTerm, Path, TSubTerm)::pred, [TTerm::typedTerm, Path::list(number), TSubTerm::typedTerm]).
 subTerm(TTerm, [], TTerm):-builtin:true.
 signature(builtin:parseTerm(TTerm, Func, TArgs)::pred, [TTerm::typedTerm, Func::string, TArgs::list(typedTerm)]).
-subTerm(TTerm, [First|Path], TSubTerm):-builtin:parseTerm(TTerm, _, TArgs), element(TSubTerm1, First, TArgs, typedTerm), subTerm(TSubTerm1, Path, TSubTerm).
+subTerm(TTerm, [First|Path], TSubTerm):-safeParseTerm(TTerm, _, TArgs), element(TSubTerm1, First, TArgs, typedTerm), subTerm(TSubTerm1, Path, TSubTerm).
+signature(safeParseTerm(TTerm, Name, TArgs)::pred, [TTerm::typedTerm, Name::string, TArgs::list(typedTerm)]).
+safeParseTerm(Term::Type, Name, TArgs):-builtin:if((builtin:compound(Term::Type), checkSignature(Term::Type, TArgs)), builtin:parseTerm(Term::Type, Name, _), builtin:parseTerm(Term::Type, Name, TArgs)).
 signature(element(Elem, Index, List, Type)::pred, [Elem::Type, Index::number, List::list(Type), Type::type]).
 element(First, 1, [First|_], _):-builtin:true.
 signature(builtin:succ(IndexMinusOne, Index)::pred, [IndexMinusOne::number, Index::number]).
