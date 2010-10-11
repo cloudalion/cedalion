@@ -1,0 +1,9 @@
+markersForPath([], _, [], []):-builtin:true.
+markersForPath([marker(Path, Mark)|Markers], BasePath, MarkersForPath, MarkersLeft):-markersForPath(Markers, BasePath, MarkersForPath1, MarkersLeft1), builtin:if(pathIsPrefix(BasePath, Path), (MarkersForPath=[marker(Path, Mark)|MarkersForPath1], MarkersLeft=MarkersLeft1), (MarkersForPath=MarkersForPath1, MarkersLeft=[marker(Path, Mark)|MarkersLeft1])).
+applyMarkers(cpi:descriptor(_, _, [])::_, Vis, Vis):-builtin:true.
+applyMarkers(cpi:descriptor(Path, Term, [marker(MPath, Mark)|Markers])::Type, Vis, MVis):-builtin:if(MPath=Path, applyMarker(Mark, Vis, MVis1), MVis1=Vis), applyMarkers(cpi:descriptor(Path, Term, Markers)::Type, MVis1, MVis).
+applyMarker(Mark, Vis, MVis):-builtin:if(markerVisualization(Mark, Vis, MVis), builtin:true, MVis=Vis).
+signature(markerVis(Mark, Vis, MVis)::statement, [Mark::marker, Vis::visualization, MVis::visualization]).
+markerVis(Mark, Vis, MVis)~>markerVisualization(Mark, Vis, MVis):-builtin:true.
+check(Path, TTerm, _, marker(Path, stringMarker)):-builtin:string(TTerm).
+markerVis(stringMarker, Vis, color(Vis, cpi:rgb(255, 0, 128))).

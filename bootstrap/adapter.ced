@@ -1,8 +1,9 @@
 signature(adapter(TTerm, WrappedTTerm)::statement, [TTerm::typedTerm, WrappedTTerm::typedTerm]).
 projection(adapter(TTerm, WrappedTTerm)::statement, horiz([vis(TTerm::typedTerm), label(!'is adapted by'), vis(WrappedTTerm::typedTerm)])).
 signature(checkAdapter(X, Y)::pred, [X::typedTerm, Y::typedTerm]).
-adapter(X, Y::T)~>checkAdapter(X, Y::T):- \+builtin:var(T::type).
-adapter(X::Type, X::Type).
+rem((adapter(X, Y::T)~>checkAdapter(X, Y::T):- \+builtin:var(T::type))).
+checkAdapter(TTerm, TTerm):-builtin:true.
+adapter(X::T1, Y::T2)~>checkAdapter(X::T1, Y::T2):- \+T1::type=T2::type.
 adapter(X::Type, (X::Type)::typedTerm).
 adapter(Pred::pred, (Pred:-builtin:true)::statement).
 errorSolution(typeMimatch(Expected, Given, Path), _, cpi:edit(Path, Wrapped::Expected, VarNames)):-cpi:termAtPath(Path, Original::Given, VarNames), true(checkAdapter(Original::Given, Wrapped::Expected)).

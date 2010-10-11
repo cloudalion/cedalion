@@ -1,0 +1,5 @@
+contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>cpi:contextMenuEntry(Path, menuItem(Name, Proc)):-cpi:termAtPath(Path, TTerm, VarNames), cpi:procedureCommand(Proc, _).
+signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
+cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem').
+contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
+contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
