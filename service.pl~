@@ -38,7 +38,7 @@ insert(Statement) :-
 
 % Remove a statement to the database
 remove(Statement) :-
-	forall(translateStatement(Statement, Clause), if(retract(Clause), true, true)).
+	forall(translateStatement(Statement, Clause), retract(Clause)).
 
 translateStatement(Statement, Statement).
 translateStatement((Head ~> Body), (H:-B)) :-

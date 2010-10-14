@@ -334,6 +334,7 @@ handleException(Exception) :-
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
 'builtin#strcat'(!S1, !S2, !S3) :- atom_concat(S1, S2, S3).
 'builtin#throw'(Exception) :- throw(Exception).
+'builtin#catch'(Goal, Exception, AltGoal) :- catch(Goal, Exception, AltGoal).
 'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
 'builtin#safeUnify'(A, B) :- unify_with_occurs_check(A,B).
 'builtin#termToString'(GTerm::_, VarNames, Depth, NsList, String) :-  termToString(GTerm, VarNames, Depth, NsList, String).

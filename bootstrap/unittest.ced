@@ -6,4 +6,5 @@ signature((\+Goal)::pred, [Goal::pred]).
 projection((\+Goal)::pred, horiz([symbol(172), vis(Goal::pred)])).
 unitTest(\+builtin:fail).
 signature(failedTest(Goal)::error, [Goal::pred]).
-check(Path, unitTest(Goal)::statement, _, marker(Path, error(failedTest(Goal), []))):- \+builtin:var(Goal::pred), \+Goal.
+signature(builtin:catch(Goal, Exception, AltGoal)::pred, [Goal::pred, Exception::exception, AltGoal::pred]).
+check(Path, unitTest(Goal)::statement, _, marker(Path, error(failedTest(Goal), []))):- \+builtin:var(Goal::pred), \+builtin:catch(Goal, _, builtin:fail).
