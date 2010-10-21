@@ -90,6 +90,8 @@ public class Compound implements Serializable {
 		return true;
 	}
 	public String toString() {
+		if(name.equals(".") && arity() == 2)
+			return listToString();
 		StringBuffer buff = new StringBuffer();
 		buff.append(name);
 		if(args.size() > 0) {
@@ -101,6 +103,22 @@ public class Compound implements Serializable {
 			}
 			buff.append(")");
 		}
+		return buff.toString();
+	}
+	private String listToString() {
+		StringBuffer buff = new StringBuffer();
+		buff.append("[");
+		Compound i = this;
+		while(i.name().equals(".") && i.arity() == 2) {
+			if(i != this)
+				buff.append(", ");
+			buff.append(i.arg(1));
+			Object next = i.arg(2);
+			if(!(next instanceof Compound))
+				break;
+			i = (Compound)next;
+		}
+		buff.append("]");
 		return buff.toString();
 	}
 	public PrologProxy getProlog() {

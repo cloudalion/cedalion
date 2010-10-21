@@ -6,6 +6,7 @@ package net.nansore.cedalion.eclipse;
 import java.io.IOException;
 
 import net.nansore.cedalion.figures.TermFigure;
+import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.swt.graphics.Color;
@@ -81,4 +82,6 @@ public interface TermContext {
 	String getPackage();
 
 	Image getImage(String imageName) throws IOException;
+	
+	Compound getPath();
 }

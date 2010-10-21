@@ -406,4 +406,9 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	public Image getImage(String imageName) throws IOException {
 		return Activator.getDefault().getImage(imageName, getEditorSite().getShell().getDisplay());
 	}
+
+	@Override
+	public Compound getPath() {
+		return null;
+	}
 }

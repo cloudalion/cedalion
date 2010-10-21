@@ -474,4 +474,9 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	public Image getImage(String imageName) throws IOException {
 		return context.getImage(imageName);
 	}
+
+	@Override
+	public Compound getPath() {
+		return (Compound)path;
+	}
 }

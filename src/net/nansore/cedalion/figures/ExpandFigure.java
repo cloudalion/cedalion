@@ -12,6 +12,8 @@ import org.eclipse.draw2d.Panel;
 
 import net.nansore.cedalion.eclipse.Activator;
 import net.nansore.cedalion.eclipse.TermContext;
+import net.nansore.cedalion.execution.PathStore;
+import net.nansore.cedalion.execution.PropertyNotFoundException;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
@@ -21,12 +23,13 @@ public class ExpandFigure extends TermContextProxy {
 
 	private ImageFigure icon;
 	private Panel panel;
-	private boolean isExpanded;
 	private IFigure collapsed;
 	private IFigure expanded;
+	private Compound path;
 
 	public ExpandFigure(Compound term, TermContext parent) throws TermInstantiationException, PrologException {
 		super(parent);
+		path = parent.getPath();
 		// Build a panel with an icon to its left
 		setLayoutManager(new FlowLayout());
 		icon = new ImageFigure();
@@ -35,14 +38,14 @@ public class ExpandFigure extends TermContextProxy {
 		add(icon);
 		add(panel);
 		try {
-			icon.setImage(parent.getImage("collapsed"));
+			String iconName = isExpanded() ? "expanded" : "collapsed";
+			icon.setImage(parent.getImage(iconName));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		collapsed = (IFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
 		expanded = (IFigure) TermInstantiator.instance().instantiate((Compound)term.arg(2), this);
-		isExpanded = false;
-		panel.add(collapsed);
+		panel.add(isExpanded() ? expanded : collapsed);
 		icon.addMouseListener(new MouseListener() {
 			
 			@Override
@@ -61,9 +64,11 @@ public class ExpandFigure extends TermContextProxy {
 	}
 
 	protected void toggle() {
+		boolean isExpanded = isExpanded();
 		IFigure from = isExpanded ? expanded : collapsed;
 		IFigure to = isExpanded ? collapsed : expanded;
 		isExpanded = !isExpanded;
+		setExpaneded(isExpanded);
 		panel.remove(from);
 		panel.add(to);
 		String iconName = isExpanded ? "expanded" : "collapsed";
@@ -71,6 +76,22 @@ public class ExpandFigure extends TermContextProxy {
 			icon.setImage(getImage(iconName));
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void setExpaneded(boolean isExpanded) {
+		PathStore.instance().assign(path, "expanded", isExpanded);
+		System.out.println("Assigned to path: " + path + ": " + isExpanded);
+	}
+
+	private boolean isExpanded() {
+		try {
+			boolean expanded = (Boolean)PathStore.instance().getProperty(path, "expanded");
+			System.out.println("Expanded for path " + path + ": " + expanded);
+			return expanded;
+		} catch (PropertyNotFoundException e) {
+			System.out.println("Expanded for path " + path + ": No value");
+			return false;
 		}
 	}
 

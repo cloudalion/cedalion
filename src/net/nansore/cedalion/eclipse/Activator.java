@@ -112,6 +112,9 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	private void loadResources(IContainer container) throws CoreException {
+		// Block getting into a project named "cedalion" to avoid duplicate definitions
+		if(container instanceof IProject && container.getName().equals("cedalion"))
+			return;
 		IResource[] members = container.members(true);
 		for(int i = 0; i < members.length; i++) {
 			String ext = members[i].getFileExtension();
@@ -130,6 +133,7 @@ public class Activator extends AbstractUIPlugin {
 		System.out.println("Loading: " + resourcePath);
 		String filePath = resource.getLocation().toString();
 		String pkg = resource.getParent().getFullPath().toString();
+		System.out.println("Package: " + pkg);
 		try {
 			prolog.getSolution(prolog.createCompound("loadFile", filePath, pkg));
 		} catch (PrologException e) {

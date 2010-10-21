@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
+import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FlowLayout;
@@ -104,7 +105,11 @@ public abstract class TermContextProxy extends Figure implements TermContext, Te
     public Color getColor() {
         return context.getColor();
     }
-    /* (non-Javadoc)
+    @Override
+	public Compound getPath() {
+		return context.getPath();
+	}
+	/* (non-Javadoc)
      * @see net.nansore.visualterm.TermContext#getFont()
      */
     public Font getFont(int fontType) {

@@ -8,31 +8,53 @@ signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode]).
 projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
 visClass(cpi:vis(_, _), !'net.nansore.cedalion.figures.VisualTerm').
 visClass(vis(_), !'net.nansore.cedalion.figures.VisualTerm').
+alias(vis(_)::visualization, !'<<>>').
 visClass(horiz(_), !'net.nansore.cedalion.figures.HorizontalFlow').
 signature(vert(List)::visualization, [List::list(visualization)]).
 projection(vert(List)::visualization, horiz([halfSize(label(!v)), vis(List::list(visualization))])).
 visClass(vert(_), !'net.nansore.cedalion.figures.VerticalFlow').
 visClass(label(_), !'net.nansore.cedalion.figures.LabelFigure').
+projection(label(L)::visualization, horiz([label(!'"'), vis(L::string), label(!'"')])).
+alias(label(L)::visualization, !'""').
 signature(italic(Vis)::visualization, [Vis::visualization]).
+projection(italic(Vis)::visualization, horiz([halfSize(label(!i)), italic(vis(Vis::visualization))])).
 visClass(italic(_), !'net.nansore.cedalion.figures.Italic').
 signature(bold(Vis)::visualization, [Vis::visualization]).
+projection(bold(Vis)::visualization, horiz([halfSize(label(!b)), bold(vis(Vis::visualization))])).
 visClass(bold(_), !'net.nansore.cedalion.figures.Bold').
 signature(color::type, []).
 signature(color(Vis, Color)::visualization, [Vis::visualization, Color::color]).
+projection(color(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!color)))).
 visClass(color(_, _), !'net.nansore.cedalion.figures.TextColor').
 signature(lineBorder(Vis, Width, Color)::visualization, [Vis::visualization, Width::number, Color::color]).
+projection(lineBorder(Vis, Width, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), label(! (,)), vis(Width::number), lowered(background(lineBorder(vis(Vis::visualization), 3, cpi:rgb(0, 0, 0)), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!lineBorder)))).
 visClass(lineBorder(_, _, _), !'net.nansore.cedalion.figures.LineBorderFigure').
 visClass(symbol(_), !'net.nansore.cedalion.figures.Symbol').
+projection(symbol(Unicode)::visualization, horiz([symbol(963), vis(Unicode::number)])).
 signature(tooltip(Content, Tooltip)::visualization, [Content::visualization, Tooltip::visualization]).
-visClass(tooltip(_, _), !'net.nansore.cedalion.figures.Tooltip').
+projection(tooltip(Content, Tooltip)::visualization, lowered(background(lineBorder(horiz([raised(background(vis(Content::visualization), cpi:rgb(255, 255, 255))), vis(Tooltip::visualization)]), 3, cpi:rgb(255, 255, 200)), cpi:rgb(255, 255, 200)))).
+visClass(tooltip(Content, Tooltip), !'net.nansore.cedalion.figures.Tooltip').
 signature(halfSize(V)::visualization, [V::visualization]).
+projection(halfSize(V)::visualization, horiz([halfSize(label(!'1/2')), halfSize(vis(V::visualization))])).
 visClass(halfSize(_), !'net.nansore.cedalion.figures.HalfSize').
-visClass(smaller(_), !'net.nansore.cedalion.figures.Smaller').
+signature(smaller(V)::visualization, [V::visualization]).
+projection(smaller(V)::visualization, horiz([halfSize(label(! (<))), smaller(vis(V::visualization))])).
+visClass(smaller(V), !'net.nansore.cedalion.figures.Smaller').
 signature(action(Vis, Proc)::visualization, [Vis::visualization, Proc::procedure]).
 visClass(action(_, _), !'net.nansore.cedalion.figures.ActionFigure').
 signature(background(Vis, Color)::visualization, [Vis::visualization, Color::color]).
+projection(background(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(220, 220, 220)))]), cpi:rgb(166, 166, 255)), label(!background)))).
 visClass(background(Vis, Color), !'net.nansore.cedalion.figures.Background').
+signature(roundRect(Vis, Color)::visualization, [Vis::visualization, Color::color]).
+visClass(roundRect(Vis, Color), !'net.nansore.cedalion.figures.RoundRect').
 signature(cpi:rgb(R, G, B)::color, [R::number, G::number, B::number]).
+projection(cpi:rgb(R, G, B)::color, halfSize(vert([color(vis(R::number), cpi:rgb(128, 0, 0)), color(vis(G::number), cpi:rgb(0, 128, 0)), color(vis(B::number), cpi:rgb(0, 0, 128))]))).
 signature(expand(Collapsed, Expanded)::visualization, [Collapsed::visualization, Expanded::visualization]).
 projection(expand(Collapsed, Expanded)::visualization, expand(vis(Collapsed::visualization), vis(Expanded::visualization))).
 visClass(expand(Collapsed, Expanded), !'net.nansore.cedalion.figures.ExpandFigure').
+signature(raised(Vis)::visualization, [Vis::visualization]).
+projection(raised(Vis)::visualization, horiz([halfSize(label(!r)), raised(vis(Vis::visualization))])).
+visClass(raised(Vis), !'net.nansore.cedalion.figures.Raised').
+signature(lowered(Vis)::visualization, [Vis::visualization]).
+projection(lowered(Vis)::visualization, horiz([halfSize(label(!l)), lowered(vis(Vis::visualization))])).
+visClass(lowered(Vis), !'net.nansore.cedalion.figures.Lowered').
