@@ -14,7 +14,7 @@ import net.nansore.prolog.Variable;
 
 public class Test {
 	public static void main(String[] args) throws IOException, PrologException, TermInstantiationException, ExecutionContextException {
-		PrologProxy p = new PrologProxy(new File("service.pl"));
+		PrologProxy p = new PrologProxy("pl", new File("service.pl"));
 		
 		p.getSolution(new Compound(p, "loadFile", "procedure.ced", "cedalion"));
 		

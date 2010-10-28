@@ -1,0 +1,12 @@
+signature(context::type, []).
+signature(checkContext(TTerm, Context)::pred, [TTerm::typedTerm, Context::context]).
+checkContext(TTerm, Context):-builtin:fail.
+signature(subTerm(TTerm, Path, SubTTerm, SubPath)::pred, [TTerm::typedTerm, Path::cpi:path, SubTTerm::_, SubPath::cpi:path]).
+subTerm(TTerm, Path, TTerm, Path):-builtin:true.
+signature(subElement(Args, Path, Arg, Path1)::pred, [Args::list(typedTerm), Path::cpi:path, Arg::typedTerm, Path1::cpi:path]).
+subElement([TTerm|_], cpi:path(File, Path), TTerm, cpi:path(File, [1|Path])):-builtin:true.
+subElement([_|TTerms], cpi:path(File, Path), TTerm, cpi:path(File, [N|Path])):-subElement(TTerms, cpi:path(File, Path), TTerm, cpi:path(File, [N1|Path])), builtin:succ(N1, N).
+subTerm(Term::Type, Path, SubTTerm, SubPath):-builtin:compound(Term::Type), safeParseTerm(Term::Type, _, Args), subElement(Args, Path, Arg, Path1), subTerm(Arg, Path1, SubTTerm, SubPath).
+checkWithContext(Context, SubTTerm, VNs, Marker):-builtin:fail.
+signature(checkWithContext(Context, SubTTerm, VNs, Marker)::pred, [Context::context, SubTTerm::typedTerm, VNs::list(varName), Marker::marker]).
+check(Path, TTerm, VNs, marker(SubPath, Marker)):-checkContext(TTerm, Context), subTerm(TTerm, Path, SubTTerm, SubPath), checkWithContext(Context, SubTTerm, VNs, Marker).

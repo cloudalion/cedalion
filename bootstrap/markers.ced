@@ -1,9 +1,15 @@
 markersForPath([], _, [], []):-builtin:true.
-markersForPath([marker(Path, Mark)|Markers], BasePath, MarkersForPath, MarkersLeft):-markersForPath(Markers, BasePath, MarkersForPath1, MarkersLeft1), builtin:if(pathIsPrefix(BasePath, Path), (MarkersForPath=[marker(Path, Mark)|MarkersForPath1], MarkersLeft=MarkersLeft1), (MarkersForPath=MarkersForPath1, MarkersLeft=[marker(Path, Mark)|MarkersLeft1])).
+markersForPath([marker(Path, Mark)|Markers], BasePath, MarkersForPath, MarkersLeft):-markersForPath(Markers, BasePath, MarkersForPath1, MarkersLeft1), builtin:if(pathIsPrefix(BasePath, Path), (MarkersForPath::list(locMarker)=[marker(Path, Mark)|MarkersForPath1]::list(locMarker), MarkersLeft=MarkersLeft1), (MarkersForPath=MarkersForPath1, MarkersLeft::list(locMarker)=[marker(Path, Mark)|MarkersLeft1]::list(locMarker))).
 applyMarkers(cpi:descriptor(_, _, [])::_, Vis, Vis):-builtin:true.
 applyMarkers(cpi:descriptor(Path, Term, [marker(MPath, Mark)|Markers])::Type, Vis, MVis):-builtin:if(MPath=Path, applyMarker(Mark, Vis, MVis1), MVis1=Vis), applyMarkers(cpi:descriptor(Path, Term, Markers)::Type, MVis1, MVis).
+signature(applyMarker(Mark, Vis, MVis)::pred, [Mark::marker, Vis::visualization, MVis::visualization]).
 applyMarker(Mark, Vis, MVis):-builtin:if(markerVisualization(Mark, Vis, MVis), builtin:true, MVis=Vis).
 signature(markerVis(Mark, Vis, MVis)::statement, [Mark::marker, Vis::visualization, MVis::visualization]).
+signature(markerVisualization(Mark, Vis, MVis)::pred, [Mark::marker, Vis::visualization, MVis::visualization]).
 markerVis(Mark, Vis, MVis)~>markerVisualization(Mark, Vis, MVis):-builtin:true.
 check(Path, TTerm, _, marker(Path, stringMarker)):-builtin:string(TTerm).
+signature(checkError(TTerm, Error)::pred, [TTerm::typedTerm, Error::error]).
+check(Path, TTerm, VNs, marker(Path, error(Error, VNs))):-checkError(TTerm, Error).
+checkError(TTerm, Error):-builtin:fail.
+signature(stringMarker::marker, []).
 markerVis(stringMarker, Vis, color(Vis, cpi:rgb(255, 0, 128))).

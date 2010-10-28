@@ -2,8 +2,10 @@ package net.nansore.cedalion.eclipse;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.preference.FontFieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PathEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -41,6 +43,7 @@ public class CedalionPreferences
 	public void createFieldEditors() {
 		addField(new FontFieldEditor("normalFont", "Normal Font", getFieldEditorParent()));
 		addField(new FontFieldEditor("symbolFont", "Symbol Font", getFieldEditorParent()));
+		addField(new FileFieldEditor("prologInterpreter", "Prolog Interpreter", getFieldEditorParent()));
 		addField(new BooleanFieldEditor("useProxy", "Use Proxy", getFieldEditorParent()));
 		addField(new StringFieldEditor("proxyHost", "Proxy host", getFieldEditorParent()));
 		addField(new IntegerFieldEditor("proxyPort", "Proxy port", getFieldEditorParent()));

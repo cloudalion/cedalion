@@ -6,6 +6,7 @@ visClass(cpi:vis(_), !'net.nansore.cedalion.figures.VisualTerm').
 signature(mode::type, []).
 signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode]).
 projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
+alias(cpi:vis(TTerm, Mode)::visualization, !'<<@>>').
 visClass(cpi:vis(_, _), !'net.nansore.cedalion.figures.VisualTerm').
 visClass(vis(_), !'net.nansore.cedalion.figures.VisualTerm').
 alias(vis(_)::visualization, !'<<>>').

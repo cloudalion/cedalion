@@ -26,8 +26,8 @@ public class PrologProxy {
     private Writer log;
     private Pattern intRegex = Pattern.compile("-?[0-9]+");
     private Pattern floatRegex = Pattern.compile("-?[0-9]+(\\.[0-9]+)?([eE][+\\-][0-9]+)?");
-    public PrologProxy(File file) throws IOException {
-        proc = Runtime.getRuntime().exec("pl -s " + file.toString() + " -t qryStart");
+    public PrologProxy(String prologInterpreter, File file) throws IOException {
+        proc = Runtime.getRuntime().exec(prologInterpreter + " -s " + file.toString() + " -t qryStart");
         input = new InputStreamReader(proc.getInputStream());
         output = new OutputStreamWriter(proc.getOutputStream());
         log = new OutputStreamWriter(new FileOutputStream("pl.log"));
@@ -323,7 +323,7 @@ public class PrologProxy {
     }
     
     public static void main(String[] args) throws IOException, PrologException {
-        PrologProxy p = new PrologProxy(new File("/home/boaz/workspace/VisualTermPlugin/prolog/semantics.pl"));
+        PrologProxy p = new PrologProxy("pl", new File("/home/boaz/workspace/VisualTermPlugin/prolog/semantics.pl"));
         Variable varX = new Variable("X");
         Iterator<Map<Variable, Object>> i = p.getSolutions(new Compound(p, "a", varX));
         while(i.hasNext()) {

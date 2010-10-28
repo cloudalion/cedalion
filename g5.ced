@@ -1,0 +1,13 @@
+import(!c, !'http://nansore.net/cedalion').
+c:signature(pattern::c:type, []).
+4.
+c:signature(empty::pattern, []).
+c:signature(follow(P1, P2)::pattern, [P1::pattern, P2::pattern]).
+c:signature(str(c)::pattern, [c:string]).
+parse(X, empty, X).
+parse([A|B], str(A), B).
+parse(Text, follow(P1, P2), Residue):-parse(Text, P1, R1), parse(R1, P2, Residue).
+parse(Text, alt(P1, P2), Residue):-parse(Text, P1, Residue).
+parse(Text, alt(P1, P2), Residue):-parse(Text, P2, Residue).
+prod(Symbol, Pattern)~>parse(Text, Symbol, Residue):-parse(Text, Pattern, Residue).
+prod(s, alt(follow(str(!a), follow(s, str(!b))), empty)).

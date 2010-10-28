@@ -1,5 +1,6 @@
 signature(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, [TTerm::typedTerm, VarNames::list(varName), Path::cpi:path, Caption::string, Proc::procedure]).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First|Rest]::list(T), VarNames)).
+contextMenuEntry([]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_]::list(T), VarNames)).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _|Rest]::list(T), VarNames)).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
 signature(showView(Vis)::command, [Vis::visualization]).

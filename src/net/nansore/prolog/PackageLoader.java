@@ -125,7 +125,7 @@ public class PackageLoader {
 	}
 	
 	public static void main(String[] args) throws IOException, PrologException {
-		PackageLoader loader = new PackageLoader(new File("d:\\"), null, new PrologProxy(new File("service.pl")));
+		PackageLoader loader = new PackageLoader(new File("d:\\"), null, new PrologProxy("pl", new File("service.pl")));
 		loader.loadNamespace("http://127.0.0.1/Apache2.2.zip");
 	}
 }

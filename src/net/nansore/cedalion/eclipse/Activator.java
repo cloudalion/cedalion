@@ -66,22 +66,30 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
         try {
-            prolog = new PrologProxy(loadToFileSystem(context, "service.pl"));
-    		//prolog.getSolution(prolog.createCompound("loadFile", loadToFileSystem(context, "procedure.ced").toString(), "cedalion1"));
-
     		super.start(context);
             this.context = context;
 
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            loadResources(root);
-            
-            Proxy proxy = null;
-            if(getPreferenceStore().getBoolean("useProxy")) {
-            	proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(getPreferenceStore().getString("proxyHost"), getPreferenceStore().getInt("proxyPort")));
-            }
-            	
-            //pkgLoader = new PackageLoader(getStateLocation().toFile(), proxy);
-            //loadNamespaces();
+        	String plInterpreter = getPreferenceStore().getString("prologInterpreter");
+        	if(plInterpreter == null || plInterpreter.equals("")) {
+        		plInterpreter = "pl";
+        	}
+            try {
+				prolog = new PrologProxy(plInterpreter, loadToFileSystem(context, "service.pl"));
+
+				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+	            loadResources(root);
+	            
+	            Proxy proxy = null;
+	            if(getPreferenceStore().getBoolean("useProxy")) {
+	            	proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(getPreferenceStore().getString("proxyHost"), getPreferenceStore().getInt("proxyPort")));
+	            }
+	            	
+	            //pkgLoader = new PackageLoader(getStateLocation().toFile(), proxy);
+	            //loadNamespaces();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         } catch(Exception e) {
             e.printStackTrace();
             throw e;
