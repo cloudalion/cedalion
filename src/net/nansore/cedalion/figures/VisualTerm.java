@@ -394,6 +394,9 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     }
 
     private void setContentFromString(String text) throws TermVisualizationException, PrologException, TermInstantiationException, ExecutionContextException {
+    	if(text.startsWith("\"")) {
+    		text = "!('" + text.substring(1) + "')";
+    	}
     	PrologProxy prolog = Activator.getProlog();
 		ExecutionContext exe = new ExecutionContext(prolog);
 		exe.runProcedure(prolog.createCompound("cpi#editFromString", path, prolog.createCompound("cpi#constExpr", text)));
