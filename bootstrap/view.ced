@@ -1,4 +1,5 @@
 signature(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, [TTerm::typedTerm, VarNames::list(varName), Path::cpi:path, Caption::string, Proc::procedure]).
+projection(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, vert([horiz([label(!'Context menu entry'), vis(Caption::string), label(!for), vis(TTerm::typedTerm), label(!'with varnames'), vis(VarNames::list(varName)), label(!'at path'), vis(Path::cpi:path)]), horiz([label(!'    '), label(!do), vis(Proc::procedure)])])).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First|Rest]::list(T), VarNames)).
 contextMenuEntry([]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_]::list(T), VarNames)).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _|Rest]::list(T), VarNames)).
@@ -6,6 +7,7 @@ contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path
 signature(showView(Vis)::command, [Vis::visualization]).
 commandClass(showView(Vis), !'net.nansore.cedalion.cmd.ShowView').
 contextMenuEntry(TTerm, VarNames, Path, !'Show in View', showInView(TTerm, VarNames)).
+signature(showInView(Term::Type, VarNames)::procedure, [ (Term::Type)::typedTerm, VarNames::list(varName)]).
 procedure(showInView(Term::Type, VarNames), showView(vis(cpi:immediateDescriptor(Term, VarNames)::Type))).
 markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(action(label(!'E'), showSolutions(X, VarNames)), cpi:rgb(255, 0, 0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
 signature(showSolutions(Error, VarNames)::procedure, [Error::error, VarNames::list(varName)]).
