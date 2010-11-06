@@ -1,0 +1,9 @@
+'/bootstrap':signature(baseAsString(First, Prefix)::'/bootstrap':pred, [First::base, Prefix::'/bootstrap':string]).
+baseAsString(a, !'A'):-builtin:true.
+baseAsString(c, !'C'):-builtin:true.
+baseAsString(g, !'G'):-builtin:true.
+baseAsString(t, !'T'):-builtin:true.
+'/bootstrap':signature(sequenceAsString(Seq, Str)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), Str::'/bootstrap':string]).
+sequenceAsString([], !''):-builtin:true.
+sequenceAsString([First|Rest], Str):-baseAsString(First, Prefix), sequenceAsString(Rest, Suffix), builtin:strcat(Prefix, Suffix, Str).
+'/bootstrap':contextMenuEntry(Set::'/bootstrap':set('/bootstrap':list(base)), VNs, Path, !'Generate Sequence Set', '/bootstrap':generateFileForSet(!'sequences.txt', '/bootstrap':set(Str, ('/bootstrap':member(Seq, Set, '/bootstrap':list(base)), sequenceAsString(Seq, Str))))).

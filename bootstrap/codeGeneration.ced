@@ -1,0 +1,6 @@
+signature(generateFile(FileName, Var, Goal)::command, [FileName::string, Var::string, Goal::pred]).
+commandClass(generateFile(FileName, Var, Goal), !'net.nansore.cedalion.cmd.GenerateFile').
+signature(generateFileForSet(FileName, Set)::procedure, [FileName::string, Set::set(string)]).
+projection(generateFileForSet(FileName, Set)::procedure, horiz([label(!'Generate file'), vis(FileName::string), label(!'with string set'), vis(Set::set(string))])).
+procedure(generateFileForSet(FileName, Set), generateFile(FileName, Var, member(Var, Set, string))).
+adapter(Proc::procedure, doProc(Proc)::command).

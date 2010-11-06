@@ -1,0 +1,15 @@
+'/bootstrap':signature(conjBase(Base, ConjBase)::'/bootstrap':pred, [Base::base, ConjBase::base]).
+conjBase(a, t):-builtin:true.
+conjBase(t, a):-builtin:true.
+conjBase(c, g):-builtin:true.
+conjBase(g, c):-builtin:true.
+'/bootstrap':signature(conj(Seq, ConjSeq)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), ConjSeq::'/bootstrap':list(base)]).
+conj([], []):-builtin:true.
+conj([Base|Seq], [ConjBase|ConjSeq]):-conjBase(Base, ConjBase), conj(Seq, ConjSeq).
+'/bootstrap':signature(conj(SeqSet)::'/bootstrap':set('/bootstrap':list(base)), [SeqSet::'/bootstrap':set('/bootstrap':list(base))]).
+'/bootstrap':projection(conj(SeqSet)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':label(!conj))])).
+'/bootstrap':member(ConjSeq, conj(SeqSet), '/bootstrap':list(base)):-'/bootstrap':member(Seq, SeqSet, '/bootstrap':list(base)), conj(Seq, ConjSeq).
+'/bootstrap':unitTest('/bootstrap':member([a, t, c, g], conj(seq(tSet, seq(aSet, seq(gSet, cSet)))), '/bootstrap':list(base))).
+'/bootstrap':unitTest(\+'/bootstrap':member([a, t, c, t], conj(seq(tSet, seq(aSet, seq(gSet, cSet)))), '/bootstrap':list(base))).
+'/bootstrap':unitTest('/bootstrap':member([a, t, t, a], seq(bind(rep(nSet, 2), X), conj(X)), '/bootstrap':list(base))).
+'/bootstrap':unitTest(\+'/bootstrap':member([a, t, a, t], seq(bind(rep(nSet, 2), X), conj(X)), '/bootstrap':list(base))).
