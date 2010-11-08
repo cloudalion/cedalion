@@ -24,8 +24,8 @@ signature(builtin:statement(S, VN)::annotatedTerm, [S::statement, VN::list(varNa
 signature(mergeVarNames(VN1, VN2, VarNames)::pred, [VN1::list(varName), VN2::list(varName), VarNames::list(varName)]).
 fileModel([builtin:statement(S, VN1)|Terms], [S|Statements], VarNames):-fileModel(Terms, Statements, VN2), mergeVarNames(VN1, VN2, VarNames).
 mergeVarNames([], VarNames, VarNames):-builtin:true.
-signature(builtin:varName(Var::T, Name)::varName, [ (Var::T)::typedTerm, Name::_]).
 signature(listMember(Elem, Type, List)::pred, [Elem::Type, Type::type, List::list(Type)]).
+signature(builtin:varName(TVar, Name)::varName, [TVar::typedTerm, Name::string]).
 mergeVarNames([builtin:varName(Var::T, Name)|VN1], VN2, VarNames):-builtin:if(listMember(builtin:varName(Var::T, Name), varName, VN2), mergeVarNames(VN1, VN2, VarNames), mergeVarNames(VN1, [builtin:varName(Var::T, Name)|VN2], VarNames)).
 signature(varInVarNames(TVar, VN)::pred, [TVar::typedTerm, VN::list(varName)]).
 signature(builtin:equals(TVar1, TVar2)::pred, [TVar1::typedTerm, TVar2::typedTerm]).
@@ -48,4 +48,3 @@ varInList(Var::VarType, [_|Tail]):-varInList(Var::VarType, Tail).
 signature(builtin:import(Alias, NS)::statement, [Alias::string, NS::string]).
 projection(builtin:import(Alias, NS)::statement, horiz([label(!import), vis(NS::string), label(! (as)), vis(Alias::string)])).
 cpi:rootType(list(statement)).
-
