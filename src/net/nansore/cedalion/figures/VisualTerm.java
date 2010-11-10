@@ -68,18 +68,23 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      */
     public VisualTerm(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException {
     	context = parent;
-        // The first argument is the descriptor, containing the path and additional information
-    	descriptor = (Compound)term.arg(1);
-    	if(!descriptor.name().equals("::"))
-    		System.err.println("Bad descriptor: " + descriptor.name());
-        path = ((Compound)descriptor.arg(1)).arg(1);
-        if(term.arity() > 1) {
-        	projType = (Compound)term.arg(2);
-        } else {
-        	projType = term.getProlog().createCompound("cpi#default");
-        }
         
+        // Register this object with the content
+        context.registerTermFigure(path, this);
+        context.registerDispose(this);
+
         try {
+            // The first argument is the descriptor, containing the path and additional information
+        	descriptor = (Compound)term.arg(1);
+        	if(!descriptor.name().equals("::"))
+        		System.err.println("Bad descriptor: " + descriptor.name());
+            path = ((Compound)descriptor.arg(1)).arg(1);
+            if(term.arity() > 1) {
+            	projType = (Compound)term.arg(2);
+            } else {
+            	projType = term.getProlog().createCompound("cpi#default");
+            }
+
             // Set up the GUI
             setLayoutManager(new FlowLayout());
             setRequestFocusEnabled(true);
@@ -87,9 +92,6 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             contentFigure = createContentFigure(descriptor);
             add(contentFigure);
             
-            // Register this object with the content
-            context.registerTermFigure(path, this);
-            context.registerDispose(this);
             PrologProxy p = term.getProlog();
 			unreg = Notifier.instance().register(p.createCompound("::", path, p.createCompound("cpi#path")), new Runnable() {
 				
@@ -108,6 +110,11 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             e.printStackTrace();
             Label label = new Label("<<<" + e.getMessage() + ">>>");
             label.setForegroundColor(new Color(context.getTextEditor().getDisplay(), 255, 0, 0));
+            add(label);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            Label label = new Label("<<<" + e.getMessage() + ">>>");
+            label.setForegroundColor(new Color(context.getTextEditor().getDisplay(), 128, 128, 0));
             add(label);
         }
     }
