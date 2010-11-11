@@ -11,6 +11,7 @@ import net.nansore.cedalion.execution.ICommand;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+import net.nansore.prolog.PrologProxy;
 import net.nansore.prolog.Variable;
 
 /**
@@ -32,18 +33,9 @@ public class GenerateFile implements ICommand {
 
 	@Override
 	public void run(ExecutionContext executionContext) throws PrologException,
-			TermInstantiationException, ExecutionContextException {
-		try {
-			FileWriter writer = new FileWriter(fileName);
-			for(Iterator<Map<Variable, Object>> solutions = executionContext.prolog().getSolutions(goal); solutions.hasNext(); ) {
-				Map<Variable, Object> solution = solutions.next();
-				String str = (String)solution.get(strVar);
-				writer.write(str + '\n');
-			}
-			writer.close();
-		} catch (IOException e) {
-			throw new ExecutionContextException(e.getMessage());
-		}
+		TermInstantiationException, ExecutionContextException {
+		PrologProxy p = executionContext.prolog();
+		p.getSolution(p.createCompound("generateFile", fileName, strVar, goal));
 	}
 
 }

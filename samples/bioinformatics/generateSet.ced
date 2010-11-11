@@ -1,9 +1,10 @@
-'/bootstrap':signature(baseAsString(First, Prefix)::'/bootstrap':pred, [First::base, Prefix::'/bootstrap':string]).
-baseAsString(a, !'A'):-builtin:true.
-baseAsString(c, !'C'):-builtin:true.
-baseAsString(g, !'G'):-builtin:true.
-baseAsString(t, !'T'):-builtin:true.
-'/bootstrap':signature(sequenceAsString(Seq, Str)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), Str::'/bootstrap':string]).
-sequenceAsString([], !''):-builtin:true.
-sequenceAsString([First|Rest], Str):-baseAsString(First, Prefix), sequenceAsString(Rest, Suffix), builtin:strcat(Prefix, Suffix, Str).
-'/bootstrap':contextMenuEntry(Set::'/bootstrap':set('/bootstrap':list(base)), VNs, Path, !'Generate Sequence Set', '/bootstrap':generateFileForSet(!'sequences.txt', '/bootstrap':set(Str, ('/bootstrap':member(Seq, Set, '/bootstrap':list(base)), sequenceAsString(Seq, Str))))).
+'/bootstrap':signature(baseString(Base)::'/Functional':expr('/bootstrap':string), [Base::base]).
+'/Functional':def(baseString(a), '/bootstrap':string, '/Functional':wrap(!'A')).
+'/Functional':def(baseString(c), '/bootstrap':string, '/Functional':wrap(!'C')).
+'/Functional':def(baseString(g), '/bootstrap':string, '/Functional':wrap(!'G')).
+'/Functional':def(baseString(t), '/bootstrap':string, '/Functional':wrap(!'T')).
+'/bootstrap':signature(sequenceString(Seq)::'/Functional':expr('/bootstrap':string), [Seq::'/bootstrap':list(base)]).
+'/Functional':def(sequenceString([]), '/bootstrap':string, '/Functional':wrap(!'')).
+'/Functional':def(sequenceString([First|Rest]), '/bootstrap':string, '/Functional':concat(baseString(First), sequenceString(Rest))).
+'/bootstrap':contextMenuEntry(Set::'/bootstrap':set('/bootstrap':list(base)), VNs, Path, !'Generate Sequence Set', '/bootstrap':generateFileForSet(!'sequences1.txt', '/Functional':eset(sequenceString(Seq), '/bootstrap':member(Seq, Set, '/bootstrap':list(base))))).
+dnaSetDef(testSeq, restrict(seq(rep(nSet, 9), '/bootstrap':union(aSet, tSet)))).

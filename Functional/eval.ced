@@ -21,13 +21,8 @@ eval(mult(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval
 '/bootstrap':alias(div(A, B)::expr(T), ! (/)).
 '/bootstrap':signature(builtin:div(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number]).
 eval(div(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:div(AV, BV, C).
-'/bootstrap':signature(concat(A, B)::expr('/bootstrap':string), [A::expr('/bootstrap':string), B::expr('/bootstrap':string)]).
-'/bootstrap':projection(concat(A, B)::expr('/bootstrap':string), '/bootstrap':horiz(['/bootstrap':vis(A::expr('/bootstrap':string)), '/bootstrap':label(! (+)), '/bootstrap':vis(B::expr('/bootstrap':string))])).
-eval(concat(A, B), '/bootstrap':string, Str):-eval(A, '/bootstrap':string, AV), eval(B, '/bootstrap':string, BV), builtin:strcat(AV, BV, Str).
 '/bootstrap':unitTest(eval(plus(wrap(1), wrap(1)), _, 2)).
 '/bootstrap':unitTest(eval(div(wrap(5), wrap(2)), '/bootstrap':number, 2.5)).
 '/bootstrap':signature(evalList(ExprList)::expr('/bootstrap':list(T)), [ExprList::'/bootstrap':list(expr(T))]).
 eval(evalList([]), '/bootstrap':list(T), []):-builtin:true.
 eval(evalList([FirstExpr|RestExpr]), '/bootstrap':list(T), [First|Rest]):-eval(FirstExpr, T, First), eval(evalList(RestExpr), '/bootstrap':list(T), Rest).
-'/bootstrap':signature('num2str'(Num)::expr('/bootstrap':string), [Num::expr('/bootstrap':number)]).
-eval('num2str'(NumExpr), '/bootstrap':string, Str):-eval(NumExpr, '/bootstrap':number, Num), builtin:termToString(Num::'/bootstrap':number, [], 1, [], Str).

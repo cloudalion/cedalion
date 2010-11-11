@@ -41,8 +41,8 @@ signature(selectVarNamesFor(TTerm, VN1, VN2)::pred, [TTerm::typedTerm, VN1::list
 annotateStatements([Statement|Statements], VarNames, [builtin:statement(Statement, VN1)|AnnoStatements]):-selectVarNamesFor(Statement::statement, VarNames, VN1), annotateStatements(Statements, VarNames, AnnoStatements).
 selectVarNamesFor(_, [], []):-builtin:true.
 signature(varIn(TVar, TTerm)::pred, [TVar::typedTerm, TTerm::typedTerm]).
-selectVarNamesFor(TTerm, [builtin:varName(Var::T, Name)|VarNames], VN):-selectVarNamesFor(TTerm, VarNames, VN1), builtin:if(varIn(Var::T, TTerm), VN::list(varName)=[builtin:varName(Var::T, Name)|VN1]::list(varName), VN=VN1).
-varIn(Var::VarType, Term::TermType):-builtin:if(builtin:var(Term::TermType), (builtin:equals(Var::VarType, Term::TermType), VarType::type=TermType::type), (builtin:compound(Term::TermType), safeParseTerm(Term::TermType, _, Args), varInList(Var::VarType, Args))).
+selectVarNamesFor(TTerm, [builtin:varName(Var::T, Name)|VarNames], VN):-selectVarNamesFor(TTerm, VarNames, VN1), builtin:if(varIn(Var::T, TTerm), VN=[builtin:varName(Var::T, Name)|VN1], VN=VN1).
+varIn(Var::VarType, Term::TermType):-builtin:if(builtin:var(Term::TermType), builtin:equals(Var::VarType, Term::TermType), (builtin:compound(Term::TermType), builtin:parseTerm(Term::TermType, _, Args), varInList(Var::VarType, Args))).
 varInList(Var::VarType, [First::FirstType|_]):-varIn(Var::VarType, First::FirstType).
 varInList(Var::VarType, [_|Tail]):-varInList(Var::VarType, Tail).
 signature(builtin:import(Alias, NS)::statement, [Alias::string, NS::string]).

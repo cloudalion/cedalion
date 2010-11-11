@@ -318,6 +318,21 @@ handleException(Exception) :-
     write('!'),
     write_term(Exception, [ignore_ops(true), quoted(true)]),
     nl.
+
+% Generate a file based on results from a query
+generateFile(!FileName, !StrVar, Goal) :-
+	open(FileName, write, S),
+	generateLines(S, StrVar, Goal),
+	close(S).
+
+generateLines(S, StrVar, Goal) :-
+	Goal,
+	write(S, StrVar),
+	nl(S),
+	fail.
+
+generateLines(_, _, _).
+
 % The basics
 'builtin#true' :- true.
 'builtin#fail' :- fail.

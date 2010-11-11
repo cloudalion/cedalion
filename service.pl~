@@ -318,6 +318,22 @@ handleException(Exception) :-
     write('!'),
     write_term(Exception, [ignore_ops(true), quoted(true)]),
     nl.
+
+% Generate a file based on results from a query
+generateFile(!FileName, StrVar, Goal) :-
+	open(FileName, write, S),
+	generateLines(S, StrVar, Goal),
+	close(S).
+
+generateLines(S, StrVar, Goal) :-
+	write(goal(Goal)),
+	Goal,
+	write(S, StrVar),
+	nl(S),
+	fail.
+
+generateLines(_, _, _).
+
 % The basics
 'builtin#true' :- true.
 'builtin#fail' :- fail.
@@ -334,6 +350,7 @@ handleException(Exception) :-
 'builtin#charCodes'(!(Atom), Codes) :- atom_codes(Atom, Codes).
 'builtin#strcat'(!S1, !S2, !S3) :- atom_concat(S1, S2, S3).
 'builtin#throw'(Exception) :- throw(Exception).
+'builtin#catch'(Goal, Exception, AltGoal) :- catch(Goal, Exception, AltGoal).
 'builtin#findall'(Template, _Type, Goal, List) :- findall(Template, Goal, List).
 'builtin#safeUnify'(A, B) :- unify_with_occurs_check(A,B).
 'builtin#termToString'(GTerm::_, VarNames, Depth, NsList, String) :-  termToString(GTerm, VarNames, Depth, NsList, String).
