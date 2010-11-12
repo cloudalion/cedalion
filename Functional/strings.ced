@@ -1,0 +1,6 @@
+'/bootstrap':signature(builtin:termToString(Num::'/bootstrap':number, [], 1, [], Str)::'/bootstrap':pred, [ (Num::'/bootstrap':number)::'/bootstrap':typedTerm, []::'/bootstrap':list(_), 1::'/bootstrap':number, []::'/bootstrap':list(_), Str::'/bootstrap':string]).
+'/bootstrap':signature('num2str'(Num)::expr('/bootstrap':string), [Num::expr('/bootstrap':number)]).
+eval('num2str'(NumExpr), '/bootstrap':string, Str):-eval(NumExpr, '/bootstrap':number, Num), builtin:termToString(Num::'/bootstrap':number, [], 1, [], Str).
+'/bootstrap':signature(concat(A, B)::expr('/bootstrap':string), [A::expr('/bootstrap':string), B::expr('/bootstrap':string)]).
+'/bootstrap':projection(concat(A, B)::expr('/bootstrap':string), '/bootstrap':horiz(['/bootstrap':vis(A::expr('/bootstrap':string)), '/bootstrap':label(! (+)), '/bootstrap':vis(B::expr('/bootstrap':string))])).
+eval(concat(A, B), '/bootstrap':string, Str):-eval(A, '/bootstrap':string, AV), eval(B, '/bootstrap':string, BV), builtin:strcat(AV, BV, Str).

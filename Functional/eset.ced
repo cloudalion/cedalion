@@ -1,0 +1,3 @@
+'/bootstrap':signature(eset(Expr, Goal)::'/bootstrap':set(T), [Expr::expr(T), Goal::'/bootstrap':pred]).
+'/bootstrap':projection(eset(Expr, Goal)::'/bootstrap':set(T), '/bootstrap':horiz(['/bootstrap':label(!'{'), '/bootstrap':vis(Expr::expr(T)), '/bootstrap':label(! (|)), '/bootstrap':vis(Goal::'/bootstrap':pred), '/bootstrap':label(!'}')])).
+'/bootstrap':member(Elem, eset(Expr, Goal), T):-Goal, eval(Expr, T, Elem).
