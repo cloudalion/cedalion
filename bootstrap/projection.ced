@@ -1,6 +1,6 @@
 signature(cpi:descriptor(Path, Term, Markers)::Type, [Path::cpi:path, Term::Type, Markers::list(locMarker)]).
 cpi:visualizeDescriptor(cpi:descriptor(Path, Term, Markers)::Type1, ProjType, MVis):-fixType(Type1::type, Type::type), cpi:termAtPath(Path, Term::Type, VarNames), true(applyCheckers(cpi:descriptor(Path, Term, Markers)::Type, Term::Type, VarNames, Desc)), builtin:if(builtin:var(Term::Type), visualizeVar(Term::Type, VarNames, Vis), builtin:if(builtin:number(Term::Type), visualizeNumber(Term::Type, Vis), builtin:if(builtin:string(Term::Type), visualizeString(Term::Type, Vis), visualizeCompound(Desc, Term::Type, ProjType, Vis)))), true(applyMarkers(Desc, Vis, MVis)).
-visualizeVar(_, [builtin:varName(_, Name)], italic(color(label(Name), cpi:rgb(0, 128, 0)))):-builtin:true.
+visualizeVar(_, [builtin:varName(_, Name)|_], italic(color(label(Name), cpi:rgb(0, 128, 0)))):-builtin:true.
 visualizeVar(_, [], italic(color(label(!'_'), cpi:rgb(0, 128, 0)))):-builtin:true.
 visualizeNumber(Num::_, label(Num)):-builtin:true.
 visualizeString(Str::_, label(Str)):-builtin:true.
@@ -25,7 +25,7 @@ signature(userVisualization(TTerm, ProjType, Hist, VisNew)::pred, [TTerm::typedT
 asProjection(VisOrig, ProjOrig, VisNew, ProjNew)~>userVisualization(TTerm, ProjNew, Hist, VisNew):- \+listMember(ProjOrig, projectionType, Hist), userVisualization(TTerm, ProjOrig, [ProjOrig|Hist], VisOrig).
 signature(cpi:immediateDescriptor(Term, VarNames)::Type, [Term::Type, VarNames::list(varName)]).
 cpi:visualizeDescriptor(cpi:immediateDescriptor(Term, VarNames)::Type, ProjType, Vis):-builtin:if(builtin:var(Term::Type), true(visualizeVar(Term::Type, VarNames, Vis)), builtin:if(builtin:number(Term::Type), true(visualizeNumber(Term::Type, Vis)), builtin:if(builtin:string(Term::Type), true(visualizeString(Term::Type, Vis)), true(visualizeCompound(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, ProjType, Vis))))).
-subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, BeforeFirst, [SubTerm::SubType|TArgs], [cpi:immediateDescriptor(SubTerm, VarNames1)::SubType|SubDescs]):-true(builtin:succ(BeforeFirst, First)), true(selectVarNamesFor(SubTerm::SubTypes, VarNames, VarNames1)), true(subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, First, TArgs, SubDescs)).
+subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, BeforeFirst, [SubTerm::SubType|TArgs], [cpi:immediateDescriptor(SubTerm, VarNames1)::SubType|SubDescs]):-true(builtin:succ(BeforeFirst, First)), true(selectVarNamesFor(SubTerm::SubType, VarNames, VarNames1)), true(subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, First, TArgs, SubDescs)).
 isDescriptor(cpi:immediateDescriptor(_, _)::_).
 isDescriptor(cpi:descriptor(_, _, _)::_).
 descriptorContent(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, VarNames).
