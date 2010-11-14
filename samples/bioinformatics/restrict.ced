@@ -1,0 +1,8 @@
+'/bootstrap':signature(restrict(Set)::'/bootstrap':set('/bootstrap':list(base)), [Set::'/bootstrap':set('/bootstrap':list(base))]).
+dnaSetDef(restrict(Set), '/bootstrap':intersect(Set, '/bootstrap':set(Seq, (inverse(InvSeq, Seq), conj(InvSeq, CompSeq), greaterOrEquals(CompSeq, Seq))))).
+'/bootstrap':unitTest('/bootstrap':member([a, t, c, g], restrict(rep(nSet, 4)), '/bootstrap':list(base))).
+'/bootstrap':unitTest(\+'/bootstrap':member([c, g, a, t], restrict(rep(nSet, 4)), '/bootstrap':list(base))).
+'/bootstrap':signature(builtin:coinToss(Nominator, Denominator)::'/bootstrap':pred, [Nominator::'/bootstrap':number, Denominator::'/bootstrap':number]).
+'/bootstrap':projection(builtin:coinToss(Nominator, Denominator)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':label(!coinToss), '/bootstrap':label(!'('), '/bootstrap':vis(Nominator::'/bootstrap':number), '/bootstrap':label(! (:)), '/bootstrap':vis(Denominator::'/bootstrap':number), '/bootstrap':label(!')')])).
+'/bootstrap':signature(uniformRestrict(Set)::'/bootstrap':set('/bootstrap':list(base)), [Set::'/bootstrap':set('/bootstrap':list(base))]).
+dnaSetDef(uniformRestrict(Set), '/Functional':eset('/Functional':if(builtin:coinToss(1, 2), '/Functional':wrap(Seq), invSeq(conjSeq('/Functional':wrap(Seq)))), '/bootstrap':member(Seq, restrict(Set), '/bootstrap':list(base)))).
