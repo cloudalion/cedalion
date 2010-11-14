@@ -6,5 +6,6 @@
 '/bootstrap':signature(sequenceString(Seq)::'/Functional':expr('/bootstrap':string), [Seq::'/bootstrap':list(base)]).
 '/Functional':def(sequenceString([]), '/bootstrap':string, '/Functional':wrap(!'')).
 '/Functional':def(sequenceString([First|Rest]), '/bootstrap':string, '/Functional':concat(baseString(First), sequenceString(Rest))).
-'/bootstrap':contextMenuEntry(Set::'/bootstrap':set('/bootstrap':list(base)), VNs, Path, !'Generate Sequence Set', '/bootstrap':generateFileForSet(!'sequences1.txt', '/Functional':eset(sequenceString(Seq), '/bootstrap':member(Seq, Set, '/bootstrap':list(base))))).
+'/bootstrap':contextMenuEntry(Set::'/bootstrap':set('/bootstrap':list(base)), VNs, Path, !'Generate Sequence Set', '/bootstrap':generateFileForSet(!'sequences.txt', '/Functional':eset(sequenceString(Seq), '/bootstrap':member(Seq, Set, '/bootstrap':list(base))))).
 dnaSetDef(testSeq, restrict(seq(rep(nSet, 9), '/bootstrap':union(aSet, tSet)))).
+dnaSetDef('test2', uniformRestrict(seq(aSet, seq(rep(nSet, 4), aSet)))).

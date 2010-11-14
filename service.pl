@@ -359,6 +359,8 @@ generateLines(_, _, _).
 'builtin#mult'(A,B,C) :- C is A*B.
 'builtin#div'(A,B,C) :- C is A/B.
 'builtin#greaterThen'(A,B) :- A>B.
+'builtin#coinToss'(N,D) :- N>random(D).
+
 
 
 % Write a term to a stream from a term(Term, VarNames) tupple

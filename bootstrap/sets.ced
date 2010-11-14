@@ -27,3 +27,7 @@ requires(signature(S::set(T), _), (member(_, S, T):-_)).
 signature(listSet(L)::set(T), [L::list(T)]).
 projection(listSet(L)::set(T), horiz([label(!'{'), cpi:vis(L::list(T), horiz), label(!'}')])).
 member(X, listSet(L), T):-listMember(X, T, L).
+signature(setParens(Set)::set(T), [Set::set(T)]).
+projection(setParens(Set)::set(T), horiz([label(!'('), vis(Set::set(T)), label(!')')])).
+alias(setParens(Set)::set(T), !'()').
+setDef(setParens(Set), Set, T).

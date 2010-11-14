@@ -1,14 +1,11 @@
-'/bootstrap':signature(numericValue(Base, Value)::'/bootstrap':pred, [Base::base, Value::'/bootstrap':number]).
-numericValue(a, 1):-builtin:true.
-numericValue(c, 2):-builtin:true.
-numericValue(g, 3):-builtin:true.
-numericValue(t, 4):-builtin:true.
+'/bootstrap':signature(baseNumericValue(Base)::'/Functional':expr('/bootstrap':number), [Base::base]).
+'/Functional':def(baseNumericValue(a), '/bootstrap':number, '/Functional':wrap(1)).
+'/Functional':def(baseNumericValue(c), '/bootstrap':number, '/Functional':wrap(2)).
+'/Functional':def(baseNumericValue(g), '/bootstrap':number, '/Functional':wrap(3)).
+'/Functional':def(baseNumericValue(t), '/bootstrap':number, '/Functional':wrap(4)).
+'/bootstrap':signature(seqNumericValue(Seq)::'/Functional':expr('/bootstrap':number), [Seq::'/bootstrap':list(base)]).
+'/Functional':def(seqNumericValue([]), '/bootstrap':number, '/Functional':wrap(0)).
+'/Functional':def(seqNumericValue([Base|Seq]), '/bootstrap':number, '/Functional':plus(baseNumericValue(Base), '/Functional':mult(seqNumericValue(Seq), '/Functional':wrap(5)))).
 '/bootstrap':signature(greaterOrEquals(A, B)::'/bootstrap':pred, [A::'/bootstrap':list(base), B::'/bootstrap':list(base)]).
 '/bootstrap':projection(greaterOrEquals(A, B)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(A::'/bootstrap':list(base)), '/bootstrap':label(! (>=)), '/bootstrap':vis(B::'/bootstrap':list(base))])).
-greaterOrEquals([A|_], [B|_]):-numericValue(A, AV), numericValue(B, BV), '/Functional':gt('/Functional':wrap(AV), '/Functional':wrap(BV), '/bootstrap':number).
-greaterOrEquals([First|AL], [First|BL]):-greaterOrEquals(AL, BL).
-greaterOrEquals([], []):-builtin:true.
-'/bootstrap':signature(restrict(Set)::'/bootstrap':set('/bootstrap':list(base)), [Set::'/bootstrap':set('/bootstrap':list(base))]).
-dnaSetDef(restrict(Set), '/bootstrap':intersect(Set, '/bootstrap':set(Seq, (inverse(InvSeq, Seq), conj(InvSeq, CompSeq), greaterOrEquals(CompSeq, Seq))))).
-'/bootstrap':unitTest('/bootstrap':member([a, t, c, g], restrict(rep(nSet, 4)), '/bootstrap':list(base))).
-'/bootstrap':unitTest(\+'/bootstrap':member([c, g, a, t], restrict(rep(nSet, 4)), '/bootstrap':list(base))).
+greaterOrEquals(SeqA, SeqB):-'/Functional':gt(seqNumericValue(SeqA), seqNumericValue(SeqB), '/bootstrap':number).

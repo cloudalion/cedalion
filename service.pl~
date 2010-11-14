@@ -320,13 +320,12 @@ handleException(Exception) :-
     nl.
 
 % Generate a file based on results from a query
-generateFile(!FileName, StrVar, Goal) :-
+generateFile(!FileName, !StrVar, Goal) :-
 	open(FileName, write, S),
 	generateLines(S, StrVar, Goal),
 	close(S).
 
 generateLines(S, StrVar, Goal) :-
-	write(goal(Goal)),
 	Goal,
 	write(S, StrVar),
 	nl(S),
@@ -360,6 +359,8 @@ generateLines(_, _, _).
 'builtin#mult'(A,B,C) :- C is A*B.
 'builtin#div'(A,B,C) :- C is A/B.
 'builtin#greaterThen'(A,B) :- A>B.
+'builtin#coinToss'(N,D) :- N>=random(D).
+
 
 
 % Write a term to a stream from a term(Term, VarNames) tupple
