@@ -1,5 +1,5 @@
 signature(autocomplete(Type, Prefix, Completion, Alias)::pred, [Type::type, Prefix::string, Completion::Type, Alias::string]).
-signature(builtin:strcat(_, Y, Z)::pred, [_::string, Y::string, Z::string]).
+signature(builtin:strcat(X, Y, Z)::pred, [X::string, Y::string, Z::string]).
 signature(defaultRepresentation(TTerm)::pred, [TTerm::typedTerm]).
 autocomplete(Type, Prefix, Completion, Alias):-checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
 signature(cpi:autocomplete(TTerm, Prefix, CompletionString, Alias)::pred, [TTerm::typedTerm, Prefix::string, CompletionString::string, Alias::string]).

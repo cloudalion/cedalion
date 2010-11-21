@@ -5,18 +5,18 @@ visualizeVar(_, [], italic(color(label(!'_'), cpi:rgb(0, 128, 0)))):-builtin:tru
 visualizeNumber(Num::_, label(Num)):-builtin:true.
 visualizeString(Str::_, label(Str)):-builtin:true.
 visualizeCompound(Desc, Term::Type, ProjType, Vis):-true(builtin:parseTerm(Term::Type, Func, TArgs)), true(subDescriptors(Desc, 0, TArgs, SubDescs)), true(builtin:parseTerm(Term2Vis::Type, Func, SubDescs)), true(visualizeTerm(Term2Vis::Type, ProjType, Vis)).
-applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type):-builtin:findall(Marker, marker, check(Path, TTerm, VarNames, Marker), NewMarkers), append(OldMarkers, NewMarkers, Markers).
+applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type):-builtin:findall(Marker, marker, check(Path, TTerm, VarNames, Marker), NewMarkers), append(OldMarkers, NewMarkers, Markers, _).
 subDescriptors(_, _, [], []):-builtin:true.
-subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType|TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType|SubDescs]):-builtin:succ(BeforeIndex, Index), append(Path, [Index], NewPath), markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft), subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).
+subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType|TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType|SubDescs]):-builtin:succ(BeforeIndex, Index), append(Path, [Index], NewPath, _), markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft), subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).
 pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)):-builtin:true.
 pathIsPrefix(cpi:path(Res, [First|Base]), cpi:path(Res, [First|Path])):-pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 visualizeTerm(TTerm2Vis, ProjType, Vis):-builtin:if(userVisualization(TTerm2Vis, ProjType, [], Vis), builtin:true, defaultVisualization(TTerm2Vis, Vis)).
 defaultVisualization(TTerm, Vis):-builtin:parseTerm(TTerm, Func, SubPaths), builtin:if(localName(Func, LFunc), builtin:true, LFunc::string=Func::string), builtin:if(SubPaths::list(cpi:path)=[]::list(cpi:path), Vis::visualization=label(LFunc)::visualization, (argListForPathList(SubPaths, ArgList), Vis::visualization=horiz([label(LFunc), label(!'('), horiz(ArgList), label(!')')])::visualization)).
 argListForPathList([Path], [vis(Path)]):-builtin:true.
 argListForPathList([First|Rest], [vis(First), label(! (,))|ArgList]):-argListForPathList(Rest, ArgList).
-localName(Func, LFunc):-builtin:charCodes(Func, Codes), append(PrefCodes, [35|LocalCodes], Codes), builtin:charCodes(LFunc, LocalCodes).
-append([], B, B):-builtin:true.
-append([X|A], B, [X|L]):-append(A, B, L).
+localName(Func, LFunc):-builtin:charCodes(Func, Codes), append(PrefCodes, [35|LocalCodes], Codes, _), builtin:charCodes(LFunc, LocalCodes).
+append([], B, B, T):-builtin:true.
+append([X|A], B, [X|L], T):-append(A, B, L, T).
 signature(projection(TTerm, ProjType, Vis)::statement, [TTerm::typedTerm, ProjType::mode, Vis::visualization]).
 signature(cpi:default::mode, []).
 projection(TTerm, Vis)~>userVisualization(TTerm, cpi:default, _, Vis):-builtin:true.
@@ -30,6 +30,7 @@ isDescriptor(cpi:immediateDescriptor(_, _)::_).
 isDescriptor(cpi:descriptor(_, _, _)::_).
 descriptorContent(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, VarNames).
 descriptorContent(cpi:descriptor(Path, _, Markers)::Type, Term::Type, VarNames):-cpi:termAtPath(Path, Term::Type, VarNames).
+signature(fixType(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
 fixType(TTerm1, TTerm2):-builtin:if(isDescriptor(TTerm1), descriptorContent(TTerm1, TTerm2, _), (builtin:parseTerm(TTerm1, Func, Args), fixTypes(Args, FixedArgs), builtin:parseTerm(TTerm2, Func, FixedArgs))).
 fixTypes([], []):-builtin:true.
 fixTypes([TTerm1|Args], [TTerm2|FixedArgs]):-fixType(TTerm1, TTerm2), fixTypes(Args, FixedArgs).

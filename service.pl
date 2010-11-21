@@ -360,6 +360,9 @@ generateLines(_, _, _).
 'builtin#div'(A,B,C) :- C is A/B.
 'builtin#greaterThen'(A,B) :- A>B.
 'builtin#coinToss'(N,D) :- N>random(D).
+'builtin#copyTerm'(TTermOrig,TTermCopy) :- copy_term(TTermOrig,TTermCopy).
+'builtin#structurallyEqual'(TTerm1,TTerm2) :- TTerm1 =@= TTerm2.
+
 
 
 

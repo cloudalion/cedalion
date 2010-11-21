@@ -3,8 +3,13 @@ signature(check(Path, TTerm, VarNames, Marker)::pred, [Path::cpi:path, TTerm::ty
 signature(statementPath(StatementPath)::pred, [StatementPath::cpi:path]).
 signature(true(Goal)::pred, [Goal::pred]).
 projection(true(Goal)::pred, horiz([vis(Goal::pred), label(! (!))])).
-signature(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)::pred, [StatementPath::cpi:path, (Statement::statement)::typedTerm, VarNames::list(varName), []::list(_), Markers::list(marker)]).
-check(StatementPath, Statement::statement, VarNames, Marker):-statementPath(StatementPath), true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)), listMember(Marker, marker, Markers).
+signature(builtin:copyTerm(TTermOrig, TTermCopy)::pred, [TTermOrig::typedTerm, TTermCopy::typedTerm]).
+check(StatementPath, Statement::statement, VarNames, Marker):-statementPath(StatementPath), builtin:copyTerm(Statement::statement, StatementCopy::statement), true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)), checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, StatementPath, VarNames), listMember(Marker, locMarker, MarkersFinal).
+signature(builtin:structurallyEqual(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
+signature(typesNotFullyInstantiated(Statement, StatementPath)::error, [Statement::statement, StatementPath::cpi:path]).
+projection(typesNotFullyInstantiated(Statement, StatementPath)::error, vert([horiz([label(!'Types are not fully instantiated in statement at path:'), vis(StatementPath::cpi:path)]), horiz([label(!'    '), vis(Statement::statement)])])).
+signature(checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, StatementPath, VarNames)::pred, [Statement::statement, StatementCopy::statement, Markers::list(locMarker), MarkersFinal::list(locMarker), StatementPath::cpi:path, VarNames::list(varName)]).
+checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, StatementPath, VarNames):-builtin:if(builtin:structurallyEqual(Statement::statement, StatementCopy::statement), MarkersFinal::list(locMarker)=Markers::list(locMarker), MarkersFinal::list(locMarker)=[marker(StatementPath, error(typesNotFullyInstantiated(Statement, StatementPath), VarNames))|Markers]::list(locMarker)).
 statementPath(cpi:path(_, [1])):-builtin:true.
 statementPath(cpi:path(Res, [2|Path])):-statementPath(cpi:path(Res, Path)).
 listMember(X, _T, [X|_]):-builtin:true.
@@ -12,6 +17,7 @@ listMember(X, T, [_|L]):-listMember(X, T, L).
 signature(builtin:var(TTerm)::pred, [TTerm::typedTerm]).
 signature(builtin:string(TTerm)::pred, [TTerm::typedTerm]).
 signature(builtin:number(TTerm)::pred, [TTerm::typedTerm]).
+signature(checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName), MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut):-builtin:if(builtin:var(TTerm), checkVarType(Path, TTerm, MarkIn, MarkOut), builtin:if(builtin:string(TTerm), true(validateType(Path, TTerm, string, Path, MarkIn, MarkOut)), builtin:if(builtin:number(TTerm), true(validateType(Path, TTerm, number, Path, MarkIn, MarkOut)), true(checkCompoundType(Path, TTerm, VarNames, MarkIn, MarkOut))))).
 signature(validateType(Path, TTerm, ExType, OrigPath, MarkIn, MarkOut)::pred, [Path::cpi:path, TTerm::typedTerm, ExType::type, OrigPath::cpi:path, MarkIn::list(marker), MarkOut::list(marker)]).
 signature(builtin:safeUnify(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
@@ -21,9 +27,9 @@ signature(error::type, []).
 signature(error(Error, VarNames)::marker, [Error::error, VarNames::list(varName)]).
 signature(typeMimatch(InType, ExType, OrigPath)::error, [InType::type, ExType::type, OrigPath::cpi:path]).
 validateType(Path, _::InType, ExType, OrigPath, MarkIn, MarkOut):-builtin:if(builtin:safeUnify(InType::type, ExType::type), MarkOut::list(locMarker)=MarkIn::list(locMarker), MarkOut::list(locMarker)=[marker(Path, error(typeMimatch(InType, ExType, OrigPath), []))|MarkIn]::list(locMarker)).
-signature(typeOf(Var::ExType, VarNames)::marker, [ (Var::ExType)::typedTerm, VarNames::_]).
 signature(checkVarType(Path, TVar, MarkIn, MarkOut)::pred, [Path::cpi:path, TVar::typedTerm, MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 signature(varType(TVar)::marker, [TVar::typedTerm]).
+signature(typeOf(TVar, VarNames)::marker, [TVar::typedTerm, VarNames::list(varName)]).
 checkVarType(Path, Var::ExType, MarkIn, [marker(Path, typeOf(Var::ExType, VarNames))|MarkOut]):-builtin:if(findVarType(MarkIn, Var::ExType, ExType, OrigPath), validateType(Path, Var::ExType, ExType, OrigPath, MarkIn, MarkOut), MarkOut::list(locMarker)=[marker(Path, varType(Var::ExType))|MarkIn]::list(locMarker)).
 signature(findVarType(MarkIn, TVar, ExType, OrigPath)::pred, [MarkIn::list(locMarker), TVar::typedTerm, ExType::type, OrigPath::cpi:path]).
 findVarType([marker(Path, varType(Var::Type))|_], TVar, Type, Path):-builtin:equals(Var::Type, TVar).
@@ -36,7 +42,7 @@ signature(checkSignature(TTerm, TArgs)::pred, [TTerm::typedTerm, TArgs::list(typ
 signature(TTerm, TArgs)~>checkSignature(TTerm, TArgs):-builtin:true.
 signature(checkArgTypes(Path, Index, TArgs, VarNames, MarkIn, MarkOut)::pred, [Path::cpi:path, Index::number, TArgs::list(typedTerm), VarNames::list(varName), MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 checkArgTypes(_, _, [], _, Markers, Markers):-builtin:true.
-checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, MarkIn, MarkOut):-append(Path, [Index], SubPath), true(checkTypes(cpi:path(Res, SubPath), TArg, VarNames, MarkIn, MarkMid)), builtin:succ(Index, NextIndex), checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
+checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, MarkIn, MarkOut):-append(Path, [Index], SubPath, number), true(checkTypes(cpi:path(Res, SubPath), TArg, VarNames, MarkIn, MarkMid)), builtin:succ(Index, NextIndex), checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type, VarNames)::type))).
 markerVis(varType(_), V, bold(V)).
 signature(exception::type, []).

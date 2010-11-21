@@ -3,9 +3,9 @@ projection(alias(TTerm, String)::statement, horiz([vis(String::string), label(!'
 signature(aliasString(TTerm, String)::pred, [TTerm::typedTerm, String::string]).
 alias(TTerm, String)~>aliasString(TTerm, String):-builtin:true.
 signature(localString(Func, String)::pred, [Func::string, String::string]).
-signature(builtin:charCodes(Func, FuncCodes)::pred, [Func::string, FuncCodes::_]).
-signature(append(L1, L2, L3)::pred, [L1::list(T), L2::list(T), L3::list(T)]).
-localString(Func, String):-builtin:charCodes(!'#', [HashCode]), builtin:charCodes(Func, FuncCodes), append(_, [HashCode|StringCodes], FuncCodes), builtin:charCodes(String, StringCodes).
+signature(builtin:charCodes(Func, FuncCodes)::pred, [Func::string, FuncCodes::list(number)]).
+signature(append(L1, L2, L3, T)::pred, [L1::list(T), L2::list(T), L3::list(T), T::type]).
+localString(Func, String):-builtin:charCodes(!'#', [HashCode]), builtin:charCodes(Func, FuncCodes), append(_, [HashCode|StringCodes], FuncCodes, number), builtin:charCodes(String, StringCodes).
 aliasString(TTerm, String):-builtin:parseTerm(TTerm, Func, _), localString(Func, String).
 unitTest(localString(!'aa#bb', !bb)).
 unitTest(aliasString(alias(TTerm, String)::statement, !alias)).
