@@ -1,7 +1,7 @@
 '/bootstrap':signature(inverse(Seq, InvSeq)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), InvSeq::'/bootstrap':list(base)]).
 '/bootstrap':projection(inverse(Seq, InvSeq)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Seq::'/bootstrap':list(base)), '/bootstrap':label(!'is the inverse of'), '/bootstrap':vis(InvSeq::'/bootstrap':list(base))])).
 inverse([], []):-builtin:true.
-inverse(List, [First|Rest]):-inverse(InvRest, Rest), '/bootstrap':append(InvRest, [First], List).
+inverse(List, [First|Rest]):-inverse(InvRest, Rest), '/bootstrap':append(InvRest, [First], List, base).
 '/bootstrap':signature(invSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)), [SeqExpr::'/Functional':expr('/bootstrap':list(base))]).
 '/bootstrap':projection(invSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(SeqExpr::'/Functional':expr('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':label(!inv))])).
 '/Functional':eval(invSeq(SeqExpr), '/bootstrap':list(base), InvSeq):-'/Functional':eval(SeqExpr, '/bootstrap':list(base), Seq), inverse(InvSeq, Seq).

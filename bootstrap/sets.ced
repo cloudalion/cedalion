@@ -31,3 +31,4 @@ signature(setParens(Set)::set(T), [Set::set(T)]).
 projection(setParens(Set)::set(T), horiz([label(!'('), vis(Set::set(T)), label(!')')])).
 alias(setParens(Set)::set(T), !'()').
 setDef(setParens(Set), Set, T).
+defines((member(_, Set, T):-_), Set::set(T), semanticDefinition).

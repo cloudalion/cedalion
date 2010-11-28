@@ -48,3 +48,4 @@ signature(stringToTerm(StringRef, NsList, TTerm, VarNames)::command, [StringRef:
 commandClass(stringToTerm(StringRef, NsList, TTerm, VarNames), !'net.nansore.cedalion.cmd.StringToTerm').
 signature(notify(TTerm)::command, [TTerm::typedTerm]).
 commandClass(notify(TTerm), !'net.nansore.cedalion.cmd.Notify').
+defines((cpi:procedureCommand(Proc, _):-_), Proc::procedure, semanticDefinition).

@@ -9,3 +9,4 @@
 '/bootstrap':signature(greaterOrEquals(A, B)::'/bootstrap':pred, [A::'/bootstrap':list(base), B::'/bootstrap':list(base)]).
 '/bootstrap':projection(greaterOrEquals(A, B)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(A::'/bootstrap':list(base)), '/bootstrap':label(! (>=)), '/bootstrap':vis(B::'/bootstrap':list(base))])).
 greaterOrEquals(SeqA, SeqB):-'/Functional':gt(seqNumericValue(SeqA), seqNumericValue(SeqB), '/bootstrap':number).
+greaterOrEquals(SeqA, SeqB):-'/Functional':eq(seqNumericValue(SeqA), seqNumericValue(SeqB), '/bootstrap':number).
