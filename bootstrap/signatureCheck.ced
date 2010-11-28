@@ -1,0 +1,21 @@
+signature(checkSignature(THead, TBody, Error)::pred, [THead::list(typedTerm), TBody::list(typedTerm), Error::error]).
+checkSignature(THead, TBody, Error):-builtin:fail.
+signature(signaturePlaceMismatch(TFirstInHead, TFirstInBody)::error, [TFirstInHead::typedTerm, TFirstInBody::typedTerm]).
+projection(signaturePlaceMismatch(TFirstInHead, TFirstInBody)::error, horiz([label(!'In a type signature, head and body arguments must appear in the same order:'), vis(TFirstInHead::typedTerm), label(!and), vis(TFirstInBody::typedTerm)])).
+checkSignature([TFirstInHead|_], [TFirstInBody|_], signaturePlaceMismatch(TFirstInHead, TFirstInBody)):- \+builtin:equals(TFirstInHead, TFirstInBody).
+signature(signatureSizeMismatch::error, []).
+projection(signatureSizeMismatch::error, label(!'The size of the signature head does not match the size of the body')).
+checkSignature([_|_], [], signatureSizeMismatch):-builtin:true.
+checkSignature([], [_|_], signatureSizeMismatch):-builtin:true.
+signature(nonVarInSignature(TFirstInHead)::error, [TFirstInHead::typedTerm]).
+projection(nonVarInSignature(TFirstInHead)::error, horiz([label(!'In a type signature, all head arguments must be variables:'), vis(TFirstInHead::typedTerm)])).
+checkSignature([TFirstInHead|_], [TFirstInBody|_], nonVarInSignature(TFirstInHead)):- \+builtin:var(TFirstInHead).
+signature(signatureVarInBodyAndNotInHead(TVar)::error, [TVar::typedTerm]).
+projection(signatureVarInBodyAndNotInHead(TVar)::error, horiz([label(!'Variable'), vis(TVar::typedTerm), label(!'appears in the head but not in the body of a type signature')])).
+check(Path, signature(THead, _)::statement, VarNames, marker(Path, error(signatureVarInBodyAndNotInHead(TVar), VarNames))):- \+builtin:var(THead), varInVarNamesAndNotInTTerm(VarNames, THead, TVar).
+signature(varInVarNamesAndNotInTTerm(VarNames, TTerm, TVar)::pred, [VarNames::list(varName), TTerm::typedTerm, TVar::typedTerm]).
+varInVarNamesAndNotInTTerm([builtin:varName(TVar, _)|_], TTerm, TVar):- \+safeVarIn(TVar, TTerm::typedTerm).
+varInVarNamesAndNotInTTerm([_|VarNames], TTerm, TVar):-varInVarNamesAndNotInTTerm(VarNames, TTerm, TVar).
+checkSignature([_|THead], [_|TBody], Error):-checkSignature(THead, TBody, Error).
+checkError(signature(TTerm, TBody)::statement, Error):- \+builtin:var(TTerm), builtin:parseTerm(TTerm, _, THead), checkSignature(THead, TBody, Error).
+solution(typesNotFullyInstantiated(Statement, Path), VNs, cpi:edit(Path, Statement::statement, VNs)).

@@ -1,0 +1,20 @@
+'/bootstrap':signature(subSeqFrom(Seq, From, SubSeq)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), From::'/bootstrap':number, SubSeq::'/bootstrap':list(base)]).
+'/bootstrap':projection(subSeqFrom(Seq, From, SubSeq)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(SubSeq::'/bootstrap':list(base)), '/bootstrap':label(! (=)), '/bootstrap':vis(Seq::'/bootstrap':list(base)), '/bootstrap':label(!'['), '/bootstrap':vis(From::'/bootstrap':number), '/bootstrap':label(!'...]')])).
+subSeqFrom(Seq, 0, Seq):-builtin:true.
+subSeqFrom([_|Seq], From, SubSeq):-From>0, builtin:succ(FromMinusOne, From), subSeqFrom(Seq, FromMinusOne, SubSeq).
+'/bootstrap':signature(subSeqTo(Seq, To, SubSeq)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), To::'/bootstrap':number, SubSeq::'/bootstrap':list(base)]).
+'/bootstrap':projection(subSeqTo(Seq, To, SubSeq)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(SubSeq::'/bootstrap':list(base)), '/bootstrap':label(! (=)), '/bootstrap':vis(Seq::'/bootstrap':list(base)), '/bootstrap':label(!'[...'), '/bootstrap':vis(To::'/bootstrap':number), '/bootstrap':label(!']')])).
+subSeqTo(_, 0, []):-builtin:true.
+subSeqTo([First|Seq], To, [First|SubSeq]):-To>0, builtin:succ(ToMinusOne, To), subSeqTo(Seq, ToMinusOne, SubSeq).
+'/bootstrap':signature(setSubSequenceFrom(Set, From)::'/bootstrap':set('/bootstrap':list(base)), [Set::'/bootstrap':set('/bootstrap':list(base)), From::'/bootstrap':number]).
+'/bootstrap':projection(setSubSequenceFrom(Set, From)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'['), '/bootstrap':vis(From::'/bootstrap':number), '/bootstrap':label(!'...]')])).
+'/bootstrap':alias(setSubSequenceFrom(Set, From)::'/bootstrap':set('/bootstrap':list(base)), !'[*...]').
+dnaSetDef(setSubSequenceFrom(Set, From), '/bootstrap':set(SubSeq, ('/bootstrap':member(Seq, Set, '/bootstrap':list(base)), subSeqFrom(Seq, From, SubSeq)))).
+'/bootstrap':signature(setSubSequenceTo(Set, To)::'/bootstrap':set('/bootstrap':list(base)), [Set::'/bootstrap':set('/bootstrap':list(base)), To::'/bootstrap':number]).
+'/bootstrap':projection(setSubSequenceTo(Set, To)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'[...'), '/bootstrap':vis(To::'/bootstrap':number), '/bootstrap':label(!']')])).
+'/bootstrap':alias(setSubSequenceTo(Set, To)::'/bootstrap':set('/bootstrap':list(base)), !'[...*]').
+dnaSetDef(setSubSequenceTo(Set, To), '/bootstrap':set(SubSeq, ('/bootstrap':member(Seq, Set, '/bootstrap':list(base)), subSeqTo(Seq, To, SubSeq)))).
+'/bootstrap':signature(setSubSequenceBetween(Set, From, To)::'/bootstrap':set('/bootstrap':list(base)), [Set::'/bootstrap':set('/bootstrap':list(base)), From::'/bootstrap':number, To::'/bootstrap':number]).
+'/bootstrap':projection(setSubSequenceBetween(Set, From, To)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'['), '/bootstrap':vis(From::'/bootstrap':number), '/bootstrap':label(!'...'), '/bootstrap':vis(To::'/bootstrap':number), '/bootstrap':label(!']')])).
+'/bootstrap':alias(setSubSequenceBetween(Set, From, To)::'/bootstrap':set('/bootstrap':list(base)), !'[*...*]').
+dnaSetDef(setSubSequenceBetween(Set, From, To), '/bootstrap':set(Seq, ('/Functional':eval('/Functional':plus('/Functional':minus('/Functional':wrap(To), '/Functional':wrap(From)), '/Functional':wrap(1)), '/bootstrap':number, Count), '/bootstrap':member(Seq, setSubSequenceTo(setSubSequenceFrom(Set, From), Count), '/bootstrap':list(base))))).

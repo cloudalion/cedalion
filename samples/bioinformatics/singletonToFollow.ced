@@ -1,0 +1,13 @@
+'/bootstrap':signature(changeToConcatenation(Seq, VNs, Path)::'/bootstrap':procedure, [Seq::'/bootstrap':list(base), VNs::'/bootstrap':list('/bootstrap':varName), Path::cpi:path]).
+cpi:procedureCommand(changeToConcatenation(Seq, VNs, Path), '/bootstrap':doProc(cpi:edit(Path, SeqSet::'/bootstrap':set('/bootstrap':list(base)), VNs))):-seqToSet(Seq, SeqSet).
+'/bootstrap':signature(seqToSet(Seq, SeqSet)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), SeqSet::'/bootstrap':set('/bootstrap':list(base))]).
+'/bootstrap':projection(seqToSet(Seq, SeqSet)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':label(!'Set'), '/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'represents sequence'), '/bootstrap':vis(Seq::'/bootstrap':list(base))])).
+seqToSet([XBase|YSeq], seq(X, Y)):-baseToSet(XBase, X), seqToSet(YSeq, Y).
+seqToSet([Base], Set):-baseToSet(Base, Set).
+'/bootstrap':signature(baseToSet(Base, Set)::'/bootstrap':pred, [Base::base, Set::'/bootstrap':set('/bootstrap':list(base))]).
+'/bootstrap':projection(baseToSet(Base, Set)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'consists of base'), '/bootstrap':vis(Base::base)])).
+baseToSet(a, aSet):-builtin:true.
+baseToSet(c, cSet):-builtin:true.
+baseToSet(g, gSet):-builtin:true.
+baseToSet(t, tSet):-builtin:true.
+'/bootstrap':contextMenuEntry('/bootstrap':singleton(Seq)::'/bootstrap':set('/bootstrap':list(base)), VNs, Path, !'Change to concatenation', changeToConcatenation(Seq, VNs, Path)).
