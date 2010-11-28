@@ -81,6 +81,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	private Font normalFont;
 	protected Font symbolFont;
 	private VisualTerm currentTermFigure;
+	private VisualTerm focused = null;
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
@@ -410,5 +411,15 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	@Override
 	public Compound getPath() {
 		return null;
+	}
+
+	@Override
+	public VisualTerm getFocused() {
+		return focused ;
+	}
+
+	@Override
+	public void setFocused(VisualTerm visualTerm) {
+		focused = visualTerm;
 	}
 }

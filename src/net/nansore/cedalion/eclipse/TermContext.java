@@ -6,6 +6,7 @@ package net.nansore.cedalion.eclipse;
 import java.io.IOException;
 
 import net.nansore.cedalion.figures.TermFigure;
+import net.nansore.cedalion.figures.VisualTerm;
 import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.MouseEvent;
@@ -84,4 +85,8 @@ public interface TermContext {
 	Image getImage(String imageName) throws IOException;
 	
 	Compound getPath();
+
+	void setFocused(VisualTerm visualTerm);
+
+	VisualTerm getFocused();
 }

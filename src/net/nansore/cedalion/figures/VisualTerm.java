@@ -338,6 +338,11 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	}
 
     public void focusGained(org.eclipse.swt.events.FocusEvent arg0) {
+        VisualTerm previousFocused = context.getFocused();
+        if(previousFocused != null)
+        	previousFocused.lostFocus();
+        context.setFocused(this);
+
         setBorder(new FocusBorder());
         context.selectionChanged(this);
         if(canModify()) {
@@ -362,7 +367,16 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         }
     }
 
-    private boolean canModify() {
+    public void lostFocus() {
+        setBorder(null);
+        context.getTextEditor().setText("");
+        context.getTextEditor().setEnabled(false);
+        context.getTextEditor().removeFocusListener(this);
+        context.getTextEditor().removeKeyListener(this);
+        context.setFocused(null);
+	}
+
+	private boolean canModify() {
         try {
         	PrologProxy prolog = Activator.getProlog();
 			ExecutionContext exe = new ExecutionContext(prolog);
@@ -374,15 +388,11 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     }
 
     public void focusLost(org.eclipse.swt.events.FocusEvent arg0) {
-        setBorder(null);
-        context.getTextEditor().setText("");
-        context.getTextEditor().setEnabled(false);
-        context.getTextEditor().removeFocusListener(this);
-        context.getTextEditor().removeKeyListener(this);
+    	lostFocus();
     }
 
     public void keyPressed(KeyEvent event) {
-        if(event.keyCode == 13 && event.stateMask == 0) {
+        if(event.character == '\r' && event.stateMask == 0) {
             try {
                 setContentFromString(context.getTextEditor().getText());
             } catch (TermVisualizationException e) {
@@ -488,5 +498,15 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	@Override
 	public Compound getPath() {
 		return (Compound)path;
+	}
+
+	@Override
+	public VisualTerm getFocused() {
+		return context.getFocused();
+	}
+
+	@Override
+	public void setFocused(VisualTerm visualTerm) {
+		context.setFocused(visualTerm);
 	}
 }

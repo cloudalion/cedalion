@@ -1,6 +1,7 @@
 '/bootstrap':signature(expr(T)::'/bootstrap':type, [T::'/bootstrap':type]).
 '/bootstrap':signature(eval(Expr, Type, Value)::'/bootstrap':pred, [Expr::expr(Type), Type::'/bootstrap':type, Value::Type]).
 '/bootstrap':projection(eval(Expr, Type, Value)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Value::Type), '/bootstrap':halfSize('/bootstrap':vis(Type::'/bootstrap':type)), '/bootstrap':symbol(8656), '/bootstrap':vis(Expr::expr(Type))])).
+'/bootstrap':defines((eval(Expr, T, _):-_), Expr::expr(T), '/bootstrap':semanticDefinition).
 '/bootstrap':signature(plus(A, B)::expr(T), [A::expr(T), B::expr(T)]).
 '/bootstrap':projection(plus(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (+)), '/bootstrap':vis(B::expr(T))])).
 '/bootstrap':alias(plus(A, B)::expr(T), ! (+)).

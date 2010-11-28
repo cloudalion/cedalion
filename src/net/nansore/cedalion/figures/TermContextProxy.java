@@ -134,6 +134,14 @@ public abstract class TermContextProxy extends Figure implements TermContext, Te
 	public Image getImage(String imageName) throws IOException {
 		return context.getImage(imageName);
 	}
+	@Override
+	public VisualTerm getFocused() {
+		return context.getFocused();
+	}
+	@Override
+	public void setFocused(VisualTerm visualTerm) {
+		context.setFocused(visualTerm);
+	}
 	
 	
 }
