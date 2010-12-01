@@ -16,6 +16,7 @@ projection(cpi:func(Expr, Result, T)::procedure, horiz([bold(label(!func)), vis(
 function(Expr, T, Result, Command)~>procedure(cpi:func(Expr, Result, T), Command).
 signature(typedTerm::type, []).
 signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
+defines((cpi:termClass(TTerm, _):-_), TTerm, semanticDefinition).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
 signature(commandClass(Cmd, ClassName)::statement, [Cmd::command, ClassName::string]).
 commandClass(Cmd, ClassName)~>cpi:termClass(Cmd::command, ClassName):-builtin:true.

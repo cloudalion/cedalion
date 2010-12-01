@@ -49,7 +49,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * @author boaz
  */
-public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener {
+public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener{
 
 //    private static final String TEXT_CONTENT_FILENAME = ".tmpContent";
     private TermContext context;
@@ -157,22 +157,26 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      * @see org.eclipse.draw2d.MouseListener#mousePressed(org.eclipse.draw2d.MouseEvent)
      */
     public void mousePressed(MouseEvent me) {
-        if(canFocus()) {
-            requestFocus();
-            context.getTextEditor().setEnabled(true);
-            context.getTextEditor().addFocusListener(this);
-            context.getTextEditor().setFocus();
-        } else {
-            context.handleClick(me);
-        }
-        /////////// Test /////////////
         if(me.button == 3) {
+        	// Context menu
             try {
 				createContextMenu(me);
 			} catch (TermInstantiationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}                   
+        }
+        else
+        {
+        	// Gain focus
+	        if(canFocus()) {
+	            requestFocus();
+	            context.getTextEditor().setEnabled(true);
+	            context.getTextEditor().addFocusListener(this);
+	            context.getTextEditor().setFocus();
+	        } else {
+	            context.handleClick(me);
+	        }
         }
     }
 
@@ -183,7 +187,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		try {
 			Variable varAction = new Variable("Action");
 			PrologProxy prolog = Activator.getProlog();
-			Iterator<Map<Variable, Object>> results = prolog.getSolutions(prolog.createCompound("cpi#contextMenuEntry", path, varAction));
+			Iterator<Map<Variable, Object>> results = prolog.getSolutions(prolog.createCompound("cpi#contextMenuEntry", descriptor, varAction));
 			while(results.hasNext()) {
 				Map<Variable, Object> result = (Map<Variable, Object>)results.next();
 				Compound action = (Compound)result.get(varAction);
@@ -352,6 +356,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
                 context.getTextEditor().setEnabled(true);
                 context.getTextEditor().setSelection(0, text.length());
                 context.getTextEditor().addKeyListener(this);
+                context.getTextEditor().setFocus();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (PrologException e) {
@@ -392,6 +397,8 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     }
 
     public void keyPressed(KeyEvent event) {
+    	if(context.getFocused() != this)
+    		return;
         if(event.character == '\r' && event.stateMask == 0) {
             try {
                 setContentFromString(context.getTextEditor().getText());

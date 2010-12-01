@@ -19,6 +19,8 @@ localName(Func, LFunc):-builtin:charCodes(Func, Codes), append(PrefCodes, [35|Lo
 append([], B, B, T):-builtin:true.
 append([X|A], B, [X|L], T):-append(A, B, L, T).
 signature(projection(TTerm, ProjType, Vis)::statement, [TTerm::typedTerm, ProjType::mode, Vis::visualization]).
+projection(projection(TTerm, ProjType, Vis)::statement, horiz([vis(TTerm::typedTerm), label(!'@'), vis(ProjType::mode), symbol(8608), vis(Vis::visualization)])).
+defines(projection(TTerm, ProjType, Vis), TTerm, projectionDefinition).
 signature(cpi:default::mode, []).
 projection(TTerm, Vis)~>userVisualization(TTerm, cpi:default, _, Vis):-builtin:true.
 projection(TTerm, ProjType, Vis)~>userVisualization(TTerm, ProjType, _, Vis):-builtin:true.

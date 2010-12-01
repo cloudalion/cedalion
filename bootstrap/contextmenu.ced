@@ -1,5 +1,10 @@
-contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>cpi:contextMenuEntry(Path, menuItem(Name, Proc)):-cpi:termAtPath(Path, TTerm, VarNames), cpi:procedureCommand(Proc, _).
+signature(menuEntry::type, []).
+signature(cpi:contextMenuEntry(Descriptor, MenuItem)::pred, [Descriptor::typedTerm, MenuItem::menuEntry]).
+contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>cpi:contextMenuEntry(cpi:descriptor(Path, Term, _)::Type, menuItem(Name, Proc)):-cpi:termAtPath(Path, TTerm, VarNames), cpi:procedureCommand(Proc, _).
+signature(noPath::cpi:path, []).
+contextMenuEntry(Term::Type, VarNames, noPath, Name, Proc)~>cpi:contextMenuEntry(cpi:immediateDescriptor(Term, VarNames)::Type, menuItem(Name, Proc)):-cpi:procedureCommand(Proc, _).
 signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
-cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem').
+cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem'):-builtin:true.
 contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
+signature(cpi:redo(Res)::procedure, [Res::string]).
 contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', cpi:redo(Res)).

@@ -43,6 +43,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -63,7 +65,7 @@ import org.eclipse.ui.part.EditorPart;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class CedalionEditor extends EditorPart implements ISelectionProvider, TermContext, DisposeListener, IViewOpener {
+public class CedalionEditor extends EditorPart implements ISelectionProvider, TermContext, DisposeListener, IViewOpener{
 
 	private final class CedalionProposalProvider implements IContentProposalProvider {
 		public IContentProposal[] getProposals(String incompleteText, int pos) {
@@ -422,4 +424,5 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	public void setFocused(VisualTerm visualTerm) {
 		focused = visualTerm;
 	}
+
 }
