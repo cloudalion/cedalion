@@ -26,7 +26,7 @@ signature(marker(Path, Marker)::locMarker, [Path::cpi:path, Marker::marker]).
 signature(error::type, []).
 signature(error(Error, VarNames)::marker, [Error::error, VarNames::list(varName)]).
 signature(typeMimatch(InType, ExType, OrigPath)::error, [InType::type, ExType::type, OrigPath::cpi:path]).
-projection(typeMimatch(InType, ExType, OrigPath)::error, horiz([label(!'Type mismatch.  Expected:'), vis(ExType::type), label(!'inferred:'), vis(InType::type), halfSize(vis(OrigPath::cpi:path))])).
+projection(typeMimatch(InType, ExType, OrigPath)::error, vert([horiz([label(!'Type mismatch.  Expected:'), vis(ExType::type), label(!'inferred:'), vis(InType::type)]), halfSize(vis(OrigPath::cpi:path))])).
 validateType(Path, InType, ExType, OrigPath, MarkIn, MarkOut):-builtin:if(builtin:safeUnify(InType::type, ExType::type), MarkOut::list(locMarker)=MarkIn::list(locMarker), MarkOut::list(locMarker)=[marker(Path, error(typeMimatch(InType, ExType, OrigPath), []))|MarkIn]::list(locMarker)).
 signature(checkVarType(Path, TVar, MarkIn, MarkOut)::pred, [Path::cpi:path, TVar::typedTerm, MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 signature(varType(TVar)::marker, [TVar::typedTerm]).
