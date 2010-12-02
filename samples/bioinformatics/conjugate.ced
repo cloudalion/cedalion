@@ -15,5 +15,5 @@ conj([Base|Seq], [ConjBase|ConjSeq]):-conjBase(Base, ConjBase), conj(Seq, ConjSe
 dnaSetDef(conj(SeqSet), '/Functional':eset(conjSeq('/Functional':wrap(Seq)), '/bootstrap':member(Seq, SeqSet, '/bootstrap':list(base)))).
 '/bootstrap':unitTest('/bootstrap':member([a, t, c, g], conj(seq(tSet, seq(aSet, seq(gSet, cSet)))), '/bootstrap':list(base))).
 '/bootstrap':unitTest(\+'/bootstrap':member([a, t, c, t], conj(seq(tSet, seq(aSet, seq(gSet, cSet)))), '/bootstrap':list(base))).
-'/bootstrap':unitTest('/bootstrap':member([a, t, t, a], seq(bind(rep(nSet, 2), X), conj(X)), '/bootstrap':list(base))).
-'/bootstrap':unitTest(\+'/bootstrap':member([a, t, a, t], seq(bind(rep(nSet, 2), X), conj(X)), '/bootstrap':list(base))).
+'/bootstrap':unitTest('/bootstrap':member([a, t, t, a], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), conj('/bootstrap':singleton([a, t]))), '/bootstrap':list(base))).
+'/bootstrap':unitTest(\+'/bootstrap':member([a, t, a, t], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), conj('/bootstrap':singleton([a, t]))), '/bootstrap':list(base))).

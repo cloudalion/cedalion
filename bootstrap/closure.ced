@@ -1,6 +1,5 @@
 signature(statements::set(statement), []).
-signature(builtin:loadedStatement(FileName, Statement)::pred, [FileName::string, Statement::statement]).
-setDef(statements, set(Statement, builtin:loadedStatement(_, Statement)), statement).
+setDef(statements, set(Statement, builtin:loadedStatement(_, Statement, _)), statement).
 signature(closure(S)::set(statement), [S::statement]).
 setDef(closure(S), union(singleton(S), set(Y, (member((S~>X), statements, statement), member(Y, closure(X), statement)))), statement).
 signature(closure::set(statement), []).
