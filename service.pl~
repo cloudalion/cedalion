@@ -55,29 +55,31 @@ rewriteBodyToClause((S1 ~> S2), H, B) :-
 
 % Load/Reload a file to the database
 loadFile(!(FileName), !(Namespace)) :-
-	forall(retract('builtin#loadedStatement'(FileName, Statement)), remove(Statement)),
+	forall(retract('builtin#loadedStatement'(!FileName, Statement, _)), remove(Statement)),
 	open(FileName, read, Stream),
-	read(Stream, Term),
-	insertTermsFromSteam(Stream, Term, FileName, [default=Namespace]).
+	read_term(Stream, Term, [variable_names(RawVarNames)]),
+	convertVarNames(RawVarNames, VarNames),
+	insertTermsFromSteam(Stream, Term, FileName, [default=Namespace], VarNames).
 
-insertTermsFromSteam(Stream, Term, FileName, NsList) :-
+insertTermsFromSteam(Stream, Term, FileName, NsList, VarNames) :-
 	if(Term=end_of_file,
 		(
 			close(Stream)
 		),
 		(
-			interpretTerm(Term, FileName, NsList, NewNsList),
-			read(Stream, NewTerm),
-			insertTermsFromSteam(Stream, NewTerm, FileName, NewNsList)
+			interpretTerm(Term, FileName, NsList, NewNsList, VarNames),
+			read_term(Stream, NewTerm, [variable_names(RawVarNames)]),
+			convertVarNames(RawVarNames, NewVarNames),
+			insertTermsFromSteam(Stream, NewTerm, FileName, NewNsList, NewVarNames)
 		)).
 
-interpretTerm(Term, FileName, NsList, NewNsList) :-
+interpretTerm(Term, FileName, NsList, NewNsList, VarNames) :-
 	if(Term = builtin:import(!(Alias), !(FullNs)),
 		NewNsList = [Alias=FullNs | NsList],
 		(
 			NewNsList = NsList,
 			localToGlobal(Term, NsList, GTerm),
-			assert('builtin#loadedStatement'(FileName, GTerm)),
+			assert('builtin#loadedStatement'(!FileName, GTerm, VarNames)),
 			if((GTerm = (Statement ~> _), \+var(Statement)), % Avoid exception if not implemented
 				assert((Statement :- fail))),
 			insert(GTerm)

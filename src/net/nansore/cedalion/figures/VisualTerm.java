@@ -228,21 +228,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      * 
      */
     public void performDefaultAction() {
-/*        try {
-            Variable varCmd = new Variable("Cmd");
-            Map solution = PrologClient.getSolution(new Compound("vtbiDefaultAction", getResource(), content, type, varCmd));
-            if(solution == null) {
-                context.performDefaultAction();
-            } else {
-                Command cmd = CommandFactory.createCommand((Compound)solution.get(varCmd));
-                cmd.run(this);
-                figureUpdated();
-            }
-        } catch (PrologException e) {
-            e.printStackTrace();
-        } catch (CommandException e) {
-            e.printStackTrace();
-        }*/
+    	context.performDefaultAction();
     }
 
 

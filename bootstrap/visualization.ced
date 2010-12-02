@@ -59,3 +59,5 @@ visClass(raised(Vis), !'net.nansore.cedalion.figures.Raised').
 signature(lowered(Vis)::visualization, [Vis::visualization]).
 projection(lowered(Vis)::visualization, horiz([halfSize(label(!l)), lowered(vis(Vis::visualization))])).
 visClass(lowered(Vis), !'net.nansore.cedalion.figures.Lowered').
+signature(link(Vis, File)::visualization, [Vis::visualization, File::string]).
+visClass(link(Vis, File), !'net.nansore.cedalion.figures.Link').

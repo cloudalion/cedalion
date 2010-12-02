@@ -48,18 +48,24 @@ public class ActionFigure extends TermContextProxy {
 			
 			@Override
 			public void mouseDoubleClicked(MouseEvent me) {
-				ExecutionContext exe = new ExecutionContext(proc.getProlog());
-				try {
-					exe.runProcedure(proc);
-				} catch (PrologException e) {
-					e.printStackTrace();
-				} catch (TermInstantiationException e) {
-					e.printStackTrace();
-				} catch (ExecutionContextException e) {
-					e.printStackTrace();
-				}
+				performDefaultAction();
 			}
 		});
 	}
+
+	@Override
+	public void performDefaultAction() {
+		ExecutionContext exe = new ExecutionContext(proc.getProlog());
+		try {
+			exe.runProcedure(proc);
+		} catch (PrologException e) {
+			e.printStackTrace();
+		} catch (TermInstantiationException e) {
+			e.printStackTrace();
+		} catch (ExecutionContextException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 }

@@ -13,6 +13,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import net.nansore.cedalion.execution.TermInstantiator;
+import net.nansore.cedalion.figures.Link;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
@@ -37,6 +38,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "net.nansore.cedalion";
+
+	public static final String CEDALION_EDITOR_NAME = "net.nansore.cedalion.editor";
 
 	// The shared instance
 	private static Activator plugin;
@@ -142,6 +145,7 @@ public class Activator extends AbstractUIPlugin {
 		String filePath = resource.getLocation().toString();
 		String pkg = resource.getParent().getFullPath().toString();
 		System.out.println("Package: " + pkg);
+		Link.setFileNameToResourceMapping(filePath, resourcePath);
 		try {
 			prolog.getSolution(prolog.createCompound("loadFile", filePath, pkg));
 		} catch (PrologException e) {

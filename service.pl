@@ -38,7 +38,7 @@ insert(Statement) :-
 
 % Remove a statement to the database
 remove(Statement) :-
-	forall(translateStatement(Statement, Clause), retract(Clause)).
+	forall(translateStatement(Statement, Clause), if(retract(Clause), true, true)).
 
 translateStatement(Statement, Statement).
 translateStatement((Head ~> Body), (H:-B)) :-
@@ -55,7 +55,7 @@ rewriteBodyToClause((S1 ~> S2), H, B) :-
 
 % Load/Reload a file to the database
 loadFile(!(FileName), !(Namespace)) :-
-	forall(retract('builtin#loadedStatement'(FileName, Statement, _)), remove(Statement)),
+	forall(retract('builtin#loadedStatement'(!FileName, Statement, _)), remove(Statement)),
 	open(FileName, read, Stream),
 	read_term(Stream, Term, [variable_names(RawVarNames)]),
 	convertVarNames(RawVarNames, VarNames),
@@ -79,7 +79,7 @@ interpretTerm(Term, FileName, NsList, NewNsList, VarNames) :-
 		(
 			NewNsList = NsList,
 			localToGlobal(Term, NsList, GTerm),
-			assert('builtin#loadedStatement'(FileName, GTerm, VarNames)),
+			assert('builtin#loadedStatement'(!FileName, GTerm, VarNames)),
 			if((GTerm = (Statement ~> _), \+var(Statement)), % Avoid exception if not implemented
 				assert((Statement :- fail))),
 			insert(GTerm)
