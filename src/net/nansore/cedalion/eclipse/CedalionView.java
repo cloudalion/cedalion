@@ -145,11 +145,6 @@ public class CedalionView extends ViewPart implements TermContext {
 	}
 
 	@Override
-	public void registerDispose(TermFigure disp) {
-		context.registerDispose(disp);
-	}
-
-	@Override
 	public void registerTermFigure(Object termID, TermFigure figure) {
 		context.registerTermFigure(termID, figure);
 	}

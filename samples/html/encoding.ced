@@ -1,0 +1,14 @@
+'/bootstrap':signature(xmlEncode(Str)::'/Functional':expr('/bootstrap':string), [Str::'/Functional':expr('/bootstrap':string)]).
+'/Functional':eval(xmlEncode(StrExpr), '/bootstrap':string, EncStr):-'/Functional':eval(StrExpr, '/bootstrap':string, Str), builtin:charCodes(Str, Codes), encodeCharCodes(Codes, EncStr).
+'/bootstrap':signature(encodeCharCodes(Codes, EncStr)::'/bootstrap':pred, [Codes::'/bootstrap':list('/bootstrap':number), EncStr::'/bootstrap':string]).
+encodeCharCodes([], !''):-builtin:true.
+encodeCharCodes([First|Rest], EncStr):-builtin:charCodes(Char, [First]), builtin:if(isEntity(Char, Entity), '/Functional':eval('/Functional':concat('/Functional':wrap(!'&'), '/Functional':concat('/Functional':wrap(Entity), '/Functional':wrap(! (;)))), '/bootstrap':string, EncFirst), EncFirst::'/bootstrap':string=Char::'/bootstrap':string), encodeCharCodes(Rest, EncRest), builtin:strcat(EncFirst, EncRest, EncStr).
+'/bootstrap':signature(isEntity(Char, Entity)::'/bootstrap':pred, [Char::'/bootstrap':string, Entity::'/bootstrap':string]).
+'/bootstrap':signature(entity(Char, Entity)::'/bootstrap':statement, [Char::'/bootstrap':string, Entity::'/bootstrap':string]).
+'/bootstrap':projection(entity(Char, Entity)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':label(!'Entity'), '/bootstrap':vis(Char::'/bootstrap':string), '/bootstrap':label(!'is written as'), '/bootstrap':vis(Entity::'/bootstrap':string)])).
+entity(Char, Entity)~>isEntity(Char, Entity):-builtin:true.
+entity(! (<), !lt).
+entity(! (>), !gt).
+entity(!'&', !amp).
+entity(!'"', !quot).
+entity(!'\'', !apos).

@@ -1,0 +1,21 @@
+'/bootstrap':signature(void::cType, []).
+'/bootstrap':signature(char::cType, []).
+'/bootstrap':signature(formalArgs::'/bootstrap':type, []).
+'/bootstrap':signature(noMoreArgs::formalArgs, []).
+'/bootstrap':projection(noMoreArgs::formalArgs, '/bootstrap':label(!.)).
+'/bootstrap':signature(cVariable(Type)::'/bootstrap':type, [Type::cType]).
+'/bootstrap':signature(function(Args, Type)::'/bootstrap':type, [Args::formalArgs, Type::cType]).
+'/bootstrap':projection(function(Args, Type)::'/bootstrap':type, '/bootstrap':horiz(['/bootstrap':label(!function), '/bootstrap':vis(Type::cType), '/bootstrap':label(!'('), '/bootstrap':vis(Args::formalArgs), '/bootstrap':label(!')')])).
+'/bootstrap':signature(cStatement::'/bootstrap':type, []).
+'/bootstrap':signature(function(Type, Name, Args, Body)::cDef, [Type::cType, Name::function(Args, Type), Args::formalArgs, Body::'/bootstrap':list(cStatement)]).
+'/bootstrap':projection(function(Type, Name, Args, Body)::cDef, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':vis(Type::cType), '/bootstrap':vis(Name::function(Args, Type)), '/bootstrap':label(!'('), '/bootstrap':vis(Args::formalArgs), '/bootstrap':label(!')'), '/bootstrap':label(!'{')]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Body::'/bootstrap':list(cStatement))]), '/bootstrap':label(!'}')])).
+'/bootstrap':signature(myFunction::function(noMoreArgs, Type), []).
+'/bootstrap':adapter(Type::cType, function(Type, myFunction, noMoreArgs, [])::cDef).
+'/bootstrap':signature(noArgs::formalArgs, []).
+'/bootstrap':projection(noArgs::formalArgs, '/bootstrap':label(!.)).
+'/bootstrap':signature(fArg(Prev, Type, Arg)::formalArgs, [Prev::formalArgs, Type::cType, Arg::cVariable(Type)]).
+'/bootstrap':projection(fArg(Prev, Type, Arg)::formalArgs, '/bootstrap':horiz(['/bootstrap':vis(Prev::formalArgs), '/bootstrap':label(! (,)), '/bootstrap':vis(Type::cType), '/bootstrap':vis(Arg::cVariable(Type))])).
+'/bootstrap':alias(fArg(Prev, Type, Arg)::formalArgs, ! (,)).
+'/bootstrap':signature(main::function(fArg(fArg(noArgs, int, Argc), pointer(pointer(char)), Argv), void), []).
+'/bootstrap':signature(someFunction::function(fArg(fArg(noMoreArgs, int, X), pointer(int), Y), int), []).
+cFile(!'main.c', [function(void, main, fArg(fArg(noArgs, int, Argc), pointer(pointer(char)), Argv), [varDef(int, X), assign(X, int, var(Argc))])]).

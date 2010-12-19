@@ -40,14 +40,18 @@ public class Underline extends TermContextProxy {
 
     }
 
+	private TermFigure figure;
+
     public Underline(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
         super(parent);
         setLayoutManager(new FlowLayout());
-        add((IFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this));
+        figure = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
+		add(figure);
         setBorder(new UndrelineBorder(getColor()));
     }
 
     public void dispose() {
+    	figure.erase();
     }
 
 }

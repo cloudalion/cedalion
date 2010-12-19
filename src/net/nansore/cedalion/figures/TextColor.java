@@ -19,13 +19,14 @@ import org.eclipse.swt.graphics.Color;
 public class TextColor extends TermContextProxy {
     
     private Color color;
+	private TermFigure figure;
 
     public TextColor(Compound term, TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {
         super(context);
         try {
         	color = createColor(term.arg(2), context);
-            context.registerDispose(this);
-            add((IFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this));
+            figure = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
+			add((IFigure) figure);
         } catch (ClassCastException e) {
             throw new TermVisualizationException("A color figure should get a compound term and a color term");
         }
@@ -56,6 +57,7 @@ public class TextColor extends TermContextProxy {
      * @see net.nansore.visualterm.Disposable#dispose()
      */
     public void dispose() {
+    	figure.dispose();
         color.dispose();
     }
 }

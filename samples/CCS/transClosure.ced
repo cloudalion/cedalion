@@ -1,0 +1,11 @@
+'/bootstrap':signature(pairType(T1, T2)::'/bootstrap':type, [T1::'/bootstrap':type, T2::'/bootstrap':type]).
+'/bootstrap':projection(pairType(T1, T2)::'/bootstrap':type, '/bootstrap':horiz(['/bootstrap':label(! (<<)), '/bootstrap':vis(T1::'/bootstrap':type), '/bootstrap':label(! (,)), '/bootstrap':vis(T2::'/bootstrap':type), '/bootstrap':label(! (>>))])).
+'/bootstrap':signature(pair(X, Y)::pairType(T1, T2), [X::T1, Y::T2]).
+'/bootstrap':projection(pair(X, Y)::pairType(T1, T2), '/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(X::T1), '/bootstrap':label(! (,)), '/bootstrap':vis(Y::T2), '/bootstrap':label(! (>))])).
+'/bootstrap':signature(inTransClosure(Init, PairSet, T, History, X)::'/bootstrap':pred, [Init::T, PairSet::'/bootstrap':set(pairType(T, T)), T::'/bootstrap':type, History::'/bootstrap':list(T), X::T]).
+inTransClosure(X, _, _, _, X):-builtin:true.
+inTransClosure(Init, PairSet, T, History, X):- \+'/bootstrap':listMember(Init, T, History), '/bootstrap':member(pair(Init, Y), PairSet, pairType(T, T)), inTransClosure(Y, PairSet, T, [Init|History], X).
+'/bootstrap':signature(transClosure(Init, PairSet)::'/bootstrap':set(T), [Init::T, PairSet::'/bootstrap':set(pairType(T, T)), T::'/bootstrap':type]).
+'/bootstrap':setDef(transClosure(Init, PairSet), '/bootstrap':set(X, inTransClosure(Init, PairSet, T, [], X)), T).
+'/bootstrap':unitTest('/bootstrap':member(3, transClosure(1, '/bootstrap':listSet([pair(1, 2), pair(2, 1), pair(2, 3)])), '/bootstrap':number)).
+'/bootstrap':unitTest(\+'/bootstrap':member(4, transClosure(1, '/bootstrap':listSet([pair(1, 2), pair(2, 1), pair(2, 3)])), '/bootstrap':number)).

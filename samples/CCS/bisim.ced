@@ -1,0 +1,11 @@
+'/bootstrap':signature(bisim(P, Q)::'/bootstrap':pred, [P::process, Q::process]).
+'/bootstrap':projection(bisim(P, Q)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(P::process), '/bootstrap':symbol(126), '/bootstrap':vis(Q::process)])).
+bisim(P, Q):-bisim(P, Q, process, action, []).
+'/bootstrap':alias(bisim(P, Q)::'/bootstrap':pred, !'~').
+'/bootstrap':signature(notBisim(P, Q, Path)::'/bootstrap':pred, [P::process, Q::process, Path::'/bootstrap':list(action)]).
+'/bootstrap':projection(notBisim(P, Q, Path)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(P::process), '/bootstrap':symbol(8769), '/bootstrap':halfSize(cpi:vis(Path::'/bootstrap':list(action), '/bootstrap':horiz)), '/bootstrap':vis(Q::process)])).
+notBisim(P, Q, Path):-path(P, process, Path, action, _), \+path(Q, process, Path, action, _).
+notBisim(P, Q, Path):-path(Q, process, Path, action, _), \+path(P, process, Path, action, _).
+'/bootstrap':unitTest(bisim('P', 'P')).
+'/bootstrap':unitTest(\+bisim('P', 'Q')).
+'/bootstrap':unitTest(\+bisim(plus(cat(a, cat(b, 'P')), cat(a, 'P')), cat(a, plus(cat(b, 'P'), 'P')))).

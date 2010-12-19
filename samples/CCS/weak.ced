@@ -1,0 +1,25 @@
+'/bootstrap':signature(weakProcess::'/bootstrap':type, []).
+'/bootstrap':signature(weak(P)::weakProcess, [P::process]).
+edge(weak(P), weakProcess, A, action, weak(Q)):-builtin:ground(P::'/bootstrap':pred), path(P, process, Path, action, Q), containsSingleVisibleAction(Path, A).
+'/bootstrap':signature(containsSingleVisibleAction(Path, A)::'/bootstrap':pred, [Path::'/bootstrap':list(action), A::action]).
+'/bootstrap':projection(containsSingleVisibleAction(Path, A)::'/bootstrap':pred, '/bootstrap':horiz([cpi:vis(Path::'/bootstrap':list(action), '/bootstrap':horiz), '/bootstrap':label(!'contains only visible action'), '/bootstrap':vis(A::action)])).
+containsSingleVisibleAction([First|Path], A):-builtin:if(First::action=internal::action, containsSingleVisibleAction(Path, A), (A=First, containsInternalActionsOnly(Path))).
+'/bootstrap':signature(containsInternalActionsOnly(Path)::'/bootstrap':pred, [Path::'/bootstrap':list(action)]).
+'/bootstrap':projection(containsInternalActionsOnly(Path)::'/bootstrap':pred, '/bootstrap':horiz([cpi:vis(Path::'/bootstrap':list(action), '/bootstrap':horiz), '/bootstrap':label(!'contains only internal actions')])).
+containsInternalActionsOnly([]):-builtin:true.
+containsInternalActionsOnly([internal|Path]):-containsInternalActionsOnly(Path).
+'/bootstrap':signature(notWeakBisim(P, Q, Path)::'/bootstrap':pred, [P::process, Q::process, Path::'/bootstrap':list(action)]).
+'/bootstrap':projection(notWeakBisim(P, Q, Path)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(P::process), '/bootstrap':symbol(8777), '/bootstrap':halfSize(cpi:vis(Path::'/bootstrap':list(action), '/bootstrap':horiz)), '/bootstrap':vis(Q::process)])).
+notWeakBisim(P, Q, Path):-path(weak(P), weakProcess, Path, action, _), \+path(weak(Q), weakProcess, Path, action, _).
+notWeakBisim(P, Q, Path):-path(weak(Q), weakProcess, Path, action, _), \+path(weak(P), weakProcess, Path, action, _).
+'/bootstrap':signature(weakBisim(P, Q)::'/bootstrap':pred, [P::process, Q::process]).
+'/bootstrap':projection(weakBisim(P, Q)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(P::process), '/bootstrap':symbol(8776), '/bootstrap':vis(Q::process)])).
+weakBisim(P, Q):-bisim(weak(P), weak(Q), weakProcess, action, []).
+'/bootstrap':signature(showWhyNot(weakBisim(P, Q))::'/bootstrap':procedure, [weakBisim(P, Q)::'/bootstrap':pred]).
+cpi:procedureCommand(showWhyNot(weakBisim(P, Q)), '/bootstrap':showView('/bootstrap':vis(cpi:immediateDescriptor(Path, [])::'/bootstrap':list(action)))):-builtin:ground(weakBisim(P, Q)::'/bootstrap':pred), builtin:if(notWeakBisim(P, Q, Path), builtin:true, builtin:fail).
+'/bootstrap':contextMenuEntry('/bootstrap':unitTest(Test)::'/bootstrap':statement, _, _, !'Show why not', showWhyNot(Test)).
+'/bootstrap':unitTest(weakBisim('P', 'P')).
+'/bootstrap':unitTest(\+weakBisim('P', 'Q')).
+'/bootstrap':unitTest(weakBisim('B2'(a, b), comp('B1'(a, b), 'B1'(a, b)))).
+'/bootstrap':unitTest(\+bisim('B2'(a, b), comp('B1'(a, b), 'B1'(a, b)))).
+graphBrowsing(!'simulate weak', weakProcess, action).

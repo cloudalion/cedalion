@@ -24,8 +24,8 @@ public class PrologProxy {
     private OutputStreamWriter output;
     private int nextChar = -2;
     private Writer log;
-    private Pattern intRegex = Pattern.compile("-?[0-9]+");
-    private Pattern floatRegex = Pattern.compile("-?[0-9]+(\\.[0-9]+)?([eE][+\\-][0-9]+)?");
+    private static final Pattern intRegex = Pattern.compile("-?[0-9]+");
+    private static final Pattern floatRegex = Pattern.compile("-?[0-9]+(\\.[0-9]+)?([eE][+\\-][0-9]+)?");
     public PrologProxy(String prologInterpreter, File file) throws IOException {
         proc = Runtime.getRuntime().exec(prologInterpreter + " -s " + file.toString() + " -t qryStart");
         input = new InputStreamReader(proc.getInputStream());

@@ -1,0 +1,15 @@
+'/bootstrap':signature(comp(P, Q)::process, [P::process, Q::process]).
+'/bootstrap':projection(comp(P, Q)::process, '/bootstrap':horiz(['/bootstrap':vis(P::process), '/bootstrap':label(! (|)), '/bootstrap':vis(Q::process)])).
+'/bootstrap':alias(comp(P, Q)::process, ! (|)).
+transition(comp(P, Q), A, comp(P1, Q)):-transition(P, A, P1).
+transition(comp(P, Q), A, comp(P, Q1)):-transition(Q, A, Q1).
+'/bootstrap':signature(internal::action, []).
+'/bootstrap':projection(internal::action, '/bootstrap':symbol(964)).
+'/bootstrap':signature(input(A)::action, [A::action]).
+'/bootstrap':projection(input(A)::action, '/bootstrap':horiz(['/bootstrap':vis(A::action), '/bootstrap':label(!'?')])).
+'/bootstrap':alias(input(A)::action, !'?').
+'/bootstrap':signature(output(A)::action, [A::action]).
+'/bootstrap':projection(output(A)::action, '/bootstrap':horiz(['/bootstrap':vis(A::action), '/bootstrap':label(! (!))])).
+'/bootstrap':alias(output(A)::action, ! (!)).
+transition(comp(P, Q), internal, comp(P1, Q1)):-transition(P, input(A), P1), transition(Q, output(A), Q1).
+transition(comp(P, Q), internal, comp(P1, Q1)):-transition(P, output(A), P1), transition(Q, input(A), Q1).

@@ -1,0 +1,17 @@
+'/bootstrap':signature(xml::'/bootstrap':type, []).
+'/bootstrap':signature(xmlAttr::'/bootstrap':type, []).
+'/bootstrap':signature(xml:element(Name, Attr, Body)::xml, [Name::'/bootstrap':string, Attr::'/bootstrap':list(xmlAttr), Body::'/bootstrap':list(xml)]).
+'/bootstrap':projection(xml:element(Name, Attr, Body)::xml, '/bootstrap':expand('/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':tooltip('/bootstrap':action('/bootstrap':label(!'...'), showProperties(Attr)), '/bootstrap':vis(Attr::'/bootstrap':list(xmlAttr))), '/bootstrap':label(! (>))]), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':vis(Attr::'/bootstrap':list(xmlAttr)), '/bootstrap':label(! (>))]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Body::'/bootstrap':list(xml))]), '/bootstrap':horiz(['/bootstrap':label(!'</'), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':label(! (>))])]))).
+'/bootstrap':alias(xml:element(Name, Attr, Body)::xml, !'</>').
+'/bootstrap':default(xml:element(!name, [], [])::xml).
+'/bootstrap':signature(xmlAttrValue::'/bootstrap':type, []).
+'/bootstrap':alias(xml:attribute(Name, Type, Value)::xmlAttr, ! (=)).
+'/bootstrap':default(xml:attribute(!name, '/bootstrap':string, !value)::xmlAttr).
+'/bootstrap':signature(xml:attribute(Name, Type, Value)::xmlAttr, [Name::'/bootstrap':string, Type::'/bootstrap':type, Value::Type]).
+'/bootstrap':projection(xml:attribute(Name, Type, Value)::xmlAttr, '/bootstrap':horiz(['/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':label(! (=)), '/bootstrap':halfSize('/bootstrap':vis(Type::'/bootstrap':type)), '/bootstrap':vis(Value::Type)])).
+'/bootstrap':signature(xml:string(Str)::xml, [Str::'/bootstrap':string]).
+'/bootstrap':projection(xml:string(Str)::xml, '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!str)), '/bootstrap':vis(Str::'/bootstrap':string)])).
+'/bootstrap':signature(unicode(Code)::xml, [Code::'/bootstrap':number]).
+'/bootstrap':projection(unicode(Code)::xml, '/bootstrap':horiz(['/bootstrap':label(!'&#'), '/bootstrap':vis(Code::'/bootstrap':number), '/bootstrap':label(! (;))])).
+'/bootstrap':alias(unicode(Code)::xml, !'&#;').
+rem(xml:element(!name, [], [unicode(65)])).

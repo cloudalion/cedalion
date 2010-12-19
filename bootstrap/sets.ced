@@ -8,7 +8,6 @@ signature(label(Str)::visualization, [Str::string]).
 projection(set(E, Pred)::set(T), horiz([label(!'{'), vis(E::T), label(! (|)), vis(Pred::pred), label(!'}')])).
 signature(member(E, Set, T)::pred, [E::T, Set::set(T), T::type]).
 member(E, set(E, Pred), T):-Pred.
-signature(symbol(Num)::visualization, [Num::number]).
 projection(member(E, Set, T)::pred, horiz([vis(E::T), symbol(8712), halfSize(vis(T::type)), vis(Set::set(T))])).
 signature(setDef(Set, Def, T)::statement, [Set::set(T), Def::set(T), T::type]).
 projection(setDef(Set, Def, T)::statement, horiz([vis(Set::set(T)), symbol(8797), halfSize(vis(T::type)), vis(Def::set(T))])).

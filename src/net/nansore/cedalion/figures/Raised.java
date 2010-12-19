@@ -18,11 +18,6 @@ public class Raised extends BorderFigure {
 		
 	}
 
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
-	}
     protected Border createBorder(Compound term, TermContext context) throws TermVisualizationException {
     	return new SimpleRaisedBorder();
     }

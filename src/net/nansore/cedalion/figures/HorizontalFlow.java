@@ -3,6 +3,9 @@
  */
 package net.nansore.cedalion.figures;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.TermInstantiationException;
@@ -20,6 +23,7 @@ import org.eclipse.draw2d.Panel;
  * @author boaz
  */
 public class HorizontalFlow extends Panel implements TermFigure {
+	private List<TermFigure> childFigures = new ArrayList<TermFigure>();
 
     public HorizontalFlow(Compound term, final TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {
         setLayout();
@@ -28,7 +32,9 @@ public class HorizontalFlow extends Panel implements TermFigure {
         Object list = term.arg(1);
         while(list instanceof Compound && ((Compound)list).arity() == 2) {
             Compound compound = ((Compound)list);
-            add((IFigure) TermInstantiator.instance().instantiate((Compound)compound.arg(1), context));
+            Object figure = TermInstantiator.instance().instantiate((Compound)compound.arg(1), context);
+			add((IFigure) figure);
+            childFigures.add((TermFigure)figure);
             list = compound.arg(2);
         }
         
@@ -67,7 +73,7 @@ public class HorizontalFlow extends Panel implements TermFigure {
      * @see net.nansore.visualterm.figures.TermFigure#dispose()
      */
     public void dispose() {
-        // TODO Auto-generated method stub
-        
+    	for(TermFigure figure : childFigures)
+    		figure.dispose();
     }
 }

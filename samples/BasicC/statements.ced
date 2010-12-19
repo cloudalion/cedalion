@@ -1,0 +1,16 @@
+'/bootstrap':signature(bool::cType, []).
+'/bootstrap':signature(select::function(fArg(fArg(fArg(noMoreArgs, bool, Cond), int, X), int, Y), int), []).
+'/bootstrap':signature(varDef(Type, Var)::cStatement, [Type::cType, Var::cVariable(Type)]).
+'/bootstrap':projection(varDef(Type, Var)::cStatement, '/bootstrap':horiz(['/bootstrap':vis(Type::cType), '/bootstrap':vis(Var::cVariable(Type)), '/bootstrap':label(! (;))])).
+'/bootstrap':signature(cExpr(Type)::'/bootstrap':type, [Type::cType]).
+'/bootstrap':signature(if(Cond, Then, Else)::cStatement, [Cond::cExpr(bool), Then::'/bootstrap':list(cStatement), Else::'/bootstrap':list(cStatement)]).
+'/bootstrap':projection(if(Cond, Then, Else)::cStatement, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!if), '/bootstrap':label(!'('), '/bootstrap':vis(Cond::cExpr(bool)), '/bootstrap':label(!')'), '/bootstrap':label(!'{')]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Then::'/bootstrap':list(cStatement))]), '/bootstrap':label(!'}else{'), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Else::'/bootstrap':list(cStatement))]), '/bootstrap':label(!'}')])).
+'/bootstrap':signature(var(Var)::cExpr(Type), [Var::cVariable(Type)]).
+'/bootstrap':projection(var(Var)::cExpr(Type), '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!v)), '/bootstrap':vis(Var::cVariable(Type))])).
+'/bootstrap':adapter(Var::cVariable(Type), var(Var)::cExpr(Type)).
+'/bootstrap':signature(assign(Var, Type, Expr)::cStatement, [Var::cVariable(Type), Type::cType, Expr::cExpr(Type)]).
+'/bootstrap':projection(assign(Var, Type, Expr)::cStatement, '/bootstrap':horiz(['/bootstrap':vis(Var::cVariable(Type)), '/bootstrap':label(! (=)), '/bootstrap':halfSize('/bootstrap':vis(Type::cType)), '/bootstrap':vis(Expr::cExpr(Type)), '/bootstrap':label(! (;))])).
+'/bootstrap':alias(assign(Var, Type, Expr)::cStatement, ! (=)).
+'/bootstrap':signature(return(Result, Type)::cStatement, [Result::cExpr(Type), Type::cType]).
+'/bootstrap':projection(return(Result, Type)::cStatement, '/bootstrap':horiz(['/bootstrap':label(!return), '/bootstrap':halfSize('/bootstrap':vis(Type::cType)), '/bootstrap':vis(Result::cExpr(Type)), '/bootstrap':label(! (;))])).
+cFile(!'test.c', [function(int, select, fArg(fArg(fArg(noMoreArgs, bool, Cond), int, X), int, Y), [varDef(int, Result), if(var(Cond), [assign(Result, int, var(X))], [assign(Result, int, var(Y))]), return(var(Result), int)])]).

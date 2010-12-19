@@ -1,15 +1,16 @@
-signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
-signature((Term::Type)::typedTerm, [Term::Type, Type::type]).
-signature((Head:-Body)::statement, [Head::pred, Body::pred]).
-signature((A, B)::pred, [A::pred, B::pred]).
-signature((Head~>Body)::statement, [Head::statement, Body::statement]).
-signature([]::list(_), []).
-signature([X|L]::list(T), [X::T, L::list(T)]).
-signature(type::type, []).
-signature(string::type, []).
-signature(pred::type, []).
-signature(list(T)::type, [T::type]).
-signature(horiz::mode, []).
+docSignature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)], !'Type signature.  TTerm contains the construct being defined where all it arguments are variables, with its type.  TArgs is a list of pairs - a variable from the head with its own type.  The variables in TArgs must appear in the same order they appear in the head.').
+docSignature((Term::Type)::typedTerm, [Term::Type, Type::type], !'A typed term pair.  This is a way to pass terms regardless of their type.  Having the type encapsulated along with the term allows Cedalion to maintain type safety.').
+alias((Term::Type)::typedTerm, ! (::)).
+docSignature((Head:-Body)::statement, [Head::pred, Body::pred], !'A prolog-like deduction rule.  Means that Head holds for every assignment for which Body holds').
+docSignature((A, B)::pred, [A::pred, B::pred], !'Conjunction.  Means that A and B must hold.  A is evaluated first, and for each successful assignment of the variables in A, B is tested.  Basic logic programming...').
+docSignature((Head~>Body)::statement, [Head::statement, Body::statement], !'Rewrite rule.  It provides statements based on Body for every statement that matches Head.').
+docSignature([]::list(_), [], !'Empty list (or the end of a list)').
+docSignature([X|L]::list(T), [X::T, L::list(T)], !'A list with at-least one element, or a link in a list').
+docSignature(type::type, [], !'The type of all types...  Types are first-class citizens in Cedalion').
+docSignature(string::type, [], !'The type of strings').
+docSignature(pred::type, [], !'The type of predicates.  Predicates are first-class citizens in Cedalion, and therefore they are typed').
+docSignature(list(T)::type, [T::type], !'The types of lists.  T represents the type of each element on the list (note that all elements must be of the same type).').
+docSignature(horiz::mode, [], !'This mode orders Cedalion to present  a list as a horizontal list, bound by []').
 projection(horiz(List)::visualization, horiz([halfSize(label(!h)), cpi:vis(List::list(visualization), horiz)])).
 projection(projection(TTerm, Vis)::statement, horiz([vis(TTerm::typedTerm), symbol(8608), vis(Vis::visualization)])).
 projection([]::list(_), cpi:default, symbol(8718)).

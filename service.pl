@@ -360,6 +360,8 @@ generateLines(_, _, _).
 'builtin#minus'(A,B,C) :- C is A-B.
 'builtin#mult'(A,B,C) :- C is A*B.
 'builtin#div'(A,B,C) :- C is A/B.
+'builtin#idiv'(A,B,C) :- C is A//B.
+'builtin#modulus'(A,B,C) :- C is A mod B.
 'builtin#greaterThen'(A,B) :- A>B.
 'builtin#coinToss'(N,D) :- N>random(D).
 'builtin#copyTerm'(TTermOrig,TTermCopy) :- copy_term(TTermOrig,TTermCopy).

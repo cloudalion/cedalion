@@ -23,8 +23,8 @@ public class ExpandFigure extends TermContextProxy {
 
 	private ImageFigure icon;
 	private Panel panel;
-	private IFigure collapsed;
-	private IFigure expanded;
+	private TermFigure collapsed;
+	private TermFigure expanded;
 	private Compound path;
 
 	public ExpandFigure(Compound term, TermContext parent) throws TermInstantiationException, PrologException {
@@ -43,8 +43,8 @@ public class ExpandFigure extends TermContextProxy {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		collapsed = (IFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
-		expanded = (IFigure) TermInstantiator.instance().instantiate((Compound)term.arg(2), this);
+		collapsed = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
+		expanded = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(2), this);
 		panel.add(isExpanded() ? expanded : collapsed);
 		icon.addMouseListener(new MouseListener() {
 			
@@ -97,8 +97,10 @@ public class ExpandFigure extends TermContextProxy {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		expanded.dispose();
+		collapsed.dispose();
+		icon.erase();
+		panel.erase();
 	}
 
 }

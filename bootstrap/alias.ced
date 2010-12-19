@@ -11,6 +11,7 @@ unitTest(localString(!'aa#bb', !bb)).
 unitTest(aliasString(alias(TTerm, String)::statement, !alias)).
 alias(projection(_, _)::statement, !'->>').
 alias((\+X)::pred, !not).
+alias((\+X)::pred, ! (\+)).
 projection(TTerm, label(Alias))~>alias(TTerm, Alias).
 contextMenuEntry([signature(TTerm, [])|OtherStatements]::list(statement), VNs, Path, !'Create an alias', cpi:edit(Path, [signature(TTerm, []), projection(TTerm, label(!alias))|OtherStatements]::list(statement), VNs)).
 contextMenuEntry([signature(TTerm, Body)|OtherStatements]::list(statement), VNs, Path, !'Define projection', cpi:edit(Path, [signature(TTerm, Body), projection(TTerm, horiz([]))|OtherStatements]::list(statement), VNs)).

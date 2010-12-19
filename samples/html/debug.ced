@@ -1,0 +1,4 @@
+'/bootstrap':signature(showXml(Page)::'/bootstrap':procedure, [Page::'/Functional':expr(xml)]).
+'/bootstrap':signature(builtin:ground(TTerm)::'/bootstrap':pred, [TTerm::'/bootstrap':typedTerm]).
+cpi:procedureCommand(showXml(Page), '/bootstrap':showView('/bootstrap':vis(cpi:immediateDescriptor(XML, [])::xml))):-builtin:ground(Page::'/Functional':expr(xml)), '/Functional':eval(Page, xml, XML).
+'/bootstrap':contextMenuEntry(Page::'/Functional':expr(xml), VN, _, !'Show XML', showXml(Page)).

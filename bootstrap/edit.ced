@@ -31,6 +31,7 @@ signature(builtin:if(Cond, Then, Else)::pred, [Cond::pred, Then::pred, Else::pre
 signature((TTerm1=TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
 projection((TTerm1=TTerm2)::pred, horiz([vis(TTerm1::typedTerm), label(! (=)), vis(TTerm2::typedTerm)])).
 signature(cpi:edit(Path, TTerm, VarNames)::procedure, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)]).
+projection(cpi:edit(Path, TTerm, VarNames)::procedure, vert([horiz([label(!'Edit:'), vis(TTerm::typedTerm)]), halfSize(horiz([label(!'At path:'), vis(Path::cpi:path), label(!'with varnames:'), vis(VarNames::list(varName))]))])).
 signature(editOp(Path, OldTypedContent, OldVarNames)::undoFrame, [Path::cpi:path, OldTypedContent::typedTerm, OldVarNames::list(varName)]).
 signature(containingStatementPath(Path, StatementPath)::pred, [Path::cpi:path, StatementPath::cpi:path]).
 cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames)), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|UndoStack], [], NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, UndoStack, _, OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), builtin:if(0>OldModifiedCounter, NewModifiedCounter::number=99999::number, builtin:succ(OldModifiedCounter, NewModifiedCounter)), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
@@ -49,5 +50,6 @@ projection(X-Y::expr(number), horiz([vis(X::expr(number)), label(! (+)), vis(Y::
 signature(minus(X, Y, Z)::command, [X::expr(number), Y::expr(number), Z::ref(number)]).
 function(X-Y, number, Z, minus(X, Y, Z)).
 commandClass(minus(X, Y, Z), !'net.nansore.cedalion.cmd.Minus').
+signature(cpi:termAsString(Path, Depth)::expr(string), [Path::cpi:path, Depth::number]).
 cpi:procedureCommand(cpi:func(cpi:termAsString(cpi:path(ResourceName, Path), Depth), Str, string), termToString(TTerm, VarNames, Depth, NsList, Str)):-cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames), fileIsLoaded(ResourceName, _, model(_, _, NsList)).
 cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef), doAll([stringToTerm(StringRef, NsList, TTerm, VarNames), doProc(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames))])):-fileIsLoaded(ResourceName, _, model(_, _, NsList)).

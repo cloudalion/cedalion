@@ -14,11 +14,14 @@ import org.eclipse.draw2d.Label;
  */
 public class LabelFigure extends Label implements TermFigure {
 
+	public static int debugCount = 0;
+	
     public LabelFigure(Compound term, TermContext context) throws TermVisualizationException {
         setForegroundColor(context.getColor());
         setFont(context.getFont(TermContext.NORMAL_FONT));
         setText(translateString(term));
         context.bindFigure(this);
+        debugCount++;
     }
 
 	private String translateString(Compound term) throws TermVisualizationException {
@@ -39,8 +42,8 @@ public class LabelFigure extends Label implements TermFigure {
      * @see net.nansore.visualterm.figures.TermFigure#dispose()
      */
     public void dispose() {
-        // TODO Auto-generated method stub
-        
+    	erase();
+    	debugCount--;
     }
     
     

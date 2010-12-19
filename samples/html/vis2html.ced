@@ -1,0 +1,29 @@
+'/bootstrap':signature('vis2html'(Vis)::'/Functional':expr(xml), [Vis::'/bootstrap':visualization]).
+'/Functional':def('vis2html'('/bootstrap':horiz(List)), xml, '/Functional':wrap(xml:element(!table, [], [xml:element(!tr, [xml:attribute(!style, '/bootstrap':string, !'vertical-align: top')], '/Functional':unwrap(listComp('/Functional':wrap(xml:element(!td, [], ['/Functional':unwrap('vis2html'(Vis))])), _, '/bootstrap':listMember(Vis, '/bootstrap':visualization, List))))]))).
+'/Functional':def('vis2html'('/bootstrap':vert(List)), xml, '/Functional':wrap(xml:element(!table, [], '/Functional':unwrap(listComp('/Functional':wrap(xml:element(!tr, [], [xml:element(!td, [], ['/Functional':unwrap('vis2html'(Vis))])])), _, '/bootstrap':listMember(Vis, '/bootstrap':visualization, List)))))).
+'/Functional':def('vis2html'('/bootstrap':label(Str)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'white-space: pre-line')], [xml:string(Str), xml:string(!' ')]))).
+'/Functional':def('vis2html'('/bootstrap':symbol(Code)), xml, '/Functional':wrap(unicode(Code))).
+'/Functional':def('vis2html'('/bootstrap':bold(Vis)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'font-weight: bold')], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':italic(Vis)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'font-style: italic')], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/bootstrap':signature(colorString(Color)::'/Functional':expr('/bootstrap':string), [Color::'/bootstrap':color]).
+'/Functional':def(colorString(cpi:rgb(R, G, B)), '/bootstrap':string, '/Functional':plus('/Functional':wrap(!'#'), asHexString('/Functional':plus('/Functional':mult('/Functional':parentheses('/Functional':plus('/Functional':mult('/Functional':wrap(R), '/Functional':wrap(256)), '/Functional':wrap(G))), '/Functional':wrap(256)), '/Functional':wrap(B))))).
+'/Functional':def('vis2html'('/bootstrap':lineBorder(Vis, Width, Color)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, '/Functional':unwrap('/Functional':plus('/Functional':wrap(!'outline-style: solid; outline-width: '), '/Functional':plus('/Functional':'num2str'('/Functional':wrap(Width)), '/Functional':plus('/Functional':wrap(!'; outline-color: '), colorString(Color))))))], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':color(Vis, Color)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, '/Functional':unwrap('/Functional':plus('/Functional':wrap(!'color:'), colorString(Color))))], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':background(Vis, Color)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, '/Functional':unwrap('/Functional':plus('/Functional':wrap(!'background-color'), colorString(Color))))], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':tooltip(Vis, _)), xml, 'vis2html'(Vis)).
+'/Functional':def('vis2html'('/bootstrap':halfSize(Vis)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'font-size: 50%; vertical-align:top')], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':smaller(Vis)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'font-size: 90%; vertical-align:top')], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':action(Vis, _)), xml, 'vis2html'(Vis)).
+'/Functional':def('vis2html'('/bootstrap':expand(Collapsed, Expanded)), xml, 'vis2html'(Expanded)).
+'/Functional':def('vis2html'('/bootstrap':raised(Vis)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'outline-style: outset; outline-width: 1; outline-color: black')], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':lowered(Vis)), xml, '/Functional':wrap(xml:element(!span, [xml:attribute(!style, '/bootstrap':string, !'outline-style: inset; outline-width: 1; outline-color: black')], ['/Functional':unwrap('vis2html'(Vis))]))).
+'/Functional':def('vis2html'('/bootstrap':vis(TTerm)), xml, 'vis2html'(cpi:vis(TTerm, cpi:default))).
+'/bootstrap':signature(asString(TTerm)::'/Functional':expr('/bootstrap':string), [TTerm::'/bootstrap':typedTerm]).
+'/Functional':def(asString(String::'/bootstrap':string), '/bootstrap':string, '/Functional':wrap(String)).
+'/Functional':eval('vis2html'(cpi:vis(TTerm, Mode)), xml, XML):-builtin:if(builtin:var(TTerm), XML::xml=xml:element(!span, [], [xml:string(!'_')])::xml, builtin:if(builtin:string(TTerm), '/Functional':eval('/Functional':wrap(xml:element(!span, [], [xml:string('/Functional':unwrap(asString(TTerm)))])), xml, XML), ('/bootstrap':visualizeTerm(TTerm, Mode, Vis), '/Functional':eval('vis2html'(Vis), xml, XML)))).
+'/bootstrap':signature('vis2htmlList'(List)::'/Functional':expr('/bootstrap':list(xml)), [List::'/bootstrap':list('/bootstrap':visualization)]).
+'/Functional':def('vis2htmlList'([]), '/bootstrap':list(xml), '/Functional':wrap([])).
+'/Functional':def('vis2htmlList'([First|Rest]), '/bootstrap':list(xml), '/Functional':wrap(['/Functional':unwrap('vis2html'(First))|'/Functional':unwrap('vis2htmlList'(Rest))])).
+'/bootstrap':signature(writeHtmlFor(TTerm, FileName)::'/bootstrap':procedure, [TTerm::'/bootstrap':typedTerm, FileName::'/bootstrap':string]).
+cpi:procedureCommand(writeHtmlFor(TTerm, FileName), '/bootstrap':doProc('/Functional':generateXMLFile(FileName, XML))):-'/Functional':eval('vis2html'('/bootstrap':vis(TTerm)), xml, XML).
+'/bootstrap':disabled('/bootstrap':contextMenuEntry(TTerm, _, _, !'Take HTML Screenshot', writeHtmlFor(TTerm, !'screenshot.html'))).

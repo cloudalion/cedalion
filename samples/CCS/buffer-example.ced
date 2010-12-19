@@ -1,0 +1,9 @@
+'/bootstrap':signature('B1'(I, O)::process, [I::action, O::action]).
+def('B1'(I, O), process, cat(input(I), cat(output(O), 'B1'(I, O)))).
+'/bootstrap':signature('B2'(I, O)::process, [I::action, O::action]).
+def('B2'(I, O), process, new(comp('B1'(I, c), 'B1'(c, O)), [c])).
+'/bootstrap':signature('B4'(I, O)::process, [I::action, O::action]).
+'/bootstrap':signature(d::action, []).
+def('B4'(I, O), process, new(comp('B2'(I, d), 'B2'(d, O)), [d])).
+'/bootstrap':signature(myProcess::process, []).
+def(myProcess, process, 'B4'(a, b)).

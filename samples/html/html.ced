@@ -1,0 +1,15 @@
+'/bootstrap':signature(myPage::'/Functional':expr(xml), []).
+'/bootstrap':signature(simplePage(Title, Body)::'/Functional':expr(xml), [Title::'/Functional':expr('/bootstrap':string), Body::'/bootstrap':list('/Functional':expr(xml))]).
+'/bootstrap':projection(simplePage(Title, Body)::'/Functional':expr(xml), '/bootstrap':raised('/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vert(['/bootstrap':color('/bootstrap':vis(Title::'/Functional':expr('/bootstrap':string)), cpi:rgb(0, 0, 255)), '/bootstrap':lowered('/bootstrap':background('/bootstrap':vis(Body::'/bootstrap':list('/Functional':expr(xml))), cpi:rgb(255, 255, 255)))]), cpi:rgb(255, 128, 255)), 5, cpi:rgb(255, 128, 255)))).
+'/Functional':def(simplePage(Title, Body), xml, '/Functional':wrap(xml:element(!html, [], [xml:element(!head, [], [xml:element(!title, [], [xml:string('/Functional':unwrap(Title))])]), xml:element(!body, [], '/Functional':unwrap('/Functional':evalList(Body)))]))).
+'/bootstrap':signature(head(Level, Content)::'/Functional':expr(xml), [Level::'/Functional':expr('/bootstrap':number), Content::'/Functional':expr('/bootstrap':string)]).
+'/bootstrap':projection(head(Level, Content)::'/Functional':expr(xml), '/bootstrap':bold('/bootstrap':horiz(['/bootstrap':vis(Level::'/Functional':expr('/bootstrap':number)), '/bootstrap':label(!')'), '/bootstrap':vis(Content::'/Functional':expr('/bootstrap':string))]))).
+'/Functional':def(head(Level, Content), xml, '/Functional':wrap(xml:element('/Functional':unwrap('/Functional':concat('/Functional':wrap(!h), '/Functional':'num2str'(Level))), [], [xml:string('/Functional':unwrap(Content))]))).
+'/bootstrap':signature(paragraph(Text)::'/Functional':expr(xml), [Text::'/Functional':expr('/bootstrap':string)]).
+'/bootstrap':projection(paragraph(Text)::'/Functional':expr(xml), '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!p)), '/bootstrap':vis(Text::'/Functional':expr('/bootstrap':string))])).
+'/Functional':def(paragraph(Text), xml, '/Functional':wrap(xml:element(!p, [], [xml:string('/Functional':unwrap(Text))]))).
+'/Functional':def(myPage, xml, simplePage('/Functional':wrap(!'My Page'), [head('/Functional':wrap(1), '/Functional':wrap(!'My Page')), paragraph('/Functional':wrap(!'Hi there...')), '/Functional':wrap(xml:element(!span, [], '/Functional':unwrap(listComp(paragraph('/Functional':concat('/Functional':wrap(!'Hello, '), '/Functional':wrap(Name))), xml, person(Name)))))])).
+'/bootstrap':signature(person(Person)::'/bootstrap':pred, [Person::'/bootstrap':string]).
+person(!mike):-builtin:true.
+person(!aaron):-builtin:true.
+person(!william):-builtin:true.

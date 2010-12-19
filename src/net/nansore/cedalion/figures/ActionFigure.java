@@ -16,11 +16,12 @@ import net.nansore.prolog.PrologException;
 public class ActionFigure extends TermContextProxy {
 
 	private Compound proc;
+	private TermFigure child;
 
 	public ActionFigure(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
 		super(parent);
 		try {
-			TermFigure child = (TermFigure)TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
+			child = (TermFigure)TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
 			add(child);
 		} catch (ClassCastException e) {
 			throw new TermVisualizationException(e);
@@ -30,7 +31,7 @@ public class ActionFigure extends TermContextProxy {
 
 	@Override
 	public void dispose() {
-		// Nothing to do...
+		child.dispose();
 	}
 
 	@Override

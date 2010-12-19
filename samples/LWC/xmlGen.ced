@@ -1,0 +1,13 @@
+'/bootstrap':signature(termName(Term)::'/Functional':expr('/bootstrap':string), [Term::'/bootstrap':typedTerm]).
+'/Functional':eval(termName(Term), '/bootstrap':string, Name):-builtin:parseTerm(Term, Name, _).
+'/bootstrap':signature(toXML(TTerm)::'/Functional':expr('/html':xml), [TTerm::'/bootstrap':typedTerm]).
+'/bootstrap':signature(toXmlList(TTerm)::'/Functional':expr('/bootstrap':list('/html':xml)), [TTerm::'/bootstrap':typedTerm]).
+'/Functional':def(toXmlList([]::'/bootstrap':list(_)), '/bootstrap':list('/html':xml), '/Functional':wrap([])).
+'/Functional':def(toXmlList([First|Rest]::'/bootstrap':list(T)), '/bootstrap':list('/html':xml), '/Functional':wrap(['/Functional':unwrap(toXML(First::T))|'/Functional':unwrap(toXmlList(Rest::'/bootstrap':list(T)))])).
+'/Functional':def(toXML(entity(Name, Props)::'/bootstrap':statement), '/html':xml, '/Functional':wrap(xml:element(!entity, [xml:attribute(!name, '/bootstrap':string, '/Functional':unwrap(termName(Name::entity)))], '/Functional':unwrap(toXmlList(Props::'/bootstrap':list(property(Name))))))).
+'/Functional':def(toXML(property(Name, primitiveType(Type), Card)::property(Ent)), '/html':xml, '/Functional':wrap(xml:element(!property, [xml:attribute(!name, '/bootstrap':string, '/Functional':unwrap(termName(Name::propertyName(Ent, primitiveType(Type), Card)))), xml:attribute(!type, '/bootstrap':string, '/Functional':unwrap(termName(Type::'/bootstrap':type))), xml:attribute(!cardinality, '/bootstrap':string, '/Functional':unwrap(termName(Card::cardinality)))], []))).
+'/Functional':def(toXML(property(Name, ent(Entity), Card)::property(Ent)), '/html':xml, '/Functional':wrap(xml:element(!property, [xml:attribute(!name, '/bootstrap':string, '/Functional':unwrap(termName(Name::propertyName(Ent, ent(Entity), Card)))), xml:attribute(!entity, '/bootstrap':string, '/Functional':unwrap(termName(Entity::entity))), xml:attribute(!cardinality, '/bootstrap':string, '/Functional':unwrap(termName(Card::cardinality)))], []))).
+'/bootstrap':signature(xmlContent(XML)::'/bootstrap':pred, [XML::'/html':xml]).
+entity(Ent, Props)~>xmlContent(XML):-'/Functional':eval(toXML(entity(Ent, Props)::'/bootstrap':statement), '/html':xml, XML).
+'/bootstrap':signature(entities::'/Functional':expr('/html':xml), []).
+'/Functional':def(entities, '/html':xml, '/Functional':wrap(xml:element(!entities, [], '/Functional':unwrap('/html':listComp('/Functional':wrap(XML), '/html':xml, xmlContent(XML)))))).

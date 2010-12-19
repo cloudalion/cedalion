@@ -1,0 +1,5 @@
+signature(disabled(Statement)::statement, [Statement::statement]).
+projection(disabled(Statement)::statement, color(horiz([label(! (//)), vis(Statement::statement)]), cpi:rgb(128, 128, 128))).
+alias(disabled(Statement)::statement, ! (//)).
+contextMenuEntry(Statement::statement, VNs, Path, !'Disable', cpi:edit(Path, disabled(Statement)::statement, VNs)).
+contextMenuEntry(disabled(Statement)::statement, VNs, Path, !'Enable', cpi:edit(Path, Statement::statement, VNs)).

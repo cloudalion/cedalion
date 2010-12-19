@@ -15,11 +15,14 @@ import org.eclipse.draw2d.IFigure;
 
 public abstract class BorderFigure extends TermContextProxy {
 
-    public BorderFigure(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
+    private TermFigure figure;
+
+	public BorderFigure(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
         super(parent);
         try {
-            add((IFigure) TermInstantiator.instance().instantiate(
-                    (Compound) term.arg(1), parent));
+            figure = (TermFigure) TermInstantiator.instance().instantiate(
+                    (Compound) term.arg(1), parent);
+			add(figure);
             setBorder(createBorder(term, parent));
         } catch (ClassCastException e) {
             throw new TermVisualizationException(e);
@@ -35,6 +38,7 @@ public abstract class BorderFigure extends TermContextProxy {
     protected abstract Border createBorder(Compound term, TermContext context) throws TermVisualizationException;
 
     public void dispose() {
+    	figure.dispose();
     }
 
 }

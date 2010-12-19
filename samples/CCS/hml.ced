@@ -1,0 +1,33 @@
+'/bootstrap':signature(hml::'/bootstrap':type, []).
+'/bootstrap':signature(true::hml, []).
+'/bootstrap':projection(true::hml, '/bootstrap':italic('/bootstrap':label(!true))).
+'/bootstrap':signature(conforms(P, HML)::'/bootstrap':pred, [P::process, HML::hml]).
+'/bootstrap':projection(conforms(P, HML)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(P::process), '/bootstrap':symbol(8872), '/bootstrap':vis(HML::hml)])).
+conforms(P, true):-builtin:true.
+'/bootstrap':signature(false::hml, []).
+'/bootstrap':projection(false::hml, '/bootstrap':italic('/bootstrap':label(!false))).
+conforms(P, false):-builtin:fail.
+'/bootstrap':signature(and(T, S)::hml, [T::hml, S::hml]).
+'/bootstrap':projection(and(T, S)::hml, '/bootstrap':horiz(['/bootstrap':vis(T::hml), '/bootstrap':symbol(8896), '/bootstrap':vis(S::hml)])).
+conforms(P, and(T, S)):-conforms(P, T), conforms(P, S).
+'/bootstrap':signature(or(T, S)::hml, [T::hml, S::hml]).
+'/bootstrap':projection(or(T, S)::hml, '/bootstrap':horiz(['/bootstrap':vis(T::hml), '/bootstrap':symbol(8897), '/bootstrap':vis(S::hml)])).
+conforms(P, or(T, S)):-conforms(P, T).
+conforms(P, or(T, S)):-conforms(P, S).
+'/bootstrap':signature(not(T)::hml, [T::hml]).
+'/bootstrap':projection(not(T)::hml, '/bootstrap':horiz(['/bootstrap':symbol(172), '/bootstrap':vis(T::hml)])).
+conforms(P, not(T)):- \+conforms(P, T).
+'/bootstrap':signature(existsAction(T, A)::hml, [T::hml, A::action]).
+'/bootstrap':projection(existsAction(T, A)::hml, '/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(A::action), '/bootstrap':label(! (>)), '/bootstrap':vis(T::hml)])).
+'/bootstrap':alias(existsAction(T, A)::hml, !'<>').
+conforms(P, existsAction(T, A)):-transition(P, A, P1), conforms(P1, T).
+'/bootstrap':signature(allAction(T, A)::hml, [T::hml, A::action]).
+'/bootstrap':projection(allAction(T, A)::hml, '/bootstrap':horiz(['/bootstrap':label(!'['), '/bootstrap':vis(A::action), '/bootstrap':label(!']'), '/bootstrap':vis(T::hml)])).
+'/bootstrap':alias(allAction(T, A)::hml, ![]).
+def(allAction(T, A), hml, not(existsAction(not(T), A))).
+def(T, hml, S)~>conforms(P, T):-conforms(P, S).
+'/bootstrap':unitTest(conforms('P', existsAction(existsAction(existsAction(true, c), b), a))).
+'/bootstrap':unitTest(conforms('P', existsAction(existsAction(existsAction(allAction(true, a), c), b), a))).
+'/bootstrap':unitTest(\+conforms('P', existsAction(existsAction(allAction(existsAction(true, a), c), b), a))).
+'/bootstrap':unitTest(conforms('B1'(a, b), existsAction(existsAction(existsAction(existsAction(true, output(b)), input(a)), output(b)), input(a)))).
+'/bootstrap':unitTest(\+conforms('B1'(a, b), existsAction(existsAction(true, output(a)), input(a)))).

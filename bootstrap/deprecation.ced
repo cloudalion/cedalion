@@ -1,0 +1,10 @@
+signature(deprecated(TTerm)::statement, [TTerm::typedTerm]).
+projection(deprecated(TTerm)::statement, horiz([vis(TTerm::typedTerm), label(!'is deprecated')])).
+signature(conceptIsDeprecated(TTerm, Path)::error, [TTerm::typedTerm, Path::cpi:path]).
+projection(conceptIsDeprecated(TTerm, Path)::error, vert([horiz([vis(TTerm::typedTerm), label(!'is Deprecated')]), halfSize(horiz([label(!'at path:'), vis(Path::cpi:path)]))])).
+signature(isDeprecated(TTerm)::pred, [TTerm::typedTerm]).
+deprecated(TTerm)~>isDeprecated(TTerm):-builtin:true.
+check(Path, TTerm, VNs, marker(Path, error(conceptIsDeprecated(TTerm, Path), VNs))):- \+builtin:var(TTerm), isDeprecated(TTerm).
+signature(deprecationReplacement(Deprecated, Type, Replacement)::statement, [Deprecated::Type, Type::type, Replacement::Type]).
+projection(deprecationReplacement(Deprecated, Type, Replacement)::statement, horiz([label(!'Deprecated'), vis(Deprecated::Type), label(! (::)), vis(Type::type), label(!'is replaced by'), vis(Replacement::Type)])).
+deprecationReplacement(Deprecated, Type, Replacement)~>errorSolution(conceptIsDeprecated(Deprecated::Type, Path), VNs, cpi:edit(Path, Replacement::Type, VNs)):-builtin:true.

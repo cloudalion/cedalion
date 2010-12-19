@@ -1,0 +1,9 @@
+'/bootstrap':signature(new(P, List)::process, [P::process, List::'/bootstrap':list(action)]).
+'/bootstrap':projection(new(P, List)::process, '/bootstrap':horiz(['/bootstrap':label(!new), cpi:vis(List::'/bootstrap':list(action), '/bootstrap':horiz), '/bootstrap':label(!'('), '/bootstrap':vis(P::process), '/bootstrap':label(!')')])).
+transition(new(P, List), A, new(P1, List)):-transition(P, A, P1), coreAction(A, Core), \+'/bootstrap':listMember(Core, action, List).
+'/bootstrap':signature(coreAction(A, Core)::'/bootstrap':pred, [A::action, Core::action]).
+coreAction(Action, Core):-builtin:ground(Action::action), builtin:if(Action::action=input(A)::action, coreAction(A, Core), builtin:if(Action::action=output(A)::action, coreAction(A, Core), Core::action=Action::action)).
+'/bootstrap':signature(showCoreAction(A)::'/bootstrap':procedure, [A::action]).
+cpi:procedureCommand(showCoreAction(A), '/bootstrap':showView('/bootstrap':vis(cpi:immediateDescriptor(CoreAction, [])::action))):-coreAction(A, CoreAction).
+'/bootstrap':contextMenuEntry(A::action, _, _, !'Show core action', showCoreAction(A)).
+def(someProcess, process, new(plus(cat(input(a), someProcess), cat(output(b), cat(a, someProcess))), [a])).

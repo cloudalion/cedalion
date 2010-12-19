@@ -61,11 +61,6 @@ public interface TermContext {
     Font getFont(int fontType);
 
     /**
-     * @param color
-     */
-    void registerDispose(TermFigure disp);
-
-    /**
      * 
      */
     void figureUpdated();

@@ -78,7 +78,6 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	private VisualTermWidget editorWidget;
     private List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
     private ISelection selection;
-    private Map<Object, List<TermFigure>> termFigures = new HashMap<Object, List<TermFigure>>();
     private IFileEditorInput input;
 	private Font normalFont;
 	protected Font symbolFont;
@@ -268,6 +267,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
     public void dispose() {
         System.out.println("Disposing editor for " + input.getFile() + " resource: " + getResource());
         try {
+        	editorWidget.dispose();
 			close();
 		} catch (PrologException e) {
 			// TODO Auto-generated catch block
@@ -321,13 +321,6 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
      * @see net.nansore.visualterm.TermContext#registerTermFigure(long, net.nansore.visualterm.figures.TermFigure)
      */
     public synchronized void registerTermFigure(Object termID, TermFigure figure) {
-        Object key = termID;
-        List<TermFigure> figures = termFigures.get(key);
-        if(figures == null) {
-            figures = new ArrayList<TermFigure>();
-            termFigures.put(key, figures);
-        }
-        figures.add(figure);        
     }
 
     /* (non-Javadoc)
@@ -366,10 +359,6 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
      * @see net.nansore.visualterm.TermContext#unregisterTermFigure(int, net.nansore.visualterm.figures.TermFigure)
      */
     public synchronized void unregisterTermFigure(Object termID, TermFigure figure) {
-        List<TermFigure> figures = (List<TermFigure>) termFigures.get(termID);
-        if(figures != null) {
-            figures.remove(figure);
-        }
     }
 
 	public String getResource() {

@@ -1,0 +1,4 @@
+'/bootstrap':signature(generateXMLFile(FileName, XML)::'/bootstrap':procedure, [FileName::'/bootstrap':string, XML::'/html':xml]).
+cpi:procedureCommand(generateXMLFile(FileName, XML), '/bootstrap':doProc('/bootstrap':generateFileForSet(FileName, '/bootstrap':singleton(XmlText)))):-eval(plus(wrap(!'<?xml version="1.0"?>
+'), '/html':toText(XML::'/html':xml)), '/bootstrap':string, XmlText).
+'/bootstrap':contextMenuEntry(XML::'/html':xml, _, _, !'Generate XML File', generateXMLFile(!'gen.xml', XML)).

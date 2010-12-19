@@ -1,0 +1,24 @@
+'/bootstrap':signature(twice::function(fArg(noMoreArgs, int, X), int), []).
+'/bootstrap':signature(plus(A, B)::cExpr(T), [A::cExpr(T), B::cExpr(T)]).
+'/bootstrap':projection(plus(A, B)::cExpr(T), '/bootstrap':horiz(['/bootstrap':vis(A::cExpr(T)), '/bootstrap':label(! (+)), '/bootstrap':vis(B::cExpr(T))])).
+'/bootstrap':alias(plus(A, B)::cExpr(T), ! (+)).
+'/bootstrap':signature(minus(A, B)::cExpr(T), [A::cExpr(T), B::cExpr(T)]).
+'/bootstrap':projection(minus(A, B)::cExpr(T), '/bootstrap':horiz(['/bootstrap':vis(A::cExpr(T)), '/bootstrap':label(! (-)), '/bootstrap':vis(B::cExpr(T))])).
+'/bootstrap':alias(minus(A, B)::cExpr(T), ! (-)).
+'/bootstrap':signature(times(A, B)::cExpr(T), [A::cExpr(T), B::cExpr(T)]).
+'/bootstrap':projection(times(A, B)::cExpr(T), '/bootstrap':horiz(['/bootstrap':vis(A::cExpr(T)), '/bootstrap':label(! (*)), '/bootstrap':vis(B::cExpr(T))])).
+'/bootstrap':alias(times(A, B)::cExpr(T), ! (*)).
+'/bootstrap':signature(div(A, B)::cExpr(T), [A::cExpr(T), B::cExpr(T)]).
+'/bootstrap':projection(div(A, B)::cExpr(T), '/bootstrap':horiz(['/bootstrap':vis(A::cExpr(T)), '/bootstrap':label(! (/)), '/bootstrap':vis(B::cExpr(T))])).
+'/bootstrap':alias(div(A, B)::cExpr(T), ! (/)).
+'/bootstrap':signature(actualArgs(FormalArgs)::'/bootstrap':type, [FormalArgs::formalArgs]).
+'/bootstrap':signature(noActArgs::actualArgs(noMoreArgs), []).
+'/bootstrap':projection(noActArgs::actualArgs(noMoreArgs), '/bootstrap':label(!.)).
+'/bootstrap':signature(arg(Prev, Arg)::actualArgs(fArg(FormalPrev, Type, _)), [Prev::actualArgs(FormalPrev), Arg::cExpr(Type)]).
+'/bootstrap':projection(arg(Prev, Arg)::actualArgs(fArg(FormalPrev, Type, _)), '/bootstrap':horiz(['/bootstrap':vis(Prev::actualArgs(FormalPrev)), '/bootstrap':label(! (,)), '/bootstrap':vis(Arg::cExpr(Type))])).
+'/bootstrap':alias(arg(Prev, Arg)::actualArgs(fArg(FormalPrev, Type, _)), ! (,)).
+'/bootstrap':signature(callFunc(Name, FArgs, Args)::cExpr(Type), [Name::function(FArgs, Type), FArgs::formalArgs, Args::actualArgs(FArgs)]).
+'/bootstrap':projection(callFunc(Name, FArgs, Args)::cExpr(Type), '/bootstrap':horiz(['/bootstrap':vis(Name::function(FArgs, Type)), '/bootstrap':halfSize('/bootstrap':vis(FArgs::formalArgs)), '/bootstrap':label(!'('), '/bootstrap':vis(Args::actualArgs(FArgs)), '/bootstrap':label(!')')])).
+'/bootstrap':adapter(Name::function(FArgs, Type), callFunc(Name, FArgs, Args)::cExpr(Type)).
+'/bootstrap':signature(quad::function(fArg(fArg(noMoreArgs, int, Y), pointer(char), Z), int), []).
+cFile(!'expr.c', [function(int, twice, fArg(noMoreArgs, int, X), [return(plus(var(X), var(X)), int)]), function(int, quad, fArg(fArg(noMoreArgs, int, Y), pointer(char), Z), [return(callFunc(twice, fArg(noMoreArgs, int, _), arg(noActArgs, callFunc(twice, fArg(noMoreArgs, int, _), arg(noActArgs, var(Y))))), int)])]).

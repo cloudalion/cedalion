@@ -1,0 +1,27 @@
+'/bootstrap':signature(cDef::'/bootstrap':type, []).
+'/bootstrap':signature(cFile(Name, Content)::'/bootstrap':statement, [Name::'/bootstrap':string, Content::'/bootstrap':list(cDef)]).
+'/bootstrap':projection(cFile(Name, Content)::'/bootstrap':statement, '/bootstrap':vert(['/bootstrap':bold('/bootstrap':vis(Name::'/bootstrap':string)), '/bootstrap':vis(Content::'/bootstrap':list(cDef))])).
+'/bootstrap':signature(struct::'/bootstrap':type, []).
+'/bootstrap':signature(fieldDef(Name)::'/bootstrap':type, [Name::struct]).
+'/bootstrap':signature(struct(Name, Members)::cDef, [Name::struct, Members::'/bootstrap':list(fieldDef(Name))]).
+'/bootstrap':projection(struct(Name, Members)::cDef, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!struct), '/bootstrap':vis(Name::struct), '/bootstrap':label(!'{')]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Members::'/bootstrap':list(fieldDef(Name)))]), '/bootstrap':label(!'};')])).
+'/bootstrap':signature(testStruct::struct, []).
+'/bootstrap':signature(cType::'/bootstrap':type, []).
+'/bootstrap':signature(fieldName(Struct, Type)::'/bootstrap':type, [Struct::struct, Type::cType]).
+'/bootstrap':signature(fieldDef(Type, Name)::fieldDef(Struct), [Type::cType, Name::fieldName(Struct, Type)]).
+'/bootstrap':projection(fieldDef(Type, Name)::fieldDef(Struct), '/bootstrap':horiz(['/bootstrap':vis(Type::cType), '/bootstrap':vis(Name::fieldName(Struct, Type)), '/bootstrap':label(! (;))])).
+'/bootstrap':adapter(Type::cType, fieldDef(Type, _)::fieldDef(_)).
+'/bootstrap':signature(int::cType, []).
+'/bootstrap':signature(testStructA::fieldName(testStruct, int), []).
+'/bootstrap':projection(testStructA::fieldName(testStruct, int), '/bootstrap':label(!a)).
+'/bootstrap':signature(testStructB::fieldName(testStruct, int), []).
+'/bootstrap':projection(testStructB::fieldName(testStruct, int), '/bootstrap':label(!b)).
+'/bootstrap':signature(pointer(Type)::cType, [Type::cType]).
+'/bootstrap':projection(pointer(Type)::cType, '/bootstrap':horiz(['/bootstrap':vis(Type::cType), '/bootstrap':label(! (*))])).
+'/bootstrap':signature(struct(Struct)::cType, [Struct::struct]).
+'/bootstrap':projection(struct(Struct)::cType, '/bootstrap':horiz(['/bootstrap':label(!struct), '/bootstrap':vis(Struct::struct)])).
+'/bootstrap':signature(testStructNext::fieldName(testStruct, pointer(struct(testStruct))), []).
+'/bootstrap':projection(testStructNext::fieldName(testStruct, pointer(struct(testStruct))), '/bootstrap':label(!next)).
+'/bootstrap':signature(testStructX::fieldName(testStruct, pointer(int)), []).
+'/bootstrap':projection(testStructX::fieldName(testStruct, pointer(int)), '/bootstrap':label(!x)).
+cFile(!'test.c', [struct(testStruct, [fieldDef(int, testStructA), fieldDef(int, testStructB), fieldDef(pointer(int), testStructX), fieldDef(pointer(struct(testStruct)), testStructNext)])]).

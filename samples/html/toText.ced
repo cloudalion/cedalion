@@ -1,0 +1,13 @@
+'/bootstrap':signature(toText(TTerm)::'/Functional':expr('/bootstrap':string), [TTerm::'/bootstrap':typedTerm]).
+'/Functional':def(toText(xml:element(Name, Attributes, Content)::xml), '/bootstrap':string, '/Functional':concat('/Functional':wrap(! (<)), '/Functional':concat('/Functional':wrap(Name), '/Functional':concat('/Functional':wrap(!' '), '/Functional':concat(toText(Attributes::'/bootstrap':list(xmlAttr)), '/Functional':concat('/Functional':wrap(! (>)), '/Functional':concat(toText(Content::'/bootstrap':list(xml)), '/Functional':concat('/Functional':wrap(!'</'), '/Functional':concat('/Functional':wrap(Name), '/Functional':wrap(! (>))))))))))).
+'/Functional':def(toText([]::'/bootstrap':list(xml)), '/bootstrap':string, '/Functional':wrap(!'')).
+'/Functional':def(toText([First|Rest]::'/bootstrap':list(xml)), '/bootstrap':string, '/Functional':concat(toText(First::xml), toText(Rest::'/bootstrap':list(xml)))).
+'/Functional':def(toText(xml:string(Str)::xml), '/bootstrap':string, xmlEncode('/Functional':wrap(Str))).
+'/Functional':def(toText(unicode(Code)::xml), '/bootstrap':string, '/Functional':plus('/Functional':wrap(!'&#'), '/Functional':plus('/Functional':'num2str'('/Functional':wrap(Code)), '/Functional':wrap(! (;))))).
+'/Functional':def(toText([xml:attribute(Name, Type, Value)|Next]::'/bootstrap':list(xmlAttr)), '/bootstrap':string, '/Functional':concat('/Functional':wrap(Name), '/Functional':concat('/Functional':wrap(!'="'), '/Functional':concat(xmlEncode(toText(Value::Type)), '/Functional':concat('/Functional':wrap(!'" '), toText(Next::'/bootstrap':list(xmlAttr))))))).
+'/Functional':def(toText([]::'/bootstrap':list(xmlAttr)), '/bootstrap':string, '/Functional':wrap(!'')).
+'/Functional':def(toText(Str::'/bootstrap':string), '/bootstrap':string, '/Functional':wrap(Str)).
+'/Functional':def(toText(Num::'/bootstrap':number), '/bootstrap':string, '/Functional':'num2str'('/Functional':wrap(Num))).
+'/bootstrap':unitTest('/Functional':eval(toText(xml:element(!someXML, [xml:attribute(!name, '/bootstrap':string, !boaz), xml:attribute(!age, '/bootstrap':number, 37)], [unicode(3333), xml:string(!hello)])::xml), '/bootstrap':string, !'<someXML name="boaz" age="37" >&#3333;hello</someXML>')).
+'/bootstrap':unitTest('/Functional':eval(toText([xml:string(!hello)]::'/bootstrap':list(xml)), '/bootstrap':string, !hello)).
+'/bootstrap':unitTest('/Functional':eval(toText([xml:string(!'<hello & "world">')]::'/bootstrap':list(xml)), '/bootstrap':string, !'&lt;hello &amp; &quot;world&quot;&gt;')).

@@ -27,13 +27,14 @@ public class Link extends TermContextProxy {
 
 	private String fileName;
 	private TermContext context;
+	private TermFigure child;
 	static private Map<String, String> fileNameToResource = new HashMap<String, String>();
 
 	public Link(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
 		super(parent);
 		context = parent;
 		try {
-			TermFigure child = (TermFigure)TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
+			child = (TermFigure)TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
 			add(child);
 		} catch (ClassCastException e) {
 			throw new TermVisualizationException(e);
@@ -45,7 +46,8 @@ public class Link extends TermContextProxy {
 
 	@Override
 	public void dispose() {
-		// Nothing to do...
+		if(child != null)
+			child.dispose();
 	}
 
 	@Override

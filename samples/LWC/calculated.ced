@@ -1,0 +1,17 @@
+'/bootstrap':signature(referenceExpression::'/bootstrap':type, []).
+'/bootstrap':signature(calculated(Name, Entity, Expr, OtherEntity)::'/bootstrap':statement, [Name::propertyName(Entity, ent(OtherEntity), _), Entity::entity, Expr::referenceExpression, OtherEntity::entity]).
+'/bootstrap':projection(calculated(Name, Entity, Expr, OtherEntity)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(OtherEntity::entity), '/bootstrap':vis(Entity::entity), '/bootstrap':label(!.), '/bootstrap':vis(Name::propertyName(Entity, ent(OtherEntity), _)), '/bootstrap':label(! (=)), '/bootstrap':vis(Expr::referenceExpression)])).
+'/bootstrap':signature(calculateReference(Instance, Entity, Expr, OtherInstance, OtherEntity)::'/bootstrap':pred, [Instance::instanceName(Entity), Entity::entity, Expr::referenceExpression, OtherInstance::instanceName(OtherEntity), OtherEntity::entity]).
+'/bootstrap':signature(field(Name, Entity, OtherEntity)::referenceExpression, [Name::propertyName(Entity, ent(OtherEntity), _), Entity::entity, OtherEntity::entity]).
+'/bootstrap':projection(field(Name, Entity, OtherEntity)::referenceExpression, '/bootstrap':vert(['/bootstrap':vis(Name::propertyName(Entity, ent(OtherEntity), zeroOrMore)), '/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':vis(Entity::entity), '/bootstrap':label(!'=>'), '/bootstrap':vis(OtherEntity::entity)]))])).
+'/bootstrap':adapter(Name::propertyName(Entity, ent(OtherEntity), _), field(Name, Entity, OtherEntity)::referenceExpression).
+calculateReference(Instance, Entity, field(Name, Entity, OtherEntity), OtherInstance, OtherEntity):-reference(Instance, Entity, Name, OtherInstance, OtherEntity).
+'/bootstrap':signature(invField(Name, Entity, OtherEntity)::referenceExpression, [Name::propertyName(OtherEntity, ent(Entity), _), Entity::entity, OtherEntity::entity]).
+'/bootstrap':projection(invField(Name, OtherEntity, Entity)::referenceExpression, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::propertyName(Entity, ent(OtherEntity), zeroOrMore)), '/bootstrap':label(! (>))]), '/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':vis(Entity::entity), '/bootstrap':label(!'=>'), '/bootstrap':vis(OtherEntity::entity)]))])).
+'/bootstrap':alias(invField(Name, OtherEntity, Entity)::referenceExpression, !'<>').
+calculateReference(Instance, Entity, invField(Name, Entity, OtherEntity), OtherInstance, OtherEntity):-reference(OtherInstance, OtherEntity, Name, Instance, Entity).
+'/bootstrap':signature(dot(A, B)::referenceExpression, [A::referenceExpression, B::referenceExpression]).
+'/bootstrap':projection(dot(A, B)::referenceExpression, '/bootstrap':horiz(['/bootstrap':vis(A::referenceExpression), '/bootstrap':label(!.), '/bootstrap':vis(B::referenceExpression)])).
+'/bootstrap':alias(dot(A, B)::referenceExpression, !.).
+calculateReference(Instance, Entity, dot(A, B), OtherInstance, OtherEntity):-calculateReference(Instance, Entity, A, InterimInstance, InterimEntity), calculateReference(InterimInstance, InterimEntity, B, OtherInstance, OtherEntity).
+calculated(Name, Entity, Expr, OtherEntity)~>reference(Instance, Entity, Name, OtherInstance, OtherEntity):-calculateReference(Instance, Entity, Expr, OtherInstance, OtherEntity).

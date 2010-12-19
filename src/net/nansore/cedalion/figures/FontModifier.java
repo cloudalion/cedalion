@@ -26,7 +26,6 @@ abstract public class FontModifier extends TermContextProxy {
     private TermFigure figure;
 	private Font symbolFont;
     private static Map<String, FontElement> fontRegistry = new HashMap<String, FontElement>();
-	private ArrayList<TermFigure> disposables = new ArrayList<TermFigure>();
 
     /**
      * @param parent
@@ -50,8 +49,6 @@ abstract public class FontModifier extends TermContextProxy {
             newFontData[i] = modifyFont(fontData, i, term);
         }
         symbolFont = createFont(context, newFontData);
-        
-        context.registerDispose(this);
         
         try {
             figure = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this); 
@@ -137,12 +134,6 @@ abstract public class FontModifier extends TermContextProxy {
         return fontDataDesc;
     }
 	public void dispose() {
-		for(Iterator<TermFigure> i = disposables.iterator(); i.hasNext(); )
-			i.next().dispose();
+		figure.dispose();
 	}
-
-	public void registerDispose(TermFigure disp) {
-		disposables.add(disp);
-	}
-
 }

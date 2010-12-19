@@ -27,6 +27,7 @@ public class Symbol extends Label implements TermFigure {
 	}
 
 	public void dispose() {
+		erase();
 	}
 
 }

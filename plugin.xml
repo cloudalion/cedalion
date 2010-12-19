@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="net.nansore.cedalion.eclipse.CedalionEditor"
+            default="false"
+            extensions="ced"
+            icon="icons/cedalion-icon16.png"
+            id="net.nansore.cedalion.editor"
+            name="Cedalion Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="net.nansore.cedalion.eclipse.CedalionPreferences"
+            id="net.nansore.cedalion.preferences"
+            name="Cedalion Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="net.nansore.cedalion"
+            name="Cedalion">
+      </category>
+      <view
+            category="net.nansore.cedalion"
+            class="net.nansore.cedalion.eclipse.CedalionView"
+            icon="icons/cedalion-icon16.png"
+            id="net.nansore.cedalion.CedalionView"
+            name="Cedalion View">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.jdt.ui.JavaPerspective">
+         <view
+               id="net.nansore.cedalion.eclipse.CedalionView"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+   </extension>
+
+</plugin>

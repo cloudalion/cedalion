@@ -52,12 +52,6 @@ public abstract class TermContextProxy extends Figure implements TermContext, Te
         // TODO Auto-generated method stub
 
     }
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#registerDispose(net.nansore.visualterm.Disposable)
-     */
-    public void registerDispose(TermFigure disp) {
-        context.registerDispose(disp);
-    }
     private TermContext context;
 
     public TermContextProxy(TermContext parent) {

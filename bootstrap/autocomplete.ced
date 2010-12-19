@@ -1,11 +1,11 @@
 signature(autocomplete(Type, Prefix, Completion, Alias)::pred, [Type::type, Prefix::string, Completion::Type, Alias::string]).
 signature(builtin:strcat(X, Y, Z)::pred, [X::string, Y::string, Z::string]).
 signature(defaultRepresentation(TTerm)::pred, [TTerm::typedTerm]).
-autocomplete(Type, Prefix, Completion, Alias):-checkAdapter(Internal::InternalType, Completion::Type), checkSignature(Internal::InternalType, _), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true).
+autocomplete(Type, Prefix, Completion, Alias):-checkSignature(Internal::InternalType, _), checkAdapter(Internal::InternalType, Completion::Type), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true), safeParseTerm(Internal::InternalType, _, InternalArgs), defaultRepresentationForAll(InternalArgs).
 signature(cpi:autocomplete(TTerm, Prefix, CompletionString, Alias)::pred, [TTerm::typedTerm, Prefix::string, CompletionString::string, Alias::string]).
 cpi:autocomplete(Desc::Type1, Prefix, CompletionString, Alias):-fixType(Type1::type, Type::type), autocomplete(Type, Prefix, Completion, Alias), descriptorContent(Desc::Type, Content::Type, VarNames), builtin:if(injectContent(Completion, Content, Type), builtin:true, builtin:true), builtin:termToString(Completion::Type, VarNames, 5, [], CompletionString).
-cpi:autocomplete(cpi:descriptor(Path, _, _)::Type1, Prefix, CompletionString, Alias):-fixType(Type1::type, Type::type), containingStatementPath(Path, StatementPath), cpi:termAtPath(StatementPath, Statement, VarNames), validateVarNames(Statement, VarNames), checkAdapter(Var::VarType, Completion::Type), listMember(builtin:varName(Var::VarType, Alias), varName, VarNames), builtin:strcat(Prefix, _, Alias), builtin:termToString(Completion::Type, VarNames, 5, [], CompletionString).
-signature(validateVarNames(Statement, VarNames)::pred, [Statement::typedTerm, VarNames::list(varName)]).
+cpi:autocomplete(cpi:descriptor(Path, _, _)::Type1, Prefix, CompletionString, Alias):-fixType(Type1::type, Type::type), containingStatementPath(Path, StatementPath), cpi:termAtPath(StatementPath, Statement::statement, VarNames), validateVarNames(Statement, VarNames), checkAdapter(Var::VarType, Completion::Type), listMember(builtin:varName(Var::VarType, Alias), varName, VarNames), builtin:strcat(Prefix, _, Alias), builtin:termToString(Completion::Type, VarNames, 5, [], CompletionString).
+signature(validateVarNames(Statement, VarNames)::pred, [Statement::statement, VarNames::list(varName)]).
 validateVarNames(_, []):-builtin:true.
 validateVarNames(Statement, [builtin:varName(TVar, _)|Rest]):-safeVarIn(TVar, Statement::statement), validateVarNames(Statement, Rest).
 signature(safeVarIn(TVar, TTerm)::pred, [TVar::typedTerm, TTerm::typedTerm]).
@@ -18,4 +18,8 @@ injectContent(Completion, Content, Type):-checkSignature(Completion::Type, [Firs
 signature(default(X)::statement, [X::typedTerm]).
 default(X)~>defaultRepresentation(X):-builtin:true.
 default(projection(_::_, horiz([]))::statement).
+default([]::list(_)).
 projection(default(TTerm)::statement, horiz([label(!'Use'), vis(TTerm::typedTerm), label(!'by default')])).
+signature(defaultRepresentationForAll(InternalArgs)::pred, [InternalArgs::list(typedTerm)]).
+defaultRepresentationForAll([]):-builtin:true.
+defaultRepresentationForAll([Var::Type|TArgs]):-builtin:if((\+builtin:var(Type::type), defaultRepresentation(Var::Type)), builtin:true, builtin:true), defaultRepresentationForAll(TArgs).

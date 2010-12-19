@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.FontResize;
+import net.nansore.cedalion.figures.LabelFigure;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
@@ -180,12 +181,15 @@ public class VisualTermWidget extends Composite {
     	refresh();
     }
 	public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
+		System.out.println("Labels before refresh: " + LabelFigure.debugCount);
 		panel.removeAll();
 		if(resizer != null)
 			resizer.dispose();
     	Compound compound = term.getProlog().createCompound("fontResize", term, new Integer(fontSizeOffset));
 		resizer = new FontResize(compound, context);
 		panel.add(resizer);
+		System.out.println("Labels after refresh: " + LabelFigure.debugCount);
+		System.gc();
 	}
     /**
      * @return Returns the text.
@@ -193,4 +197,10 @@ public class VisualTermWidget extends Composite {
     public Text getText() {
         return text;
     }
+	@Override
+	public void dispose() {
+		resizer.dispose();
+		super.dispose();
+	}
+    
 }

@@ -26,8 +26,4 @@ public class FontResize extends FontModifier {
 			return null;
 		}
 	}
-	
-	public void dispose() {
-	    super.dispose();
-	}
 }

@@ -1,0 +1,10 @@
+doc(!'This is a type signature with a textual description', signature(docSignature(Head, Body, Doc)::statement, [Head::typedTerm, Body::list(typedTerm), Doc::string])).
+projection(docSignature(Head, Body, Doc)::statement, vert([horiz([label(! (//)), background(italic(vis(Doc::string)), cpi:rgb(255, 255, 180))]), horiz([vis(Head::typedTerm), symbol(8618), cpi:vis(Body::list(typedTerm), horiz)])])).
+alias(doc(Doc, signature(Head, Body))::statement, ! (//)).
+docSignature(Head, Body, Doc)~>signature(Head, Body).
+contextMenuEntry(signature(Head, Body)::statement, VarNames, Path, !'Add Description', cpi:edit(Path, doc(Doc, signature(Head, Body))::statement, VarNames)).
+deprecated(docSignature(_, _, _)::statement).
+signature(doc(Doc, Signature)::statement, [Doc::string, Signature::statement]).
+projection(doc(Doc, Signature)::statement, vert([horiz([label(! (//)), color(background(italic(vis(Doc::string)), cpi:rgb(255, 255, 180)), cpi:rgb(0, 0, 0))]), vis(Signature::statement)])).
+doc(Doc, signature(Head, Body))~>signature(Head, Body).
+deprecationReplacement(docSignature(Head, Body, Doc), statement, doc(Doc, signature(Head, Body))).

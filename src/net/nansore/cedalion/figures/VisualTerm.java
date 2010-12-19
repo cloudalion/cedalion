@@ -53,12 +53,12 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 
 //    private static final String TEXT_CONTENT_FILENAME = ".tmpContent";
     private TermContext context;
-    private IFigure contentFigure;
-    private List<TermFigure> disposables = new ArrayList<TermFigure>();
+    private TermFigure contentFigure;
 	private Object path;
 	private Compound descriptor;
 	private Compound projType;
 	private Runnable unreg;
+	private List<TermFigure> boundFigures = new ArrayList<TermFigure>();
 
     /**
      * @param term
@@ -71,7 +71,6 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         
         // Register this object with the content
         context.registerTermFigure(path, this);
-        context.registerDispose(this);
 
         try {
             // The first argument is the descriptor, containing the path and additional information
@@ -125,7 +124,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      * @throws TermVisualizationException
      * @throws TermInstantiationException 
      */
-    private IFigure createContentFigure(Object path) throws TermVisualizationException, TermInstantiationException {
+    private TermFigure createContentFigure(Object path) throws TermVisualizationException, TermInstantiationException {
         // Query for the annotated term's visualization
 	    Variable vis = new Variable();
 	    PrologProxy prolog = Activator.getProlog();
@@ -133,7 +132,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	    // If successful, build the GUI
         try {
 			Map<Variable, Object> s = prolog.getSolution(q);
-		    return (IFigure) TermInstantiator.instance().instantiate((Compound)s.get(vis), this);
+		    return (TermFigure) TermInstantiator.instance().instantiate((Compound)s.get(vis), this);
 		} catch (PrologException e) {
 			throw new TermVisualizationException(e);
 		}
@@ -151,6 +150,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      */
     public void bindFigure(TermFigure figure) {
         figure.addMouseListener(this);
+        boundFigures.add(figure);
     }
 
     /* (non-Javadoc)
@@ -260,7 +260,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
      * @see net.nansore.visualterm.figures.TermFigure#updateFigure()
      */
     public void updateFigure() throws TermVisualizationException, TermInstantiationException {
-		disposeChildFigures();
+		contentFigure.dispose();
 		if(contentFigure != null) {
 			contentFigure.erase();
 		    remove(contentFigure);			
@@ -288,26 +288,16 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     }
 
     /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#registerDispose(net.nansore.visualterm.Disposable)
-     */
-    public void registerDispose(TermFigure disp) {
-        disposables.add(disp);
-    }
-
-    /* (non-Javadoc)
      * @see net.nansore.visualterm.Disposable#dispose()
      */
     public void dispose() {
+    	for(TermFigure figure : boundFigures) {
+    		figure.removeMouseListener(this);
+    	}
 		unregisterTermFigure(path, this);
 		unreg.run();
-        disposeChildFigures();
+        contentFigure.dispose();
     }
-
-	private void disposeChildFigures() {
-		for(Iterator<TermFigure> i = disposables.iterator(); i.hasNext(); )
-		    i.next().dispose();
-		disposables.clear();
-	}
 
     /**
      * 

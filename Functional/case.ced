@@ -1,0 +1,14 @@
+'/bootstrap':signature(cases(ExprType, T)::'/bootstrap':type, [ExprType::'/bootstrap':type, T::'/bootstrap':type]).
+'/bootstrap':signature(switch(Expr, ExprType, Cases)::expr(T), [Expr::expr(ExprType), ExprType::'/bootstrap':type, Cases::cases(ExprType, T)]).
+'/bootstrap':projection(switch(Expr, ExprType, Cases)::expr(T), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!switch), '/bootstrap':vis(ExprType::'/bootstrap':type), '/bootstrap':vis(Expr::expr(ExprType)), '/bootstrap':label(!of)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Cases::cases(ExprType, T))])])).
+'/bootstrap':default(switch(Expr, ExprType, otherwise(_))::expr(T)).
+eval(switch(Expr, ExprType, Cases), T, Result):-eval(Expr, ExprType, Value), evalCases(Cases, ExprType, T, Value, Result).
+'/bootstrap':signature(evalCases(Cases, ExprType, T, Value, Result)::'/bootstrap':pred, [Cases::cases(ExprType, T), ExprType::'/bootstrap':type, T::'/bootstrap':type, Value::ExprType, Result::T]).
+'/bootstrap':signature(case(Pattern, Expr, Next)::cases(ExprType, T), [Pattern::ExprType, Expr::expr(T), Next::cases(ExprType, T)]).
+'/bootstrap':projection(case(Pattern, Expr, Next)::cases(ExprType, T), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':vis(Pattern::ExprType), '/bootstrap':symbol(8658), '/bootstrap':vis(Expr::expr(T))]), '/bootstrap':vis(Next::cases(ExprType, T))])).
+evalCases(case(Pattern, Expr, Next), ExprType, T, Value, Result):-builtin:if(Pattern::ExprType=Value::ExprType, eval(Expr, T, Result), evalCases(Next, ExprType, T, Value, Result)).
+'/bootstrap':signature(otherwise(Expr)::cases(ExprType, T), [Expr::expr(T)]).
+'/bootstrap':projection(otherwise(Expr)::cases(ExprType, T), '/bootstrap':horiz(['/bootstrap':label(!'otherwise:'), '/bootstrap':vis(Expr::expr(T))])).
+evalCases(otherwise(Expr), ExprType, T, Value, Result):-eval(Expr, T, Result).
+'/bootstrap':contextMenuEntry(Cases::cases(T1, T2), VNs, Path, !'Insert Case', cpi:edit(Path, case(_, _, Cases)::cases(T1, T2), VNs)).
+'/bootstrap':contextMenuEntry(case(_, _, Cases)::cases(T1, T2), VNs, Path, !'Remove Case', cpi:edit(Path, Cases::cases(T1, T2), VNs)).

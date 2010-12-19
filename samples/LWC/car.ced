@@ -1,0 +1,13 @@
+'/bootstrap':signature(car::entity, []).
+'/bootstrap':signature(make::propertyName(car, primitiveType('/bootstrap':string), one), []).
+'/bootstrap':signature(model::propertyName(car, primitiveType('/bootstrap':string), one), []).
+'/bootstrap':signature(productionDate::propertyName(car, primitiveType(date), one), []).
+'/bootstrap':signature(licensePlate::propertyName(car, primitiveType('/bootstrap':string), one), []).
+entity(car, [property(make, primitiveType('/bootstrap':string), one), property(model, primitiveType('/bootstrap':string), one), property(productionDate, primitiveType(date), one), property(licensePlate, primitiveType('/bootstrap':string), one)]).
+'/bootstrap':signature(boat::entity, []).
+'/bootstrap':signature(length::propertyName(boat, primitiveType('/bootstrap':number), one), []).
+'/bootstrap':signature(boatName::propertyName(boat, primitiveType('/bootstrap':string), one), []).
+'/bootstrap':signature(puller::propertyName(boat, ent(car), zeroOrMore), []).
+entity(boat, [property(length, primitiveType('/bootstrap':number), one), property(boatName, primitiveType('/bootstrap':string), one), property(puller, ent(car), zeroOrMore)]).
+'/bootstrap':signature(odisey::instanceName(boat), []).
+instance(odisey, boat, [propVal(length, '/bootstrap':number, 11), entityRef(puller, car, myCar), propVal(boatName, '/bootstrap':string, !odisey)]).

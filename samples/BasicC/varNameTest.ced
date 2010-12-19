@@ -1,0 +1,14 @@
+'/bioinformatics':dnaSetDef('test1', '/bioinformatics':seq(T, T)).
+'/bioinformatics':dnaSetDef('test2', '/bioinformatics':seq('/bootstrap':singleton(T), Y)).
+'/bootstrap':signature(showVarNames(VNs)::'/bootstrap':procedure, [VNs::'/bootstrap':list('/bootstrap':varName)]).
+'/bootstrap':procedure(showVarNames(VNs), '/bootstrap':showView('/bootstrap':vis(cpi:immediateDescriptor(VNs, VNs)::'/bootstrap':list('/bootstrap':varName)))).
+'/bootstrap':contextMenuEntry(TTerm, VNs, _, !'Show VarNames', showVarNames(VNs)).
+'/bootstrap':signature(c(P, Type)::'/bootstrap':statement, [P::Type, Type::'/bootstrap':type]).
+'/bootstrap':signature(t::'/bootstrap':type, []).
+'/bootstrap':signature(p::t, []).
+c('/bootstrap':type, '/bootstrap':type).
+'/bootstrap':signature(h::'/bootstrap':type, []).
+c(p, t).
+'/bootstrap':signature(k(T, Y)::'/bootstrap':statement, [T::t, Y::'/bootstrap':type]).
+k(G, G).
+'/bootstrap':loadedFile(Res, _, '/bootstrap':model(Statements, VarNames, NSs))~>'/bootstrap':contextMenuEntry(_, _, cpi:path(Res, _), !'Show Model', '/bootstrap':showInView('/bootstrap':model(Statements, VarNames, NSs)::'/bootstrap':model, VarNames)).

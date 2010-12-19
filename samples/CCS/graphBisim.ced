@@ -1,0 +1,7 @@
+'/bootstrap':signature(forall(A, B)::'/bootstrap':pred, [A::'/bootstrap':pred, B::'/bootstrap':pred]).
+'/bootstrap':projection(forall(A, B)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':symbol(8704), '/bootstrap':vis(A::'/bootstrap':pred), '/bootstrap':symbol(8658), '/bootstrap':vis(B::'/bootstrap':pred)])).
+forall(A, B):- \+ (A, \+B).
+'/bootstrap':unitTest(forall('/bootstrap':listMember(X, '/bootstrap':number, [1, 2, 3]), X<4)).
+'/bootstrap':unitTest(\+forall('/bootstrap':listMember(X, '/bootstrap':number, [1, 2, 3]), X<3)).
+'/bootstrap':signature(bisim(P, Q, T, ET, Pairs)::'/bootstrap':pred, [P::T, Q::T, T::'/bootstrap':type, ET::'/bootstrap':type, Pairs::'/bootstrap':list(pairType(T, T))]).
+bisim(P, Q, T, ET, Pairs):-builtin:if('/bootstrap':listMember(pair(P, Q), pairType(T, T), Pairs), builtin:true, (forall(edge(P, T, E, ET, P1), (edge(Q, T, E, ET, Q1), bisim(P1, Q1, T, ET, [pair(P, Q), pair(Q, P)|Pairs]))), forall(edge(Q, T, E, ET, Q1), (edge(P, T, E, ET, P1), bisim(P1, Q1, T, ET, [pair(P, Q), pair(Q, P)|Pairs]))))).

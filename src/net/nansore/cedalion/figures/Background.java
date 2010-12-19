@@ -12,16 +12,18 @@ import org.eclipse.draw2d.IFigure;
 
 public class Background extends TermContextProxy {
 
+	private TermFigure figure;
+
 	public Background(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
 		super(parent);
         setLayoutManager(new FlowLayout());
         setBackgroundColor(TextColor.createColor(term.arg(2), this));
-        add((IFigure) TermInstantiator.instance().instantiate(term.arg(1), this));
+        figure = (TermFigure) TermInstantiator.instance().instantiate(term.arg(1), this);
+		add(figure);
 	}
 
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		figure.dispose();
 	}
 
 }
