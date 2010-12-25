@@ -77,7 +77,9 @@ public class Activator extends AbstractUIPlugin {
         		plInterpreter = "pl";
         	}
             try {
-				prolog = new PrologProxy(plInterpreter, loadToFileSystem(context, "service.pl"));
+				//URL serviceURL = ClassLoader.getSystemResource("service.pl");
+            	//prolog = new PrologProxy(plInterpreter, new File(serviceURL.getFile()));
+            	prolog = new PrologProxy(plInterpreter, loadToFileSystem(context, "service.pl"));
 
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	            loadResources(root);

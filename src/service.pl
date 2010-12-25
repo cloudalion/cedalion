@@ -164,6 +164,20 @@ convertVarNames([Name=Var | RestIn], ['builtin#varName'(Var::_, !(Name)) | RestO
 	convertVarNames(RestIn, RestOut).
 
 % Write a cedalion file
+writeFile(!(FileName), 'builtin#fileContent'(Term, Goal, NsList)) :-
+	open(FileName, write, Stream),
+	writeToStream(Stream, Goal, Term, NsList),
+	close(Stream).
+
+writeToStream(Stream, Goal, 'builtin#statement'(GTerm, VarNames), NsList) :-
+	Goal,
+	globalToLocal(GTerm, NsList, Term),
+	writeTerm(Stream, Term, VarNames),
+	fail.
+writeToStream(_, _, _, _).
+
+
+% Write a cedalion file
 writeFile(!(FileName), 'builtin#fileContent'(Terms, NsList)) :-
 	open(FileName, write, Stream),
 	writeToStream(Stream, Terms, NsList).
