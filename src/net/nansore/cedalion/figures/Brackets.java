@@ -59,15 +59,9 @@ public class Brackets extends Panel implements TermFigure {
 		float ratio = (float)contentDim.height/(float)openningDim.height;
 		if(Math.abs(ratio - 1.0) < MODIFICATION_THRESHOLD)
 			return;
-		final Font newFont = resizeFont(openning.getFont(), ratio);
-		context.getCanvas().getDisplay().asyncExec(new Runnable() {
-			
-			@Override
-			public void run() {
-				openning.setFont(newFont);
-				closing.setFont(newFont);
-			}
-		});
+		Font newFont = resizeFont(openning.getFont(), ratio);
+		openning.setFont(newFont);
+		closing.setFont(newFont);
 	}
 
 	private Font resizeFont(Font font, float ratio) {

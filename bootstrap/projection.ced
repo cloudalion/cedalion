@@ -14,7 +14,7 @@ pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)):-builtin:true.
 pathIsPrefix(cpi:path(Res, [First|Base]), cpi:path(Res, [First|Path])):-pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 signature(visualizeTerm(TTerm2Vis, ProjType, Vis)::pred, [TTerm2Vis::typedTerm, ProjType::mode, Vis::visualization]).
 visualizeTerm(TTerm2Vis, ProjType, Vis):-builtin:if(userVisualization(TTerm2Vis, ProjType, [], Vis), builtin:true, defaultVisualization(TTerm2Vis, Vis)).
-defaultVisualization(TTerm, Vis):-builtin:parseTerm(TTerm, Func, SubPaths), builtin:if(localName(Func, LFunc), builtin:true, LFunc::string=Func::string), builtin:if(SubPaths::list(cpi:path)=[]::list(cpi:path), Vis::visualization=label(LFunc)::visualization, (argListForPathList(SubPaths, ArgList), Vis::visualization=horiz([label(LFunc), label(!'('), horiz(ArgList), label(!')')])::visualization)).
+defaultVisualization(TTerm, Vis):-builtin:parseTerm(TTerm, Func, SubPaths), builtin:if(localName(Func, LFunc), builtin:true, LFunc::string=Func::string), builtin:if(SubPaths::list(cpi:path)=[]::list(cpi:path), Vis::visualization=label(LFunc)::visualization, (argListForPathList(SubPaths, ArgList), Vis::visualization=horiz([label(LFunc), brackets(horiz(ArgList), 40, 41)])::visualization)).
 argListForPathList([Path], [vis(Path)]):-builtin:true.
 argListForPathList([First|Rest], [vis(First), label(! (,))|ArgList]):-argListForPathList(Rest, ArgList).
 localName(Func, LFunc):-builtin:charCodes(Func, Codes), append(PrefCodes, [35|LocalCodes], Codes, _), builtin:charCodes(LFunc, LocalCodes).
@@ -33,7 +33,7 @@ cpi:visualizeDescriptor(cpi:immediateDescriptor(Term, VarNames)::Type1, ProjType
 subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, BeforeFirst, [SubTerm::SubType|TArgs], [cpi:immediateDescriptor(SubTerm, VarNames1)::SubType|SubDescs]):-true(builtin:succ(BeforeFirst, First)), true(selectVarNamesFor(SubTerm::SubType, VarNames, VarNames1)), true(subDescriptors(cpi:immediateDescriptor(Term, VarNames)::Type, First, TArgs, SubDescs)).
 isDescriptor(cpi:immediateDescriptor(_, _)::_).
 isDescriptor(cpi:descriptor(_, _, _)::_).
-descriptorContent(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, VarNames).
+descriptorContent(cpi:immediateDescriptor(Term, VarNames)::Type, Term::Type, VarNames):-builtin:true.
 descriptorContent(cpi:descriptor(Path, _, Markers)::Type, Term::Type, VarNames):-cpi:termAtPath(Path, Term::Type, VarNames).
 signature(fixType(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
 fixType(TTerm1, TTerm2):-builtin:if(isDescriptor(TTerm1), descriptorContent(TTerm1, TTerm2, _), (builtin:parseTerm(TTerm1, Func, Args), fixTypes(Args, FixedArgs), builtin:parseTerm(TTerm2, Func, FixedArgs))).

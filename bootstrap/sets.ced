@@ -3,7 +3,7 @@ signature(set(E, Pred)::set(T), [E::T, Pred::pred]).
 signature(horiz(List)::visualization, [List::list(visualization)]).
 signature(projection(TTerm, Vis)::statement, [TTerm::typedTerm, Vis::visualization]).
 signature(label(Str)::visualization, [Str::string]).
-projection(set(E, Pred)::set(T), brackets(horiz([vis(E::T), brackets(vis(Pred::pred), 124, 0)]), 123, 125)).
+projection(set(E, Pred)::set(T), brackets(horiz([vis(E::T), box(1), vis(Pred::pred)]), 123, 125)).
 signature(member(E, Set, T)::pred, [E::T, Set::set(T), T::type]).
 member(E, set(E, Pred), T):-Pred.
 projection(member(E, Set, T)::pred, horiz([vis(E::T), symbol(8712), halfSize(vis(T::type)), vis(Set::set(T))])).

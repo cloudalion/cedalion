@@ -15,6 +15,7 @@ public class Symbol extends Label implements TermFigure {
 		try {
             character = (char)((Integer)term.arg(1)).intValue();
             setFont(context.getFont(TermContext.SYMBOL_FONT));
+            setForegroundColor(context.getColor());
             StringBuffer buff = new StringBuffer();
             buff.append(character);
             setText(buff.toString());
