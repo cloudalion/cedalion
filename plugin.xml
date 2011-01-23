@@ -39,12 +39,28 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               id="net.nansore.cedalion.eclipse.CedalionView"
+               id="net.nansore.cedalion.CedalionView"
                ratio="0.5"
                relationship="right"
                relative="org.eclipse.ui.views.TaskList">
          </view>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="net.nansore.cedalion.CedalionViewContribution"
+            targetID="net.nansore.cedalion.CedalionView">
+         <action
+               class="net.nansore.cedalion.eclipse.CedalionViewScreenshot"
+               icon="icons/screenshot16.png"
+               id="net.nansore.cedalion.CedalionViewScreenshot"
+               label="Take Screenshot"
+               style="push"
+               toolbarPath="additions"
+               tooltip="Take a screenshot of the view">
+         </action>
+      </viewContribution>
    </extension>
 
 </plugin>

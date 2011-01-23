@@ -1,6 +1,6 @@
 signature(definitionType::type, []).
 signature(semanticDefinition::definitionType, []).
-projection(semanticDefinition::definitionType, label(!'semantic definition')).
+projection(semanticDefinition::definitionType, label(!'Semantic Definition')).
 signature(defines(Definition, Defined, DefType)::statement, [Definition::statement, Defined::typedTerm, DefType::definitionType]).
 projection(defines(Definition, Defined, DefType)::statement, horiz([vis(Definition::statement), label(!defines), vis(Defined::typedTerm), label(! (as)), vis(DefType::definitionType)])).
 signature(canDefine(Definition, Defined, DefType)::pred, [Definition::statement, Defined::typedTerm, DefType::definitionType]).
@@ -9,14 +9,14 @@ signature(definitionOf(Defined, Definition, DefType, FileName, VarNames)::pred, 
 definitionOf(Defined, Definition, DefType, FileName, VarNames):- \+builtin:var(Defined), canDefine(Definition, Defined, DefType), checkSignature(Defined, _), builtin:loadedStatement(FileName, Definition, VarNames).
 defines((Pred:-_), Pred::pred, semanticDefinition).
 signature(typeSignature::definitionType, []).
-projection(typeSignature::definitionType, label(!'type signature')).
+projection(typeSignature::definitionType, label(!'Type Signature')).
 defines(signature(TTerm, _), TTerm, typeSignature).
 signature(projectionDefinition::definitionType, []).
-projection(projectionDefinition::definitionType, label(!'projection definition')).
+projection(projectionDefinition::definitionType, label(!'Projection Definition')).
 defines(projection(TTerm, _), TTerm, projectionDefinition).
 signature(showDefinitions(TTerm, VNs)::procedure, [TTerm::typedTerm, VNs::list(varName)]).
 signature(definitionsVisualization(TTerm, VNs, Vis)::pred, [TTerm::typedTerm, VNs::list(varName), Vis::visualization]).
-definitionsVisualization(TTerm, VNs, raised(lineBorder(background(vert(Types), cpi:rgb(192, 255, 192)), 5, cpi:rgb(192, 255, 192)))):-builtin:findall(vert([bold(vis(cpi:immediateDescriptor(DefType, VNs)::definitionType)), lineBorder(lowered(background(vert(Defs), cpi:rgb(255, 255, 255))), 5, cpi:rgb(192, 255, 192))]), visualization, definitionCategory(TTerm, DefType, Defs), Types).
+definitionsVisualization(TTerm, VNs, raised(vert([lineBorder(background(vert([horiz([bold(label(!'Aliases:')), vis(cpi:immediateDescriptor(Aliases, [])::list(string))])|Types]), cpi:rgb(192, 255, 192)), 5, cpi:rgb(192, 255, 192))]))):-builtin:findall(vert([bold(vis(cpi:immediateDescriptor(DefType, VNs)::definitionType)), lineBorder(lowered(background(vert(Defs), cpi:rgb(255, 255, 255))), 5, cpi:rgb(192, 255, 192))]), visualization, definitionCategory(TTerm, DefType, Defs), Types), builtin:findall(Alias, string, aliasString(TTerm, Alias), Aliases).
 signature(definitionCategory(TTerm, DefType, Defs)::pred, [TTerm::typedTerm, DefType::definitionType, Defs::list(visualization)]).
 definitionCategory(TTerm, DefType, Defs):-checkSignature(DefType::definitionType, []), builtin:findall(link(vert([italic(label(FileName)), vis(cpi:immediateDescriptor(Definition, VarNames)::statement)]), FileName), visualization, definitionOf(TTerm, Definition, DefType, FileName, VarNames), Defs).
 signature(showDefinitions(TTerm)::procedure, [TTerm::typedTerm]).
