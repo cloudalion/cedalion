@@ -1,11 +1,9 @@
 signature(set(T)::type, [T::type]).
 signature(set(E, Pred)::set(T), [E::T, Pred::pred]).
-signature(vis(TTerm)::visualization, [TTerm::typedTerm]).
-projection(vis(TTerm)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), symbol(12299)])).
 signature(horiz(List)::visualization, [List::list(visualization)]).
 signature(projection(TTerm, Vis)::statement, [TTerm::typedTerm, Vis::visualization]).
 signature(label(Str)::visualization, [Str::string]).
-projection(set(E, Pred)::set(T), horiz([label(!'{'), vis(E::T), label(! (|)), vis(Pred::pred), label(!'}')])).
+projection(set(E, Pred)::set(T), brackets(horiz([vis(E::T), brackets(vis(Pred::pred), 124, 0)]), 123, 125)).
 signature(member(E, Set, T)::pred, [E::T, Set::set(T), T::type]).
 member(E, set(E, Pred), T):-Pred.
 projection(member(E, Set, T)::pred, horiz([vis(E::T), symbol(8712), halfSize(vis(T::type)), vis(Set::set(T))])).
@@ -20,14 +18,14 @@ signature(intersect(S1, S2)::set(T), [S1::set(T), S2::set(T)]).
 projection(intersect(S1, S2)::set(T), horiz([vis(S1::set(T)), symbol(8745), vis(S2::set(T))])).
 setDef(intersect(S1, S2), set(E, (member(E, S1, T), member(E, S2, T))), T).
 signature(singleton(S)::set(T), [S::T]).
-projection(singleton(S)::set(T), horiz([label(!'{'), vis(S::T), label(!'}')])).
+projection(singleton(S)::set(T), brackets(vis(S::T), 123, 125)).
 member(E, singleton(E), T):-builtin:true.
 requires(signature(S::set(T), _), (member(_, S, T):-_)).
 signature(listSet(L)::set(T), [L::list(T)]).
-projection(listSet(L)::set(T), horiz([label(!'{'), cpi:vis(L::list(T), horiz), label(!'}')])).
+projection(listSet(L)::set(T), brackets(cpi:vis(L::list(T), horiz), 123, 125)).
 member(X, listSet(L), T):-listMember(X, T, L).
 signature(setParens(Set)::set(T), [Set::set(T)]).
-projection(setParens(Set)::set(T), horiz([label(!'('), vis(Set::set(T)), label(!')')])).
+projection(setParens(Set)::set(T), brackets(vis(Set::set(T)), 40, 41)).
 alias(setParens(Set)::set(T), !'()').
 setDef(setParens(Set), Set, T).
 defines((member(_, Set, T):-_), Set::set(T), semanticDefinition).

@@ -1,0 +1,5 @@
+signature(descriptorContent(TDesc, TTerm, VNs)::pred, [TDesc::typedTerm, TTerm::typedTerm, VNs::list(varName)]).
+descriptorContent(cpi:descriptor(Path, _, _)::Type, Term::Type, VNs):-cpi:termAtPath(Path, Term::Type, VNs).
+descriptorContent(cpi:immediateDescriptor(Term, VNs)::Type, Term::Type, VNs):-builtin:true.
+signature(descriptorContentWithDefault(TDesc, Default, TTerm, VNs)::pred, [TDesc::typedTerm, Default::typedTerm, TTerm::typedTerm, VNs::list(varName)]).
+descriptorContentWithDefault(TDesc, Default, TTerm, VNs):-descriptorContent(TDesc, TTerm1, VNs), builtin:if(builtin:var(TTerm1), TTerm=Default, TTerm=TTerm1).

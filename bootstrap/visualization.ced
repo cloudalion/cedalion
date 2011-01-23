@@ -8,6 +8,8 @@ signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode]).
 projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
 alias(cpi:vis(TTerm, Mode)::visualization, !'<<@>>').
 visClass(cpi:vis(_, _), !'net.nansore.cedalion.figures.VisualTerm').
+signature(vis(TTerm)::visualization, [TTerm::typedTerm]).
+projection(vis(TTerm)::visualization, brackets(vis(TTerm::typedTerm), 12298, 12299)).
 visClass(vis(_), !'net.nansore.cedalion.figures.VisualTerm').
 adapter(TTerm::typedTerm, vis(TTerm)::visualization).
 alias(vis(_)::visualization, !'<<>>').
@@ -27,14 +29,16 @@ projection(bold(Vis)::visualization, horiz([halfSize(label(!b)), bold(vis(Vis::v
 visClass(bold(_), !'net.nansore.cedalion.figures.Bold').
 signature(color::type, []).
 signature(color(Vis, Color)::visualization, [Vis::visualization, Color::color]).
-projection(color(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!color)))).
+disabled(projection(color(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!color))))).
+userVisualization(color(Vis, ColorDesc)::visualization, cpi:default, _, raised(tooltip(background(horiz([color(vis(ColorDesc::color), Color), lowered(background(vis(Vis::visualization), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!color)))):-descriptorContent(ColorDesc::color, Color::color, []), builtin:if(builtin:var(Color::color), Color::color=cpi:rgb(0, 0, 0)::color, builtin:true).
 visClass(color(_, _), !'net.nansore.cedalion.figures.TextColor').
 signature(lineBorder(Vis, Width, Color)::visualization, [Vis::visualization, Width::number, Color::color]).
 projection(lineBorder(Vis, Width, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), label(! (,)), vis(Width::number), lowered(background(lineBorder(vis(Vis::visualization), 3, cpi:rgb(0, 0, 0)), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!lineBorder)))).
 visClass(lineBorder(_, _, _), !'net.nansore.cedalion.figures.LineBorderFigure').
 visClass(symbol(_), !'net.nansore.cedalion.figures.Symbol').
 signature(symbol(Num)::visualization, [Num::number]).
-projection(symbol(Unicode)::visualization, horiz([symbol(963), vis(Unicode::number)])).
+disabled(projection(symbol(Unicode)::visualization, horiz([symbol(963), vis(Unicode::number)]))).
+userVisualization(symbol(Desc)::visualization, cpi:default, _, vert([symbol(Value), halfSize(vis(Desc::number))])):-descriptorContent(Desc::number, Value::number, _), builtin:if(builtin:var(Value::number), Value::number=63::number, builtin:true).
 signature(tooltip(Content, Tooltip)::visualization, [Content::visualization, Tooltip::visualization]).
 projection(tooltip(Content, Tooltip)::visualization, lowered(background(lineBorder(horiz([raised(background(vis(Content::visualization), cpi:rgb(255, 255, 255))), vis(Tooltip::visualization)]), 3, cpi:rgb(255, 255, 200)), cpi:rgb(255, 255, 200)))).
 visClass(tooltip(Content, Tooltip), !'net.nansore.cedalion.figures.Tooltip').
@@ -45,6 +49,7 @@ signature(smaller(V)::visualization, [V::visualization]).
 projection(smaller(V)::visualization, horiz([halfSize(label(! (<))), smaller(vis(V::visualization))])).
 visClass(smaller(V), !'net.nansore.cedalion.figures.Smaller').
 signature(action(Vis, Proc)::visualization, [Vis::visualization, Proc::procedure]).
+projection(action(Vis, Proc)::visualization, tooltip(raised(raised(background(vert([vis(Vis::visualization), horiz([label(!'Do'), lowered(background(vis(Proc::procedure), cpi:rgb(255, 255, 255)))])]), cpi:rgb(192, 192, 192)))), label(!action))).
 visClass(action(_, _), !'net.nansore.cedalion.figures.ActionFigure').
 signature(background(Vis, Color)::visualization, [Vis::visualization, Color::color]).
 projection(background(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(220, 220, 220)))]), cpi:rgb(166, 166, 255)), label(!background)))).
@@ -65,3 +70,7 @@ projection(lowered(Vis)::visualization, horiz([halfSize(label(!l)), lowered(vis(
 visClass(lowered(Vis), !'net.nansore.cedalion.figures.Lowered').
 signature(link(Vis, File)::visualization, [Vis::visualization, File::string]).
 visClass(link(Vis, File), !'net.nansore.cedalion.figures.Link').
+signature(brackets(Content, Open, Close)::visualization, [Content::visualization, Open::number, Close::number]).
+disabled(projection(brackets(Content, Open, Close)::visualization, horiz([vis(Open::number), brackets(vis(Content::visualization), 40, 41), vis(Close::number)]))).
+userVisualization(brackets(Content, Open, Close)::visualization, cpi:default, _, vert([brackets(vis(Content::visualization), OpenValue, CloseValue), halfSize(horiz([vis(Open::number), label(! (:)), vis(Close::number)]))])):-descriptorContentWithDefault(Open::number, 40::number, OpenValue::number, _), descriptorContentWithDefault(Close::number, 41::number, CloseValue::number, _).
+visClass(brackets(Content, Open, Close), !'net.nansore.cedalion.figures.Brackets').

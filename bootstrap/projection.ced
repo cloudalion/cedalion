@@ -6,6 +6,7 @@ visualizeNumber(Num::_, label(Num)):-builtin:true.
 visualizeString(Str::_, label(Str)):-builtin:true.
 visualizeCompound(Desc, Term::Type, ProjType, Vis):-true(builtin:parseTerm(Term::Type, Func, TArgs)), true(subDescriptors(Desc, 0, TArgs, SubDescs)), true(builtin:parseTerm(Term2Vis::Type, Func, SubDescs)), true(visualizeTerm(Term2Vis::Type, ProjType, Vis)).
 signature(builtin:findall(Element, Type, Goal, List)::pred, [Element::Type, Type::type, Goal::pred, List::list(Type)]).
+projection(builtin:findall(Element, Type, Goal, List)::pred, horiz([label(!'Find all'), vis(Element::Type), label(!'of type'), vis(Type::type), label(!'such that'), vis(Goal::pred), label(!into), vis(List::list(Type))])).
 applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type):-builtin:findall(Marker, locMarker, check(Path, TTerm, VarNames, Marker), NewMarkers), append(OldMarkers, NewMarkers, Markers, locMarker).
 subDescriptors(_, _, [], []):-builtin:true.
 subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType|TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType|SubDescs]):-builtin:succ(BeforeIndex, Index), append(Path, [Index], NewPath, _), markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft), subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).

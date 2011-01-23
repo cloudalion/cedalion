@@ -19,7 +19,7 @@ public class FontResize extends FontModifier {
 
 	protected FontData modifyFont(FontData[] fontData, int i, Compound term) {
 		try {
-			int fontSizeOffset = ((Integer)term.arg(2)).intValue();
+			int fontSizeOffset = (Integer)term.arg(2);
 			return new FontData(fontData[i].getName(), (int)fontData[i].height + fontSizeOffset, fontData[i].getStyle());
 		} catch (ClassCastException e) {
 			e.printStackTrace();

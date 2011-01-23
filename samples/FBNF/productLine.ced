@@ -1,0 +1,13 @@
+'/bootstrap':signature(someStatement::'/bootstrap':statement, []).
+'/bootstrap':signature(feature::'/bootstrap':type, []).
+'/bootstrap':signature(someFeature::feature, []).
+'/bootstrap':signature(condStatement(Statement, Feature)::'/bootstrap':statement, [Statement::'/bootstrap':statement, Feature::feature]).
+'/bootstrap':projection(condStatement(Statement, Feature)::'/bootstrap':statement, '/bootstrap':raised('/bootstrap':background('/bootstrap':vert(['/bootstrap':lineBorder('/bootstrap':lowered('/bootstrap':background('/bootstrap':vis(Statement::'/bootstrap':statement), cpi:rgb(255, 255, 255))), 5, cpi:rgb(192, 192, 255)), '/bootstrap':horiz(['/bootstrap':label(!if), '/bootstrap':vis(Feature::feature), '/bootstrap':label(!'is enabled')])]), cpi:rgb(192, 192, 255)))).
+condStatement(someStatement, SomeFeature)~>isEnabled(SomeFeature)~>someStatement.
+condStatement(someStatement, someFeature).
+isEnabled(someFeature).
+'/bootstrap':signature(statementDoesNotSupportFeatures(Statement, Path)::'/bootstrap':error, [Statement::'/bootstrap':statement, Path::cpi:path]).
+'/bootstrap':signature(isEnabled(SomeFeature)::'/bootstrap':statement, [SomeFeature::feature]).
+'/bootstrap':projection(isEnabled(SomeFeature)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(SomeFeature::feature), '/bootstrap':label(!'is enabled')])).
+'/bootstrap':check(Path, condStatement(Statement, Feature)::'/bootstrap':statement, VNs, '/bootstrap':marker(Path, '/bootstrap':error(statementDoesNotSupportFeatures(Statement, Path), VNs))):- \+builtin:loadedStatement(_, (condStatement(Statement, SomeFeature)~>isEnabled(SomeFeature)~>Statement), _).
+'/bootstrap':errorSolution(statementDoesNotSupportFeatures(Statement, Path), VNs, '/bootstrap':insertStatement((condStatement(Statement, SomeFeature)~>isEnabled(SomeFeature)~>Statement), Path, VNs2)):-VNs2::'/bootstrap':list('/bootstrap':varName)=[builtin:varName(SomeFeature::feature, !'SomeFeature')|VNs]::'/bootstrap':list('/bootstrap':varName).

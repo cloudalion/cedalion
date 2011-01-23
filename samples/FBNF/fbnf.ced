@@ -4,3 +4,6 @@
 evalString(Str, Pattern, Type, Value):-parse(patternValue(Pattern, Type, Expression), Str, !''), '/Functional':eval(Expression, Type, Value).
 '/bootstrap':signature(patternValue(Pattern, Type, Expression)::pattern, [Pattern::reducable(Type), Type::'/bootstrap':type, Expression::'/Functional':expr(Type)]).
 '/bootstrap':projection(patternValue(Pattern, Type, Expression)::pattern, '/bootstrap':horiz(['/bootstrap':vis(Pattern::reducable(Type)), '/bootstrap':symbol(8594), '/bootstrap':halfSize('/bootstrap':vis(Type::'/bootstrap':type)), '/bootstrap':vis(Expression::'/Functional':expr(Type))])).
+'/bootstrap':alias(patternValue(Pattern, Type, Expression)::pattern, ! (->)).
+'/bootstrap':adapter(patternValue(Pattern, Type, Expression)::pattern, prod(patternValue(Pattern, Type, Expression), _)::'/bootstrap':statement).
+'/bootstrap':adapter(Pattern::reducable(Type), patternValue(Pattern, Type, _)::pattern).

@@ -1,6 +1,7 @@
 '/bootstrap':signature(pattern::'/bootstrap':type, []).
 '/bootstrap':signature(prod(Symbol, Pattern)::'/bootstrap':statement, [Symbol::pattern, Pattern::pattern]).
 '/bootstrap':projection(prod(Symbol, Pattern)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(Symbol::pattern), '/bootstrap':label(!'::='), '/bootstrap':vis(Pattern::pattern)])).
+'/bootstrap':alias(prod(Symbol, Pattern)::'/bootstrap':statement, !'::=').
 prod(Symbol, Pattern)~>parse(Symbol, Text, Residue):-parse(Pattern, Text, Residue).
 '/bootstrap':signature(empty::pattern, []).
 '/bootstrap':projection(empty::pattern, '/bootstrap':symbol(949)).
@@ -10,6 +11,7 @@ parse(empty, Text, Text):-builtin:true.
 parse(str(Str), Text, Residue):-builtin:strcat(Str, Residue, Text).
 '/bootstrap':signature(conc(A, B)::pattern, [A::pattern, B::pattern]).
 '/bootstrap':projection(conc(A, B)::pattern, '/bootstrap':horiz(['/bootstrap':vis(A::pattern), '/bootstrap':label(! (,)), '/bootstrap':vis(B::pattern)])).
+'/bootstrap':alias(conc(A, B)::pattern, ! (,)).
 parse(conc(A, B), Text, Residue):-parse(A, Text, Mid), parse(B, Mid, Residue).
 '/bootstrap':signature(parse(Pattern, Text, Residue)::'/bootstrap':pred, [Pattern::pattern, Text::'/bootstrap':string, Residue::'/bootstrap':string]).
 '/bootstrap':projection(parse(Pattern, Text, Residue)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Pattern::pattern), '/bootstrap':symbol(8658), '/bootstrap':vis(Text::'/bootstrap':string), '/bootstrap':label(! (/)), '/bootstrap':vis(Residue::'/bootstrap':string)])).

@@ -6,6 +6,6 @@ def(Func, T, Expr)~>eval(Func, T, V):-eval(Expr, T, V).
 def(f(X), '/bootstrap':number, div(plus(X, wrap(2)), wrap(4))).
 '/bootstrap':unitTest(eval(f(wrap(5)), '/bootstrap':number, 1.75)).
 '/bootstrap':signature(parentheses(X)::expr(T), [X::expr(T)]).
-'/bootstrap':projection(parentheses(X)::expr(T), '/bootstrap':horiz(['/bootstrap':label(!'('), '/bootstrap':vis(X::expr(T)), '/bootstrap':label(!')')])).
+'/bootstrap':projection(parentheses(X)::expr(T), '/bootstrap':brackets('/bootstrap':vis(X::expr(T)), 40, 41)).
 '/bootstrap':alias(parentheses(X)::expr(T), !'()').
 def(parentheses(X), T, X).

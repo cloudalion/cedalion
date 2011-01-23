@@ -92,7 +92,7 @@ abstract public class FontModifier extends TermContextProxy {
         }
     }
     
-    private static synchronized Font createFont(TermContext context, FontData[] fontData) {
+    public static synchronized Font createFont(TermContext context, FontData[] fontData) {
         String fontDataDesc = fontDataDescription(fontData);
         FontElement element = fontRegistry.get(fontDataDesc);
         if(element == null) {
