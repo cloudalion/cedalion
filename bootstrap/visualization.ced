@@ -29,16 +29,15 @@ projection(bold(Vis)::visualization, horiz([halfSize(label(!b)), bold(vis(Vis::v
 visClass(bold(_), !'net.nansore.cedalion.figures.Bold').
 signature(color::type, []).
 signature(color(Vis, Color)::visualization, [Vis::visualization, Color::color]).
-disabled(projection(color(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!color))))).
-userVisualization(color(Vis, ColorDesc)::visualization, cpi:default, _, raised(tooltip(background(horiz([color(vis(ColorDesc::color), Color), lowered(background(vis(Vis::visualization), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!color)))):-descriptorContent(ColorDesc::color, Color::color, []), builtin:if(builtin:var(Color::color), Color::color=cpi:rgb(0, 0, 0)::color, builtin:true).
+userVisualization(color(Vis, ColorDesc)::visualization, cpi:default, _, raised(tooltip(horiz([vis(ColorDesc::color), color(vis(Vis::visualization), Color)]), label(!color)))):-descriptorContentWithDefault(ColorDesc::color, cpi:rgb(0, 0, 0)::color, Color::color, _).
 visClass(color(_, _), !'net.nansore.cedalion.figures.TextColor').
 signature(lineBorder(Vis, Width, Color)::visualization, [Vis::visualization, Width::number, Color::color]).
-projection(lineBorder(Vis, Width, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), label(! (,)), vis(Width::number), lowered(background(lineBorder(vis(Vis::visualization), 3, cpi:rgb(0, 0, 0)), cpi:rgb(255, 255, 255)))]), cpi:rgb(220, 220, 220)), label(!lineBorder)))).
+userVisualization(lineBorder(Vis, Width, Color)::visualization, cpi:default, _, raised(tooltip(horiz([vis(Color::color), label(! (,)), vis(Width::number), lowered(lineBorder(vis(Vis::visualization), WidthValue, ColorValue))]), label(!lineBorder)))):-descriptorContentWithDefault(Color::color, cpi:rgb(0, 0, 0)::color, ColorValue::color, _), descriptorContentWithDefault(Width::number, 3::number, WidthValue::number, _).
 visClass(lineBorder(_, _, _), !'net.nansore.cedalion.figures.LineBorderFigure').
 visClass(symbol(_), !'net.nansore.cedalion.figures.Symbol').
 signature(symbol(Num)::visualization, [Num::number]).
 disabled(projection(symbol(Unicode)::visualization, horiz([symbol(963), vis(Unicode::number)]))).
-userVisualization(symbol(Desc)::visualization, cpi:default, _, vert([symbol(Value), halfSize(vis(Desc::number))])):-descriptorContent(Desc::number, Value::number, _), builtin:if(builtin:var(Value::number), Value::number=63::number, builtin:true).
+userVisualization(symbol(Desc)::visualization, cpi:default, _, vert([symbol(Value), halfSize(vis(Desc::number))])):-descriptorContentWithDefault(Desc::number, 63::number, Value::number, _).
 signature(tooltip(Content, Tooltip)::visualization, [Content::visualization, Tooltip::visualization]).
 projection(tooltip(Content, Tooltip)::visualization, lowered(background(lineBorder(horiz([raised(background(vis(Content::visualization), cpi:rgb(255, 255, 255))), vis(Tooltip::visualization)]), 3, cpi:rgb(255, 255, 200)), cpi:rgb(255, 255, 200)))).
 visClass(tooltip(Content, Tooltip), !'net.nansore.cedalion.figures.Tooltip').
@@ -52,7 +51,7 @@ signature(action(Vis, Proc)::visualization, [Vis::visualization, Proc::procedure
 projection(action(Vis, Proc)::visualization, tooltip(raised(raised(background(vert([vis(Vis::visualization), horiz([label(!'Do'), lowered(background(vis(Proc::procedure), cpi:rgb(255, 255, 255)))])]), cpi:rgb(192, 192, 192)))), label(!action))).
 visClass(action(_, _), !'net.nansore.cedalion.figures.ActionFigure').
 signature(background(Vis, Color)::visualization, [Vis::visualization, Color::color]).
-projection(background(Vis, Color)::visualization, raised(tooltip(background(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), cpi:rgb(220, 220, 220)))]), cpi:rgb(166, 166, 255)), label(!background)))).
+userVisualization(background(Vis, Color)::visualization, cpi:default, _, tooltip(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), ColorValue))]), label(!background))):-descriptorContentWithDefault(Color::color, cpi:rgb(220, 220, 220)::color, ColorValue::color, _).
 visClass(background(Vis, Color), !'net.nansore.cedalion.figures.Background').
 signature(roundRect(Vis, Color)::visualization, [Vis::visualization, Color::color]).
 visClass(roundRect(Vis, Color), !'net.nansore.cedalion.figures.RoundRect').
