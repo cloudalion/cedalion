@@ -16,7 +16,7 @@ projection(projection(TTerm, Vis)::statement, horiz([vis(TTerm::typedTerm), symb
 projection([]::list(_), cpi:default, symbol(8718)).
 projection([F|R]::list(T), cpi:default, vert([horiz([symbol(8729), vis(F::T)]), vis(R::list(T))])).
 projection([]::list(_), horiz, label(![])).
-projection([F|R]::list(T), horiz, horiz([label(!'['), vis(F::T), cpi:vis(R::list(T), horizCont), label(!']')])).
+projection([F|R]::list(T), horiz, brackets(horiz([vis(F::T), cpi:vis(R::list(T), horizCont)]), 91, 93)).
 signature(horizCont::mode, []).
 projection([]::list(_), horizCont, horiz([])).
 projection([F|R]::list(T), horizCont, horiz([label(! (,)), vis(F::T), cpi:vis(R::list(T), horizCont)])).

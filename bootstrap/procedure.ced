@@ -50,3 +50,6 @@ commandClass(stringToTerm(StringRef, NsList, TTerm, VarNames), !'net.nansore.ced
 signature(notify(TTerm)::command, [TTerm::typedTerm]).
 commandClass(notify(TTerm), !'net.nansore.cedalion.cmd.Notify').
 defines((cpi:procedureCommand(Proc, _):-_), Proc::procedure, semanticDefinition).
+signature(if(Cond, Then, Else)::procedure, [Cond::pred, Then::command, Else::command]).
+projection(if(Cond, Then, Else)::procedure, vert([horiz([label(!if), vis(Cond::pred)]), horiz([label(!'    '), vis(Then::command)]), label(!else), horiz([label(!'    '), vis(Else::command)])])).
+cpi:procedureCommand(if(Cond, Then, Else), Cmd):-builtin:if(Cond, Cmd::command=Then::command, Cmd::command=Else::command).

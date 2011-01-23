@@ -17,6 +17,7 @@ public class ActionFigure extends TermContextProxy {
 
 	private Compound proc;
 	private TermFigure child;
+	private boolean automatic = false;
 
 	public ActionFigure(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
 		super(parent);
@@ -27,6 +28,23 @@ public class ActionFigure extends TermContextProxy {
 			throw new TermVisualizationException(e);
 		}
 		proc = (Compound)term.arg(2);
+		if(term.arity() >= 3) {
+			automatic  = term.getProlog().hasSolution((Compound)term.arg(3));
+		}
+	}
+
+	@Override
+	public void validate() {
+		super.validate();
+		if(automatic) {
+			getCanvas().getDisplay().asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					performDefaultAction();
+				}
+			});			
+		}
 	}
 
 	@Override

@@ -50,8 +50,11 @@ visClass(smaller(V), !'net.nansore.cedalion.figures.Smaller').
 signature(action(Vis, Proc)::visualization, [Vis::visualization, Proc::procedure]).
 projection(action(Vis, Proc)::visualization, tooltip(raised(raised(background(vert([vis(Vis::visualization), horiz([label(!'Do'), lowered(background(vis(Proc::procedure), cpi:rgb(255, 255, 255)))])]), cpi:rgb(192, 192, 192)))), label(!action))).
 visClass(action(_, _), !'net.nansore.cedalion.figures.ActionFigure').
+signature(action(Vis, Proc, AutoCond)::visualization, [Vis::visualization, Proc::procedure, AutoCond::pred]).
+projection(action(Vis, Proc, AutoCond)::visualization, tooltip(raised(raised(background(vert([vis(Vis::visualization), horiz([label(!'Do'), lowered(background(vis(Proc::procedure), cpi:rgb(255, 255, 255)))]), horiz([label(!'Automatic if'), lowered(background(vis(AutoCond::pred), cpi:rgb(255, 255, 255)))])]), cpi:rgb(192, 192, 192)))), label(!action))).
+visClass(action(Vis, Proc, AutoCond), !'net.nansore.cedalion.figures.ActionFigure').
 signature(background(Vis, Color)::visualization, [Vis::visualization, Color::color]).
-userVisualization(background(Vis, Color)::visualization, cpi:default, _, tooltip(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), ColorValue))]), label(!background))):-descriptorContentWithDefault(Color::color, cpi:rgb(220, 220, 220)::color, ColorValue::color, _).
+userVisualization(background(Vis, Color)::visualization, cpi:default, _, tooltip(lineBorder(horiz([vis(Color::color), lowered(background(vis(Vis::visualization), ColorValue))]), 1, cpi:rgb(0, 0, 0)), label(!background))):-descriptorContentWithDefault(Color::color, cpi:rgb(220, 220, 220)::color, ColorValue::color, _).
 visClass(background(Vis, Color), !'net.nansore.cedalion.figures.Background').
 signature(roundRect(Vis, Color)::visualization, [Vis::visualization, Color::color]).
 visClass(roundRect(Vis, Color), !'net.nansore.cedalion.figures.RoundRect').
@@ -70,6 +73,5 @@ visClass(lowered(Vis), !'net.nansore.cedalion.figures.Lowered').
 signature(link(Vis, File)::visualization, [Vis::visualization, File::string]).
 visClass(link(Vis, File), !'net.nansore.cedalion.figures.Link').
 signature(brackets(Content, Open, Close)::visualization, [Content::visualization, Open::number, Close::number]).
-disabled(projection(brackets(Content, Open, Close)::visualization, horiz([vis(Open::number), brackets(vis(Content::visualization), 40, 41), vis(Close::number)]))).
 userVisualization(brackets(Content, Open, Close)::visualization, cpi:default, _, vert([brackets(vis(Content::visualization), OpenValue, CloseValue), halfSize(horiz([vis(Open::number), label(! (:)), vis(Close::number)]))])):-descriptorContentWithDefault(Open::number, 40::number, OpenValue::number, _), descriptorContentWithDefault(Close::number, 41::number, CloseValue::number, _).
 visClass(brackets(Content, Open, Close), !'net.nansore.cedalion.figures.Brackets').
