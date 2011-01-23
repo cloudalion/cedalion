@@ -5,6 +5,6 @@ docSignature(Head, Body, Doc)~>signature(Head, Body).
 contextMenuEntry(signature(Head, Body)::statement, VarNames, Path, !'Add Description', cpi:edit(Path, doc(Doc, signature(Head, Body))::statement, VarNames)).
 deprecated(docSignature(_, _, _)::statement).
 signature(doc(Doc, Signature)::statement, [Doc::string, Signature::statement]).
-projection(doc(Doc, Signature)::statement, vert([horiz([label(! (//)), color(background(italic(vis(Doc::string)), cpi:rgb(255, 255, 180)), cpi:rgb(0, 0, 0))]), vis(Signature::statement)])).
+projection(doc(Doc, Signature)::statement, vert([color(background(horiz([label(! (//)), italic(vis(Doc::string))]), cpi:rgb(255, 255, 180)), cpi:rgb(0, 0, 0)), vis(Signature::statement)])).
 doc(Doc, signature(Head, Body))~>signature(Head, Body).
 deprecationReplacement(docSignature(Head, Body, Doc), statement, doc(Doc, signature(Head, Body))).
