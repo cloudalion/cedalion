@@ -1,7 +1,9 @@
-'/bootstrap':signature(sum(Expr, Goal)::expr(T), [Expr::expr(T), Goal::'/bootstrap':pred]).
-'/bootstrap':projection(sum(Expr, Goal)::expr(T), '/bootstrap':vert(['/bootstrap':brackets('/bootstrap':vis(Expr::expr(T)), 8721, 0), '/bootstrap':halfSize('/bootstrap':vis(Goal::'/bootstrap':pred))])).
-eval(sum(Expr, Goal), '/bootstrap':number, Sum):-builtin:findall(Value, '/bootstrap':number, (Goal, eval(Expr, '/bootstrap':number, Value)), List), sumList(List, Sum).
-'/bootstrap':signature(sumList(List, Sum)::'/bootstrap':pred, [List::'/bootstrap':list('/bootstrap':number), Sum::'/bootstrap':number]).
-sumList([First|Rest], Sum):-sumList(Rest, SubSum), eval(plus(wrap(First), wrap(SubSum)), '/bootstrap':number, Sum).
-sumList([], 0):-builtin:true.
-'/bootstrap':unitTest(eval(sum(div(mult(wrap(X), wrap(X)), wrap(2)), '/bootstrap':member(X, '/bootstrap':listSet([1, 2, 3]), '/bootstrap':number)), '/bootstrap':number, 7.0)).
+'/bootstrap':signature(sum(Expr, Goal)::expr(Type), [Expr::expr(Type), Goal::'/bootstrap':pred]).
+'/bootstrap':projection(sum(Expr, Goal)::expr(Type), '/bootstrap':vert(['/bootstrap':brackets('/bootstrap':vis(Expr::expr(Type)), 8721, 0), '/bootstrap':halfSize('/bootstrap':vis(Goal::'/bootstrap':pred))])).
+eval(sum(Expr, Goal), Type, Sum):-builtin:findall(Value, Type, (Goal, eval(Expr, Type, Value)), List), eval(sumList(List), Type, Sum).
+'/bootstrap':signature(sumList(List)::expr(Type), [List::'/bootstrap':list(Type)]).
+def(sumList([]), Type, zero).
+def(sumList([First|Rest]), Type, plus(wrap(First), sumList(Rest))).
+'/bootstrap':signature(zero::expr(Type), []).
+def(zero, '/bootstrap':number, wrap(0)).
+'/bootstrap':unitTest(eval(sum(parentheses(plus(div(mult(wrap(X), wrap(X)), wrap(2)), wrap(X))), '/bootstrap':member(X, '/bootstrap':listSet([1, 2, 3]), '/bootstrap':number)), '/bootstrap':number, 13.0)).
