@@ -22,6 +22,7 @@ public class Brackets extends Panel implements TermFigure {
 	private Label closing;
 	private TermFigure content;
 	private TermContext context;
+	private int count = 10;
 
 	public Brackets(Compound term, TermContext context) throws TermInstantiationException, PrologException {
 		setLayoutManager(new FlowLayout());
@@ -54,6 +55,8 @@ public class Brackets extends Panel implements TermFigure {
 	@Override
 	public void validate() {
 		super.validate();
+		if(count-- < 0)
+			return;
 		Dimension contentDim = content.getSize();
 		Dimension openningDim = openning.getSize();
 		float ratio = (float)contentDim.height/(float)openningDim.height;
