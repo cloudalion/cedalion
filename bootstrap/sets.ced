@@ -12,8 +12,7 @@ projection(setDef(Set, Def, T)::statement, horiz([vis(Set::set(T)), symbol(8797)
 setDef(Set, Def, T)~>member(X, Set, T):-member(X, Def, T).
 signature(union(S1, S2)::set(T), [S1::set(T), S2::set(T)]).
 projection(union(S1, S2)::set(T), horiz([vis(S1::set(T)), symbol(8746), vis(S2::set(T))])).
-member(E, union(S1, S2), T):-member(E, S1, T).
-member(E, union(S1, S2), T):-member(E, S2, T).
+setDef(union(S1, S2), set(E, or(member(E, S1, T), member(E, S2, T))), T).
 signature(intersect(S1, S2)::set(T), [S1::set(T), S2::set(T)]).
 projection(intersect(S1, S2)::set(T), horiz([vis(S1::set(T)), symbol(8745), vis(S2::set(T))])).
 setDef(intersect(S1, S2), set(E, (member(E, S1, T), member(E, S2, T))), T).

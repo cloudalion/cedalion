@@ -169,6 +169,10 @@ writeFile(!(FileName), 'builtin#fileContent'(Term, Goal, NsList)) :-
 	writeToStream(Stream, Goal, Term, NsList),
 	close(Stream).
 
+writeFile(!(FileName), 'builtin#fileContent'(Terms, NsList)) :-
+	open(FileName, write, Stream),
+	writeToStream(Stream, Terms, NsList).
+
 writeToStream(Stream, Goal, 'builtin#statement'(GTerm, VarNames), NsList) :-
 	Goal,
 	globalToLocal(GTerm, NsList, Term),
@@ -176,11 +180,6 @@ writeToStream(Stream, Goal, 'builtin#statement'(GTerm, VarNames), NsList) :-
 	fail.
 writeToStream(_, _, _, _).
 
-
-% Write a cedalion file
-writeFile(!(FileName), 'builtin#fileContent'(Terms, NsList)) :-
-	open(FileName, write, Stream),
-	writeToStream(Stream, Terms, NsList).
 
 writeToStream(Stream, [], _) :-
 	close(Stream).
