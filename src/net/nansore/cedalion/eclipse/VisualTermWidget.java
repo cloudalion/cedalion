@@ -3,6 +3,8 @@
  */
 package net.nansore.cedalion.eclipse;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import net.nansore.cedalion.execution.TermInstantiationException;
@@ -13,16 +15,25 @@ import net.nansore.prolog.PrologException;
 
 import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.Graphics;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Panel;
+import org.eclipse.draw2d.SWTGraphics;
+import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -37,6 +48,7 @@ public class VisualTermWidget extends Composite {
     private Button zoomInBtn;
     private Button zoomOutBtn;
     private Button refreshBtn;
+    private Button snippetBtn;
     private int fontSizeOffset = 0;
 	private Compound term;
 	private TermContext context;
@@ -45,8 +57,9 @@ public class VisualTermWidget extends Composite {
     /**
      * @param parent
      * @param style
+     * @param cedalionEditor 
      */
-    public VisualTermWidget(Composite parent, int style) {
+    public VisualTermWidget(Composite parent, int style, final CedalionEditor cedalionEditor) {
         super(parent, style);
         setLayout(new FormLayout());
         
@@ -147,11 +160,30 @@ public class VisualTermWidget extends Composite {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}});
         
+        snippetBtn = new Button(topPanel, SWT.PUSH);
+        try {
+        	snippetBtn.setImage(Activator.getDefault().getScreenshotImage(getDisplay()));
+        } catch (IOException e1) {
+        	snippetBtn.setText("Zoom Out");
+        }
+        FormData snippetFD = new FormData();
+        snippetFD.top = new FormAttachment(0,0);
+        snippetFD.right = new FormAttachment(refreshBtn);
+        snippetBtn.setLayoutData(snippetFD);
+        snippetBtn.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				takeSnippet(cedalionEditor);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}});
+        
         text = new Text(topPanel, SWT.NONE);
         FormData textFD = new FormData();
         textFD.top = new FormAttachment(0, 0);
         textFD.left = new FormAttachment(0, 0);
-        textFD.right = new FormAttachment(refreshBtn);
+        textFD.right = new FormAttachment(snippetBtn);
         text.setLayoutData(textFD);
         text.setEnabled(false);
         
@@ -168,7 +200,33 @@ public class VisualTermWidget extends Composite {
         canvas.setContents(panel);
         canvas.setBackground(new Color(getDisplay(), 255, 255, 255));
     }
-    /**
+    protected void takeSnippet(CedalionEditor cedalionEditor) {
+		IFigure contents = cedalionEditor.getLastFocused();
+		if(contents == null)
+			return;
+		FileDialog  dlg = new FileDialog(getShell());
+		String fileName = dlg.open();
+		if(fileName == null)
+			return;
+		Dimension size = contents.getSize();
+		Image image = new Image(getDisplay(), size.width, size.height);
+		GC gc = new GC(image);
+		Graphics graphics = new SWTGraphics(gc);
+		graphics.translate(-contents.getBounds().x, -contents.getBounds().y);
+		contents.paint(graphics);
+		ImageLoader loader = new ImageLoader();
+		loader.data = new ImageData[] {image.getImageData()};
+		try {
+			FileOutputStream stream = new FileOutputStream(fileName);
+			loader.save(stream, SWT.IMAGE_PNG);
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		image.dispose();
+		
+	}
+	/**
      * @return Returns the canvas.
      */
     public FigureCanvas getCanvas() {

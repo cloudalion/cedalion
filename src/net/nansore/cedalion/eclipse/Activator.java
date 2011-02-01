@@ -97,7 +97,7 @@ public class Activator extends AbstractUIPlugin {
 			}
         } catch(Exception e) {
             e.printStackTrace();
-            throw e;
+            //throw e;
         }
 	}
 
@@ -259,6 +259,13 @@ public class Activator extends AbstractUIPlugin {
 
 	public Image getImage(String imageName, Display display) throws IOException {
 		URL prologFileURL = context.getBundle().getEntry("icons/" + imageName + ".gif");
+		URLConnection connection = prologFileURL.openConnection();
+		InputStream input = connection.getInputStream();
+        return new Image(display, input);
+	}
+
+	public Image getScreenshotImage(Display display) throws IOException {
+		URL prologFileURL = context.getBundle().getEntry("icons/cedalion-icon16.png"); // Replace with screenshot icon
 		URLConnection connection = prologFileURL.openConnection();
 		InputStream input = connection.getInputStream();
         return new Image(display, input);

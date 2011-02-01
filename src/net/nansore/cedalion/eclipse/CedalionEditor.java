@@ -155,7 +155,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-	    editorWidget = new VisualTermWidget(parent, SWT.NONE);	
+	    editorWidget = new VisualTermWidget(parent, SWT.NONE, this);	
 	    editorWidget.addDisposeListener(this);
 		Activator.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
 
@@ -412,6 +412,10 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	@Override
 	public void setFocused(VisualTerm visualTerm) {
 		focused = visualTerm;
+	}
+	
+	public VisualTerm getLastFocused() {
+		return currentTermFigure;
 	}
 
 }

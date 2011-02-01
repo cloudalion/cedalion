@@ -22,6 +22,7 @@ public class Brackets extends Panel implements TermFigure {
 	private Label closing;
 	private TermFigure content;
 	private TermContext context;
+	private int counter = 10;
 
 	public Brackets(Compound term, TermContext context) throws TermInstantiationException, PrologException {
 		setLayoutManager(new FlowLayout());
@@ -59,6 +60,8 @@ public class Brackets extends Panel implements TermFigure {
 		float ratio = (float)contentDim.height/(float)openningDim.height;
 		if(Math.abs(ratio - 1.0) < MODIFICATION_THRESHOLD)
 			return;
+		if(counter-- < 0)
+			return;
 		Font newFont = resizeFont(openning.getFont(), ratio);
 		openning.setFont(newFont);
 		closing.setFont(newFont);
@@ -69,7 +72,7 @@ public class Brackets extends Panel implements TermFigure {
 		FontData[] newFontData = new FontData[oldFontData.length];
 		for(int i = 0; i < oldFontData.length; i++) {
 			float newHeight = oldFontData[i].height * ratio;
-			newFontData[i] = new FontData(oldFontData[i].name, Math.round(newHeight), oldFontData[i].style);
+			newFontData[i] = new FontData(oldFontData[i].getName(), Math.round(newHeight), oldFontData[i].getStyle());
 		}
 		return FontModifier.createFont(context, newFontData);
 	}

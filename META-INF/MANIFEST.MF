@@ -20,3 +20,7 @@ Export-Package: .,
  net.nansore.cedalion.runtime,
  net.nansore.parser,
  net.nansore.prolog
+Import-Package: org.eclipse.jface,
+ org.eclipse.jface.dialogs,
+ org.eclipse.swt,
+ org.eclipse.swt.events

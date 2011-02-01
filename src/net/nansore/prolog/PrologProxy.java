@@ -323,7 +323,8 @@ public class PrologProxy {
     }
     
     public static void main(String[] args) throws IOException, PrologException {
-        PrologProxy p = new PrologProxy("pl", new File("/home/boaz/workspace/VisualTermPlugin/prolog/semantics.pl"));
+    	System.out.println("Hello");
+        PrologProxy p = new PrologProxy("c:\\program files\\pl\\bin\\plcon.exe", new File("d:/workspace/cedalion/service.pl"));
         Variable varX = new Variable("X");
         Iterator<Map<Variable, Object>> i = p.getSolutions(new Compound(p, "a", varX));
         while(i.hasNext()) {
