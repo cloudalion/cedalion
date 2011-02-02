@@ -265,7 +265,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public Image getScreenshotImage(Display display) throws IOException {
-		URL prologFileURL = context.getBundle().getEntry("icons/cedalion-icon16.png"); // Replace with screenshot icon
+		URL prologFileURL = context.getBundle().getEntry("icons/screenshot16.png"); // Replace with screenshot icon
 		URLConnection connection = prologFileURL.openConnection();
 		InputStream input = connection.getInputStream();
         return new Image(display, input);

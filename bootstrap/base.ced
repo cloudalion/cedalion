@@ -25,3 +25,7 @@ projection((Term::Type)::typedTerm, horiz([vis(Term::Type), label(! (::)), vis(T
 projection((A, B)::pred, vert([horiz([vis(A::pred), label(! (,))]), vis(B::pred)])).
 projection((H:-B)::statement, vert([horiz([vis(H::pred), label(! (:-))]), horiz([label(!'    '), vis(B::pred)])])).
 projection(signature(TTerm, TArgs)::statement, horiz([vis(TTerm::typedTerm), symbol(8618), cpi:vis(TArgs::list(typedTerm), horiz)])).
+signature(or(A, B)::pred, [A::pred, B::pred]).
+projection(or(A, B)::pred, horiz([vis(A::pred), symbol(8744), vis(B::pred)])).
+or(A, B):-A.
+or(A, B):-B.
