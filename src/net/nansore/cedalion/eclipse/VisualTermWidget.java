@@ -187,7 +187,7 @@ public class VisualTermWidget extends Composite {
         text.setLayoutData(textFD);
         text.setEnabled(false);
         
-        canvas = new FigureCanvas(this);
+        canvas = new CedalionCanvas(this);
         FormData canvasFD = new FormData();
         canvasFD.top = new FormAttachment(topPanel);
         canvasFD.left = new FormAttachment(0, 0);
@@ -211,6 +211,7 @@ public class VisualTermWidget extends Composite {
 		Dimension size = contents.getSize();
 		Image image = new Image(getDisplay(), size.width, size.height);
 		GC gc = new GC(image);
+		//gc.setTextAntialias(SWT.ON);
 		Graphics graphics = new SWTGraphics(gc);
 		graphics.translate(-contents.getBounds().x, -contents.getBounds().y);
 		contents.paint(graphics);
