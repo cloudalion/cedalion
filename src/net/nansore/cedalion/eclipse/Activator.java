@@ -12,9 +12,7 @@ import java.net.URLConnection;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.cedalion.figures.Link;
-import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
@@ -27,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 

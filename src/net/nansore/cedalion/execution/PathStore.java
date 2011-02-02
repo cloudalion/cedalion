@@ -1,7 +1,6 @@
 package net.nansore.cedalion.execution;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.nansore.prolog.Compound;

@@ -2,15 +2,6 @@ package net.nansore.cedalion.figures;
 
 import java.io.IOException;
 
-import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.ImageFigure;
-import org.eclipse.draw2d.MouseEvent;
-import org.eclipse.draw2d.MouseListener;
-import org.eclipse.draw2d.Panel;
-
-import net.nansore.cedalion.eclipse.Activator;
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.execution.PathStore;
 import net.nansore.cedalion.execution.PropertyNotFoundException;
@@ -18,6 +9,13 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+
+import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ImageFigure;
+import org.eclipse.draw2d.MouseEvent;
+import org.eclipse.draw2d.MouseListener;
+import org.eclipse.draw2d.Panel;
 
 public class ExpandFigure extends TermContextProxy {
 

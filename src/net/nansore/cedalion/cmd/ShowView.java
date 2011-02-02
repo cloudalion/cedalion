@@ -1,7 +1,5 @@
 package net.nansore.cedalion.cmd;
 
-import org.eclipse.ui.PartInitException;
-
 import net.nansore.cedalion.eclipse.Activator;
 import net.nansore.cedalion.eclipse.CedalionView;
 import net.nansore.cedalion.execution.ExecutionContext;
@@ -10,6 +8,8 @@ import net.nansore.cedalion.execution.ICommand;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+
+import org.eclipse.ui.PartInitException;
 
 public class ShowView implements ICommand {
 	private Compound visualization;
