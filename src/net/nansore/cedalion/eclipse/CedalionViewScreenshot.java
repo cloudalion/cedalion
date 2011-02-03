@@ -1,6 +1,5 @@
 package net.nansore.cedalion.eclipse;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
@@ -9,7 +8,6 @@ import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.SWTGraphics;
 import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
@@ -20,7 +18,6 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.dialogs.FileSelectionDialog;
 
 public class CedalionViewScreenshot implements IViewActionDelegate {
 

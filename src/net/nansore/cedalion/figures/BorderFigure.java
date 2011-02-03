@@ -11,7 +11,6 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
 import org.eclipse.draw2d.Border;
-import org.eclipse.draw2d.IFigure;
 
 public abstract class BorderFigure extends TermContextProxy {
 

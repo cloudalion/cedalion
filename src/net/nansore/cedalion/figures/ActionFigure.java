@@ -1,9 +1,5 @@
 package net.nansore.cedalion.figures;
 
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.MouseEvent;
-import org.eclipse.draw2d.MouseListener;
-
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.ExecutionContext;
@@ -12,6 +8,9 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+
+import org.eclipse.draw2d.MouseEvent;
+import org.eclipse.draw2d.MouseListener;
 
 public class ActionFigure extends TermContextProxy {
 

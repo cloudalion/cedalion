@@ -25,7 +25,6 @@ import net.nansore.prolog.Variable;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.FocusBorder;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;

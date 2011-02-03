@@ -6,9 +6,6 @@ package net.nansore.cedalion.eclipse;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.nansore.cedalion.execution.ExecutionContextException;
-import net.nansore.prolog.Compound;
-
 /**
  * @author boaz
  */

@@ -1,19 +1,18 @@
 package net.nansore.cedalion.figures;
 
-import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.Panel;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+
+import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.Panel;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 
 public class Brackets extends Panel implements TermFigure {
 
