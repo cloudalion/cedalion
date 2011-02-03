@@ -3,9 +3,7 @@
  */
 package net.nansore.cedalion.figures;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import net.nansore.cedalion.eclipse.TermContext;

@@ -12,9 +12,7 @@ import java.net.URLConnection;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.cedalion.figures.Link;
-import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
@@ -27,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.UIPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -265,7 +262,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	public Image getScreenshotImage(Display display) throws IOException {
-		URL prologFileURL = context.getBundle().getEntry("icons/cedalion-icon16.png"); // Replace with screenshot icon
+		URL prologFileURL = context.getBundle().getEntry("icons/screenshot16.png"); // Replace with screenshot icon
 		URLConnection connection = prologFileURL.openConnection();
 		InputStream input = connection.getInputStream();
         return new Image(display, input);

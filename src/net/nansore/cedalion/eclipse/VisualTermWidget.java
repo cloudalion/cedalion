@@ -3,7 +3,6 @@
  */
 package net.nansore.cedalion.eclipse;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -81,6 +80,7 @@ public class VisualTermWidget extends Composite {
         zoomInFD.top = new FormAttachment(0,0);
         zoomInFD.right = new FormAttachment(100, 0);
         zoomInBtn.setLayoutData(zoomInFD);
+        zoomInBtn.setToolTipText("Increase Font Size");
         zoomInBtn.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -111,6 +111,7 @@ public class VisualTermWidget extends Composite {
         zoomOutFD.top = new FormAttachment(0,0);
         zoomOutFD.right = new FormAttachment(zoomInBtn);
         zoomOutBtn.setLayoutData(zoomOutFD);
+        zoomOutBtn.setToolTipText("Decrease Font Size");
         zoomOutBtn.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -141,6 +142,7 @@ public class VisualTermWidget extends Composite {
         refreshFD.top = new FormAttachment(0,0);
         refreshFD.right = new FormAttachment(zoomOutBtn);
         refreshBtn.setLayoutData(refreshFD);
+        refreshBtn.setToolTipText("Refresh");
         refreshBtn.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -170,6 +172,7 @@ public class VisualTermWidget extends Composite {
         snippetFD.top = new FormAttachment(0,0);
         snippetFD.right = new FormAttachment(refreshBtn);
         snippetBtn.setLayoutData(snippetFD);
+        snippetBtn.setToolTipText("Take code snippet of the selection");
         snippetBtn.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {

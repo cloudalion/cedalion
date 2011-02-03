@@ -59,7 +59,9 @@ public class HorizontalFlow extends Panel implements TermFigure {
      * 
      */
     protected void setLayout() {
-        setLayoutManager(new FlowLayout());
+        FlowLayout flowLayout = new FlowLayout();
+//        flowLayout.setMinorAlignment(FlowLayout.ALIGN_CENTER);
+		setLayoutManager(flowLayout);
     }
 
     /* (non-Javadoc)

@@ -5,7 +5,6 @@ import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
-import net.nansore.prolog.PrologProxy;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;

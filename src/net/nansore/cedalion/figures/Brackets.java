@@ -1,19 +1,18 @@
 package net.nansore.cedalion.figures;
 
-import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.IFigure;
-import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.Panel;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+
+import org.eclipse.draw2d.FlowLayout;
+import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.Panel;
+import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 
 public class Brackets extends Panel implements TermFigure {
 
@@ -22,7 +21,7 @@ public class Brackets extends Panel implements TermFigure {
 	private Label closing;
 	private TermFigure content;
 	private TermContext context;
-	private int counter = 10;
+	private int count = 10;
 
 	public Brackets(Compound term, TermContext context) throws TermInstantiationException, PrologException {
 		setLayoutManager(new FlowLayout());
@@ -55,12 +54,12 @@ public class Brackets extends Panel implements TermFigure {
 	@Override
 	public void validate() {
 		super.validate();
+		if(count-- < 0)
+			return;
 		Dimension contentDim = content.getSize();
 		Dimension openningDim = openning.getSize();
 		float ratio = (float)contentDim.height/(float)openningDim.height;
 		if(Math.abs(ratio - 1.0) < MODIFICATION_THRESHOLD)
-			return;
-		if(counter-- < 0)
 			return;
 		Font newFont = resizeFont(openning.getFont(), ratio);
 		openning.setFont(newFont);

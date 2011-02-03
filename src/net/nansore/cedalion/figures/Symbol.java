@@ -5,7 +5,6 @@ import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.Label;
-import org.eclipse.draw2d.geometry.Dimension;
 
 public class Symbol extends Label implements TermFigure {
 

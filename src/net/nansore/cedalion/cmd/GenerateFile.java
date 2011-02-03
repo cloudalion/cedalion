@@ -1,10 +1,5 @@
 package net.nansore.cedalion.cmd;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-
 import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.ICommand;

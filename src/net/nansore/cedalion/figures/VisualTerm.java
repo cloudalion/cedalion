@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.FocusBorder;
 import org.eclipse.draw2d.Graphics;
-import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.MouseEvent;
@@ -327,8 +326,8 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 
         LineBorder focusBorder = new LineBorder();
         focusBorder.setStyle(Graphics.LINE_DASH);
-        focusBorder.setWidth(1);
         focusBorder.setColor(getColor());
+        focusBorder.setWidth(1);
 		setBorder(focusBorder);
         context.selectionChanged(this);
         if(canModify()) {
