@@ -35,6 +35,7 @@ import org.eclipse.draw2d.LineBorder;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.Panel;
+import org.eclipse.draw2d.Viewport;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.fieldassist.IContentProposal;
@@ -346,6 +347,13 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
                 context.getTextEditor().setSelection(0, text.length());
                 context.getTextEditor().addKeyListener(this);
                 context.getTextEditor().setFocus();
+                Viewport viewport = ((CedalionCanvas)getCanvas()).getViewport();
+				Point p = viewport.getViewLocation();
+                if(p.y > getLocation().y) {
+                	viewport.setViewLocation(new Point(p.x, getLocation().y));
+                } else if(p.y + viewport.getSize().height < getLocation().y + getSize().height) {
+                	viewport.setViewLocation(new Point(p.x, getLocation().y + getSize().height - viewport.getSize().height));
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (PrologException e) {
