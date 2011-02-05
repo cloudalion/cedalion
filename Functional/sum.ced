@@ -6,4 +6,4 @@ def(sumList([]), Type, zero).
 def(sumList([First|Rest]), Type, plus(wrap(First), sumList(Rest))).
 '/bootstrap':signature(zero::expr(Type), []).
 def(zero, '/bootstrap':number, wrap(0)).
-'/bootstrap':unitTest(eval(sum(parentheses(plus(div(mult(wrap(X), wrap(X)), wrap(2)), wrap(X))), '/bootstrap':member(X, '/bootstrap':listSet([1, 2, 3]), '/bootstrap':number)), '/bootstrap':number, 13.0)).
+'/bootstrap':unitTest(eval(sum(parentheses(plus(div(mult(wrap(X), wrap(X)), wrap(2)), wrap(X))), '/bootstrap':member(X, '/bootstrap':listSet([1, 2, 3, 4]), '/bootstrap':number)), '/bootstrap':number, 25.0)).

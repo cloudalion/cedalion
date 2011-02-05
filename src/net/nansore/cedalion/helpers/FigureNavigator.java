@@ -76,7 +76,7 @@ public class FigureNavigator {
 	public void refresh() {
 		eventList.clear();
 		addEvents(root, 0);
-		dumpEvents();
+		//dumpEvents();
 	}
 	private void dumpEvents() {
 		for(Event event : eventList) {

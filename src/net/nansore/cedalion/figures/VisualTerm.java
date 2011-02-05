@@ -5,6 +5,7 @@ package net.nansore.cedalion.figures;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	private Compound projType;
 	private Runnable unreg;
 	private List<TermFigure> boundFigures = new ArrayList<TermFigure>();
+	private static Map<Object, VisualTerm> pathOwner = new HashMap<Object, VisualTerm>();
 
     /**
      * @param term
@@ -120,6 +122,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             label.setForegroundColor(new Color(context.getTextEditor().getDisplay(), 128, 128, 0));
             add(label);
         }
+        pathOwner.put(path, this);
     }
 
     /**
@@ -302,6 +305,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		unregisterTermFigure(path, this);
 		unreg.run();
         contentFigure.dispose();
+        pathOwner.remove(path);
     }
 
     /**
@@ -451,6 +455,16 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		ExecutionContext exe = new ExecutionContext(prolog);
 		exe.runProcedure(prolog.createCompound("cpi#editFromString", path, prolog.createCompound("cpi#constExpr", text)));
         figureUpdated();
+        // Schedule a re-focusing of this object
+        getCanvas().getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				VisualTerm newVT = pathOwner.get(path);
+				if(newVT != null)
+					newVT.focusGained(null);
+			}
+		});
     }
 
     public void keyReleased(KeyEvent arg0) {

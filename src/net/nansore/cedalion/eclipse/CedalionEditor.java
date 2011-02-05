@@ -79,7 +79,6 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	protected Font symbolFont;
 	private VisualTerm currentTermFigure;
 	private VisualTerm focused = null;
-	private FigureNavigator navigator;
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
@@ -206,7 +205,6 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		Compound descriptor = prolog.createCompound("cpi#descriptor", path, new Variable(), prolog.createCompound("[]"));
 		Compound tterm = prolog.createCompound("::", descriptor, rootType);
 		editorWidget.setTerm(prolog.createCompound("cpi#vis", tterm), this);
-		navigator = new FigureNavigator(editorWidget.getCanvas().getContents());
 	}
 
 	private Font createFont(final String fontType) {
@@ -377,7 +375,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
     public void performDefaultAction() {
     }
 
-    public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
+	public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
         editorWidget.refresh();
         Notifier.instance().printRefCount();
         System.gc();

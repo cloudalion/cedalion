@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.FontResize;
+import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
@@ -248,6 +249,7 @@ public class VisualTermWidget extends Composite {
     	Compound compound = term.getProlog().createCompound("fontResize", term, new Integer(fontSizeOffset));
 		resizer = new FontResize(compound, context);
 		panel.add(resizer);
+		FigureNavigator.getNavigatorForRoot(canvas.getContents()).refresh();
 		System.gc();
 	}
     /**
