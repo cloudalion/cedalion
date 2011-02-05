@@ -17,6 +17,7 @@ import net.nansore.cedalion.execution.Notifier;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.TermFigure;
 import net.nansore.cedalion.figures.VisualTerm;
+import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
@@ -78,6 +79,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	protected Font symbolFont;
 	private VisualTerm currentTermFigure;
 	private VisualTerm focused = null;
+	private FigureNavigator navigator;
 
     /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
@@ -204,6 +206,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		Compound descriptor = prolog.createCompound("cpi#descriptor", path, new Variable(), prolog.createCompound("[]"));
 		Compound tterm = prolog.createCompound("::", descriptor, rootType);
 		editorWidget.setTerm(prolog.createCompound("cpi#vis", tterm), this);
+		navigator = new FigureNavigator(editorWidget.getCanvas().getContents());
 	}
 
 	private Font createFont(final String fontType) {

@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import net.nansore.cedalion.figures.TermFigure;
 import net.nansore.cedalion.figures.VisualTerm;
+import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.MouseEvent;

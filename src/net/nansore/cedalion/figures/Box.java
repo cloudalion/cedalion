@@ -49,7 +49,7 @@ public class Box extends Panel implements TermFigure {
 
 	private IFigure getContainer() {
 		IFigure f = getParent();
-		while(f != null && !(f instanceof HorizontalFlow))
+		while(f != null && !(f instanceof FlowFigure))
 			f = f.getParent();
 		return f;
 	}

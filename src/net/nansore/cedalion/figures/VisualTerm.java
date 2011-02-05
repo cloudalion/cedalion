@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.nansore.cedalion.eclipse.Activator;
+import net.nansore.cedalion.eclipse.CedalionCanvas;
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.ExecutionContext;
@@ -17,6 +18,8 @@ import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.Notifier;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
+import net.nansore.cedalion.helpers.FigureNavigator;
+import net.nansore.cedalion.helpers.FigureNotFoundException;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
@@ -271,6 +274,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         requestFocus();
         setFocus();
         context.figureUpdated();
+		navigator().refresh();
     }
 
 	public void setFocus() {
@@ -318,7 +322,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		return context.getResource();
 	}
 
-    public void focusGained(org.eclipse.swt.events.FocusEvent arg0) {
+    public void focusGained(org.eclipse.swt.events.FocusEvent event) {
         VisualTerm previousFocused = context.getFocused();
         if(previousFocused != null)
         	previousFocused.lostFocus();
@@ -381,22 +385,63 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     	if(context.getFocused() != this)
     		return;
         if(event.character == '\r' && event.stateMask == 0) {
-            try {
-                setContentFromString(context.getTextEditor().getText());
-            } catch (TermVisualizationException e) {
-                ErrorDialog.openError(context.getTextEditor().getShell(), "Error Updating Element", "The following error has occured: " + e.getMessage(), Status.OK_STATUS);
-            } catch (PrologException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (TermInstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionContextException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+            replaceContent();
+        } else if(event.stateMask == (SWT.ALT | SWT.SHIFT)) {
+        	FigureNavigator nav = navigator();
+        	try {
+				VisualTerm other = null;
+				switch(event.keyCode) {
+				case SWT.ARROW_UP:
+					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfPrevSibling(this, VerticalFlow.class, VisualTerm.class), VisualTerm.class);
+					break;
+				case SWT.ARROW_DOWN:
+					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfNextSibling(this, VerticalFlow.class, VisualTerm.class), VisualTerm.class);
+					break;
+				case SWT.ARROW_LEFT:
+					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfPrevSibling(this, HorizontalFlow.class, VisualTerm.class), VisualTerm.class);
+					break;
+				case SWT.ARROW_RIGHT:
+					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfNextSibling(this, HorizontalFlow.class, VisualTerm.class), VisualTerm.class);
+					break;
+				case SWT.PAGE_UP:
+					other = (VisualTerm)nav.getAncestor(getParent(), VisualTerm.class);
+					break;
+				case SWT.PAGE_DOWN:
+				case SWT.HOME:
+					other = (VisualTerm)nav.getFirstDescendant(this, VisualTerm.class, false);
+					break;
+				case SWT.END:
+					other = (VisualTerm)nav.getLastDescendant(this, VisualTerm.class);
+					break;
+				}
+				if(other != null)
+					other.focusGained(null);
+			} catch (FigureNotFoundException e) {
+				// No navigation...
 			}
         }
     }
+
+	private void replaceContent() {
+		try {
+		    setContentFromString(context.getTextEditor().getText());
+		} catch (TermVisualizationException e) {
+		    ErrorDialog.openError(context.getTextEditor().getShell(), "Error Updating Element", "The following error has occured: " + e.getMessage(), Status.OK_STATUS);
+		} catch (PrologException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TermInstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionContextException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private FigureNavigator navigator() {
+		return FigureNavigator.getNavigatorForRoot(((CedalionCanvas)getCanvas()).getContents());
+	}
 
     private void setContentFromString(String text) throws TermVisualizationException, PrologException, TermInstantiationException, ExecutionContextException {
     	if(text.startsWith("\"")) {

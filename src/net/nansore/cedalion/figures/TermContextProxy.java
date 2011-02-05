@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
+import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.Figure;
@@ -136,6 +137,4 @@ public abstract class TermContextProxy extends Figure implements TermContext, Te
 	public void setFocused(VisualTerm visualTerm) {
 		context.setFocused(visualTerm);
 	}
-	
-	
 }

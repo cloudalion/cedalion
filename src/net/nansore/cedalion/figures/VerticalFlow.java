@@ -14,7 +14,7 @@ import org.eclipse.draw2d.FlowLayout;
 /**
  * @author boaz
  */
-public class VerticalFlow extends HorizontalFlow {
+public class VerticalFlow extends FlowFigure {
 
     /**
      * @param term
