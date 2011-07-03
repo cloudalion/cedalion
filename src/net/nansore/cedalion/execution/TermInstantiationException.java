@@ -1,5 +1,8 @@
 package net.nansore.cedalion.execution;
 
+/**
+ * An exception thrown when the instantiation of a term has failed.
+ */
 public class TermInstantiationException extends Exception {
 
 	private static final long serialVersionUID = 1L;

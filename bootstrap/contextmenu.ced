@@ -1,10 +1,15 @@
 signature(menuEntry::type, []).
-signature(cpi:contextMenuEntry(Descriptor, MenuItem)::pred, [Descriptor::typedTerm, MenuItem::menuEntry]).
+doc(!'Succeeds for every context menu entry provided for Descriptor.  MenuItem is bound to a description of the menu item to display', signature(cpi:contextMenuEntry(Descriptor, MenuItem)::pred, [Descriptor::typedTerm, MenuItem::menuEntry])).
 contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>cpi:contextMenuEntry(cpi:descriptor(Path, Term, _)::Type, menuItem(Name, Proc)):-cpi:termAtPath(Path, TTerm, VarNames), cpi:procedureCommand(Proc, _).
 signature(noPath::cpi:path, []).
 contextMenuEntry(Term::Type, VarNames, noPath, Name, Proc)~>cpi:contextMenuEntry(cpi:immediateDescriptor(Term, VarNames)::Type, menuItem(Name, Proc)):-cpi:procedureCommand(Proc, _).
 signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
 cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem'):-builtin:true.
 contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
-signature(cpi:redo(Res)::procedure, [Res::string]).
-contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', cpi:redo(Res)).
+doc(!'Deprecated.  Moved to the /bootstrap namespace', signature(cpi:redo(Res)::procedure, [Res::string])).
+deprecated(cpi:redo(Res)::procedure).
+signature(redo(Res)::procedure, [Res::string]).
+deprecationReplacement(cpi:redo(Res), procedure, redo(Res)).
+cpi:procedureCommand(cpi:redo(Res), Cmd):-cpi:procedureCommand(redo(Res), Cmd).
+signature(redo(Res)::procedure, [Res::string]).
+contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', redo(Res)).

@@ -7,8 +7,10 @@ propValueMatches(entityRef(Name, E, _), Name, ent(E), Entity, Cardinality):-buil
 propValueMatches(entityContent(Name, E, _), Name, ent(E), Entity, Cardinality):-builtin:true.
 '/bootstrap':signature(checkValueCount(Cardinality, Count, Name, Type, Entity, Error)::'/bootstrap':pred, [Cardinality::cardinality, Count::'/bootstrap':number, Name::propertyName(Entity, Type, Cardinality), Type::propertyType, Entity::entity, Error::'/bootstrap':error]).
 '/bootstrap':signature(tooFewInstances(Name, Type, Entity, Cardinality)::'/bootstrap':error, [Name::propertyName(Entity, Type, Cardinality), Type::propertyType, Entity::entity, Cardinality::cardinality]).
-checkValueCount(one, Count, Name, Type, Entity, tooFewInstances(Name, Type, Entity, one)):-1>Count.
+'/bootstrap':projection(tooFewInstances(Name, Type, Entity, Cardinality)::'/bootstrap':error, '/bootstrap':horiz(['/bootstrap':label(!'Too few intances of'), '/bootstrap':vis(Entity::entity), '/bootstrap':label(!.), '/bootstrap':vis(Name::propertyName(Entity, Type, Cardinality)), '/bootstrap':label(!'of type'), '/bootstrap':vis(Type::propertyType), '/bootstrap':label(!'and cardinality'), '/bootstrap':vis(Cardinality::cardinality)])).
 '/bootstrap':signature(tooManyInstances(Name, Type, Entity, Cardinality)::'/bootstrap':error, [Name::propertyName(Entity, Type, Cardinality), Type::propertyType, Entity::entity, Cardinality::cardinality]).
+'/bootstrap':projection(tooManyInstances(Name, Type, Entity, Cardinality)::'/bootstrap':error, '/bootstrap':horiz(['/bootstrap':label(!'Too many intances of'), '/bootstrap':vis(Entity::entity), '/bootstrap':label(!.), '/bootstrap':vis(Name::propertyName(Entity, Type, Cardinality)), '/bootstrap':label(!'of type'), '/bootstrap':vis(Type::propertyType), '/bootstrap':label(!'and cardinality'), '/bootstrap':vis(Cardinality::cardinality)])).
+checkValueCount(one, Count, Name, Type, Entity, tooFewInstances(Name, Type, Entity, one)):-1>Count.
 checkValueCount(one, Count, Name, Type, Entity, tooManyInstances(Name, Type, Entity, one)):-Count>1.
 '/bootstrap':signature(zeroToOne::cardinality, []).
 '/bootstrap':projection(zeroToOne::cardinality, '/bootstrap':label(!'0..1')).

@@ -18,6 +18,10 @@ import org.eclipse.draw2d.geometry.Insets;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * Displays a solid line under the contents, using the current color.
+ * Takes one argument: the contents.
+ */
 public class Underline extends TermContextProxy {
 
     public class UndrelineBorder extends AbstractBorder {

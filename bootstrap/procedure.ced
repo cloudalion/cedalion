@@ -1,21 +1,21 @@
 signature(procedure::type, []).
 signature(command::type, []).
-signature(cpi:procedureCommand(Proc, Command)::pred, [Proc::procedure, Command::command]).
+doc(!'Defines procedure Proc, by associating it to Command', signature(cpi:procedureCommand(Proc, Command)::pred, [Proc::procedure, Command::command])).
 projection(cpi:procedureCommand(Proc, Command)::pred, vert([horiz([bold(label(!procedure)), halfSize(label(!pred)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
 signature(statement::type, []).
-signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]).
+doc(!'Procedure definition in a statement', signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command])).
 projection(procedure(Proc, Command)::statement, vert([horiz([bold(label(!procedure)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
-signature(builtin:true::pred, []).
+doc(!'A goal that always succeeds', signature(builtin:true::pred, [])).
 procedure(Proc, Command)~>cpi:procedureCommand(Proc, Command):-builtin:true.
 signature(expr(T)::type, [T::type]).
-signature(function(Expr, T, Result, Command)::statement, [Expr::expr(T), T::type, Result::ref(T), Command::command]).
+doc(!'A procedural function.  Expr is a procedure that runs Command and then evaluates to Result of type T', signature(function(Expr, T, Result, Command)::statement, [Expr::expr(T), T::type, Result::ref(T), Command::command])).
 projection(function(Expr, T, Result, Command)::statement, vert([horiz([bold(label(!function)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))]), horiz([label(!'    '), vis(Command::command)])])).
 signature(ref(T)::type, [T::type]).
-signature(cpi:func(Expr, Result, T)::procedure, [Expr::expr(T), Result::ref(T), T::type]).
+doc(!'This is how a procedural function looks as a procedure', signature(cpi:func(Expr, Result, T)::procedure, [Expr::expr(T), Result::ref(T), T::type])).
 projection(cpi:func(Expr, Result, T)::procedure, horiz([bold(label(!func)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))])).
 function(Expr, T, Result, Command)~>procedure(cpi:func(Expr, Result, T), Command).
 signature(typedTerm::type, []).
-signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]).
+doc(!'Associating a concept (represented by TTerm) with a Java class', signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string])).
 defines((cpi:termClass(TTerm, _):-_), TTerm, semanticDefinition).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
 signature(commandClass(Cmd, ClassName)::statement, [Cmd::command, ClassName::string]).

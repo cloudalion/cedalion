@@ -6,6 +6,10 @@ import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.Label;
 
+/**
+ * Displays a symbol using the symbol font, given its Unicode.
+ * Takes one argument: the Unicode of the character to be displayed.
+ */
 public class Symbol extends Label implements TermFigure {
 
 	private char character;

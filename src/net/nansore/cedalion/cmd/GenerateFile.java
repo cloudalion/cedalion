@@ -29,8 +29,7 @@ public class GenerateFile implements ICommand {
 	@Override
 	public void run(ExecutionContext executionContext) throws PrologException,
 		TermInstantiationException, ExecutionContextException {
-		PrologProxy p = executionContext.prolog();
-		p.getSolution(p.createCompound("generateFile", fileName, strVar, goal));
+		PrologProxy.instance().getSolution(Compound.createCompound("generateFile", fileName, strVar, goal));
 	}
 
 }

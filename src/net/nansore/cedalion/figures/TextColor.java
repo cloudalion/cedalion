@@ -14,7 +14,10 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * @author boaz
+ * Modifies the color of the text in the contents.
+ * Takes 2 arguments:
+ * 1. the contents
+ * 2. the color (RGB) in which we wish to color the text.
  */
 public class TextColor extends TermContextProxy {
     

@@ -1,11 +1,8 @@
-signature(given(S, Ss)::statement, [S::statement, Ss::list(statement)]).
-projection(given(S, Ss)::statement, vert([vis(S::statement), horiz([label(!given), cpi:vis(Ss::list(statement), horiz)])])).
-signature(statementFound(S, Ss)::pred, [S::statement, Ss::list(statement)]).
-given(S, Ss)~>statementFound(S, Ss):-builtin:true.
-rem((S~>statementFound(S, []):- \+statementFound(S, [_|_]))).
-given(S, Ss)~> (S~>S1)~>given(S1, Ss).
-signature(missingDependency(S, Dep)::pred, [S::statement, Dep::statement]).
-missingDependency(Statement, Statement):- \+statementFound(Statement, _).
-missingDependency(Statement, Dependency):-statementFound(Statement, Deps), listMember(Dep, statement, Deps), missingDependency(Dep, Dependency).
-signature(req(TTerm, S)::statement, [TTerm::typedTerm, S::statement]).
-req(TTerm, S)~>check(Path, TTerm, VarNames, marker(Path, error(missing(Dep), VarNames))):-missingDependency(S, Dep).
+sigProj(error(Path, TTerm, VNs, Error)::pred, [Path::cpi:path, TTerm::typedTerm, VNs::list(varName), Error::error], horiz([label(!'Error'), vis(Error::error), label(!'for term'), vis(TTerm::typedTerm), label(!'at path'), vis(Path::cpi:path), label(!'with varnames'), vis(VNs::list(varName))])).
+check(Path, TTerm, VNs, marker(Path, error(Error, VNs))):-builtin:catch(error(Path, TTerm, VNs, Error), Exception, Error::error=exceptionThrown(Exception)::error).
+error(_, _, _, _):-builtin:fail.
+signature(missingDefinition(Def, Path, VNs)::error, [Def::statement, Path::cpi:path, VNs::list(varName)]).
+projection(missingDefinition(Def, Path, VNs)::error, vert([horiz([label(!'Missing definition:'), vis(Def::statement)]), halfSize(horiz([label(!'At path'), vis(Path::cpi:path), label(!'with varnames'), vis(VNs::list(varName))]))])).
+signature(requiredSemanticDefinition::definitionType, []).
+projection(requiredSemanticDefinition::definitionType, label(!'Required Semantic Definition')).
+disabled((error(Path, TTerm, VNs, missingDefinition(Definition, Path, VNs)):- \+builtin:var(TTerm), canDefine(Definition, TTerm, requiredSemanticDefinition), checkSignature(TTerm, _), \+builtin:loadedStatement(_, Definition, _))).

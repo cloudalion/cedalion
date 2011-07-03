@@ -28,3 +28,6 @@ projection(setParens(Set)::set(T), brackets(vis(Set::set(T)), 40, 41)).
 alias(setParens(Set)::set(T), !'()').
 setDef(setParens(Set), Set, T).
 defines((member(_, Set, T):-_), Set::set(T), semanticDefinition).
+signature(diffSet(A, B)::set(T), [A::set(T), B::set(T)]).
+projection(diffSet(A, B)::set(T), horiz([vis(A::set(T)), label(! (\)), vis(B::set(T))])).
+setDef(diffSet(A, B), set(X, (member(X, A, T), \+member(X, B, T))), T).

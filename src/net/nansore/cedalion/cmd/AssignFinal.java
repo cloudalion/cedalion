@@ -8,6 +8,10 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.Variable;
 
+/**
+ * Evaluates an imperative expression, and assigns the value to a logic variable.
+ * Takes three arguments: The target variable, the expression to be evaluated and the type.
+ */
 public class AssignFinal implements ICommand {
 	private Variable target;
 	private Compound expression;

@@ -8,10 +8,17 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
+import net.nansore.prolog.PrologProxy;
 
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 
+/**
+ * A figure, that when double-clicked, performs a procedure associated with it.  The term is expected to have 2 or 3 arguments:
+ * 1. The child figure to display.
+ * 2. The procedure to perform when the action occurs
+ * 3. (optional) A goal that decides if the action should be performed automatically, as the visuals are displayed.
+ */
 public class ActionFigure extends TermContextProxy {
 
 	private Compound proc;
@@ -28,7 +35,7 @@ public class ActionFigure extends TermContextProxy {
 		}
 		proc = (Compound)term.arg(2);
 		if(term.arity() >= 3) {
-			automatic  = term.getProlog().hasSolution((Compound)term.arg(3));
+			automatic  = PrologProxy.instance().hasSolution((Compound)term.arg(3));
 		}
 	}
 
@@ -73,7 +80,7 @@ public class ActionFigure extends TermContextProxy {
 
 	@Override
 	public void performDefaultAction() {
-		ExecutionContext exe = new ExecutionContext(proc.getProlog());
+		ExecutionContext exe = new ExecutionContext();
 		try {
 			exe.runProcedure(proc);
 		} catch (PrologException e) {

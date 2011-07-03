@@ -12,7 +12,7 @@ import net.nansore.prolog.PrologException;
 import org.eclipse.draw2d.FlowLayout;
 
 /**
- * @author boaz
+ * A FlowFigure that lays out its contents vertically.  Takes no extra arguments.
  */
 public class VerticalFlow extends FlowFigure {
 

@@ -1,0 +1,4 @@
+'/bootstrap':sigProj(base::'/bootstrap':type, [], '/bootstrap':label(!'Nucleotide')).
+'/bootstrap':sigProj(a::base, [], '/bootstrap':label(!'A')).
+'/bootstrap':sigProj(aSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'A')).
+'/bootstrap':setDef(aSet, '/bootstrap':singleton([a]), '/bootstrap':list(base)).

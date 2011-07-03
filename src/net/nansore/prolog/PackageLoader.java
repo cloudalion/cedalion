@@ -19,6 +19,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+/**
+ * Deprecated.  Not in use
+ */
 public class PackageLoader {
 	Set<String> loadedUrls = new HashSet<String>();
 	private File cacheLocation;
@@ -38,7 +41,7 @@ public class PackageLoader {
 			Variable varRes = new Variable("Res");
 			Variable varNS = new Variable("NS");
 			Variable varAlias = new Variable("Alias");
-			Iterator<Map<Variable, Object>> i = prolog.getSolutions(new Compound(prolog, "semImported", varRes, varNS, varAlias));
+			Iterator<Map<Variable, Object>> i = prolog.getSolutions(new Compound("semImported", varRes, varNS, varAlias));
 			while(i.hasNext()) {
 				Map<Variable, Object> result = i.next();
 				String url = result.get(varNS).toString();
@@ -81,7 +84,7 @@ public class PackageLoader {
 	private void loadFile(String pkg, File file) throws PrologException {
 		String resourcePath = pkg + "$" + file.getName();
 		String filePath = file.getAbsolutePath();
-		prolog.hasSolution(new Compound(prolog, "semAssertTermsFromFile", pkg, resourcePath, filePath));
+		prolog.hasSolution(new Compound("semAssertTermsFromFile", pkg, resourcePath, filePath));
 	}
 
 	private void extractZip(ZipFile zip, File cacheDir) throws FileNotFoundException, IOException {
@@ -124,8 +127,8 @@ public class PackageLoader {
 		output.close();
 	}
 	
-	public static void main(String[] args) throws IOException, PrologException {
+	/*public static void main(String[] args) throws IOException, PrologException {
 		PackageLoader loader = new PackageLoader(new File("d:\\"), null, new PrologProxy("pl", new File("service.pl")));
 		loader.loadNamespace("http://127.0.0.1/Apache2.2.zip");
-	}
+	}*/
 }

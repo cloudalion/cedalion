@@ -34,16 +34,6 @@ public class CedalionView extends ViewPart implements TermContext {
 	private FigureCanvas canvas;
 	private TermContext context;
 
-	/*
-	 * The content provider class is responsible for
-	 * providing objects to the view. It can wrap
-	 * existing objects in adapters or simply return
-	 * objects as-is. These objects may be sensitive
-	 * to the current input of the view, or ignore
-	 * it and always show the same content 
-	 * (like Task List, for example).
-	 */
-	 
 	/**
 	 * The constructor.
 	 */
@@ -67,6 +57,12 @@ public class CedalionView extends ViewPart implements TermContext {
 		canvas.setFocus();
 	}
 
+	/**
+	 * Sets the visuals displayed on the view to the given ones.
+	 * @param visualization a term describing the visuals we wish to display
+	 * @throws TermInstantiationException if a Java object was not properly created from a term
+	 * @throws PrologException if the Cedalion program has raised an exception
+	 */
 	public void setVisualization(Compound visualization) throws TermInstantiationException, PrologException {
 		context = Activator.getDefault().currentContext();
 		IFigure figure = (IFigure)TermInstantiator.instance().instantiate(visualization, this);
@@ -116,7 +112,7 @@ public class CedalionView extends ViewPart implements TermContext {
 
 	@Override
 	public Compound getPath() {
-		return context.getPath();
+		return null;
 	}
 
 	@Override

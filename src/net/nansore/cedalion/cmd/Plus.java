@@ -8,6 +8,10 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.Variable;
 
+/**
+ * Takes two imperative expressions as arguments, and a target reference.  Calculates the values, 
+ * then adds them.  Stores the result in the given target reference.
+ */
 public class Plus implements ICommand {
 	private Object arg1;
 	private Object arg2;

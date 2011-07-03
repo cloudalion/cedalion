@@ -7,6 +7,10 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
+/**
+ * Inserts the given statement into the logic engine's database
+ * Takes one argument: the statement to be inserted.
+ */
 public class DBInsert implements ICommand {
 	private Compound statement;
 
@@ -16,8 +20,7 @@ public class DBInsert implements ICommand {
 
 	public void run(ExecutionContext executionContext) throws PrologException,
 			TermInstantiationException {
-		PrologProxy p = executionContext.prolog();
-		p.getSolution(p.createCompound("insert", statement));
+		PrologProxy.instance().getSolution(Compound.createCompound("insert", statement));
 	}
 
 }

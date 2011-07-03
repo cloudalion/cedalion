@@ -48,9 +48,7 @@ public class CedalionPreferences
 		addField(new IntegerFieldEditor("proxyPort", "Proxy port", getFieldEditorParent()));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
+	@Override
 	public void init(IWorkbench workbench) {
 	}
 	

@@ -10,7 +10,8 @@ import net.nansore.prolog.Compound;
 import org.eclipse.draw2d.Label;
 
 /**
- * @author boaz
+ * A figure that displays a constant label, using the font it takes from its environment.
+ * Takes one argument: the text to be displayed.
  */
 public class LabelFigure extends Label implements TermFigure {
 

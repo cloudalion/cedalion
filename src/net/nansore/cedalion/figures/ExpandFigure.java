@@ -17,6 +17,16 @@ import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseListener;
 import org.eclipse.draw2d.Panel;
 
+/**
+ * An ExpandFigure holds two versions of its contents: "collapsed" and "expanded".
+ * It displays both next to an icon with either a "+" (for "collapsed"), or a "-" (for "expanded").
+ * Clicking the icon toggles the figure's state.
+ * ExpandFigure tries to remember its state from one instance to another based on its path.
+ * However, editing the file can shift the path and cause it to loose track of its state.
+ * Receives two arguments:
+ * 1. Its collapsed contents
+ * 2. Its expanded contents
+ */
 public class ExpandFigure extends TermContextProxy {
 
 	private ImageFigure icon;
@@ -24,9 +34,12 @@ public class ExpandFigure extends TermContextProxy {
 	private TermFigure collapsed;
 	private TermFigure expanded;
 	private Compound path;
+	private Compound term;
+	private boolean isExpanded = false;
 
 	public ExpandFigure(Compound term, TermContext parent) throws TermInstantiationException, PrologException {
 		super(parent);
+		this.term = term;
 		path = parent.getPath();
 		// Build a panel with an icon to its left
 		setLayoutManager(new FlowLayout());
@@ -41,8 +54,11 @@ public class ExpandFigure extends TermContextProxy {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		collapsed = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);
-		expanded = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(2), this);
+		if(isExpanded()) {
+			expanded = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(2), this);			
+		} else {
+			collapsed = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);			
+		}
 		panel.add(isExpanded() ? expanded : collapsed);
 		icon.addMouseListener(new MouseListener() {
 			
@@ -52,7 +68,13 @@ public class ExpandFigure extends TermContextProxy {
 			
 			@Override
 			public void mousePressed(MouseEvent me) {
-				toggle();
+				try {
+					toggle();
+				} catch (TermInstantiationException e) {
+					e.printStackTrace();
+				} catch (PrologException e) {
+					e.printStackTrace();
+				}
 			}
 			
 			@Override
@@ -61,10 +83,17 @@ public class ExpandFigure extends TermContextProxy {
 		});
 	}
 
-	protected void toggle() {
+	protected void toggle() throws TermInstantiationException, PrologException {
 		boolean isExpanded = isExpanded();
 		IFigure from = isExpanded ? expanded : collapsed;
 		IFigure to = isExpanded ? collapsed : expanded;
+		if(to == null) {
+			if(isExpanded()) {
+				to = collapsed = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(1), this);			
+			} else {
+				to = expanded = (TermFigure) TermInstantiator.instance().instantiate((Compound)term.arg(2), this);			
+			}
+		}
 		isExpanded = !isExpanded;
 		setExpaneded(isExpanded);
 		panel.remove(from);
@@ -78,11 +107,16 @@ public class ExpandFigure extends TermContextProxy {
 	}
 
 	private void setExpaneded(boolean isExpanded) {
-		PathStore.instance().assign(path, "expanded", isExpanded);
-		System.out.println("Assigned to path: " + path + ": " + isExpanded);
+		if(path != null) {
+			PathStore.instance().assign(path, "expanded", isExpanded);
+			System.out.println("Assigned to path: " + path + ": " + isExpanded);			
+		}
+		this.isExpanded = isExpanded;
 	}
 
 	private boolean isExpanded() {
+		if(path == null)
+			return isExpanded;
 		try {
 			boolean expanded = (Boolean)PathStore.instance().getProperty(path, "expanded");
 			System.out.println("Expanded for path " + path + ": " + expanded);
@@ -95,8 +129,10 @@ public class ExpandFigure extends TermContextProxy {
 
 	@Override
 	public void dispose() {
-		expanded.dispose();
-		collapsed.dispose();
+		if(expanded != null)
+			expanded.dispose();
+		if(collapsed != null)
+			collapsed.dispose();
 		icon.erase();
 		panel.erase();
 	}

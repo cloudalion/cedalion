@@ -8,6 +8,10 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
+/**
+ * Notifies listeners associated with the given term.  
+ * Takes one argument: the term to notify on. 
+ */
 public class Notify implements ICommand {
 	
 	private Compound notifyTerm;

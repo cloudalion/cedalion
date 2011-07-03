@@ -1,12 +1,9 @@
 package net.nansore.parser;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import net.nansore.parser.Operator.Assoc;
 
@@ -19,12 +16,12 @@ public class InfixParser {
 		keywords.add(name);
 	}
 	
-	public <T> T parse(Reader input, ParserContext<T> context) throws IOException, ParseException {
+/*	public <T> T parse(Reader input, ParserContext<T> context) throws IOException, ParseException {
 		Stack<T> valueStack = new Stack<T>();
 		Stack<Operator> opStack = new Stack<Operator>();
 		LexicalAnalyzer lex = new LexicalAnalyzer(input, keywords);
 		// TODO: Complete this...
 		return null;
-	}
+	}*/
 
 }

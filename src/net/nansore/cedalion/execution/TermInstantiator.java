@@ -11,6 +11,9 @@ import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 import net.nansore.prolog.Variable;
 
+/**
+ * A singleton class in charge of instantiating terms into Java objects.
+ */
 public class TermInstantiator {
 	
 	private Map<String, Class<?>> classCache = new HashMap<String, Class<?>>();
@@ -20,10 +23,25 @@ public class TermInstantiator {
 		
 	}
 
+	/**
+	 * @return the singleton instance
+	 */
 	public static TermInstantiator instance() {
 		return instance;
 	}
 	
+	/**
+	 * Instantiates the given term. 
+	 * It follows the following protocol:
+	 * For "instantiable" terms, the predicate cpi#termClass/2 succeeds, and provides the fully-qualified 
+	 * name of the associated class.  An instance of this class is then instantiated, using a constructor that
+	 * matches the given arguments.
+	 *
+	 * @param args the arguments to be passed to the object's constructor.  The first argument must be the Compound term being instantiated.
+	 * @return the Java object associated with the term.
+	 * @throws TermInstantiationException if the Java class was not found, or the constructor was not found or failed.
+	 * @throws PrologException if the querying for the term's associated class raised an exception
+	 */
 	public synchronized Object instantiate(Object... args) throws TermInstantiationException, PrologException {
 		if(!(args[0] instanceof Compound))
 			throw new TermInstantiationException("First argument must be a compound term");
@@ -72,11 +90,11 @@ public class TermInstantiator {
 	}
 
 	private Class<?> termClass(Compound term) throws PrologException, TermInstantiationException {
-		PrologProxy prolog = term.getProlog();
+		PrologProxy prolog = PrologProxy.instance();
 		Class<?> clazz = classCache.get(term.name());
 		if(clazz == null) {
 			Variable classNameVar = new Variable("VarName");
-			Compound query = new Compound(prolog, "cpi#termClass", new Compound(prolog, "::", term, new Variable("T")), classNameVar);
+			Compound query = new Compound("cpi#termClass", new Compound("::", term, new Variable("T")), classNameVar);
 			Map<Variable, Object> result;
 			try {
 				result = prolog.getSolution(query);

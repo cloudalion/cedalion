@@ -12,7 +12,7 @@ import net.nansore.prolog.PrologException;
 import org.eclipse.swt.graphics.FontData;
 
 /**
- * @author boaz
+ * A font modifier that cuts the font size of its contents by two.  Takes no extra arguments.
  */
 public class HalfSize extends FontModifier {
 

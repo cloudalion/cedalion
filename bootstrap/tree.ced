@@ -1,0 +1,7 @@
+signature(treeElement(Parent, Child)::pred, [Parent::typedTerm, Child::typedTerm]).
+treeElement(S1::statement, S2::statement):-builtin:loadedStatement(_, (S1~>S2), _).
+signature(treeElementVis(Parent, ChildVis)::pred, [Parent::typedTerm, ChildVis::visualization]).
+treeElementVis(Parent, horiz([symbol(8729), expand(vis(cpi:immediateDescriptor(Child, [])::Type), vert([vis(cpi:immediateDescriptor(Child, [])::Type), dynamicList(Vis, treeElementVis(Child::Type, Vis))]))])):-treeElement(Parent, Child::Type).
+signature(showTree(Parent)::procedure, [Parent::typedTerm]).
+procedure(showTree(Parent::Type), showView(horiz([symbol(8729), expand(vis(cpi:immediateDescriptor(Parent, [])::Type), vert([vis(cpi:immediateDescriptor(Parent, [])::Type), dynamicList(Vis, treeElementVis(Parent::Type, Vis))]))]))).
+contextMenuEntry(Parent, _, _, !'Show tree', showTree(Parent)).

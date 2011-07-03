@@ -9,6 +9,10 @@ import net.nansore.prolog.PrologException;
 import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.SimpleRaisedBorder;
 
+/**
+ * A BorderFigure that displays a raised border around the contents.
+ * Takes no additional arguments.
+ */
 public class Raised extends BorderFigure {
 
 	public Raised(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {

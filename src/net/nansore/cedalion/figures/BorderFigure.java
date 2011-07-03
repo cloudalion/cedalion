@@ -12,6 +12,9 @@ import net.nansore.prolog.PrologException;
 
 import org.eclipse.draw2d.Border;
 
+/**
+ * This is a base class for all border figures.  It assumes that the first argument of the underlying term is the content to be placed inside the border.
+ */
 public abstract class BorderFigure extends TermContextProxy {
 
     private TermFigure figure;

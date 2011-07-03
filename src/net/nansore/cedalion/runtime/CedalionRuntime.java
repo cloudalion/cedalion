@@ -17,11 +17,12 @@ public class CedalionRuntime {
 
 	public CedalionRuntime(String swiProlog, String programFile) throws IOException, PrologException {
 		URL url =  ClassLoader.getSystemResource("service.pl");
-		prolog = new PrologProxy(swiProlog, new File(url.getFile()));
+		PrologProxy.initialize(swiProlog, new File(url.getFile()));
+		prolog = PrologProxy.instance();
 		
-		prolog.getSolution(new Compound(prolog, "loadFile", programFile, "<no namespace>"));
+		prolog.getSolution(new Compound("loadFile", programFile, "<no namespace>"));
 		
-		exe = new ExecutionContext(prolog);
+		exe = new ExecutionContext();
 
 	}
 	
@@ -29,7 +30,7 @@ public class CedalionRuntime {
 		exe.runProcedure(proc);
 	}
 	
-	public static void main(String[] args) throws IOException, PrologException {
+/*	public static void main(String[] args) throws IOException, PrologException {
 		CedalionRuntime runtime = new CedalionRuntime("/usr/bin/swipl", "/home/boaz/export.car");
-	}
+	}*/
 }

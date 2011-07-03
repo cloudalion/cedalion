@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This class is a SWT composite control that contains a text field and a draw2d canvas. 
- * @author boaz
  */
 public class VisualTermWidget extends Composite {
     
@@ -54,9 +53,10 @@ public class VisualTermWidget extends Composite {
 	private FontResize resizer;
 
     /**
-     * @param parent
-     * @param style
-     * @param cedalionEditor 
+     * Construct a widget
+     * @param parent The parent widget
+     * @param style the SWT style to use
+     * @param cedalionEditor the owner editor
      */
     public VisualTermWidget(Composite parent, int style, final CedalionEditor cedalionEditor) {
         super(parent, style);
@@ -231,22 +231,36 @@ public class VisualTermWidget extends Composite {
 		
 	}
 	/**
-     * @return Returns the canvas.
+     * @return the canvas.
      */
     public FigureCanvas getCanvas() {
         return canvas;
     }
     
+    /**
+     * Modifies the contents to displaying a new term
+     * @param term the term to display
+     * @param context the TermContext to use
+     * @throws TermVisualizationException if the term could not be visualized properly
+     * @throws TermInstantiationException if the visualization term failed to turn into a Java object
+     * @throws PrologException if Cedalion threw an exception
+     */
     public void setTerm(Compound term, TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {
     	this.term = term;
     	this.context = context;
     	refresh();
     }
+    /**
+     * Re-render the term into visuals
+     * @throws TermVisualizationException if the term could not be visualized properly
+     * @throws TermInstantiationException if the visualization term failed to turn into a Java object
+     * @throws PrologException if Cedalion threw an exception
+     */
 	public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
 		panel.removeAll();
 		if(resizer != null)
 			resizer.dispose();
-    	Compound compound = term.getProlog().createCompound("fontResize", term, new Integer(fontSizeOffset));
+    	Compound compound = Compound.createCompound("fontResize", term, new Integer(fontSizeOffset));
 		resizer = new FontResize(compound, context);
 		panel.add(resizer);
 		FigureNavigator.getNavigatorForRoot(canvas.getContents()).refresh();

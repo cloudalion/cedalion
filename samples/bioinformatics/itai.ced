@@ -1,0 +1,9 @@
+'/bootstrap':signature(not(X)::'/bootstrap':set('/bootstrap':list(base)), [X::base]).
+dnaSetDef(not(X), '/bootstrap':set([Y], ('/bootstrap':member([Y], nSet, '/bootstrap':list(base)), \+X::base=Y::base))).
+'/bootstrap':signature(prefix::'/bootstrap':set('/bootstrap':list(base)), []).
+dnaSetDef(prefix, seq(aSet, seq(cSet, seq(tSet, seq(gSet, seq(cSet, seq(tSet, seq(aSet, gSet)))))))).
+'/bootstrap':signature(suffix::'/bootstrap':set('/bootstrap':list(base)), []).
+dnaSetDef(suffix, seq(cSet, seq(tSet, aSet))).
+'/bootstrap':signature(wrapped(X)::'/bootstrap':set('/bootstrap':list(base)), [X::'/bootstrap':set('/bootstrap':list(base))]).
+dnaSetDef(wrapped(X), seq(prefix, seq(X, suffix))).
+microArray(!'microarray/itai', [section(!normal, wrapped(uniformRestrict(seq(rep(nSet, 3), seq(cSet, seq(rep(nSet, 2), seq(gSet, rep(nSet, 3))))))), 32000), section(!'negative-control', wrapped(uniformRestrict(seq(rep(nSet, 3), seq(not(c), seq(rep(nSet, 2), seq(not(g), rep(nSet, 3))))))), 200)]).

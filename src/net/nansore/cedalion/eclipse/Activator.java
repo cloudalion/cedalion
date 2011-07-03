@@ -5,14 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import net.nansore.cedalion.figures.Link;
+import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
@@ -33,21 +32,25 @@ import org.osgi.framework.BundleContext;
  */
 public class Activator extends AbstractUIPlugin {
 
-	// The plug-in ID
+	/**
+	 *  The plug-in ID
+	 */
 	public static final String PLUGIN_ID = "net.nansore.cedalion";
 
 	public static final String CEDALION_EDITOR_NAME = "net.nansore.cedalion.editor";
 
-	// The shared instance
+	/**
+	 *  The shared instance
+	 */
 	private static Activator plugin;
 
-	//Resource bundle.
+	/** 
+	 * Resource bundle.
+	 */
 	private ResourceBundle resourceBundle;
     private BundleContext context;
     
 //    private PackageLoader pkgLoader;
-
-	private PrologProxy prolog;
 
 	private IViewOpener viewOpener;
 
@@ -74,17 +77,15 @@ public class Activator extends AbstractUIPlugin {
         		plInterpreter = "pl";
         	}
             try {
-				//URL serviceURL = ClassLoader.getSystemResource("service.pl");
-            	//prolog = new PrologProxy(plInterpreter, new File(serviceURL.getFile()));
-            	prolog = new PrologProxy(plInterpreter, loadToFileSystem(context, "service.pl"));
+            	PrologProxy.initialize(plInterpreter, loadToFileSystem(context, "service.pl"));
 
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 	            loadResources(root);
 	            
-	            Proxy proxy = null;
+/*	            Proxy proxy = null;
 	            if(getPreferenceStore().getBoolean("useProxy")) {
 	            	proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(getPreferenceStore().getString("proxyHost"), getPreferenceStore().getInt("proxyPort")));
-	            }
+	            }*/
 	            	
 	            //pkgLoader = new PackageLoader(getStateLocation().toFile(), proxy);
 	            //loadNamespaces();
@@ -102,7 +103,10 @@ public class Activator extends AbstractUIPlugin {
 //		pkgLoader.loadNamespaces();
 //	}
 
-    private File loadToFileSystem(BundleContext context, String fileName) throws IOException, FileNotFoundException, PrologException {
+	/**
+	 * Load a plugin resource into a file-system file.
+	 */
+	private File loadToFileSystem(BundleContext context, String fileName) throws IOException, FileNotFoundException, PrologException {
 		File tmpFile = File.createTempFile("tmp", ".ced");
 		URL prologFileURL = context.getBundle().getEntry(fileName);
 		URLConnection connection = prologFileURL.openConnection();
@@ -138,6 +142,10 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
+	/**
+	 * Load a workspace file into Cedalion
+	 * @param resource the file as a workspace resource
+	 */
 	public void loadResource(IResource resource) {
 		String resourcePath = resource.getFullPath().toString();
 		System.out.println("Loading: " + resourcePath);
@@ -146,7 +154,7 @@ public class Activator extends AbstractUIPlugin {
 		System.out.println("Package: " + pkg);
 		Link.setFileNameToResourceMapping(filePath, resourcePath);
 		try {
-			prolog.getSolution(prolog.createCompound("loadFile", filePath, pkg));
+			PrologProxy.instance().getSolution(new Compound("loadFile", filePath, pkg));
 		} catch (PrologException e) {
 			e.printStackTrace();
 		}
@@ -161,7 +169,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	private void stopPServer() throws IOException {
-        prolog.terminate();
+        PrologProxy.instance().terminate();
     }
 
     /**
@@ -192,14 +200,14 @@ public class Activator extends AbstractUIPlugin {
 	}
 
     /**
-     * @return
+     * @return the context
      */
     public BundleContext getContext() {
         return context;
     }
 
     /**
-     * @return
+     * @return The "zoom in" button image
      * @throws IOException
      * @throws CoreException
      */
@@ -211,7 +219,7 @@ public class Activator extends AbstractUIPlugin {
     }
 
     /**
-     * @return
+     * @return The "zoom out" button image
      * @throws IOException
      * @throws CoreException
      */
@@ -223,7 +231,7 @@ public class Activator extends AbstractUIPlugin {
     }
 
     /**
-     * @return
+     * @return The "refresh" button image
      * @throws IOException
      * @throws CoreException
      */
@@ -234,26 +242,52 @@ public class Activator extends AbstractUIPlugin {
         return new Image(display, input);
     }
 
-	public static PrologProxy getProlog() {
-		return getDefault().prolog;
+	/**
+	 * @return reference to the PrologProxy instance, holding the connection to the Prolog back-end. 
+	 */
+    public static PrologProxy getProlog() {
+		return PrologProxy.instance();
 	}
 	
-	public void registerViewOpener(IViewOpener opener) {
+	/**
+	 * Allows other parties (e.g., the Cedalion editor) to register themselves as the "view opener", used by openView()
+	 * @param opener the designated view opener.
+	 */
+    public void registerViewOpener(IViewOpener opener) {
 		viewOpener = opener;
 	}
 	
-	public void registerCurrentContext(TermContext currContext) {
+	/**
+	 * Allo other parties to register themselves as the term context for newly opened views.
+	 * @param currContext the designated context
+	 */
+    public void registerCurrentContext(TermContext currContext) {
 		this.currContext = currContext;
 	}
 	
-	public CedalionView openView() throws PartInitException {
+	/**
+	 * Opens a view (using the registered view opener)
+	 * @return the new view
+	 * @throws PartInitException if construction has failed.
+	 */
+    public CedalionView openView() throws PartInitException {
 		return viewOpener.openView();
 	}
 	
+    /**
+     * @return the current context.
+     */
 	public TermContext currentContext() {
 		return currContext;
 	}
 
+	/**
+	 * Returns an image from the plug-in
+	 * @param imageName The name of the image
+	 * @param display A display object associated with the GUI
+	 * @return the created image
+	 * @throws IOException if creation failed
+	 */
 	public Image getImage(String imageName, Display display) throws IOException {
 		URL prologFileURL = context.getBundle().getEntry("icons/" + imageName + ".gif");
 		URLConnection connection = prologFileURL.openConnection();
@@ -261,6 +295,12 @@ public class Activator extends AbstractUIPlugin {
         return new Image(display, input);
 	}
 
+	/**
+	 * Returns the "Take screenshot" button image
+	 * @param display A display object associated with the GUI
+	 * @return the newly created image
+	 * @throws IOException if something goes wrong
+	 */
 	public Image getScreenshotImage(Display display) throws IOException {
 		URL prologFileURL = context.getBundle().getEntry("icons/screenshot16.png"); // Replace with screenshot icon
 		URLConnection connection = prologFileURL.openConnection();

@@ -1,22 +1,23 @@
-signature(cpi:path::type, []).
-signature(cpi:path(ResourceName, Path)::cpi:path, [ResourceName::string, Path::list(number)]).
+doc(!'Type for a path to a code element', signature(cpi:path::type, [])).
+doc(!'A path to a code element.  Consists of ResourceName - the file name, and Path - a list of numbers representing the one-based index of nested argument to take to reach the code element', signature(cpi:path(ResourceName, Path)::cpi:path, [ResourceName::string, Path::list(number)])).
 projection(cpi:path(ResourceName, Path)::cpi:path, horiz([vis(ResourceName::string), label(! (/)), cpi:vis(Path::list(number), horiz)])).
-signature(cpi:termAtPath(Path, TTerm, VarNames)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)]).
+doc(!'Retrieves a code element (TTerm), based on its Path.  VarNames contains variable name bindings for TTerm', signature(cpi:termAtPath(Path, TTerm, VarNames)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)])).
 cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames):-fileIsLoaded(ResourceName, _, model(Statements, AllVarNames, _)), subTerm(Statements::list(statement), Path, TTerm), selectVarNamesFor(TTerm, AllVarNames, VarNames).
 signature(subTerm(TTerm, Path, TSubTerm)::pred, [TTerm::typedTerm, Path::list(number), TSubTerm::typedTerm]).
 subTerm(TTerm, [], TTerm):-builtin:true.
-signature(builtin:parseTerm(TTerm, Func, TArgs)::pred, [TTerm::typedTerm, Func::string, TArgs::list(typedTerm)]).
+doc(!'Parse a typed term (TTerm) into a Name and a list of typed arguments (TArgs).  Can also be used to construct a typed term out of a name and typed args.  This predicate is not type-safe.  Use safeParseTerm instead.', signature(builtin:parseTerm(TTerm, Func, TArgs)::pred, [TTerm::typedTerm, Func::string, TArgs::list(typedTerm)])).
 subTerm(TTerm, [First|Path], TSubTerm):-safeParseTerm(TTerm, _, TArgs), element(TSubTerm1, First, TArgs, typedTerm), subTerm(TSubTerm1, Path, TSubTerm).
 signature(safeParseTerm(TTerm, Name, TArgs)::pred, [TTerm::typedTerm, Name::string, TArgs::list(typedTerm)]).
 safeParseTerm(Term::Type, Name, TArgs):-builtin:parseTerm(Term::Type, Name, TRawArgs), builtin:if((builtin:compound(Term::Type), checkSignature(Term::Type, TArgs), \+checkSignature(TRawArgs, TArgs, signaturePlaceMismatch(_, _)), \+checkSignature(TRawArgs, TArgs, signatureSizeMismatch)), builtin:true, TArgs::list(typedTerm)=TRawArgs::list(typedTerm)).
 signature(element(Elem, Index, List, Type)::pred, [Elem::Type, Index::number, List::list(Type), Type::type]).
 element(First, 1, [First|_], _):-builtin:true.
-signature(builtin:succ(IndexMinusOne, Index)::pred, [IndexMinusOne::number, Index::number]).
+doc(!'Calculate the next of previous integer', signature(builtin:succ(IndexMinusOne, Index)::pred, [IndexMinusOne::number, Index::number])).
+projection(builtin:succ(IndexMinusOne, Index)::pred, horiz([vis(Index::number), label(! (=)), vis(IndexMinusOne::number), label(!'+1')])).
 element(Elem, Index, [_|Rest], Type):-builtin:succ(IndexMinusOne, Index), element(Elem, IndexMinusOne, Rest, Type).
 signature(setElement(Index, List, Elem, NewList, Type)::pred, [Index::number, List::list(Type), Elem::Type, NewList::list(Type), Type::type]).
 setElement(1, [_|Rest], Elem, [Elem|Rest], _):-builtin:true.
 setElement(Index, [First|Rest], Elem, [First|ModRest], Type):-builtin:succ(IndexMinusOne, Index), setElement(IndexMinusOne, Rest, Elem, ModRest, Type).
-signature(cpi:setAtPath(Path, TTerm, VarNames2)::procedure, [Path::cpi:path, TTerm::typedTerm, VarNames2::list(varName)]).
+doc(!'Replaces the code element at Path with TTerm.  VarNames hold the variable name bindings', signature(cpi:setAtPath(Path, TTerm, VarNames)::procedure, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)])).
 signature(replaceSubterm(OldTTerm, Path, RepTTerm, TTerm)::pred, [OldTTerm::typedTerm, Path::list(number), RepTTerm::typedTerm, TTerm::typedTerm]).
 cpi:procedureCommand(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames2), doAll([dbRemove(loadedFile(ResourceName, _, _)), dbInsert(loadedFile(ResourceName, FileName, model(Statements, VarNames, NsList)))])):-fileIsLoaded(ResourceName, FileName, model(OldStatements, VarNames1, NsList)), replaceSubterm(OldStatements::list(statement), Path, TTerm, Statements::list(statement)), mergeVarNames(VarNames1, VarNames2, VarNames).
 replaceSubterm(_, [], TTerm, TTerm):-builtin:true.
@@ -27,18 +28,22 @@ signature((A>B)::pred, [A::number, B::number]).
 projection((A>B)::pred, horiz([vis(A::number), label(! (>)), vis(B::number)])).
 replaceNthSubterm([First|TArgs], N, Path, RepTTerm, [First|TNewArgs]):-N>1, builtin:succ(NMinus1, N), replaceNthSubterm(TArgs, NMinus1, Path, RepTTerm, TNewArgs).
 projection(builtin:if(Cond, Then, Else)::pred, vert([horiz([label(!if), vis(Cond::pred), label(! (:))]), horiz([label(!'    '), vis(Then::pred)]), label(!'else:'), horiz([label(!'    '), vis(Else::pred)])])).
-signature(builtin:if(Cond, Then, Else)::pred, [Cond::pred, Then::pred, Else::pred]).
+doc(!'Conditional predicate.  If Cond succeeds, Then applies.  Otherwise Else applies.', signature(builtin:if(Cond, Then, Else)::pred, [Cond::pred, Then::pred, Else::pred])).
 signature((TTerm1=TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
 projection((TTerm1=TTerm2)::pred, horiz([vis(TTerm1::typedTerm), label(! (=)), vis(TTerm2::typedTerm)])).
-signature(cpi:edit(Path, TTerm, VarNames)::procedure, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)]).
+doc(!'Edit the content in Path to host TTerm.  This action is undoable', signature(cpi:edit(Path, TTerm, VarNames)::procedure, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName)])).
 projection(cpi:edit(Path, TTerm, VarNames)::procedure, vert([horiz([label(!'Edit:'), vis(TTerm::typedTerm)]), halfSize(horiz([label(!'At path:'), vis(Path::cpi:path), label(!'with varnames:'), vis(VarNames::list(varName))]))])).
 signature(editOp(Path, OldTypedContent, OldVarNames)::undoFrame, [Path::cpi:path, OldTypedContent::typedTerm, OldVarNames::list(varName)]).
 signature(containingStatementPath(Path, StatementPath)::pred, [Path::cpi:path, StatementPath::cpi:path]).
 cpi:procedureCommand(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TTerm, VarNames)), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|UndoStack], [], NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, UndoStack, _, OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), builtin:if(0>OldModifiedCounter, NewModifiedCounter::number=99999::number, builtin:succ(OldModifiedCounter, NewModifiedCounter)), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
-signature(cpi:undo(ResourceName)::procedure, [ResourceName::string]).
-cpi:procedureCommand(cpi:undo(ResourceName), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)), assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter)-cpi:constExpr(1), number), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|RedoStack], NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames)|UndoStack], RedoStack, OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
+doc(!'Deprecated, moved to the /builtin namespace', signature(cpi:undo(ResourceName)::procedure, [ResourceName::string])).
+deprecated(cpi:undo(ResourceName)::procedure).
+deprecationReplacement(cpi:undo(ResourceName), procedure, undo(ResourceName)).
+cpi:procedureCommand(cpi:undo(ResourceName), Cmd):-cpi:procedureCommand(undo(ResourceName), Cmd).
+signature(undo(ResourceName)::procedure, [ResourceName::string]).
+cpi:procedureCommand(undo(ResourceName), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)), assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter)-cpi:constExpr(1), number), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|RedoStack], NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames)|UndoStack], RedoStack, OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
 cpi:procedureCommand(cpi:redo(ResourceName), doAll([doProc(cpi:setAtPath(cpi:path(ResourceName, Path), TypedContent, VarNames)), assignFinal(NewModifiedCounter, cpi:constExpr(OldModifiedCounter)-cpi:constExpr(1), number), dbRemove(editState(ResourceName, _, _, _)), dbInsert(editState(ResourceName, [editOp(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames)|UndoStack], RedoStack, NewModifiedCounter)), notify(cpi:path(ResourceName, StatementPath)::cpi:path)])):-editStateIs(ResourceName, UndoStack, [editOp(cpi:path(ResourceName, Path), TypedContent, VarNames)|RedoStack], OldModifiedCounter), cpi:termAtPath(cpi:path(ResourceName, Path), OldTypedContent, OldVarNames), containingStatementPath(cpi:path(ResourceName, Path), cpi:path(ResourceName, StatementPath)).
-signature(cpi:isModified(ResourceName)::pred, [ResourceName::string]).
+doc(!'Checks if a file has been modified', signature(cpi:isModified(ResourceName)::pred, [ResourceName::string])).
 cpi:isModified(ResourceName):-editStateIs(ResourceName, _, _, ModifiedCounter), \+builtin:equals(ModifiedCounter::number, 0::number).
 signature(X+Y::expr(number), [X::expr(number), Y::expr(number)]).
 projection(X+Y::expr(number), horiz([vis(X::expr(number)), label(! (+)), vis(Y::expr(number))])).
@@ -50,6 +55,7 @@ projection(X-Y::expr(number), horiz([vis(X::expr(number)), label(! (+)), vis(Y::
 signature(minus(X, Y, Z)::command, [X::expr(number), Y::expr(number), Z::ref(number)]).
 function(X-Y, number, Z, minus(X, Y, Z)).
 commandClass(minus(X, Y, Z), !'net.nansore.cedalion.cmd.Minus').
-signature(cpi:termAsString(Path, Depth)::expr(string), [Path::cpi:path, Depth::number]).
+doc(!'Returns the term at Path as a string, trimming any child elements beyond Depth and replacing them with numbers to allow restoring them', signature(cpi:termAsString(Path, Depth)::expr(string), [Path::cpi:path, Depth::number])).
 cpi:procedureCommand(cpi:func(cpi:termAsString(cpi:path(ResourceName, Path), Depth), Str, string), termToString(TTerm, VarNames, Depth, NsList, Str)):-cpi:termAtPath(cpi:path(ResourceName, Path), TTerm, VarNames), fileIsLoaded(ResourceName, _, model(_, _, NsList)).
+doc(!'Set the code element at Path to the content of String.  This is an undoable edit.', signature(cpi:editFromString(Path, StringRef)::procedure, [Path::cpi:path, StringRef::ref(string)])).
 cpi:procedureCommand(cpi:editFromString(cpi:path(ResourceName, Path), StringRef), doAll([stringToTerm(StringRef, NsList, TTerm, VarNames), doProc(cpi:edit(cpi:path(ResourceName, Path), TTerm, VarNames))])):-fileIsLoaded(ResourceName, _, model(_, _, NsList)).

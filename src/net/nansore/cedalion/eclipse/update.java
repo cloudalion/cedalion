@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author boaz
+ * Helper class to manage editors
  */
 public class update {
 

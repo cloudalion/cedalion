@@ -9,6 +9,12 @@ import net.nansore.prolog.PrologException;
 
 import org.eclipse.draw2d.FlowLayout;
 
+/**
+ * This figure displays a solid-colored background behind its contents
+ * The associtated term has 2 arguments:
+ * 1. The contents (figure)
+ * 2. The color (RGB) to be used as background 
+ */
 public class Background extends TermContextProxy {
 
 	private TermFigure figure;

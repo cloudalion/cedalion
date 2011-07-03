@@ -7,6 +7,10 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
+/**
+ * This command calculates an imperative expression, and assigns the result to an imperative variable in the ExecutionContext.
+ * Takes three arguments: The reference to receive the result, the expression to be evaluated and the type.
+ */
 public class Assign implements ICommand {
 	
 	private Object ref;

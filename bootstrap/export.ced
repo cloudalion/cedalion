@@ -1,4 +1,4 @@
 signature(exportCedalionProgram::procedure, []).
-signature(builtin:fileContent(AnnotatedStatement, Goal, NSList)::fileContent, [AnnotatedStatement::annotatedTerm, Goal::pred, NSList::list(nsElem)]).
+doc(!'A representation for the contents of a generated file for the writeFile command.  For every result of Goal, AnnotatedStatement represents a statement to be written to file', signature(builtin:fileContent(AnnotatedStatement, Goal, NSList)::fileContent, [AnnotatedStatement::annotatedTerm, Goal::pred, NSList::list(nsElem)])).
 procedure(exportCedalionProgram, writeFile(!'export.car', builtin:fileContent(builtin:statement(Statement, VarNames), builtin:loadedStatement(_, Statement, VarNames), []))).
 contextMenuEntry([]::list(statement), _, _, !'Export Cedalion Program', exportCedalionProgram).

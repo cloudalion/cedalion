@@ -1,0 +1,5 @@
+'/bootstrap':signature(pairType(TA, TB)::'/bootstrap':type, [TA::'/bootstrap':type, TB::'/bootstrap':type]).
+'/bootstrap':projection(pairType(TA, TB)::'/bootstrap':type, '/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(TA::'/bootstrap':type), '/bootstrap':label(! (,)), '/bootstrap':vis(TB::'/bootstrap':type)]), 60, 62)).
+'/bootstrap':signature(pair(A, B)::pairType(TA, TB), [A::TA, B::TB]).
+'/bootstrap':projection(pair(A, B)::pairType(TA, TB), '/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(A::TA), '/bootstrap':label(! (,)), '/bootstrap':vis(B::TB)]), 60, 62)).
+'/bootstrap':alias(pair(A, B)::pairType(TA, TB), !'<,>').

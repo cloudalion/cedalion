@@ -7,7 +7,7 @@ signature(canDefine(Definition, Defined, DefType)::pred, [Definition::statement,
 defines(Definition, Defined, DefType)~>canDefine(Definition, Defined, DefType):-builtin:true.
 signature(definitionOf(Defined, Definition, DefType, FileName, VarNames)::pred, [Defined::typedTerm, Definition::statement, DefType::definitionType, FileName::string, VarNames::list(varName)]).
 definitionOf(Defined, Definition, DefType, FileName, VarNames):- \+builtin:var(Defined), canDefine(Definition, Defined, DefType), checkSignature(Defined, _), builtin:loadedStatement(FileName, Definition, VarNames).
-defines((Pred:-_), Pred::pred, semanticDefinition).
+defines((Pred:-_), Pred::pred, requiredSemanticDefinition).
 signature(typeSignature::definitionType, []).
 projection(typeSignature::definitionType, label(!'Type Signature')).
 defines(signature(TTerm, _), TTerm, typeSignature).
@@ -27,7 +27,7 @@ signature(blankList(List1, List2)::pred, [List1::list(typedTerm), List2::list(ty
 blankList([], []):-builtin:true.
 blankList([_::Type|List1], [_::Type|List2]):-blankList(List1, List2).
 defines((S1~>S2), S1::statement, semanticDefinition).
-signature(builtin:loadedStatement(FileName, Statement, VarNames)::pred, [FileName::string, Statement::statement, VarNames::list(varName)]).
+doc(!'Succeeds for all Statements loaded from file FileName.  VarNames is bound to a list of variable name bindings', signature(builtin:loadedStatement(FileName, Statement, VarNames)::pred, [FileName::string, Statement::statement, VarNames::list(varName)])).
 canDefine(S1, TTerm, DefType):-builtin:loadedStatement(_, (S1~>S2), _), canDefine(S2, TTerm, DefType).
 defines(signature(Term::Type, _), Type::type, semanticDefinition).
 signature(definitionMarker(DefType)::marker, [DefType::definitionType]).

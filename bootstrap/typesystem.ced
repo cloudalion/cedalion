@@ -3,9 +3,9 @@ signature(check(Path, TTerm, VarNames, Marker)::pred, [Path::cpi:path, TTerm::ty
 signature(statementPath(StatementPath)::pred, [StatementPath::cpi:path]).
 signature(true(Goal)::pred, [Goal::pred]).
 projection(true(Goal)::pred, horiz([vis(Goal::pred), label(! (!))])).
-signature(builtin:copyTerm(TTermOrig, TTermCopy)::pred, [TTermOrig::typedTerm, TTermCopy::typedTerm]).
+doc(!'Creates TTermCopy, a copy of TTermOrig, such that they are structurally equal, but have different variables.', signature(builtin:copyTerm(TTermOrig, TTermCopy)::pred, [TTermOrig::typedTerm, TTermCopy::typedTerm])).
 check(StatementPath, Statement::statement, VarNames, Marker):-statementPath(StatementPath), builtin:copyTerm(Statement::statement, StatementCopy::statement), true(checkTypes(StatementPath, Statement::statement, VarNames, [], Markers)), checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, StatementPath, VarNames), listMember(Marker, locMarker, MarkersFinal).
-signature(builtin:structurallyEqual(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
+doc(!'Succeeds if TTerm1 and TTerm2 have the same structure, but potentially different variables', signature(builtin:structurallyEqual(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm])).
 signature(typesNotFullyInstantiated(Statement, StatementPath)::error, [Statement::statement, StatementPath::cpi:path]).
 projection(typesNotFullyInstantiated(Statement, StatementPath)::error, vert([horiz([label(!'Types are not fully instantiated in statement at path:'), vis(StatementPath::cpi:path)]), horiz([label(!'    '), vis(Statement::statement)])])).
 signature(checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, StatementPath, VarNames)::pred, [Statement::statement, StatementCopy::statement, Markers::list(locMarker), MarkersFinal::list(locMarker), StatementPath::cpi:path, VarNames::list(varName)]).
@@ -14,13 +14,13 @@ statementPath(cpi:path(_, [1])):-builtin:true.
 statementPath(cpi:path(Res, [2|Path])):-statementPath(cpi:path(Res, Path)).
 listMember(X, _T, [X|_]):-builtin:true.
 listMember(X, T, [_|L]):-listMember(X, T, L).
-signature(builtin:var(TTerm)::pred, [TTerm::typedTerm]).
-signature(builtin:string(TTerm)::pred, [TTerm::typedTerm]).
-signature(builtin:number(TTerm)::pred, [TTerm::typedTerm]).
+doc(!'Succeeds if TTerm matches Var::Type, where Var is an unbound variable', signature(builtin:var(TTerm)::pred, [TTerm::typedTerm])).
+doc(!'Succeeds if TTerm matches Str::Type, where Str is a Cedalion string', signature(builtin:string(TTerm)::pred, [TTerm::typedTerm])).
+doc(!'Succeeds if TTerm matches Num::Type, where Num is a number', signature(builtin:number(TTerm)::pred, [TTerm::typedTerm])).
 signature(checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName), MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 checkTypes(Path, Term::Type, VarNames, MarkIn, MarkOut):-builtin:if(builtin:var(Term::Type), checkVarType(Path, Term::Type, MarkIn, MarkOut), builtin:if(builtin:string(Term::Type), true(validateType(Path, string, Type, Path, MarkIn, MarkOut)), builtin:if(builtin:number(Term::Type), true(validateType(Path, number, Type, Path, MarkIn, MarkOut)), true(checkCompoundType(Path, Term::Type, VarNames, MarkIn, MarkOut))))).
 signature(validateType(Path, InType, ExType, OrigPath, MarkIn, MarkOut)::pred, [Path::cpi:path, InType::type, ExType::type, OrigPath::cpi:path, MarkIn::list(locMarker), MarkOut::list(locMarker)]).
-signature(builtin:safeUnify(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm]).
+doc(!'Perform unification of TTerm1 and TTerm2, not allowing variables to be unified with terms containing them', signature(builtin:safeUnify(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm])).
 signature(locMarker::type, []).
 signature(marker(Path, Marker)::locMarker, [Path::cpi:path, Marker::marker]).
 signature(error::type, []).
@@ -47,7 +47,7 @@ checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, MarkIn, MarkOu
 markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type, VarNames)::type))).
 markerVis(varType(_), V, bold(V)).
 signature(exception::type, []).
-signature(builtin:throw(Exception)::pred, [Exception::exception]).
+doc(!'Throw an exception', signature(builtin:throw(Exception)::pred, [Exception::exception])).
 signature(false(X)::exception, [X::pred]).
 true(X):-builtin:if(X, builtin:true, builtin:throw(false(X))).
 containingStatementPath(cpi:path(Res, []), cpi:path(Res, [])):-builtin:true.

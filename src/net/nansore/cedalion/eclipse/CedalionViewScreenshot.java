@@ -19,6 +19,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
+/**
+ * This view action implements the CedalionView's ability to take screenshots. 
+ */
 public class CedalionViewScreenshot implements IViewActionDelegate {
 
 	private CedalionView view;

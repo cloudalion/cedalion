@@ -13,7 +13,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
 /**
- * @author boaz
+ * A font modifier that makes the font of its contents italic.  Takes no extra arguments.
  */
 public class Italic extends FontModifier {
     public Italic(Compound term, TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {

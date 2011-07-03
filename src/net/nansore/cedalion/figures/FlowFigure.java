@@ -13,6 +13,11 @@ import net.nansore.prolog.PrologException;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Panel;
 
+/**
+ * This is a base class for "container" figures.
+ * Derived classes need to implement setLayout(), to set the layout manager as needed.
+ * Expects at least one argument: a list of figures to be owned.
+ */
 public abstract class FlowFigure extends Panel implements TermFigure {
 
 	private List<TermFigure> childFigures = new ArrayList<TermFigure>();

@@ -1,0 +1,7 @@
+'/bootstrap':signature(plainSeq(S)::'/bootstrap':set('/bootstrap':list(base)), [S::'/bootstrap':list(base)]).
+'/bootstrap':projection(plainSeq(S)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!'DNA')), cpi:vis(S::'/bootstrap':list(base), '/bootstrap':horiz)])).
+'/bootstrap':adapter(S::'/bootstrap':list(base), plainSeq(S)::'/bootstrap':set('/bootstrap':list(base))).
+dnaSetDef(plainSeq(S), '/bootstrap':singleton(S)).
+'/bootstrap':signature(extractSequence(Set, Path)::'/bootstrap':procedure, [Set::'/bootstrap':set('/bootstrap':list(base)), Path::cpi:path]).
+cpi:procedureCommand(extractSequence(Set, Path), '/bootstrap':doProc(cpi:edit(Path, plainSeq(S)::'/bootstrap':set('/bootstrap':list(base)), []))):-builtin:if('/bootstrap':member(S, Set, '/bootstrap':list(base)), builtin:true, builtin:true).
+'/bootstrap':contextMenuEntry(Set::'/bootstrap':set('/bootstrap':list(base)), [], Path, !'Extract Sequence', extractSequence(Set, Path)).

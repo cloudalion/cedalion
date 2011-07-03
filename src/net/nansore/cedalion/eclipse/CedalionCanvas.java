@@ -8,8 +8,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+/**
+ * This is a SWT widget that holds Cedalion code.
+ */
 public class CedalionCanvas extends FigureCanvas {
 
+	/**
+	 * A lightweight system that forces font anti-aliasing in all modes
+	 */
 	static public class MyLightweightSystem extends LightweightSystem {
 
 		@Override
@@ -26,6 +32,10 @@ public class CedalionCanvas extends FigureCanvas {
 		
 	}
 
+	/**
+	 * Creates a new canvas, using MyLightweightSystem as the lightweight system
+	 * @param parent
+	 */
 	public CedalionCanvas(Composite parent) {
 		super(parent, SWT.DOUBLE_BUFFERED, new MyLightweightSystem());
 	}

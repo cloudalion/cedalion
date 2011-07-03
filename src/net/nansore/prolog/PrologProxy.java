@@ -17,27 +17,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-
+/**
+ * This class represents the logic engine behind Cedalion.  It is implemented to use SWI-Prolog.
+ * Its current implementation assumes all calls are made from a single thread.
+ */
 public class PrologProxy {
     private Process proc;
     private InputStreamReader input;
     private OutputStreamWriter output;
     private int nextChar = -2;
     private Writer log;
+	private static ThreadLocal<PrologProxy> prologTLS = new ThreadLocal<PrologProxy>();
     private static final Pattern intRegex = Pattern.compile("-?[0-9]+");
     private static final Pattern floatRegex = Pattern.compile("-?[0-9]+(\\.[0-9]+)?([eE][+\\-][0-9]+)?");
-    public PrologProxy(String prologInterpreter, File file) throws IOException {
+    
+    private PrologProxy(String prologInterpreter, File file) throws IOException {
         proc = Runtime.getRuntime().exec(prologInterpreter + " -s " + file.toString() + " -t qryStart");
         input = new InputStreamReader(proc.getInputStream());
         output = new OutputStreamWriter(proc.getOutputStream());
         log = new OutputStreamWriter(new FileOutputStream("pl.log"));
-        while(getNextChar() != ':')
-            readNext();
     }
-    /**
-     * @throws IOException
-     * @throws PrologException 
-     */
+
     private boolean hasMoreSolutions() throws IOException, PrologException {
     	Map<String, Variable> varMap = new HashMap<String, Variable>();
         while(!isAtEOF()) {
@@ -58,8 +58,19 @@ public class PrologProxy {
         return false;
     }
 
+    /**
+     * Runs a query and returns an iterator on the solutions.
+     * @param query the query term.
+     * @return an iterator on the solutions.  Each solution is a map from the variables in query to their solution values
+     * @throws PrologException if an exception was thrown on the Prolog side.
+     */
     public synchronized Iterator<Map<Variable, Object> > getSolutions(Compound query) throws PrologException {
         try {
+        	// Prepare a map with the variables in the query
+        	Map<String, Variable> queryVars = new HashMap<String, Variable>();
+        	for(Variable var : query.variables()) {
+        		queryVars.put(var.name(), var);
+        	}
             // Write the query
             writeQuery(query);
             // Read all results
@@ -72,7 +83,11 @@ public class PrologProxy {
                 while(term instanceof Compound && ((Compound)term).name().equals(".")) {
                     Compound compound = (Compound)term;
                     Compound item = (Compound)compound.arg(1);
-                    result.put(new Variable(item.arg(1).toString()), item.arg(2));
+                    Variable var = queryVars.get(item.arg(1).toString());
+                    if(var == null) {
+                    	var = new Variable(item.arg(1).toString());
+                    }
+                    result.put(var, item.arg(2));
                     term = compound.arg(2);
                 }
                 results.add(result);
@@ -87,17 +102,17 @@ public class PrologProxy {
     private void writeQuery(Compound query) throws IOException {
         List<Variable> vars = new ArrayList<Variable>();
         findAllVars(query, vars);
-        Object pattern = createCompound("[]");
+        Object pattern = Compound.createCompound("[]");
         for(Iterator<Variable> i = vars.iterator(); i.hasNext(); ) {
             Variable var = i.next();
-            pattern = new Compound(this, ".", new Compound(this, "=", var.name(), var), pattern);
+            pattern = new Compound(".", new Compound("=", var.name(), var), pattern);
         }
-        writeTerm(new Compound(this, "query", pattern, query));
+        writeTerm(new Compound("query", pattern, query));
         write(".\r\n");
         output.flush();
 //        write("query(ok, halt).\n");
     }
-    public Object readTerm(Map<String, Variable> varMap) throws IOException {
+    private Object readTerm(Map<String, Variable> varMap) throws IOException {
         skipWhiteSpace();
         String atom;
         if(getNextChar() == '\'') {
@@ -143,7 +158,7 @@ public class PrologProxy {
             		return str.toString();
             }
             else
-            	return new Compound(this, atom, args.toArray());
+            	return new Compound(atom, args.toArray());
         } else {
             // Check for numeric values
         	if(intRegex.matcher(atom).matches()) {
@@ -152,7 +167,7 @@ public class PrologProxy {
                 // Try float
                 return Float.valueOf(atom);
             } else {
-                return new Compound(this, atom);
+                return new Compound(atom);
             }
         }
         
@@ -326,15 +341,15 @@ public class PrologProxy {
     	System.out.println("Hello");
         PrologProxy p = new PrologProxy("c:\\program files\\pl\\bin\\plcon.exe", new File("d:/workspace/cedalion/service.pl"));
         Variable varX = new Variable("X");
-        Iterator<Map<Variable, Object>> i = p.getSolutions(new Compound(p, "a", varX));
+        Iterator<Map<Variable, Object>> i = p.getSolutions(new Compound("a", varX));
         while(i.hasNext()) {
             System.out.println("Result : " + i.next().get(varX));
         }
-        i = p.getSolutions(new Compound(p, "=", varX, "x"));
+        i = p.getSolutions(new Compound("=", varX, "x"));
         while(i.hasNext()) {
             System.out.println("Result : " + i.next().get(varX));
         }
-        i = p.getSolutions(new Compound(p, "a", varX));
+        i = p.getSolutions(new Compound("a", varX));
         while(i.hasNext()) {
             System.out.println("Result : " + i.next().get(varX));
         }
@@ -347,13 +362,23 @@ public class PrologProxy {
             log.write(s);
     }
     
+    /**
+     * Close connection to the Prolog
+     * @throws IOException is something goes wrong
+     */
     public void terminate() throws IOException {
         input.close();
         proc.destroy();
     }
     
+    /**
+     * Runs a query and returns whether it has a solution
+     * @param q the query to run
+     * @return true if q has a solution
+     * @throws PrologException if an exception was thrown on the Prolog side
+     */
     public boolean hasSolution(Compound q) throws PrologException {
-        Iterator<Map<Variable, Object> > i = getSolutions(new Compound(this, "once", q));
+        Iterator<Map<Variable, Object> > i = getSolutions(new Compound("once", q));
         if(i.hasNext()) {
             i.next();
             return true;
@@ -362,14 +387,34 @@ public class PrologProxy {
             return false;
     }
 
-    public Map<Variable, Object> getSolution(Compound q) throws PrologException {
-        Iterator<Map<Variable, Object> > i = getSolutions(new Compound(this, "once", q));
+    /**
+     * Runs a query and returns its solution
+     * @param q the query to run
+     * @return a solution, mapping variables to their values
+     * @throws PrologException if an exception was thrown on the Prolog side
+     * @throws NoSolutionsException if no solutions have been encountered
+     */
+    public Map<Variable, Object> getSolution(Compound q) throws NoSolutionsException, PrologException {
+        Iterator<Map<Variable, Object> > i = getSolutions(new Compound("once", q));
         if(i.hasNext())
             return i.next();
         else
             throw new NoSolutionsException("Query " + q + " has no solutions");
     }
-	public Compound createCompound(String name, Object... args) {
-		return new Compound(this, name, args);
+    
+	/**
+	 * Initialize the logic engine on the running thread
+	 * @param prologInterpreter the path to the SWI-Prolog executable
+	 * @param file the Prolog file implementing core Cedalion
+	 * @throws IOException if something goes wrong
+	 */
+    public static void initialize(String prologInterpreter, File file) throws IOException {
+		prologTLS.set(new PrologProxy(prologInterpreter, file));
+	}
+	/**
+	 * @return an instance of the logic engine associated with the running thread
+	 */
+	public static PrologProxy instance() {
+		return prologTLS.get();
 	}
 }

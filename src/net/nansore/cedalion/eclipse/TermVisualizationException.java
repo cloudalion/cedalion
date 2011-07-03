@@ -4,7 +4,7 @@
 package net.nansore.cedalion.eclipse;
 
 /**
- * @author boaz
+ * This exception is thrown when for some reason a visualization term could not turn into a proper figure
  */
 public class TermVisualizationException extends Exception {
 

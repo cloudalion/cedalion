@@ -1,13 +1,13 @@
 signature(unitTest(Goal)::statement, [Goal::pred]).
-projection(unitTest(Goal)::statement, horiz([label(!'Unit Test:'), vis(Goal::pred)])).
+projection(unitTest(Goal)::statement, horiz([bold(label(!'Unit Test:')), vis(Goal::pred)])).
 unitTest(builtin:true).
-signature(builtin:fail::pred, []).
+doc(!'A goal that never succeeds', signature(builtin:fail::pred, [])).
 signature((\+Goal)::pred, [Goal::pred]).
 projection((\+Goal)::pred, horiz([symbol(172), vis(Goal::pred)])).
 unitTest(\+builtin:fail).
 signature(failedTest(Goal)::error, [Goal::pred]).
 projection(failedTest(Goal)::error, horiz([label(!'Test'), vis(Goal::pred), label(!'has failed')])).
-signature(builtin:catch(Goal, Exception, AltGoal)::pred, [Goal::pred, Exception::exception, AltGoal::pred]).
+doc(!'Succeeds if Goal succeeds, and if no exceptions have been thrown from it.  If an exception matchin Exception has been thrown, AltGoal is evaluated.', signature(builtin:catch(Goal, Exception, AltGoal)::pred, [Goal::pred, Exception::exception, AltGoal::pred])).
 projection(builtin:catch(Goal, Exception, AltGoal)::pred, vert([label(!'try:'), horiz([label(!'    '), vis(Goal::pred)]), horiz([label(!catch), vis(Exception::exception), label(! (:))]), horiz([label(!'    '), vis(AltGoal::pred)])])).
 signature(exceptionThrown(Exception)::error, [Exception::exception]).
 signature(testNotFullyInstantiated(Goal, Path, VarNames)::error, [Goal::pred, Path::cpi:path, VarNames::list(varName)]).

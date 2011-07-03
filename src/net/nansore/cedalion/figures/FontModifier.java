@@ -17,7 +17,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 
 /**
- * @author boaz
+ * A base class for font modifiers, i.e., figures that modify the font of their contents.
+ * Expects at least one argument for the instance.
  */
 abstract public class FontModifier extends TermContextProxy {
     private Font normalFont;
@@ -26,7 +27,8 @@ abstract public class FontModifier extends TermContextProxy {
     private static Map<String, FontElement> fontRegistry = new HashMap<String, FontElement>();
 
     /**
-     * @param parent
+     * @param term
+     * @param context
      * @throws TermVisualizationException
      * @throws PrologException 
      * @throws TermInstantiationException 

@@ -11,11 +11,9 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
 import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.MouseEvent;
-import org.eclipse.draw2d.MouseListener;
 
 /**
- * @author boaz
+ * A FlowFigure that lays out its contents horizontally.  Takes no extra arguments.
  */
 public class HorizontalFlow extends FlowFigure {
 	public HorizontalFlow(Compound term, final TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {

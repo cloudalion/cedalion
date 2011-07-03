@@ -17,7 +17,6 @@ import net.nansore.cedalion.execution.Notifier;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.figures.TermFigure;
 import net.nansore.cedalion.figures.VisualTerm;
-import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
@@ -56,10 +55,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 /**
- * @author boaz
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * This is the Cedalion editor.  It is an Eclipse editor (EditorPart) that displays the CedalionWidget, containing a CedalionCanvas, 
+ * a text entry box for entering text and command buttons.  It is responsible for loading, displaying and saving Cedalion files.
+ * It also keeps track over the file's modified state.
  */
 public class CedalionEditor extends EditorPart implements ISelectionProvider, TermContext, DisposeListener, IViewOpener{
 
@@ -80,14 +78,11 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	private VisualTerm currentTermFigure;
 	private VisualTerm focused = null;
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
-	 */
+    @Override
 	public void doSave(IProgressMonitor monitor) {
 	    try {
-	    	PrologProxy prolog = Activator.getProlog();
-			ExecutionContext exe = new ExecutionContext(prolog);
-			exe.runProcedure(prolog.createCompound("cpi#saveFile", getResource(), input.getFile().getLocation().toString()));
+			ExecutionContext exe = new ExecutionContext();
+			exe.runProcedure(Compound.createCompound("cpi#saveFile", getResource(), input.getFile().getLocation().toString()));
 	        firePropertyChange(PROP_DIRTY);
 	        // Reload the content
 	        Activator.getDefault().loadResource(input.getFile());
@@ -107,16 +102,12 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
-	 */
+    @Override
 	public void doSaveAs() {
 	    // TODO: Implement
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
-	 */
+    @Override
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		setSite(site);
 		setInput(input);
@@ -126,30 +117,23 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		site.setSelectionProvider(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isDirty()
-	 */
+    @Override
 	public boolean isDirty() {
 		try {
-			PrologProxy prolog = Activator.getProlog();
-			return prolog.hasSolution(prolog.createCompound("cpi#isModified", getResource()));
+			return PrologProxy.instance().hasSolution(Compound.createCompound("cpi#isModified", getResource()));
 		} catch (PrologException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
-	 */
+    @Override
 	public boolean isSaveAsAllowed() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
+    @Override
 	public void createPartControl(Composite parent) {
 	    editorWidget = new VisualTermWidget(parent, SWT.NONE, this);	
 	    editorWidget.addDisposeListener(this);
@@ -194,17 +178,16 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 	private void open() throws PrologException, TermInstantiationException, ExecutionContextException, TermVisualizationException {
 		// Open the file
 		IFile res = input.getFile();
-		PrologProxy prolog = Activator.getProlog();
-		ExecutionContext exe = new ExecutionContext(prolog);
-		exe.runProcedure(prolog.createCompound("cpi#openFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
+		ExecutionContext exe = new ExecutionContext();
+		exe.runProcedure(Compound.createCompound("cpi#openFile", res.getLocation().toString(), getResource(), res.getParent().getFullPath().toString()));
 		// Get the root type
 		Variable varType = new Variable("RootType");
-		Object rootType = prolog.getSolution(prolog.createCompound("cpi#rootType", varType)).get(varType);
+		Object rootType = PrologProxy.instance().getSolution(Compound.createCompound("cpi#rootType", varType)).get(varType);
 		// Set the root path
-		Compound path = prolog.createCompound("cpi#path", getResource(), prolog.createCompound("[]"));
-		Compound descriptor = prolog.createCompound("cpi#descriptor", path, new Variable(), prolog.createCompound("[]"));
-		Compound tterm = prolog.createCompound("::", descriptor, rootType);
-		editorWidget.setTerm(prolog.createCompound("cpi#vis", tterm), this);
+		Compound path = Compound.createCompound("cpi#path", getResource(), Compound.createCompound("[]"));
+		Compound descriptor = Compound.createCompound("cpi#descriptor", path, new Variable(), Compound.createCompound("[]"));
+		Compound tterm = Compound.createCompound("::", descriptor, rootType);
+		editorWidget.setTerm(Compound.createCompound("cpi#vis", tterm), this);
 	}
 
 	private Font createFont(final String fontType) {
@@ -216,40 +199,30 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		return normalFont;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
-	 */
+    @Override
 	public void setFocus() {
 		getSite().getPage().activate(this);
 		Activator.getDefault().registerViewOpener(this);
 		Activator.getDefault().registerCurrentContext(this);
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-     */
+    @Override
     public void addSelectionChangedListener(ISelectionChangedListener listener) {
         listeners.add(listener);
         
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
-     */
+    @Override
     public ISelection getSelection() {
         return selection;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
-     */
+    @Override
     public void removeSelectionChangedListener(ISelectionChangedListener listener) {
         listeners.remove(listener);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
-     */
+    @Override
     public void setSelection(ISelection selection) {
         this.selection = selection;
         for(Iterator<ISelectionChangedListener> i = listeners.iterator(); i.hasNext(); ) {
@@ -257,9 +230,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IWorkbenchPart#dispose()
-     */
+    @Override
     public void dispose() {
         System.out.println("Disposing editor for " + input.getFile() + " resource: " + getResource());
         try {
@@ -278,57 +249,41 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
     }
 
 	private void close() throws PrologException, TermInstantiationException, ExecutionContextException {
-		IFile res = input.getFile();
-		PrologProxy prolog = Activator.getProlog();
-		ExecutionContext exe = new ExecutionContext(prolog);
-		exe.runProcedure(prolog.createCompound("cpi#closeFile", getResource()));
+		ExecutionContext exe = new ExecutionContext();
+		exe.runProcedure(Compound.createCompound("cpi#closeFile", getResource()));
 	}
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#getTextEditor()
-     */
+    @Override
     public Text getTextEditor() {
         return editorWidget.getText();
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#bindFigure(net.nansore.visualterm.figures.TermFigure)
-     */
+    @Override
     public void bindFigure(TermFigure figure) {
         // Do nothing
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#focusChanged(net.nansore.visualterm.figures.TermFigure)
-     */
+    @Override
     public void selectionChanged(TermFigure figure) {
         setSelection(new StructuredSelection(figure));
         if(figure instanceof VisualTerm)
         	currentTermFigure = (VisualTerm)figure;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-     */
+    @Override
     public void widgetDisposed(DisposeEvent e) {
         update.unregisterEditor(this);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#registerTermFigure(long, net.nansore.visualterm.figures.TermFigure)
-     */
+    @Override
     public synchronized void registerTermFigure(Object termID, TermFigure figure) {
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#getColor()
-     */
+    @Override
     public Color getColor() {
         return new Color(editorWidget.getDisplay(), 0, 0, 0);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#getFont()
-     */
+    @Override
     public Font getFont(int fontType) {
     	if(fontType == TermContext.NORMAL_FONT)
     		return normalFont;
@@ -336,66 +291,92 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
     		return symbolFont;
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#registerDispose(net.nansore.visualterm.Disposable)
-     */
-    public void registerDispose(TermFigure disp) {
+    /*public void registerDispose(TermFigure disp) {
         // TODO Auto-generated method stub
         
-    }
+    }*/
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#figureUpdated()
-     */
+    @Override
     public synchronized void figureUpdated() {
         firePropertyChange(PROP_DIRTY);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#unregisterTermFigure(int, net.nansore.visualterm.figures.TermFigure)
-     */
+    @Override
     public synchronized void unregisterTermFigure(Object termID, TermFigure figure) {
     }
 
-	public String getResource() {
+	/**
+	 * Returns the name of the resource, as used internally by Cedalion.
+	 */
+    public String getResource() {
 		return input.getFile().getFullPath().toString();
 	}
 
+    /**
+     * Ignored
+     */
     public void handleClick(MouseEvent me) {
     }
 
+    /**
+     * Returns the canvas used by this editor
+     */
     public Control getCanvas() {
         return editorWidget.getCanvas();
     }
 
-	public IWorkbenchPart getWorkbenchPart() {
+	/**
+	 * Returns this object
+	 */
+    public IWorkbenchPart getWorkbenchPart() {
 		return this;
 	}
 
+    /**
+     * Ignored
+     */
     public void performDefaultAction() {
     }
 
-	public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
+	/**
+	 * Causes the display to refresh
+	 * @throws TermVisualizationException if one or more figures are unable to display
+	 * @throws TermInstantiationException if one or more terms could not be instantiated to Java objects
+	 * @throws PrologException if the Cedalion program through an exception
+	 */
+    public void refresh() throws TermVisualizationException, TermInstantiationException, PrologException {
         editorWidget.refresh();
         Notifier.instance().printRefCount();
         System.gc();
     }
 
-	public String getPackage() {
+	/**
+	 * Returns the name to be used as a namespace for the file in this editor
+	 */
+    public String getPackage() {
 		return input.getFile().getParent().getFullPath().toString();
 	}
 
 	@Override
+	/**
+	 * Opens a CedalionView
+	 */
 	public CedalionView openView() throws PartInitException {
 		return (CedalionView)getSite().getPage().showView("net.nansore.cedalion.CedalionView");
 	}
 
 	@Override
+	/**
+	 * Uses the plug-in to load an image
+	 */
 	public Image getImage(String imageName) throws IOException {
 		return Activator.getDefault().getImage(imageName, getEditorSite().getShell().getDisplay());
 	}
 
 	@Override
+	/**
+	 * XXX
+	 */
 	public Compound getPath() {
 		return null;
 	}
@@ -410,6 +391,9 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		focused = visualTerm;
 	}
 	
+	/**
+	 * @return The last code element that took focus in this editor
+	 */
 	public VisualTerm getLastFocused() {
 		return currentTermFigure;
 	}

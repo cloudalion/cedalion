@@ -6,56 +6,56 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A compound term.  Such a term has a name, and zero or more arguments, which are any kind of objects.
+ */
 public class Compound implements Serializable {
 	/**
-     * 
+     * Serialization version
      */
     private static final long serialVersionUID = 1L;
     private List<Object> args = new ArrayList<Object>();
 	private String name;
-	private PrologProxy prolog;
 	
-	public Compound(PrologProxy prolog, String name) {
+	/**
+	 * Create a new compound with the given name and arguments
+	 * @param name the name of this compound
+	 * @param args zero or more arguments, which can be Compound, Variable or any other Object
+	 */
+	public Compound(String name, Object... args) {
 		this.name = name;
-		this.prolog = prolog;
-	}
-	public Compound(PrologProxy prolog, String name, Object[] args) {
-		this(prolog, name);
 		this.args = Arrays.asList(args);
 	}
-	public Compound(PrologProxy prolog, String name, Object arg1) {
-		this(prolog, name, new Object[] {arg1});
-	}
-	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2) {
-		this(prolog, name, new Object[] {arg1, arg2});
-	}
-	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3) {
-		this(prolog, name, new Object[] {arg1, arg2, arg3});
-	}
-	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3, Object arg4) {
-		this(prolog, name, new Object[] {arg1, arg2, arg3, arg4});
-	}
 	
-	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5) {
-		this(prolog, name, new Object[] {arg1, arg2, arg3, arg4, arg5});
-	}
-	
-	public Compound(PrologProxy prolog, String name, Object arg1, Object arg2, Object arg3, Object arg4, Object arg5, Object arg6) {
-		this(prolog, name, new Object[] {arg1, arg2, arg3, arg4, arg5, arg6});
-	}
-	
+	/**
+	 * @return the number of arguments
+	 */
 	public int arity() {
 		return args.size();
 	}
 	
+	/**
+	 * @return the name of this compound
+	 */
 	public String name() { 
 		return name;
 	}
 	
+	/**
+	 * Returns the n'th argument.  If the argument is a Variable, the value this Variable is bound to is returned.
+	 * @param n the 1-based index of the argument
+	 * @return the argument value
+	 */
 	public Object arg(int n) {
-		return args.get(n - 1);
+		Object arg = args.get(n - 1);
+		if(arg instanceof Variable)
+			arg = ((Variable) arg).boundTo();
+		return arg;
 	}
 	
+	/**
+	 * @return the arguments of this compound.  Variables are returned as is.
+	 */
 	public List<Object> args() {
 		return args;
 	}
@@ -89,6 +89,8 @@ public class Compound implements Serializable {
 			return false;
 		return true;
 	}
+	
+	@Override
 	public String toString() {
 		if(name.equals(".") && arity() == 2)
 			return listToString();
@@ -121,7 +123,89 @@ public class Compound implements Serializable {
 		buff.append("]");
 		return buff.toString();
 	}
-	public PrologProxy getProlog() {
-		return prolog;
+	/**
+	 * Perform term unification with another object.
+	 * @param other the other object to unify with.
+	 * @return true if this term matches other.
+	 */
+	public boolean unify(Object other) {
+		if(other instanceof Variable) {
+			Variable otherVar = (Variable)other;
+			if(otherVar.isBound()) {
+				return unify(otherVar.boundTo());
+			} else {
+				otherVar.bind(this);
+				return true;
+			}
+		} else if(other instanceof Compound) {
+			Compound otherCompound = (Compound)other;
+			if(!name.equals(otherCompound.name()) || arity() != otherCompound.arity()) {
+				return false;
+			}
+			for(int i = 1; i <= arity(); i++) {
+				if(!unify(arg(i), otherCompound.arg(i)))
+					return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	/**
+	 * Unify two terms
+	 * @param term1 the first term
+	 * @param term2 the second term
+	 * @return true if the two terms match
+	 */
+	public static boolean unify(Object term1, Object term2) {
+		if(term1 instanceof Compound) {
+			return ((Compound)term1).unify(term2);
+		} else if(term1 instanceof Variable) {
+			if(((Variable)term1).isBound()) {
+				return unify(((Variable)term1).boundTo(), term2);
+			} else {
+				((Variable)term1).bind(term2);
+				return true;
+			}
+		} else if(term2 instanceof Variable) {
+			return unify(term2, term1);
+		} else {
+			return term1.equals(term2);
+		}
+	}
+	/**
+	 * @return true is this compound does not contain (recursively) any Variables.
+	 */
+	public boolean isGround() {
+		for(Object arg : args) {
+			if(arg instanceof Variable)
+				arg = ((Variable)arg).boundTo();
+			if(arg instanceof Variable)
+				return false;
+			else if(arg instanceof Compound && !((Compound)arg).isGround())
+				return false;
+		}
+		return true;
+	}
+	/**
+	 * @return a list of all variables in this compound (recursively) 
+	 */
+	public List<Variable> variables() {
+		List<Variable> result = new ArrayList<Variable>();
+		for(Object arg : args) {
+			if(arg instanceof Variable)
+				arg = ((Variable)arg).boundTo();
+			
+			if(arg instanceof Compound) {
+				result.addAll(((Compound)arg).variables());
+			} else if(arg instanceof Variable) {
+				result.add((Variable)arg);
+			}
+		}
+		return result;
+	}
+
+	public static Compound createCompound(String name, Object... args) {
+		return new Compound(name, args);
 	}
 }

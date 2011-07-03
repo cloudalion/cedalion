@@ -7,6 +7,10 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
+/**
+ * Removes a statement from the logic engine's database.
+ * Accepts one argument: the statement to be removed.
+ */
 public class DBRemove implements ICommand {
 	private Compound statement;
 
@@ -16,8 +20,7 @@ public class DBRemove implements ICommand {
 
 	public void run(ExecutionContext executionContext) throws PrologException,
 			TermInstantiationException {
-		PrologProxy p = executionContext.prolog();
-		p.getSolution(p.createCompound("remove", statement));
+		PrologProxy.instance().getSolution(Compound.createCompound("remove", statement));
 	}
 
 }

@@ -11,6 +11,9 @@ import net.nansore.prolog.PrologException;
 
 import org.eclipse.swt.graphics.FontData;
 
+/**
+ * A font modifier that resizes the font by a given offset.  The offset is given as the second argument.
+ */
 public class FontResize extends FontModifier {
 	
 	public FontResize(Compound term, TermContext context) throws TermVisualizationException, TermInstantiationException, PrologException {

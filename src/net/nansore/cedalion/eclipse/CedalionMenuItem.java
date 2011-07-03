@@ -12,7 +12,16 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+/**
+ * Represents a context menu item
+ */
 public class CedalionMenuItem {
+	/**
+	 * Construct a menu item
+	 * @param term The term specifying this menu item
+	 * @param parent the parent menu
+	 * @param context the context in which this menu was opened
+	 */
 	public CedalionMenuItem(Compound term, Menu parent, TermContext context) {
 		MenuItem item = new MenuItem(parent, SWT.PUSH);
 		item.setText((String) term.arg(1));
@@ -22,7 +31,7 @@ public class CedalionMenuItem {
 			@Override
 			public void handleEvent(Event event) {
 				try {
-					ExecutionContext exe = new ExecutionContext(proc.getProlog());
+					ExecutionContext exe = new ExecutionContext();
 					exe.runProcedure(proc);
 				} catch (PrologException e) {
 					// TODO Auto-generated catch block

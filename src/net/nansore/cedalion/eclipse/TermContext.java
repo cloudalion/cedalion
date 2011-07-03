@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import net.nansore.cedalion.figures.TermFigure;
 import net.nansore.cedalion.figures.VisualTerm;
-import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.prolog.Compound;
 
 import org.eclipse.draw2d.MouseEvent;
@@ -19,7 +18,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * @author boaz
+ * This interface represents the "place" where a figure representing a Cedalion code element is placed.
+ * It provides information and services from the "environment".
  */
 public interface TermContext {
 
@@ -29,12 +29,14 @@ public interface TermContext {
     Text getTextEditor();
 
     /**
-     * @param label
+     * Allows children to bind their figures to receive mouse events
+     * @param figure the figure to be bound
      */
     void bindFigure(TermFigure figure);
 
     /**
-     * @param term
+     * Tells the "environment" that the selection has now changed
+     * @param figure the newly selected figure
      */
     void selectionChanged(TermFigure figure);
 
@@ -44,45 +46,88 @@ public interface TermContext {
      * @param figure the figure that displays it
      */
     void registerTermFigure(Object termID, TermFigure figure);
+    /**
+     * Remove record of the given termID and figure
+     * @param termID the term ID
+     * @param figure the figure bound to that term ID
+     */
     void unregisterTermFigure(Object termID, TermFigure figure);
 
-	void setFocus();
+	/**
+	 * Request focus for the widget displaying the child figure
+	 */
+    void setFocus();
 
     /**
-     * @return
+     * @return the current color
      */
     Color getColor();
 
     final static int NORMAL_FONT = 1;
     final static int SYMBOL_FONT = 2;
     /**
-     * @param fontType TODO
-     * @return
+     * @param fontType what kind of font do we wish to create? Either NORMAL_FONT or SYMBOL_FONT 
+     * @return the created font
      */
     Font getFont(int fontType);
 
     /**
-     * 
+     * Notify that the figure has been updated
      */
     void figureUpdated();
 
-	String getResource();
+	/**
+	 * @return the resource name, used internally by Cedalion to represent the file
+	 */
+    String getResource();
 
+    /**
+     * Notify that a mouse click has occured
+     * @param me the draw2d mouse event
+     */
     void handleClick(MouseEvent me);
 
+    /**
+     * @return the canvas used to draw the child figures
+     */
     Control getCanvas();
 
-	IWorkbenchPart getWorkbenchPart();
+	/**
+	 * @return the Eclipse workbench where the child figures reside.
+	 */
+    IWorkbenchPart getWorkbenchPart();
 
+    /**
+     * Notifies the container to perform the action typically associated with a double-click
+     */
     void performDefaultAction();
 
-	String getPackage();
+	/**
+	 * @return the namespace associated with the current file
+	 */
+    String getPackage();
 
-	Image getImage(String imageName) throws IOException;
+	/**
+	 * Creates an image associated with the given name
+	 * @param imageName the name of the image
+	 * @return a new or reused Image
+	 * @throws IOException if something goes wrong, e.g., bad image name
+	 */
+    Image getImage(String imageName) throws IOException;
 	
-	Compound getPath();
+	/**
+	 * @return the path associated with the current location
+	 */
+    Compound getPath();
 
-	void setFocused(VisualTerm visualTerm);
+	/**
+	 * Notify that visualTerm has received focus
+	 * @param visualTerm the object that has received focus
+	 */
+    void setFocused(VisualTerm visualTerm);
 
-	VisualTerm getFocused();
+	/**
+	 * @return the object that has last received focus
+	 */
+    VisualTerm getFocused();
 }

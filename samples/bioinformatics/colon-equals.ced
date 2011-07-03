@@ -1,0 +1,2 @@
+'/bootstrap':sigProj(dnaSetDef(Set, Def)::'/bootstrap':statement, [Set::'/bootstrap':set('/bootstrap':list(base)), Def::'/bootstrap':set('/bootstrap':list(base))], '/bootstrap':horiz(['/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!':='), '/bootstrap':vis(Def::'/bootstrap':set('/bootstrap':list(base)))])).
+dnaSetDef(Set, Def)~>'/bootstrap':setDef(Set, Def, '/bootstrap':list(base)).

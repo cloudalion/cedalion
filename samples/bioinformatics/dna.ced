@@ -1,28 +1,10 @@
-'/bootstrap':signature(base::'/bootstrap':type, []).
-'/bootstrap':signature(a::base, []).
-'/bootstrap':projection(a::base, '/bootstrap':label(!'A')).
-'/bootstrap':signature(aSet::'/bootstrap':set('/bootstrap':list(base)), []).
-'/bootstrap':projection(aSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'A')).
-'/bootstrap':setDef(aSet, '/bootstrap':singleton([a]), '/bootstrap':list(base)).
-'/bootstrap':signature(t::base, []).
-'/bootstrap':projection(t::base, '/bootstrap':label(!'T')).
-'/bootstrap':signature(tSet::'/bootstrap':set('/bootstrap':list(base)), []).
-'/bootstrap':projection(tSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'T')).
+'/bootstrap':sigProj(t::base, [], '/bootstrap':label(!'T')).
+'/bootstrap':sigProj(tSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'T')).
 '/bootstrap':setDef(tSet, '/bootstrap':singleton([t]), '/bootstrap':list(base)).
-'/bootstrap':signature(c::base, []).
-'/bootstrap':projection(c::base, '/bootstrap':label(!'C')).
+'/bootstrap':sigProj(c::base, [], '/bootstrap':label(!'C')).
 '/bootstrap':signature(cSet::'/bootstrap':set('/bootstrap':list(base)), []).
 '/bootstrap':projection(cSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'C')).
 '/bootstrap':setDef(cSet, '/bootstrap':singleton([c]), '/bootstrap':list(base)).
-'/bootstrap':signature(g::base, []).
-'/bootstrap':projection(g::base, '/bootstrap':label(!'G')).
-'/bootstrap':signature(gSet::'/bootstrap':set('/bootstrap':list(base)), []).
-'/bootstrap':projection(gSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'G')).
+'/bootstrap':sigProj(g::base, [], '/bootstrap':label(!'G')).
+'/bootstrap':sigProj(gSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'G')).
 '/bootstrap':setDef(gSet, '/bootstrap':singleton([g]), '/bootstrap':list(base)).
-'/bootstrap':signature(nSet::'/bootstrap':set('/bootstrap':list(base)), []).
-'/bootstrap':projection(nSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'N')).
-dnaSetDef(nSet, '/bootstrap':union('/bootstrap':union('/bootstrap':union(aSet, tSet), cSet), gSet)).
-'/bootstrap':signature(dnaSetDef(Set, Def)::'/bootstrap':statement, [Set::'/bootstrap':set('/bootstrap':list(base)), Def::'/bootstrap':set('/bootstrap':list(base))]).
-'/bootstrap':projection(dnaSetDef(Set, Def)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!':='), '/bootstrap':vis(Def::'/bootstrap':set('/bootstrap':list(base)))])).
-'/bootstrap':alias(dnaSetDef(Set, Def)::'/bootstrap':statement, !':=').
-dnaSetDef(Set, Def)~>'/bootstrap':setDef(Set, Def, '/bootstrap':list(base)).

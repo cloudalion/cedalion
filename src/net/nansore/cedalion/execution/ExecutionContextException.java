@@ -1,14 +1,16 @@
 package net.nansore.cedalion.execution;
 
-import org.eclipse.ui.PartInitException;
 
+/**
+ * Generic exception thrown on a command execution error.
+ */
 public class ExecutionContextException extends Exception {
 
 	public ExecutionContextException(String string) {
 		super(string);
 	}
 
-	public ExecutionContextException(PartInitException e) {
+	public ExecutionContextException(Exception e) {
 		super(e);
 	}
 

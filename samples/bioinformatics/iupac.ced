@@ -1,0 +1,6 @@
+'/bootstrap':sigProj(nSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'N')).
+dnaSetDef(nSet, '/bootstrap':union('/bootstrap':union('/bootstrap':union(aSet, tSet), cSet), gSet)).
+'/bootstrap':sigProj(wSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'W')).
+dnaSetDef(wSet, '/bootstrap':union(aSet, tSet)).
+'/bootstrap':sigProj(sSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'S')).
+dnaSetDef(sSet, '/bootstrap':union(cSet, gSet)).

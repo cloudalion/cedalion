@@ -11,6 +11,10 @@ import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
+/**
+ * Performs all commands in the given list, sequentially.
+ * Takes one argument: the list of commands to be executed.
+ */
 public class DoAll implements ICommand {
 	private List<ICommand> commands = new ArrayList<ICommand>();
 	public DoAll(Compound term) throws TermInstantiationException, PrologException {

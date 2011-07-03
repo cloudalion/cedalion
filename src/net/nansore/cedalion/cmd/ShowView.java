@@ -11,6 +11,10 @@ import net.nansore.prolog.PrologException;
 
 import org.eclipse.ui.PartInitException;
 
+/**
+ * Shows the given content in the Cedalion view.
+ * Takes one argument: a term describing the visuals we wish to display in the Cedalion view.
+ */
 public class ShowView implements ICommand {
 	private Compound visualization;
 

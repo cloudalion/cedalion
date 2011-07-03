@@ -1,10 +1,10 @@
 signature(visualization::type, []).
 signature(visClass(Vis, Class)::statement, [Vis::visualization, Class::string]).
 visClass(Vis, Class)~>cpi:termClass(Vis::visualization, Class):-builtin:true.
-signature(cpi:vis(TTerm)::visualization, [TTerm::typedTerm]).
+doc(!'A placeholder for visualizing an a typed term (TTerm)', signature(cpi:vis(TTerm)::visualization, [TTerm::typedTerm])).
 visClass(cpi:vis(_), !'net.nansore.cedalion.figures.VisualTerm').
 signature(mode::type, []).
-signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode]).
+doc(!'A placeholder for visualizing an a typed term (TTerm) in visualization mode Mode', signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode])).
 projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
 alias(cpi:vis(TTerm, Mode)::visualization, !'<<@>>').
 visClass(cpi:vis(_, _), !'net.nansore.cedalion.figures.VisualTerm').
@@ -58,17 +58,15 @@ userVisualization(background(Vis, Color)::visualization, cpi:default, _, tooltip
 visClass(background(Vis, Color), !'net.nansore.cedalion.figures.Background').
 signature(roundRect(Vis, Color)::visualization, [Vis::visualization, Color::color]).
 visClass(roundRect(Vis, Color), !'net.nansore.cedalion.figures.RoundRect').
-signature(cpi:rgb(R, G, B)::color, [R::number, G::number, B::number]).
+doc(!'A data structure to hold an RGB color', signature(cpi:rgb(R, G, B)::color, [R::number, G::number, B::number])).
 projection(cpi:rgb(R, G, B)::color, halfSize(vert([color(vis(R::number), cpi:rgb(128, 0, 0)), color(vis(G::number), cpi:rgb(0, 128, 0)), color(vis(B::number), cpi:rgb(0, 0, 128))]))).
 default(cpi:rgb(0, 0, 0)::color).
 signature(expand(Collapsed, Expanded)::visualization, [Collapsed::visualization, Expanded::visualization]).
 projection(expand(Collapsed, Expanded)::visualization, expand(vis(Collapsed::visualization), vis(Expanded::visualization))).
 visClass(expand(Collapsed, Expanded), !'net.nansore.cedalion.figures.ExpandFigure').
-signature(raised(Vis)::visualization, [Vis::visualization]).
-projection(raised(Vis)::visualization, horiz([halfSize(label(!r)), raised(vis(Vis::visualization))])).
+sigProj(raised(Vis)::visualization, [Vis::visualization], horiz([halfSize(label(!r)), raised(vis(Vis::visualization))])).
 visClass(raised(Vis), !'net.nansore.cedalion.figures.Raised').
-signature(lowered(Vis)::visualization, [Vis::visualization]).
-projection(lowered(Vis)::visualization, horiz([halfSize(label(!l)), lowered(vis(Vis::visualization))])).
+sigProj(lowered(Vis)::visualization, [Vis::visualization], horiz([halfSize(label(!l)), lowered(vis(Vis::visualization))])).
 visClass(lowered(Vis), !'net.nansore.cedalion.figures.Lowered').
 signature(link(Vis, File)::visualization, [Vis::visualization, File::string]).
 visClass(link(Vis, File), !'net.nansore.cedalion.figures.Link').
@@ -78,3 +76,7 @@ visClass(brackets(Content, Open, Close), !'net.nansore.cedalion.figures.Brackets
 signature(box(Size)::visualization, [Size::number]).
 userVisualization(box(Size)::visualization, cpi:default, _, vert([box(SizeVal), horiz([box(SizeVal), vis(Size::number), box(SizeVal)]), box(SizeVal)])):-descriptorContentWithDefault(Size::number, 1::number, SizeVal::number, _).
 visClass(box(Size), !'net.nansore.cedalion.figures.Box').
+signature(dynamicList(Vis, Goal)::visualization, [Vis::visualization, Goal::pred]).
+projection(dynamicList(Vis, Goal)::visualization, brackets(horiz([vis(Vis::visualization), box(1), vis(Goal::pred)]), 123, 125)).
+alias(dynamicList(Vis, Goal)::visualization, !'{}').
+visClass(dynamicList(Vis, Goal), !'net.nansore.cedalion.figures.DynamicList').

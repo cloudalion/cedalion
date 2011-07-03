@@ -78,13 +78,13 @@ public class FigureNavigator {
 		addEvents(root, 0);
 		//dumpEvents();
 	}
-	private void dumpEvents() {
+	/*private void dumpEvents() {
 		for(Event event : eventList) {
 			for(int i = 0; i < event.depth; i++)
 				System.out.print("  ");
 			System.out.println(event.eventType + ": " + event.figure);
 		}
-	}
+	}*/
 	/**
 	 * Recursively, add the given figure and all its children to the event list
 	 * @param figure the figure to be added
@@ -245,14 +245,35 @@ public class FigureNavigator {
 	 * Just like getFirstDescendant(), only that it finds the smallest matching figure.
 	 * @param start
 	 * @param classToFind
-	 * @return
+	 * @return The first descendant
 	 * @throws FigureNotFoundException
 	 */
-	public IFigure getSmallestDecscendant(IFigure start, Class<? extends IFigure> classToFind) throws FigureNotFoundException {
+	public IFigure getFirstSmallestDecscendant(IFigure start, Class<? extends IFigure> classToFind) throws FigureNotFoundException {
 		IFigure descendant = start;
 		try {
 			while(true) {
 				descendant = getFirstDescendant(descendant, classToFind, false);
+			}
+		} catch (FigureNotFoundException e) {
+			// We found the smallest descendant, i.e., the one that does not have children of type classToFind.
+		}
+		if(!(classToFind.isInstance(descendant)))
+			throw new FigureNotFoundException();
+		return descendant;
+	}
+	
+	/**
+	 * Just like getLastDescendant(), only that it finds the smallest matching figure.
+	 * @param start
+	 * @param classToFind
+	 * @return The last descendant
+	 * @throws FigureNotFoundException
+	 */
+	public IFigure getLastSmallestDecscendant(IFigure start, Class<? extends IFigure> classToFind) throws FigureNotFoundException {
+		IFigure descendant = start;
+		try {
+			while(true) {
+				descendant = getLastDescendant(descendant, classToFind);
 			}
 		} catch (FigureNotFoundException e) {
 			// We found the smallest descendant, i.e., the one that does not have children of type classToFind.

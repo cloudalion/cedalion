@@ -12,7 +12,7 @@ import net.nansore.prolog.PrologException;
 import org.eclipse.swt.graphics.FontData;
 
 /**
- * @author boaz
+ * A FontModifier that makes the content's font 2 points smaller 
  */
 public class Smaller extends FontModifier {
 
@@ -27,9 +27,7 @@ public class Smaller extends FontModifier {
         super(term, context);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.figures.FontModifier#modifyFont(org.eclipse.swt.graphics.FontData[], int, net.nansore.visualterm.prolog.Compound)
-     */
+    @Override
     protected FontData modifyFont(FontData[] fontData, int i, Compound term) {
         return new FontData(fontData[i].getName(), fontData[i].getHeight() - 2, fontData[i].getStyle());
     }

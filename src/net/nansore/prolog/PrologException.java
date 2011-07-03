@@ -1,10 +1,10 @@
 package net.nansore.prolog;
 
+/**
+ * A generic exception originating from the logic engine
+ */
 public class PrologException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public PrologException() {
@@ -23,9 +23,6 @@ public class PrologException extends Exception {
 		super(arg0);
 	}
 
-    /**
-     * @param exception
-     */
     public PrologException(Object exception) {
         this(exception.toString());
     }

@@ -9,6 +9,11 @@ import org.eclipse.draw2d.Panel;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * This is a box figure, providing a horizontal or vertical dividing line.
+ * The orientation of the dividing line is opposite to the one of the container.  A horizontal container will have a vertical divider line, and vice versa.
+ * Takes one argument: the line's width.
+ */
 public class Box extends Panel implements TermFigure {
 
 	private static final int MARGIN = 1;

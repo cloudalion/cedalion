@@ -12,10 +12,7 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import org.eclipse.draw2d.IFigure;
 
 /**
- * @author boaz
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * A common interface for all term figures, that is, figures that represent Cedalion terms. 
  */
 public interface TermFigure extends IFigure {
 
@@ -28,7 +25,7 @@ public interface TermFigure extends IFigure {
     void updateFigure() throws TermVisualizationException, TermInstantiationException;
 
     /**
-     * 
+     * Dispose of this figure and the resources it occupies
      */
     void dispose();
 

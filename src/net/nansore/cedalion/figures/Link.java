@@ -23,6 +23,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
 
+/**
+ * Creates a "hyperlink" to a Cedalion file.
+ * Takes two arguments:
+ * 1. The contents of the hyperlink
+ * 2. The file name it points to.
+ */
 public class Link extends TermContextProxy {
 
 	private String fileName;

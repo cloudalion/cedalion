@@ -11,6 +11,12 @@ import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * Displays a tooltip when hovering the mouse over the contents.
+ * Takes two arguments:
+ * 1. The contents.
+ * 2. The figure to be displayed in the tooltip
+ */
 public class Tooltip extends TermContextProxy {
 
 	private final class ChangeForeground extends TermContextProxy {

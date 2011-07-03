@@ -12,6 +12,9 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.geometry.Dimension;
 
+/**
+ * A round rectangle figure.  Not used.
+ */
 public class RoundRect extends TermContextProxy {
 
 	public RoundRect(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {

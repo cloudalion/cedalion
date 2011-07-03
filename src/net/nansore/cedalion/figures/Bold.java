@@ -13,7 +13,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 
 /**
- * @author boaz
+ * This is a font modifier, setting the font of the contents to be bold.
+ * The associated term takes one argument: the contents.
  */
 public class Bold extends FontModifier {
 

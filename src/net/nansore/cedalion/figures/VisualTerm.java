@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.nansore.cedalion.eclipse.Activator;
 import net.nansore.cedalion.eclipse.CedalionCanvas;
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
@@ -28,7 +27,6 @@ import net.nansore.prolog.Variable;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.draw2d.FlowLayout;
-import org.eclipse.draw2d.FocusBorder;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
@@ -53,11 +51,18 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * @author boaz
+ * This figure represents a term that needs to be visualized.  It operates on "descriptors", which are terms
+ * containing the content or the location of a certain Cedalion code element.  
+ * Upon creation, it issues a query to get the visuals associated with that code element.
+ * This figure draws focus.  When focused, it draws a rectangle around itself, and captures the CedalionEditor's
+ * text box, filling it with a textual representation of the underlying term.  The text box is writable, allowing
+ * the user to modify its content.  When Enter is hit, this figure modifies the content of the underlying term to
+ * the parsed content of the text-box.
+ * Also supported by this figure are code completion and a context menu.  Both getting their content by issuing
+ * queries to the Cedalion program. 
  */
 public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener{
 
-//    private static final String TEXT_CONTENT_FILENAME = ".tmpContent";
     private TermContext context;
     private TermFigure contentFigure;
 	private Object path;
@@ -68,12 +73,13 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	private static Map<Object, VisualTerm> pathOwner = new HashMap<Object, VisualTerm>();
 
     /**
-     * @param term
-     * @param context
-     * @throws TermVisualizationException
-     * @throws TermInstantiationException 
+     * Construct a new instance
+     * @param term the term containing the descriptor and possibly the visualization mode
+     * @param parent the figure in which this figure is placed
+     * @throws TermVisualizationException if visualization of the term has failed, e.g., if the query failed.
+     * @throws TermInstantiationException if a visualization object could not be instantiated
      */
-    public VisualTerm(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException {
+	public VisualTerm(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException {
     	context = parent;
         
         // Register this object with the content
@@ -88,7 +94,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             if(term.arity() > 1) {
             	projType = (Compound)term.arg(2);
             } else {
-            	projType = term.getProlog().createCompound("cpi#default");
+            	projType = Compound.createCompound("cpi#default");
             }
 
             // Set up the GUI
@@ -98,8 +104,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             contentFigure = createContentFigure(descriptor);
             add(contentFigure);
             
-            PrologProxy p = term.getProlog();
-			unreg = Notifier.instance().register(p.createCompound("::", path, p.createCompound("cpi#path")), new Runnable() {
+			unreg = Notifier.instance().register(new Compound("::", path, Compound.createCompound("cpi#path")), new Runnable() {
 				
 				@Override
 				public void run() {
@@ -126,44 +131,28 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         pathOwner.put(path, this);
     }
 
-    /**
-     * @param content
-     * @return
-     * @throws TermVisualizationException
-     * @throws TermInstantiationException 
-     */
     private TermFigure createContentFigure(Object path) throws TermVisualizationException, TermInstantiationException {
         // Query for the annotated term's visualization
 	    Variable vis = new Variable();
-	    PrologProxy prolog = Activator.getProlog();
-		Compound q = prolog.createCompound("cpi#visualizeDescriptor", path, projType, vis);
+		Compound q = Compound.createCompound("cpi#visualizeDescriptor", path, projType, vis);
 	    // If successful, build the GUI
         try {
-			Map<Variable, Object> s = prolog.getSolution(q);
+			Map<Variable, Object> s = PrologProxy.instance().getSolution(q);
 		    return (TermFigure) TermInstantiator.instance().instantiate((Compound)s.get(vis), this);
 		} catch (PrologException e) {
 			throw new TermVisualizationException(e);
 		}
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#getTextEditor()
-     */
     public Text getTextEditor() {
         return context.getTextEditor();
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#bindFigure(net.nansore.visualterm.figures.TermFigure)
-     */
     public void bindFigure(TermFigure figure) {
         figure.addMouseListener(this);
         boundFigures.add(figure);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.draw2d.MouseListener#mousePressed(org.eclipse.draw2d.MouseEvent)
-     */
     public void mousePressed(MouseEvent me) {
         if(me.button == 3) {
         	// Context menu
@@ -194,8 +183,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		Menu menu = new Menu(context.getCanvas().getShell(), SWT.POP_UP);
 		try {
 			Variable varAction = new Variable("Action");
-			PrologProxy prolog = Activator.getProlog();
-			Iterator<Map<Variable, Object>> results = prolog.getSolutions(prolog.createCompound("cpi#contextMenuEntry", descriptor, varAction));
+			Iterator<Map<Variable, Object>> results = PrologProxy.instance().getSolutions(Compound.createCompound("cpi#contextMenuEntry", descriptor, varAction));
 			while(results.hasNext()) {
 				Map<Variable, Object> result = (Map<Variable, Object>)results.next();
 				Compound action = (Compound)result.get(varAction);
@@ -219,54 +207,35 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     	return canModify();
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.draw2d.MouseListener#mouseReleased(org.eclipse.draw2d.MouseEvent)
-     */
     public void mouseReleased(MouseEvent me) {
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.draw2d.MouseListener#mouseDoubleClicked(org.eclipse.draw2d.MouseEvent)
-     */
     public void mouseDoubleClicked(MouseEvent me) {
         performDefaultAction();
     }
 
-    /**
-     * 
-     */
     public void performDefaultAction() {
     	context.performDefaultAction();
     }
 
 
     private String termToText() throws IOException, PrologException, TermInstantiationException, ExecutionContextException {
-    	PrologProxy prolog = Activator.getProlog();
-		ExecutionContext exe = new ExecutionContext(prolog);
-    	return (String) exe.evaluate(prolog.createCompound("cpi#termAsString", path, prolog.createCompound("cpi#constExpr", 5)), new Variable());
+		ExecutionContext exe = new ExecutionContext();
+    	return (String) exe.evaluate(Compound.createCompound("cpi#termAsString", path, Compound.createCompound("cpi#constExpr", 5)), new Variable());
     }
 
     public String getPackage() {
 		return context.getPackage();
 	}
 
-	/* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#focusChanged(net.nansore.visualterm.figures.TermFigure)
-     */
     public void selectionChanged(TermFigure figure) {
         context.selectionChanged(figure);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#registerTermFigure(long, net.nansore.visualterm.figures.TermFigure)
-     */
     public void registerTermFigure(Object termID, TermFigure figure) {
         context.registerTermFigure(termID, figure);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.figures.TermFigure#updateFigure()
-     */
     public void updateFigure() throws TermVisualizationException, TermInstantiationException {
 		contentFigure.dispose();
 		if(contentFigure != null) {
@@ -285,9 +254,6 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		context.setFocus();
 	}
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#getColor()
-     */
     public Color getColor() {
         return context.getColor();
     }
@@ -296,9 +262,6 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         return context.getFont(fontType);
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.Disposable#dispose()
-     */
     public void dispose() {
     	for(TermFigure figure : boundFigures) {
     		figure.removeMouseListener(this);
@@ -309,16 +272,10 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
         pathOwner.remove(path);
     }
 
-    /**
-     * 
-     */
     public void figureUpdated() {
         context.figureUpdated();
     }
 
-    /* (non-Javadoc)
-     * @see net.nansore.visualterm.TermContext#unregisterTermFigure(int, net.nansore.visualterm.figures.TermFigure)
-     */
     public void unregisterTermFigure(Object termID, TermFigure figure) {
         context.unregisterTermFigure(termID, figure);
     }
@@ -357,13 +314,10 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (PrologException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (TermInstantiationException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (ExecutionContextException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
@@ -380,9 +334,8 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 
 	private boolean canModify() {
         try {
-        	PrologProxy prolog = Activator.getProlog();
-			ExecutionContext exe = new ExecutionContext(prolog);
-        	return exe.isProcDefined(prolog.createCompound("cpi#edit", path, new Variable(), new Variable()));
+			ExecutionContext exe = new ExecutionContext();
+        	return exe.isProcDefined(Compound.createCompound("cpi#edit", path, new Variable(), new Variable()));
         } catch (PrologException e) {
             e.printStackTrace();
             return false;
@@ -404,16 +357,16 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 				VisualTerm other = null;
 				switch(event.keyCode) {
 				case SWT.ARROW_UP:
-					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfPrevSibling(this, VerticalFlow.class, VisualTerm.class), VisualTerm.class);
+					other = (VisualTerm)nav.getLastSmallestDecscendant(nav.getFirstDescendantOfPrevSibling(this, VerticalFlow.class, VisualTerm.class), VisualTerm.class);
 					break;
 				case SWT.ARROW_DOWN:
-					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfNextSibling(this, VerticalFlow.class, VisualTerm.class), VisualTerm.class);
+					other = (VisualTerm)nav.getFirstSmallestDecscendant(nav.getFirstDescendantOfNextSibling(this, VerticalFlow.class, VisualTerm.class), VisualTerm.class);
 					break;
 				case SWT.ARROW_LEFT:
-					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfPrevSibling(this, HorizontalFlow.class, VisualTerm.class), VisualTerm.class);
+					other = (VisualTerm)nav.getLastSmallestDecscendant(nav.getFirstDescendantOfPrevSibling(this, HorizontalFlow.class, VisualTerm.class), VisualTerm.class);
 					break;
 				case SWT.ARROW_RIGHT:
-					other = (VisualTerm)nav.getSmallestDecscendant(nav.getFirstDescendantOfNextSibling(this, HorizontalFlow.class, VisualTerm.class), VisualTerm.class);
+					other = (VisualTerm)nav.getFirstSmallestDecscendant(nav.getFirstDescendantOfNextSibling(this, HorizontalFlow.class, VisualTerm.class), VisualTerm.class);
 					break;
 				case SWT.PAGE_UP:
 					other = (VisualTerm)nav.getAncestor(getParent(), VisualTerm.class);
@@ -440,13 +393,10 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		} catch (TermVisualizationException e) {
 		    ErrorDialog.openError(context.getTextEditor().getShell(), "Error Updating Element", "The following error has occured: " + e.getMessage(), Status.OK_STATUS);
 		} catch (PrologException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TermInstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ExecutionContextException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -459,9 +409,8 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     	if(text.startsWith("\"")) {
     		text = "!('" + text.substring(1) + "')";
     	}
-    	PrologProxy prolog = Activator.getProlog();
-		ExecutionContext exe = new ExecutionContext(prolog);
-		exe.runProcedure(prolog.createCompound("cpi#editFromString", path, prolog.createCompound("cpi#constExpr", text)));
+		ExecutionContext exe = new ExecutionContext();
+		exe.runProcedure(Compound.createCompound("cpi#editFromString", path, Compound.createCompound("cpi#constExpr", text)));
         figureUpdated();
         // Schedule a re-focusing of this object
         getCanvas().getDisplay().asyncExec(new Runnable() {
@@ -490,13 +439,20 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		return context.getWorkbenchPart();
 	}
 
+	/**
+	 * Returns a list of proposals for auto-completion.  Each proposal contains a string with
+	 * the textual representation of the proposal, and an alias by which this proposal is
+	 * to be selected
+	 * @param substring the string to match the beginning of the alias to be matched
+	 * @param pos ignored
+	 * @return an array of proposals
+	 */
 	public IContentProposal[] getProposals(String substring, int pos) {
 	    List<IContentProposal> proposals = new ArrayList<IContentProposal>();
 	    try {
 			Variable varCompletion = new Variable();
 			Variable varAlias = new Variable();
-			PrologProxy prolog = Activator.getProlog();
-			Iterator<Map<Variable, Object>> solutions = prolog.getSolutions(prolog.createCompound("cpi#autocomplete", descriptor, substring, varCompletion, varAlias));
+			Iterator<Map<Variable, Object>> solutions = PrologProxy.instance().getSolutions(Compound.createCompound("cpi#autocomplete", descriptor, substring, varCompletion, varAlias));
 			while(solutions.hasNext()) {
 				Map<Variable, Object> solution = solutions.next();
 				final String completion = (String)solution.get(varCompletion);
@@ -526,13 +482,12 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 			}
 			
 		} catch (PrologException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return proposals.toArray(new IContentProposal[] {}); 
 	}
 
-	private String toLocalString(String string) {
+	/*private String toLocalString(String string) {
 		String name = string;
 		String args = "";
 		if(string.contains("(")) {
@@ -543,7 +498,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 			name = "'" + name.substring(0, name.indexOf("#")) + "':'" + name.substring(name.indexOf("#") + 1) + "'";
 		}
 		return name + args;
-	}
+	}*/
 
 	@Override
 	public Image getImage(String imageName) throws IOException {

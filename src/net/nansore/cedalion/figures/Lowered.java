@@ -9,6 +9,10 @@ import net.nansore.prolog.PrologException;
 import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.SimpleLoweredBorder;
 
+/**
+ * A BorderFigure that displays a lowered border around the contents.
+ * Takes no additional arguments.
+ */
 public class Lowered extends BorderFigure {
 
 	public Lowered(Compound term, TermContext parent)

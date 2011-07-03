@@ -1,0 +1,6 @@
+sigProj(sigProj(H, S, P)::statement, [H::typedTerm, S::list(typedTerm), P::visualization], vert([vis(H::typedTerm), horiz([label(!'    '), vert([horiz([symbol(8618), cpi:vis(S::list(typedTerm), horiz)]), horiz([symbol(8608), vis(P::visualization)])])])])).
+sigProj(H, S, P)~>signature(H, S).
+sigProj(H, S, P)~>projection(H, P).
+contextMenuEntry([signature(H, S), projection(H, P)|Rest]::list(statement), VNs, Path, !'Unify signature and projection', cpi:edit(Path, [sigProj(H, S, P)|Rest]::list(statement), VNs)).
+check(Path, sigProj(H, S, P)::statement, VNs, Marker):-check(Path, signature(H, S)::statement, VNs, Marker).
+contextMenuEntry([sigProj(H, S, P)|Rest]::list(statement), VNs, Path, !'Split definitions', cpi:edit(Path, [signature(H, S), projection(H, P)|Rest]::list(statement), VNs)).

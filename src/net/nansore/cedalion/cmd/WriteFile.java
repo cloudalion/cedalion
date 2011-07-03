@@ -8,6 +8,10 @@ import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
+/**
+ * Write a Cedalion file to the disk.
+ * Takes two arguments: the name of the file, and its content, as provided by ReadFile.
+ */
 public class WriteFile implements ICommand {
 	
 	private String fileName;
@@ -20,8 +24,8 @@ public class WriteFile implements ICommand {
 
 	public void run(ExecutionContext executionContext) throws PrologException,
 			TermInstantiationException, ExecutionContextException {
-		PrologProxy p = content.getProlog();
-		p.getSolution(p.createCompound("writeFile", fileName, content));
+		PrologProxy p = PrologProxy.instance();
+		p.getSolution(Compound.createCompound("writeFile", fileName, content));
 	}
 
 }

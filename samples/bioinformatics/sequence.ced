@@ -1,14 +1,9 @@
-'/bootstrap':signature(seq(ASet, BSet)::'/bootstrap':set('/bootstrap':list(base)), [ASet::'/bootstrap':set('/bootstrap':list(base)), BSet::'/bootstrap':set('/bootstrap':list(base))]).
-'/bootstrap':projection(seq(ASet, BSet)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(ASet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!.), '/bootstrap':vis(BSet::'/bootstrap':set('/bootstrap':list(base)))])).
-'/bootstrap':alias(seq(ASet, BSet)::'/bootstrap':set('/bootstrap':list(base)), !.).
-'/bootstrap':member(Seq, seq(ASet, BSet), '/bootstrap':list(base)):-'/bootstrap':member(A, ASet, '/bootstrap':list(base)), '/bootstrap':member(B, BSet, '/bootstrap':list(base)), '/bootstrap':append(A, B, Seq, base).
+'/bootstrap':disabled('/bootstrap':alias(seq(ASet, BSet)::'/bootstrap':set('/bootstrap':list(base)), !.)).
+'/bootstrap':disabled(('/bootstrap':member(Seq, seq(ASet, BSet), '/bootstrap':list(base)):-'/bootstrap':member(A, ASet, '/bootstrap':list(base)), '/bootstrap':member(B, BSet, '/bootstrap':list(base)), '/bootstrap':append(A, B, Seq, base))).
 '/bootstrap':unitTest('/bootstrap':member([a, t], seq(aSet, tSet), '/bootstrap':list(base))).
 '/bootstrap':unitTest(\+'/bootstrap':member([a, t], seq(aSet, gSet), '/bootstrap':list(base))).
 '/bootstrap':unitTest('/bootstrap':member([a, t], seq(aSet, nSet), '/bootstrap':list(base))).
-'/bootstrap':signature(rep(SeqSet, N)::'/bootstrap':set('/bootstrap':list(base)), [SeqSet::'/bootstrap':set('/bootstrap':list(base)), N::'/bootstrap':number]).
-'/bootstrap':projection(rep(SeqSet, N)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':vis(N::'/bootstrap':number))])).
-'/bootstrap':alias(rep(SeqSet, N)::'/bootstrap':set('/bootstrap':list(base)), ! (^)).
-'/bootstrap':member(RepSeq, rep(SeqSet, N), '/bootstrap':list(base)):-builtin:if(N>0, (builtin:succ(N1, N), '/bootstrap':member(RepSeq, seq(SeqSet, rep(SeqSet, N1)), '/bootstrap':list(base))), RepSeq::'/bootstrap':list(base)=[]::'/bootstrap':list(base)).
+'/bootstrap':disabled(('/bootstrap':member(RepSeq, rep(SeqSet, N), '/bootstrap':list(base)):-builtin:if(N>0, (builtin:succ(N1, N), '/bootstrap':member(RepSeq, seq(SeqSet, rep(SeqSet, N1)), '/bootstrap':list(base))), RepSeq::'/bootstrap':list(base)=[]::'/bootstrap':list(base)))).
 '/bootstrap':unitTest('/bootstrap':member([a, a, a], rep(aSet, 3), '/bootstrap':list(base))).
 '/bootstrap':unitTest('/bootstrap':member([c, g, t], rep(nSet, 3), '/bootstrap':list(base))).
 '/bootstrap':unitTest(\+'/bootstrap':member([c, g, t], rep(nSet, 4), '/bootstrap':list(base))).

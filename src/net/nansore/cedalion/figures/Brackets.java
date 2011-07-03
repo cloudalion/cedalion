@@ -14,6 +14,14 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 
+/**
+ * Brackets provide a layout, in which the contents is enclosed between two symbols to its left and right.
+ * The symbols on both sides change their size (font size) to have approximately the same height as the contents.
+ * Expects to have three arguments:
+ * 1. The contents.
+ * 2. The openning symbol's Unicode
+ * 3. The closing symbol's Unicode 
+ */
 public class Brackets extends Panel implements TermFigure {
 
 	private static final double MODIFICATION_THRESHOLD = 0.1;

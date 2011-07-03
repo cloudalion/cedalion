@@ -14,6 +14,11 @@ import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.LineBorder;
 import org.eclipse.swt.graphics.Color;
 
+/**
+ * A BorderFigure, that displays a line border around the contents.  Takes 2 in addition to the contents:
+ * 2. The width of the line
+ * 3. The color (RGB) of the line
+ */
 public class LineBorderFigure extends BorderFigure {
 
     public LineBorderFigure(Compound term, TermContext parent) throws TermVisualizationException, TermInstantiationException, PrologException {
