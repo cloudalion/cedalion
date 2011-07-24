@@ -1,0 +1,8 @@
+signature(alignment::type, []).
+signature(cpi:bottom::alignment, []).
+projection(cpi:bottom::alignment, symbol(10515)).
+signature(cpi:top::alignment, []).
+projection(cpi:top::alignment, symbol(10514)).
+signature(cpi:middle::alignment, []).
+projection(cpi:middle::alignment, symbol(8597)).
+contextMenuEntry(horiz(List)::visualization, VNs, Path, !'Set alignment', cpi:edit(Path, horiz(List, cpi:top)::visualization, VNs)).

@@ -1,0 +1,10 @@
+signature(define(TTerm)::statement, [TTerm::typedTerm]).
+disabled(signature(ofType(Term, Type)::Type, [Term::Type, Type::type])).
+disabled(projection(ofType(Term, Type)::Type, brackets(horiz([vis(Term::Type), label(! (::)), vis(Type::type)]), 60, 62))).
+define(myTTerm(ofType(A, Type), ofType(Type, type))::typedTerm).
+signature(definitionToSignature(TTerm, Head, Body)::pred, [TTerm::typedTerm, Head::typedTerm, Body::list(typedTerm)]).
+definitionToSignature(Term::Type, Head::Type, Args):-safeParseTerm(Term::Type, Func, DefArgs), defArgsToArgs(DefArgs, Args), safeParseTerm(Head::Type, Func, Args).
+signature(defArgsToArgs(DefArgs, Args)::pred, [DefArgs::list(typedTerm), Args::list(typedTerm)]).
+defArgsToArgs([], []):-builtin:true.
+defArgsToArgs([ofType(Term, Type)::Type|DefArgs], [Term::Type|Args]):-defArgsToArgs(DefArgs, Args).
+disabled((define(TTerm)~>checkSignature(Head, Body):-definitionToSignature(TTerm, Head, Body))).

@@ -1,0 +1,20 @@
+signature(symbolRange(Label, From, To)::statement, [Label::string, From::number, To::number]).
+projection(symbolRange(Label, From, To)::statement, horiz([label(!'Symbols'), vis(Label::string), label(!'Range from'), vis(From::number), label(!to), vis(To::number)])).
+signature(showSymbols(Label, Path)::procedure, [Label::string, Path::cpi:path]).
+signature(symbolsMenu(From, To, Path, Symbols)::pred, [From::number, To::number, Path::cpi:path, Symbols::visualization]).
+symbolsMenu(From, To, Path, Symbols):-builtin:if(To>From, (builtin:succ(From, Next), symbolsMenu(Next, To, Path, MoreSymbols), Symbols::visualization=horiz([action(symbol(From), cpi:edit(Path, symbol(From)::visualization, [])), MoreSymbols])::visualization), Symbols::visualization=action(symbol(From), cpi:edit(Path, symbol(From)::visualization, []))::visualization).
+symbolRange(Label, From, To)~>cpi:procedureCommand(showSymbols(Label, Path), showView(Symbols)):-symbolsMenu(From, To, Path, Symbols).
+contextMenuEntry(symbol(_)::visualization, _, Path, Label, showSymbols(Label, Path)).
+symbolRange(!'Mathematical Symbols', 8704, 8959).
+symbolRange(!'Arrows', 8592, 8703).
+symbolRange(!'Supplemental Mathematical Symbols', 10752, 11007).
+symbolRange(!'Supplemental Arrows-A', 10224, 10239).
+symbolRange(!'Supplemental Arrows-B', 10496, 10623).
+symbolRange(!'ASCII', 32, 127).
+symbolRange(!'Miscellaneous Mathematical Symbols-A', 10176, 10223).
+symbolRange(!'Miscellaneous Mathematical Symbols-B', 10624, 10751).
+symbolRange(!'Greek and Coptic', 880, 1023).
+symbolRange(!'Letterlike Symbols', 8448, 8527).
+symbolRange(!'Miscellaneous Symbols', 9728, 9983).
+contextMenuEntry([symbol(Sym1), Vis, symbol(Sym2)|Res]::list(visualization), VNs, Path, !'Create brackets', cpi:edit(Path, [brackets(Vis, Sym1, Sym2)|Res]::list(visualization), VNs)).
+contextMenuEntry([brackets(Vis, Sym1, Sym2)|Res]::list(visualization), VNs, Path, !'Split brackets', cpi:edit(Path, [symbol(Sym1), Vis, symbol(Sym2)|Res]::list(visualization), VNs)).

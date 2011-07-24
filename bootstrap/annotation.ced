@@ -1,0 +1,20 @@
+signature(annotation:escape(annotation:escape(X))::T, [X::T]).
+signature(annotation:escape(annotation:parentheses(X))::T, [X::T]).
+alias(annotation:escape(annotation:parentheses(X))::T, !'()').
+projection(annotation:escape(annotation:parentheses(X))::T, horiz([brackets(vis(X::T), 40, 41)])).
+signature(annotation:escape(annotation:comment(Body, Comment))::T, [Body::T, Comment::string]).
+projection(annotation:escape(annotation:comment(Body, Comment))::T, vert([background(horiz([label(! (//)), vis(Comment::string)]), cpi:rgb(255, 255, 128)), vis(Body::T)])).
+alias(annotation:escape(annotation:comment(Body, Comment))::T, ! (//)).
+signature(annotation:escape(annotation:minComment(Body, Comment))::T, [Body::T, Comment::string]).
+projection(annotation:escape(annotation:minComment(Body, Comment))::T, tooltip(horiz([smaller(color(symbol(9873), cpi:rgb(200, 200, 0))), vis(Body::T)], cpi:top), vis(Comment::string))).
+contextMenuEntry(annotation:escape(annotation:comment(Body, Comment))::T, VNs, Path, !'Minimize comment', cpi:edit(Path, annotation:escape(annotation:minComment(Body, Comment))::T, VNs)).
+contextMenuEntry(annotation:escape(annotation:minComment(Body, Comment))::T, VNs, Path, !'Restore comment', cpi:edit(Path, annotation:escape(annotation:comment(Body, Comment))::T, VNs)).
+signature(annotation:escape(annotation:changeMode(Term, Mode))::Type, [Term::Type, Mode::mode]).
+projection(annotation:escape(annotation:changeMode(Term, Mode))::Type, horiz([color(halfSize(vis(Mode::mode)), cpi:rgb(192, 192, 192)), vis(Term::Type)])).
+userVisualization(annotation:escape(annotation:changeMode(Term, Mode))::Type, _, [], horiz([color(halfSize(vis(Mode::mode)), cpi:rgb(192, 192, 192)), cpi:vis(Term::Type, ModeVal)])):-descriptorContentWithDefault(Mode::mode, cpi:default::mode, ModeVal::mode, _).
+contextMenuEntry(Term::Type, VNs, Path, !'Change projection mode', cpi:edit(Path, annotation:escape(annotation:changeMode(Term, cpi:default)::Type), VNs)).
+contextMenuEntry([A|B]::list(T), VNs, Path, !'Display horizontally', cpi:edit(Path, annotation:escape(annotation:changeMode([A|B], horiz)::list(T)), VNs)).
+contextMenuEntry([A|B]::list(T), VNs, Path, !'Display vertically', cpi:edit(Path, annotation:escape(annotation:changeMode([A|B], vert)::list(T)), VNs)).
+signature(removeAnnotation(Annotated, Path, VNs)::procedure, [Annotated::typedTerm, Path::cpi:path, VNs::list(varName)]).
+cpi:procedureCommand(removeAnnotation(Annotated, Path, VNs), doProc(cpi:edit(Path, Unannotated, VNs))):- \+builtin:var(Annotated), safeParseTerm(Annotated, Func, [Unannotated|_]), builtin:strcat(!'annotation#', _, Func).
+contextMenuEntry(Annotated, VNs, Path, !'Remove annotation', removeAnnotation(Annotated, Path, VNs)).

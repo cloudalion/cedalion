@@ -1,0 +1,25 @@
+signature(visualizeVar(TTerm, VNs, Vis)::pred, [TTerm::typedTerm, VNs::list(varName), Vis::visualization]).
+signature(varNameMacro(Name, Vis)::pred, [Name::string, Vis::visualization]).
+varNameMacro(Name, Vis):-builtin:fail.
+signature(varNameMacroStatement(Name, Vis)::statement, [Name::string, Vis::visualization]).
+projection(varNameMacroStatement(Name, Vis)::statement, horiz([label(!'Variable'), vis(Name::string), label(!'displays as'), vis(Vis::visualization)])).
+varNameMacroStatement(Name, Vis)~>varNameMacro(Name, Vis):-builtin:true.
+visualizeVar(_, [builtin:varName(_, Name)|_], italic(color(Vis, cpi:rgb(0, 128, 0)))):-builtin:if(varNameMacro(Name, Vis), builtin:true, Vis::visualization=label(Name)::visualization).
+visualizeVar(_, [], italic(color(label(!'_'), cpi:rgb(0, 128, 0)))):-builtin:true.
+varNameMacroStatement(!'Alpha', symbol(945)).
+varNameMacroStatement(!'Beta', symbol(946)).
+varNameMacroStatement(!'Gamma', symbol(947)).
+varNameMacroStatement(!'Tau', symbol(964)).
+contextMenuEntry(_, [builtin:varName(_, Name)], Path, !'Define Variable Name Macro', insertStatement(varNameMacroStatement(Name, symbol(_)), Path, [])).
+signature(varNameSuffix(Suffix, Vis, VisPrime)::statement, [Suffix::string, Vis::visualization, VisPrime::visualization]).
+projection(varNameSuffix(Suffix, Vis, VisPrime)::statement, horiz([label(!'Variable suffix'), vis(Suffix::string), label(!modifies), vis(Vis::visualization), label(!into), vis(VisPrime::visualization)])).
+varNameSuffix(Suffix, Vis, VisPrime)~>varNameMacro(VarName, VisPrime):-builtin:strcat(BaseName, Suffix, VarName), visualizeVar(_, [builtin:varName(_, BaseName)], Vis).
+varNameSuffix(!'Prime', Vis, horiz([Vis, label(!'\'')])).
+varNameSuffix(!'Bar', Vis, vert([box(1), Vis])).
+signature(subscriptVarSuffix(Suffix)::statement, [Suffix::string]).
+subscriptVarSuffix(Suffix)~>varNameSuffix(Suffix, Vis, horiz([Vis, halfSize(label(Suffix))], cpi:bottom)).
+subscriptVarSuffix(!'1').
+subscriptVarSuffix(!'2').
+subscriptVarSuffix(!'3').
+subscriptVarSuffix(!'4').
+subscriptVarSuffix(!'5').
