@@ -183,11 +183,13 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		// Get the root type
 		Variable varType = new Variable("RootType");
 		Object rootType = PrologProxy.instance().getSolution(Compound.createCompound("cpi#rootType", varType)).get(varType);
+		Variable varMode = new Variable("RootType");
+		Object rootMode = PrologProxy.instance().getSolution(Compound.createCompound("cpi#rootMode", varMode)).get(varMode);
 		// Set the root path
 		Compound path = Compound.createCompound("cpi#path", getResource(), Compound.createCompound("[]"));
 		Compound descriptor = Compound.createCompound("cpi#descriptor", path, new Variable(), Compound.createCompound("[]"));
 		Compound tterm = Compound.createCompound("::", descriptor, rootType);
-		editorWidget.setTerm(Compound.createCompound("cpi#vis", tterm), this);
+		editorWidget.setTerm(Compound.createCompound("cpi#vis", tterm, rootMode), this);
 	}
 
 	private Font createFont(final String fontType) {

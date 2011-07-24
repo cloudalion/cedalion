@@ -1,10 +1,15 @@
-'/bootstrap':sigProj(t::base, [], '/bootstrap':label(!'T')).
-'/bootstrap':sigProj(tSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'T')).
+'/bootstrap':defAtom(t::base).
+'/bootstrap':projection(t::base, '/bootstrap':label(!'T')).
+'/bootstrap':defAtom(tSet::'/bootstrap':set('/bootstrap':list(base))).
+'/bootstrap':projection(tSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'T')).
 '/bootstrap':setDef(tSet, '/bootstrap':singleton([t]), '/bootstrap':list(base)).
-'/bootstrap':sigProj(c::base, [], '/bootstrap':label(!'C')).
-'/bootstrap':signature(cSet::'/bootstrap':set('/bootstrap':list(base)), []).
+'/bootstrap':defAtom(c::base).
+'/bootstrap':projection(c::base, '/bootstrap':label(!'C')).
+'/bootstrap':defAtom(cSet::'/bootstrap':set('/bootstrap':list(base))).
 '/bootstrap':projection(cSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'C')).
 '/bootstrap':setDef(cSet, '/bootstrap':singleton([c]), '/bootstrap':list(base)).
-'/bootstrap':sigProj(g::base, [], '/bootstrap':label(!'G')).
-'/bootstrap':sigProj(gSet::'/bootstrap':set('/bootstrap':list(base)), [], '/bootstrap':label(!'G')).
+'/bootstrap':defAtom(g::base).
+'/bootstrap':projection(g::base, '/bootstrap':label(!'G')).
+'/bootstrap':defAtom(gSet::'/bootstrap':set('/bootstrap':list(base))).
+'/bootstrap':projection(gSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'G')).
 '/bootstrap':setDef(gSet, '/bootstrap':singleton([g]), '/bootstrap':list(base)).

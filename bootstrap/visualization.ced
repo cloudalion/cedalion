@@ -1,9 +1,9 @@
-signature(visualization::type, []).
+defAtom(visualization::type).
 signature(visClass(Vis, Class)::statement, [Vis::visualization, Class::string]).
 visClass(Vis, Class)~>cpi:termClass(Vis::visualization, Class):-builtin:true.
 doc(!'A placeholder for visualizing an a typed term (TTerm)', signature(cpi:vis(TTerm)::visualization, [TTerm::typedTerm])).
 visClass(cpi:vis(_), !'net.nansore.cedalion.figures.VisualTerm').
-signature(mode::type, []).
+defAtom(mode::type).
 doc(!'A placeholder for visualizing an a typed term (TTerm) in visualization mode Mode', signature(cpi:vis(TTerm, Mode)::visualization, [TTerm::typedTerm, Mode::mode])).
 projection(cpi:vis(TTerm, Mode)::visualization, horiz([symbol(12298), vis(TTerm::typedTerm), label(!'@'), vis(Mode::mode), symbol(12299)])).
 alias(cpi:vis(TTerm, Mode)::visualization, !'<<@>>').
@@ -15,7 +15,7 @@ adapter(TTerm::typedTerm, vis(TTerm)::visualization).
 alias(vis(_)::visualization, !'<<>>').
 visClass(horiz(_), !'net.nansore.cedalion.figures.HorizontalFlow').
 signature(vert(List)::visualization, [List::list(visualization)]).
-projection(vert(List)::visualization, horiz([halfSize(label(!v)), vis(List::list(visualization))])).
+projection(vert(List)::visualization, horiz([halfSize(label(!v)), cpi:vis(List::list(visualization), vert)])).
 visClass(vert(_), !'net.nansore.cedalion.figures.VerticalFlow').
 visClass(label(_), !'net.nansore.cedalion.figures.LabelFigure').
 projection(label(L)::visualization, horiz([label(!'"'), vis(L::string), label(!'"')])).
@@ -27,7 +27,7 @@ visClass(italic(_), !'net.nansore.cedalion.figures.Italic').
 signature(bold(Vis)::visualization, [Vis::visualization]).
 projection(bold(Vis)::visualization, horiz([halfSize(label(!b)), bold(vis(Vis::visualization))])).
 visClass(bold(_), !'net.nansore.cedalion.figures.Bold').
-signature(color::type, []).
+defAtom(color::type).
 signature(color(Vis, Color)::visualization, [Vis::visualization, Color::color]).
 userVisualization(color(Vis, ColorDesc)::visualization, cpi:default, _, raised(tooltip(horiz([vis(ColorDesc::color), color(vis(Vis::visualization), Color)]), label(!color)))):-descriptorContentWithDefault(ColorDesc::color, cpi:rgb(0, 0, 0)::color, Color::color, _).
 visClass(color(_, _), !'net.nansore.cedalion.figures.TextColor').

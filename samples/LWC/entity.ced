@@ -12,20 +12,20 @@
 '/bootstrap':projection(propertyNotInEntity::'/bootstrap':error, '/bootstrap':label(!'Property is defined, but does not appear in the entity definition')).
 entity(Ent, Fields)~>'/bootstrap':checkError('/bootstrap':signature(Prop::propertyName(Ent, Type, Cardinality), [])::'/bootstrap':statement, propertyNotInEntity):- \+'/bootstrap':listMember(property(Prop, Type, Cardinality), property(Ent), Fields).
 '/bootstrap':doc(!'An example entity', '/bootstrap':signature(person::entity, [])).
-'/bootstrap':signature(firstName::propertyName(person, primitiveType('/bootstrap':string), one), []).
-'/bootstrap':signature(personName::propertyName(person, primitiveType('/bootstrap':string), one), []).
+'/bootstrap':defAtom(firstName::propertyName(person, primitiveType('/bootstrap':string), one)).
+'/bootstrap':defAtom(personName::propertyName(person, primitiveType('/bootstrap':string), one)).
 '/bootstrap':projection(personName::propertyName(person, primitiveType('/bootstrap':string), one), '/bootstrap':label(!name)).
-'/bootstrap':signature(birthDate::propertyName(person, primitiveType(date), one), []).
-'/bootstrap':signature(ownedCar::propertyName(person, ent(car), one), []).
+'/bootstrap':defAtom(birthDate::propertyName(person, primitiveType(date), one)).
+'/bootstrap':defAtom(ownedCar::propertyName(person, ent(car), one)).
 entity(person, [property(firstName, primitiveType('/bootstrap':string), one), property(personName, primitiveType('/bootstrap':string), one), property(birthDate, primitiveType(date), one), property(ownedCar, ent(car), one)]).
 '/bootstrap':doc(!'The type for entity names', '/bootstrap':signature(entity::'/bootstrap':type, [])).
 '/bootstrap':doc(!'A type for properties of entities', '/bootstrap':signature(property(Entity)::'/bootstrap':type, [Entity::entity])).
 '/bootstrap':doc(!'An entity definition statement.  Has a name of type entity, and a list of properties', '/bootstrap':signature(entity(Entity, Properties)::'/bootstrap':statement, [Entity::entity, Properties::'/bootstrap':list(property(Entity))])).
-'/bootstrap':projection(entity(Entity, Properties)::'/bootstrap':statement, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!entity), '/bootstrap':vis(Entity::entity)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Properties::'/bootstrap':list(property(Entity)))])])).
+'/bootstrap':projection(entity(Entity, Properties)::'/bootstrap':statement, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!entity), '/bootstrap':vis(Entity::entity)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), cpi:vis(Properties::'/bootstrap':list(property(Entity)), '/bootstrap':vert)])])).
 '/bootstrap':defines(entity(Entity, Properties), Entity::entity, '/bootstrap':semanticDefinition).
 '/bootstrap':doc(!'A general type for all property types', '/bootstrap':signature(propertyType::'/bootstrap':type, [])).
 '/bootstrap':doc(!'A type for property names.  Their type reflects the entity they are defined in, and the property type.', '/bootstrap':signature(propertyName(Ent, Type, Cardinality)::'/bootstrap':type, [Ent::entity, Type::propertyType, Cardinality::cardinality])).
-'/bootstrap':signature(cardinality::'/bootstrap':type, []).
+'/bootstrap':defAtom(cardinality::'/bootstrap':type).
 '/bootstrap':doc(!'A property, containing a name, a type and cardinality', '/bootstrap':signature(property(Name, Type, Cardinality)::property(Ent), [Name::propertyName(Ent, Type, Cardinality), Type::propertyType, Cardinality::cardinality])).
 '/bootstrap':projection(property(Name, Type, Cardinality)::property(Ent), '/bootstrap':horiz(['/bootstrap':vis(Name::propertyName(Ent, Type, Cardinality)), '/bootstrap':label(! (:)), '/bootstrap':vis(Type::propertyType), '/bootstrap':symbol(215), '/bootstrap':vis(Cardinality::cardinality)])).
 '/bootstrap':doc(!'A property of this type is a reference to another entity', '/bootstrap':signature(ent(Entity)::propertyType, [Entity::entity])).
@@ -34,5 +34,5 @@ entity(person, [property(firstName, primitiveType('/bootstrap':string), one), pr
 '/bootstrap':doc(!'A primitive type entity, where the value is of any valid Cedalion type.', '/bootstrap':signature(primitiveType(Type)::propertyType, [Type::'/bootstrap':type])).
 '/bootstrap':projection(primitiveType(Type)::propertyType, '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!pr)), '/bootstrap':vis(Type::'/bootstrap':type)])).
 '/bootstrap':adapter(Type::'/bootstrap':type, primitiveType(Type)::propertyType).
-'/bootstrap':signature(one::cardinality, []).
+'/bootstrap':defAtom(one::cardinality).
 '/bootstrap':projection(one::cardinality, '/bootstrap':label(!'1')).

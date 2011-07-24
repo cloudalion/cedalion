@@ -1,7 +1,5 @@
 checkSignature(cpi:descriptor(Path, Term, Markers)::Type, [Path::cpi:path, Term::Type, Markers::list(locMarker)]):-builtin:true.
 cpi:visualizeDescriptor(cpi:descriptor(Path, Term, Markers)::Type1, ProjType, MVis):-fixType(Type1::type, Type::type), cpi:termAtPath(Path, Term::Type, VarNames), true(applyCheckers(cpi:descriptor(Path, Term, Markers)::Type, Term::Type, VarNames, Desc)), builtin:if(builtin:var(Term::Type), visualizeVar(Term::Type, VarNames, Vis), builtin:if(builtin:number(Term::Type), visualizeNumber(Term::Type, Vis), builtin:if(builtin:string(Term::Type), visualizeString(Term::Type, Vis), visualizeCompound(Desc, Term::Type, ProjType, Vis)))), true(applyMarkers(Desc, Vis, MVis)).
-visualizeVar(_, [builtin:varName(_, Name)|_], italic(color(label(Name), cpi:rgb(0, 128, 0)))):-builtin:true.
-visualizeVar(_, [], italic(color(label(!'_'), cpi:rgb(0, 128, 0)))):-builtin:true.
 visualizeNumber(Num::_, label(Num)):-builtin:true.
 visualizeString(Str::_, label(Str)):-builtin:true.
 visualizeCompound(Desc, Term::Type, ProjType, Vis):-true(builtin:parseTerm(Term::Type, Func, TArgs)), true(subDescriptors(Desc, 0, TArgs, SubDescs)), true(builtin:parseTerm(Term2Vis::Type, Func, SubDescs)), true(visualizeTerm(Term2Vis::Type, ProjType, Vis)).
@@ -13,7 +11,7 @@ subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeI
 pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)):-builtin:true.
 pathIsPrefix(cpi:path(Res, [First|Base]), cpi:path(Res, [First|Path])):-pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 signature(visualizeTerm(TTerm2Vis, ProjType, Vis)::pred, [TTerm2Vis::typedTerm, ProjType::mode, Vis::visualization]).
-visualizeTerm(TTerm2Vis, ProjType, Vis):-builtin:if(userVisualization(TTerm2Vis, ProjType, [], Vis), builtin:true, defaultVisualization(TTerm2Vis, Vis)).
+visualizeTerm(TTerm2Vis, ProjType, Vis):-builtin:if(userVisualization(TTerm2Vis, ProjType, [], Vis), builtin:true, builtin:if(userVisualization(TTerm2Vis, _, [], Vis), builtin:true, defaultVisualization(TTerm2Vis, Vis))).
 defaultVisualization(TTerm, Vis):-builtin:parseTerm(TTerm, Func, SubPaths), builtin:if(localName(Func, LFunc), builtin:true, LFunc::string=Func::string), builtin:if(SubPaths::list(cpi:path)=[]::list(cpi:path), Vis::visualization=label(LFunc)::visualization, (argListForPathList(SubPaths, ArgList), Vis::visualization=horiz([label(LFunc), brackets(horiz(ArgList), 40, 41)])::visualization)).
 argListForPathList([Path], [vis(Path)]):-builtin:true.
 argListForPathList([First|Rest], [vis(First), label(! (,))|ArgList]):-argListForPathList(Rest, ArgList).
@@ -22,6 +20,7 @@ append([], B, B, T):-builtin:true.
 append([X|A], B, [X|L], T):-append(A, B, L, T).
 signature(projection(TTerm, ProjType, Vis)::statement, [TTerm::typedTerm, ProjType::mode, Vis::visualization]).
 projection(projection(TTerm, ProjType, Vis)::statement, horiz([vis(TTerm::typedTerm), label(!'@'), vis(ProjType::mode), symbol(8608), vis(Vis::visualization)])).
+alias(projection(TTerm, ProjType, Vis)::statement, !'@->>').
 defines(projection(TTerm, ProjType, Vis), TTerm, projectionDefinition).
 doc(!'The default visualization mode', signature(cpi:default::mode, [])).
 projection(TTerm, Vis)~>userVisualization(TTerm, cpi:default, _, Vis):-builtin:true.

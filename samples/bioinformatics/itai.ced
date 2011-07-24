@@ -1,8 +1,8 @@
 '/bootstrap':signature(not(X)::'/bootstrap':set('/bootstrap':list(base)), [X::base]).
 dnaSetDef(not(X), '/bootstrap':set([Y], ('/bootstrap':member([Y], nSet, '/bootstrap':list(base)), \+X::base=Y::base))).
-'/bootstrap':signature(prefix::'/bootstrap':set('/bootstrap':list(base)), []).
+'/bootstrap':defAtom(prefix::'/bootstrap':set('/bootstrap':list(base))).
 dnaSetDef(prefix, seq(aSet, seq(cSet, seq(tSet, seq(gSet, seq(cSet, seq(tSet, seq(aSet, gSet)))))))).
-'/bootstrap':signature(suffix::'/bootstrap':set('/bootstrap':list(base)), []).
+'/bootstrap':defAtom(suffix::'/bootstrap':set('/bootstrap':list(base))).
 dnaSetDef(suffix, seq(cSet, seq(tSet, aSet))).
 '/bootstrap':signature(wrapped(X)::'/bootstrap':set('/bootstrap':list(base)), [X::'/bootstrap':set('/bootstrap':list(base))]).
 dnaSetDef(wrapped(X), seq(prefix, seq(X, suffix))).

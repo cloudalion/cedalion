@@ -1,6 +1,6 @@
 '/bootstrap':signature(cases(ExprType, T)::'/bootstrap':type, [ExprType::'/bootstrap':type, T::'/bootstrap':type]).
 '/bootstrap':signature(switch(Expr, ExprType, Cases)::expr(T), [Expr::expr(ExprType), ExprType::'/bootstrap':type, Cases::cases(ExprType, T)]).
-'/bootstrap':projection(switch(Expr, ExprType, Cases)::expr(T), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!case), '/bootstrap':vis(ExprType::'/bootstrap':type), '/bootstrap':vis(Expr::expr(ExprType)), '/bootstrap':label(!of)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Cases::cases(ExprType, T))])])).
+'/bootstrap':projection(switch(Expr, ExprType, Cases)::expr(T), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!case), '/bootstrap':vis(Expr::expr(ExprType)), '/bootstrap':label(! (::)), '/bootstrap':vis(ExprType::'/bootstrap':type), '/bootstrap':label(!of)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Cases::cases(ExprType, T))])])).
 '/bootstrap':alias(switch(Expr, ExprType, otherwise(_))::expr(T), !case).
 '/bootstrap':disabled('/bootstrap':default(switch(Expr, ExprType, otherwise(_))::expr(T))).
 eval(switch(Expr, ExprType, Cases), T, Result):-eval(Expr, ExprType, Value), evalCases(Cases, ExprType, T, Value, Result).

@@ -1,39 +1,40 @@
-'/bootstrap':signature(expr(T)::'/bootstrap':type, [T::'/bootstrap':type]).
-'/bootstrap':signature(eval(Expr, Type, Value)::'/bootstrap':pred, [Expr::expr(Type), Type::'/bootstrap':type, Value::Type]).
-'/bootstrap':projection(eval(Expr, Type, Value)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Value::Type), '/bootstrap':halfSize('/bootstrap':vis(Type::'/bootstrap':type)), '/bootstrap':symbol(8656), '/bootstrap':vis(Expr::expr(Type))])).
-'/bootstrap':defines((eval(Expr, T, _):-_), Expr::expr(T), '/bootstrap':semanticDefinition).
-'/bootstrap':signature(plus(A, B)::expr(T), [A::expr(T), B::expr(T)]).
-'/bootstrap':projection(plus(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (+)), '/bootstrap':vis(B::expr(T))])).
-'/bootstrap':alias(plus(A, B)::expr(T), ! (+)).
-'/bootstrap':doc(!'Succeeds if C equals (numerically) AV+BV', '/bootstrap':signature(builtin:plus(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number])).
-eval(plus(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:plus(AV, BV, C).
-'/bootstrap':signature(minus(A, B)::expr(T), [A::expr(T), B::expr(T)]).
-'/bootstrap':projection(minus(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (-)), '/bootstrap':vis(B::expr(T))])).
-'/bootstrap':alias(minus(A, B)::expr(T), ! (-)).
-'/bootstrap':doc(!'Succeeds if C equals (numerically) AV-BV', '/bootstrap':signature(builtin:minus(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number])).
-eval(minus(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:minus(AV, BV, C).
-'/bootstrap':signature(mult(A, B)::expr(T), [A::expr(T), B::expr(T)]).
-'/bootstrap':projection(mult(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (*)), '/bootstrap':vis(B::expr(T))])).
-'/bootstrap':alias(mult(A, B)::expr(T), ! (*)).
-'/bootstrap':doc(!'Succeeds if C equals (numerically) AV*BV', '/bootstrap':signature(builtin:mult(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number])).
-eval(mult(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:mult(AV, BV, C).
-'/bootstrap':signature(div(A, B)::expr(T), [A::expr(T), B::expr(T)]).
-'/bootstrap':disabled('/bootstrap':projection(div(A, B)::expr(T), '/bootstrap':horiz(['/bootstrap':vis(A::expr(T)), '/bootstrap':label(! (/)), '/bootstrap':vis(B::expr(T))]))).
-'/bootstrap':projection(div(A, B)::expr(T), '/bootstrap':vert(['/bootstrap':vis(A::expr(T)), '/bootstrap':box(1), '/bootstrap':vis(B::expr(T))])).
-'/bootstrap':alias(div(A, B)::expr(T), ! (/)).
-'/bootstrap':doc(!'Succeeds if C equals (numerically) AV/BV (real division)', '/bootstrap':signature(builtin:div(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number])).
-eval(div(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:div(AV, BV, C).
-'/bootstrap':signature(idiv(A, B)::expr('/bootstrap':number), [A::expr('/bootstrap':number), B::expr('/bootstrap':number)]).
-'/bootstrap':projection(idiv(A, B)::expr('/bootstrap':number), '/bootstrap':horiz(['/bootstrap':vis(A::expr('/bootstrap':number)), '/bootstrap':label(! (//)), '/bootstrap':vis(B::expr('/bootstrap':number))])).
-'/bootstrap':alias(idiv(A, B)::expr('/bootstrap':number), ! (//)).
-'/bootstrap':doc(!'Succeeds if C equals (numerically) AV/BV (integer division)', '/bootstrap':signature(builtin:idiv(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number])).
-eval(idiv(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:idiv(AV, BV, C).
-'/bootstrap':signature(modulus(A, B)::expr('/bootstrap':number), [A::expr('/bootstrap':number), B::expr('/bootstrap':number)]).
-'/bootstrap':projection(modulus(A, B)::expr('/bootstrap':number), '/bootstrap':horiz(['/bootstrap':vis(A::expr('/bootstrap':number)), '/bootstrap':label(! (mod)), '/bootstrap':vis(B::expr('/bootstrap':number))])).
-'/bootstrap':doc(!'Succeeds if C equals (numerically) AV mod BV', '/bootstrap':signature(builtin:modulus(AV, BV, C)::'/bootstrap':pred, [AV::'/bootstrap':number, BV::'/bootstrap':number, C::'/bootstrap':number])).
-eval(modulus(A, B), '/bootstrap':number, C):-eval(A, '/bootstrap':number, AV), eval(B, '/bootstrap':number, BV), builtin:modulus(AV, BV, C).
+'/bootstrap':signature(expr(Tau)::'/bootstrap':type, [Tau::'/bootstrap':type]).
+'/bootstrap':signature(eval(Expr, Tau, Value)::'/bootstrap':pred, [Expr::expr(Tau), Tau::'/bootstrap':type, Value::Tau]).
+'/bootstrap':projection(eval(Expr, Tau, Value)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Value::Tau), '/bootstrap':halfSize('/bootstrap':vis(Tau::'/bootstrap':type)), '/bootstrap':symbol(8656), '/bootstrap':vis(Expr::expr(Tau))], cpi:middle)).
+'/bootstrap':alias(eval(Expr, Tau, Value)::'/bootstrap':pred, !'<=').
+'/bootstrap':defines((eval(Expr, Tau, _):-_), Expr::expr(Tau), '/bootstrap':semanticDefinition).
+'/bootstrap':signature(plus(Alpha, Beta)::expr(Tau), [Alpha::expr(Tau), Beta::expr(Tau)]).
+'/bootstrap':projection(plus(Alpha, Beta)::expr(Tau), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr(Tau)), '/bootstrap':label(! (+)), '/bootstrap':vis(Beta::expr(Tau))])).
+'/bootstrap':alias(plus(Alpha, Beta)::expr(Tau), ! (+)).
+'/bootstrap':doc(!'Succeeds if C equals (numerically) AlphaPrime+BetaPrime', '/bootstrap':signature(builtin:plus(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number])).
+eval(plus(Alpha, Beta), '/bootstrap':number, Gamma):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:plus(AlphaPrime, BetaPrime, Gamma).
+'/bootstrap':signature(minus(Alpha, Beta)::expr(Tau), [Alpha::expr(Tau), Beta::expr(Tau)]).
+'/bootstrap':projection(minus(Alpha, Beta)::expr(Tau), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr(Tau)), '/bootstrap':label(! (-)), '/bootstrap':vis(Beta::expr(Tau))])).
+'/bootstrap':alias(minus(Alpha, Beta)::expr(Tau), ! (-)).
+'/bootstrap':doc(!'Succeeds if C equals (numerically) AlphaPrime-BetaPrime', '/bootstrap':signature(builtin:minus(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number])).
+eval(minus(Alpha, Beta), '/bootstrap':number, C):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:minus(AlphaPrime, BetaPrime, C).
+'/bootstrap':signature(mult(Alpha, Beta)::expr(Tau), [Alpha::expr(Tau), Beta::expr(Tau)]).
+'/bootstrap':projection(mult(Alpha, Beta)::expr(Tau), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr(Tau)), '/bootstrap':label(! (*)), '/bootstrap':vis(Beta::expr(Tau))])).
+'/bootstrap':alias(mult(Alpha, Beta)::expr(Tau), ! (*)).
+'/bootstrap':doc(!'Succeeds if C equals (numerically) AlphaPrime*BetaPrime', '/bootstrap':signature(builtin:mult(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number])).
+eval(mult(Alpha, Beta), '/bootstrap':number, C):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:mult(AlphaPrime, BetaPrime, C).
+'/bootstrap':signature(div(Alpha, Beta)::expr(Tau), [Alpha::expr(Tau), Beta::expr(Tau)]).
+'/bootstrap':disabled('/bootstrap':projection(div(Alpha, Beta)::expr(Tau), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr(Tau)), '/bootstrap':label(! (/)), '/bootstrap':vis(Beta::expr(Tau))]))).
+'/bootstrap':projection(div(Alpha, Beta)::expr(Tau), '/bootstrap':vert(['/bootstrap':vis(Alpha::expr(Tau)), '/bootstrap':box(1), '/bootstrap':vis(Beta::expr(Tau))])).
+'/bootstrap':alias(div(Alpha, Beta)::expr(Tau), ! (/)).
+'/bootstrap':doc(!'Succeeds if C equals (numerically) AlphaPrime/BetaPrime (real division)', '/bootstrap':signature(builtin:div(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number])).
+eval(div(Alpha, Beta), '/bootstrap':number, C):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:div(AlphaPrime, BetaPrime, C).
+'/bootstrap':signature(idiv(Alpha, Beta)::expr('/bootstrap':number), [Alpha::expr('/bootstrap':number), Beta::expr('/bootstrap':number)]).
+'/bootstrap':projection(idiv(Alpha, Beta)::expr('/bootstrap':number), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr('/bootstrap':number)), '/bootstrap':label(! (//)), '/bootstrap':vis(Beta::expr('/bootstrap':number))])).
+'/bootstrap':alias(idiv(Alpha, Beta)::expr('/bootstrap':number), ! (//)).
+'/bootstrap':doc(!'Succeeds if C equals (numerically) AlphaPrime/BetaPrime (integer division)', '/bootstrap':signature(builtin:idiv(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number])).
+eval(idiv(Alpha, Beta), '/bootstrap':number, C):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:idiv(AlphaPrime, BetaPrime, C).
+'/bootstrap':signature(modulus(Alpha, Beta)::expr('/bootstrap':number), [Alpha::expr('/bootstrap':number), Beta::expr('/bootstrap':number)]).
+'/bootstrap':projection(modulus(Alpha, Beta)::expr('/bootstrap':number), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr('/bootstrap':number)), '/bootstrap':label(! (mod)), '/bootstrap':vis(Beta::expr('/bootstrap':number))])).
+'/bootstrap':doc(!'Succeeds if C equals (numerically) AlphaPrime mod BetaPrime', '/bootstrap':signature(builtin:modulus(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number])).
+eval(modulus(Alpha, Beta), '/bootstrap':number, C):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:modulus(AlphaPrime, BetaPrime, C).
 '/bootstrap':unitTest(eval(plus(wrap(1), wrap(1)), '/bootstrap':number, 2)).
 '/bootstrap':unitTest(eval(div(wrap(5), wrap(2)), '/bootstrap':number, 2.5)).
-'/bootstrap':signature(evalList(ExprList)::expr('/bootstrap':list(T)), [ExprList::'/bootstrap':list(expr(T))]).
-eval(evalList([]), '/bootstrap':list(T), []):-builtin:true.
-eval(evalList([FirstExpr|RestExpr]), '/bootstrap':list(T), [First|Rest]):-eval(FirstExpr, T, First), eval(evalList(RestExpr), '/bootstrap':list(T), Rest).
+'/bootstrap':signature(evalList(ExprList)::expr('/bootstrap':list(Tau)), [ExprList::'/bootstrap':list(expr(Tau))]).
+eval(evalList([]), '/bootstrap':list(Tau), []):-builtin:true.
+eval(evalList([FirstExpr|RestExpr]), '/bootstrap':list(Tau), [First|Rest]):-eval(FirstExpr, Tau, First), eval(evalList(RestExpr), '/bootstrap':list(Tau), Rest).

@@ -15,5 +15,5 @@ dnaSetDef(inv(SeqSet), '/Functional':eset(invSeq('/Functional':wrap(Seq)), '/boo
 dnaSetDef(complement(Set), conj(inv(Set))).
 '/bootstrap':signature(palindromial(X)::'/bootstrap':set('/bootstrap':list(base)), [X::'/bootstrap':set('/bootstrap':list(base))]).
 dnaSetDef(palindromial(X), seq(bind(X, Y), complement(Y))).
-'/bootstrap':signature(testSet::'/bootstrap':set('/bootstrap':list(base)), []).
+'/bootstrap':defAtom(testSet::'/bootstrap':set('/bootstrap':list(base))).
 dnaSetDef(testSet, palindromial(seq(rep(nSet, 7), cSet))).

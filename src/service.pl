@@ -55,7 +55,7 @@ rewriteBodyToClause((S1 ~> S2), H, B) :-
 
 % Load/Reload a file to the database
 loadFile(!(FileName), !(Namespace)) :-
-	forall(retract('builtin#loadedStatement'(!FileName, Statement, _)), remove(Statement)),
+	forall((retract('builtin#loadedStatement'(!FileName, Statement, _)), removeAnnotations(Statement, NoAnnot)), remove(NoAnnot)),
 	open(FileName, read, Stream),
 	read_term(Stream, Term, [variable_names(RawVarNames)]),
 	convertVarNames(RawVarNames, VarNames),
@@ -80,11 +80,37 @@ interpretTerm(Term, FileName, NsList, NewNsList, VarNames) :-
 			NewNsList = NsList,
 			localToGlobal(Term, NsList, GTerm),
 			assert('builtin#loadedStatement'(!FileName, GTerm, VarNames)),
-			if((GTerm = (Statement ~> _), \+var(Statement)), % Avoid exception if not implemented
+			removeAnnotations(GTerm, UnAnnotated),
+			if((UnAnnotated = (Statement ~> _), \+var(Statement)), % Avoid exception if not implemented
 				assert((Statement :- fail))),
-			insert(GTerm)
+			insert(UnAnnotated)
 
 		)).
+
+removeAnnotations(WithAnnot, NoAnnot) :-
+	if(nonCompoundTerm(WithAnnot),
+		NoAnnot = WithAnnot,
+	%else
+	(
+		if(WithAnnot = 'annotation#escape'(Esc),
+			NoAnnot = Esc,
+		%else
+		(
+			WithAnnot =.. [Func | Args],
+			if((concat_atom(['annotation#', _], Func), Args = [First | _]),
+				removeAnnotations(First, NoAnnot),
+			%else
+			(
+				removeAnnotationsFromList(Args, ArgsNoAnnot),
+				NoAnnot =.. [Func | ArgsNoAnnot]
+			))
+		))
+	)).
+
+removeAnnotationsFromList([], []).
+removeAnnotationsFromList([First | Rest], [NoAnnot | NoAnnotList]) :-
+	removeAnnotations(First, NoAnnot),
+	removeAnnotationsFromList(Rest, NoAnnotList).
 
 % Translating from local terms (specific to this file) to their global representation
 localToGlobal(Local, NsList, Global) :-
@@ -379,7 +405,7 @@ generateLines(_, _, _).
 'builtin#coinToss'(N,D) :- N>random(D).
 'builtin#copyTerm'(TTermOrig,TTermCopy) :- copy_term(TTermOrig,TTermCopy).
 'builtin#structurallyEqual'(TTerm1,TTerm2) :- TTerm1 =@= TTerm2.
-
+'builtin#removeAnnotations'(With, Without) :- removeAnnotations(With, Without).
 
 
 

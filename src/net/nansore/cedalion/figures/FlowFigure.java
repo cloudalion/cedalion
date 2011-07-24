@@ -20,27 +20,28 @@ import org.eclipse.draw2d.Panel;
  */
 public abstract class FlowFigure extends Panel implements TermFigure {
 
-	private List<TermFigure> childFigures = new ArrayList<TermFigure>();
+	protected List<TermFigure> childFigures = new ArrayList<TermFigure>();
 
-	protected abstract void setLayout();
+	protected abstract void setLayout(Compound term);
 
 	public FlowFigure(Compound term, final TermContext context) throws TermInstantiationException, PrologException {
 		init(term, context);
 	}
 
 	protected void init(Compound term, final TermContext context)
-			throws TermInstantiationException, PrologException {
-				setLayout();
-			    
+			throws TermInstantiationException, PrologException {			    
 			    context.bindFigure(this);
 			    Object list = term.arg(1);
 			    while(list instanceof Compound && ((Compound)list).arity() == 2) {
 			        Compound compound = ((Compound)list);
 			        Object figure = TermInstantiator.instance().instantiate((Compound)compound.arg(1), context);
-					add((IFigure) figure);
 			        childFigures.add((TermFigure)figure);
 			        list = compound.arg(2);
 			    }
+			    
+				setLayout(term);
+				for(TermFigure figure : childFigures)
+					add((IFigure) figure);
 			}
 
 	public void updateFigure() throws TermVisualizationException {

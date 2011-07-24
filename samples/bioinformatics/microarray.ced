@@ -1,4 +1,4 @@
-'/bootstrap':signature(microArraySection::'/bootstrap':type, []).
+'/bootstrap':defAtom(microArraySection::'/bootstrap':type).
 '/bootstrap':sigProj(microArray(Name, Sections)::'/bootstrap':statement, [Name::'/bootstrap':string, Sections::'/bootstrap':list(microArraySection)], '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!'Micro-array'), '/bootstrap':vis(Name::'/bootstrap':string)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Sections::'/bootstrap':list(microArraySection))])])).
 '/bootstrap':sigProj(section(Name, Set, Quantity)::microArraySection, [Name::'/bootstrap':string, Set::'/bootstrap':set('/bootstrap':list(base)), Quantity::'/bootstrap':number], '/bootstrap':horiz(['/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':label(! (:)), '/bootstrap':vis(Set::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'('), '/bootstrap':vis(Quantity::'/bootstrap':number), '/bootstrap':label(!')')])).
 '/bootstrap':adapter(Set::'/bootstrap':set('/bootstrap':list(base)), section(!'name...', Set, 1)::microArraySection).

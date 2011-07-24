@@ -1,4 +1,4 @@
-doc(!'Type signature.  TTerm contains the construct being defined where all it arguments are variables, with its type.  TArgs is a list of pairs - a variable from the head with its own type.  The variables in TArgs must appear in the same order they appear in the head.', signature(signature(TTerm, TArgs)::statement, [TTerm::typedTerm, TArgs::list(typedTerm)])).
+signature(annotation:parentheses(signature(TTerm, TArgs))::statement, [TTerm::typedTerm, TArgs::list(typedTerm)]).
 doc(!'A typed term pair.  This is a way to pass terms regardless of their type.  Having the type encapsulated along with the term allows Cedalion to maintain type safety.', signature((Term::Type)::typedTerm, [Term::Type, Type::type])).
 alias((Term::Type)::typedTerm, ! (::)).
 doc(!'A prolog-like deduction rule.  Means that Head holds for every assignment for which Body holds', signature((Head:-Body)::statement, [Head::pred, Body::pred])).
@@ -11,20 +11,18 @@ doc(!'The type of strings', signature(string::type, [])).
 doc(!'The type of predicates.  Predicates are first-class citizens in Cedalion, and therefore they are typed', signature(pred::type, [])).
 doc(!'The types of lists.  T represents the type of each element on the list (note that all elements must be of the same type).', signature(list(T)::type, [T::type])).
 doc(!'This mode orders Cedalion to present  a list as a horizontal list, bound by []', signature(horiz::mode, [])).
-projection(horiz(List)::visualization, horiz([halfSize(label(!h)), cpi:vis(List::list(visualization), horiz)])).
-projection(projection(TTerm, Vis)::statement, horiz([vis(TTerm::typedTerm), symbol(8608), vis(Vis::visualization)])).
-projection([]::list(_), cpi:default, symbol(8718)).
-projection([F|R]::list(T), cpi:default, vert([horiz([symbol(8729), vis(F::T)]), vis(R::list(T))])).
-projection([]::list(_), horiz, label(![])).
-projection([F|R]::list(T), horiz, brackets(horiz([vis(F::T), cpi:vis(R::list(T), horizCont)]), 91, 93)).
-signature(horizCont::mode, []).
+projection(horiz(List)::visualization, horiz([halfSize(label(!h)), cpi:vis(List::list(visualization), horizontal(32, 32, label(!' '), label(![])))])).
+signature(horiz(List, Alignment)::visualization, [List::list(visualization), Alignment::alignment]).
+projection(horiz(List, Alignment)::visualization, horiz([halfSize(label(!h)), vis(Alignment::alignment), cpi:vis(List::list(visualization), horizontal(32, 32, label(!' '), label(![])))])).
+projection(projection(TTerm, Vis)::statement, horiz([label(!display), vis(TTerm::typedTerm), label(! (as)), vis(Vis::visualization)])).
+defAtom(horizCont::mode).
 projection([]::list(_), horizCont, horiz([])).
 projection([F|R]::list(T), horizCont, horiz([label(! (,)), vis(F::T), cpi:vis(R::list(T), horizCont)])).
-projection((H~>B)::statement, horiz([vis(H::statement), symbol(8669), vis(B::statement)])).
+projection((H~>B)::statement, horiz([label(!statement), vis(H::statement), label(!implies), vis(B::statement)])).
 projection((Term::Type)::typedTerm, horiz([vis(Term::Type), label(! (::)), vis(Type::type)])).
 projection((A, B)::pred, vert([horiz([vis(A::pred), label(! (,))]), vis(B::pred)])).
 projection((H:-B)::statement, vert([horiz([vis(H::pred), label(! (:-))]), horiz([label(!'    '), vis(B::pred)])])).
-projection(signature(TTerm, TArgs)::statement, horiz([vis(TTerm::typedTerm), symbol(8618), cpi:vis(TArgs::list(typedTerm), horiz)])).
+projection(annotation:parentheses(signature(TTerm, TArgs))::statement, horiz([label(!declare), vis(TTerm::typedTerm), label(!where), cpi:vis(TArgs::list(typedTerm), horizontal(32, 32, label(! (,)), label(!'()')))])).
 signature(or(A, B)::pred, [A::pred, B::pred]).
 projection(or(A, B)::pred, horiz([vis(A::pred), symbol(8744), vis(B::pred)])).
 or(A, B):-A.

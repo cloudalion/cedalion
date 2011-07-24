@@ -1,7 +1,6 @@
 signature(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, [TTerm::typedTerm, VarNames::list(varName), Path::cpi:path, Caption::string, Proc::procedure]).
 projection(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, vert([horiz([label(!'Context menu entry'), vis(Caption::string), label(!for), vis(TTerm::typedTerm), label(!'with varnames'), vis(VarNames::list(varName)), label(!'at path'), vis(Path::cpi:path)]), horiz([label(!'    '), label(!do), vis(Proc::procedure)])])).
-contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_, First|Rest]::list(T), VarNames)).
-contextMenuEntry([]::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_]::list(T), VarNames)).
+contextMenuEntry(List::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_|List]::list(T), VarNames)).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _|Rest]::list(T), VarNames)).
 contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
 signature(showView(Vis)::command, [Vis::visualization]).
@@ -13,7 +12,7 @@ signature(autoFix(Error, VarNames, AutoFix)::pred, [Error::error, VarNames::list
 autoFix(Error, VarNames, AutoFix):-builtin:fail.
 signature(fixError(X, VarNames)::procedure, [X::error, VarNames::list(varName)]).
 procedure(fixError(X, VarNames), doProc(if(autoFix(X, VarNames, Fix), doProc(Fix), doProc(showSolutions(X, VarNames))))).
-markerVis(error(X, VarNames), V, tooltip(horiz([halfSize(color(action(label(!'E'), fixError(X, VarNames), autoFix(X, VarNames, _)), cpi:rgb(255, 0, 0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
+markerVis(error(X, VarNames), V, tooltip(horiz([smaller(color(action(symbol(9888), fixError(X, VarNames), autoFix(X, VarNames, _)), cpi:rgb(255, 0, 0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
 signature(showSolutions(Error, VarNames)::procedure, [Error::error, VarNames::list(varName)]).
 cpi:procedureCommand(showSolutions(Error, VarNames), showView(vert(Solutions))):-builtin:findall(Proc, procedure, errorSolution(Error, VarNames, Proc), Procs), visualizeSolutions(Procs, VarNames, Solutions).
 signature(visualizeSolutions(Procs, VarNames, Solutions)::pred, [Procs::list(procedure), VarNames::list(varName), Solutions::list(visualization)]).

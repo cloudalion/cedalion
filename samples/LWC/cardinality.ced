@@ -12,13 +12,13 @@ propValueMatches(entityContent(Name, E, _), Name, ent(E), Entity, Cardinality):-
 '/bootstrap':projection(tooManyInstances(Name, Type, Entity, Cardinality)::'/bootstrap':error, '/bootstrap':horiz(['/bootstrap':label(!'Too many intances of'), '/bootstrap':vis(Entity::entity), '/bootstrap':label(!.), '/bootstrap':vis(Name::propertyName(Entity, Type, Cardinality)), '/bootstrap':label(!'of type'), '/bootstrap':vis(Type::propertyType), '/bootstrap':label(!'and cardinality'), '/bootstrap':vis(Cardinality::cardinality)])).
 checkValueCount(one, Count, Name, Type, Entity, tooFewInstances(Name, Type, Entity, one)):-1>Count.
 checkValueCount(one, Count, Name, Type, Entity, tooManyInstances(Name, Type, Entity, one)):-Count>1.
-'/bootstrap':signature(zeroToOne::cardinality, []).
+'/bootstrap':defAtom(zeroToOne::cardinality).
 '/bootstrap':projection(zeroToOne::cardinality, '/bootstrap':label(!'0..1')).
 checkValueCount(zeroToOne, Count, Name, Type, Entity, tooManyInstances(Name, Type, Entity, zeroToOne)):-Count>1.
-'/bootstrap':signature(oneOrMore::cardinality, []).
+'/bootstrap':defAtom(oneOrMore::cardinality).
 '/bootstrap':projection(oneOrMore::cardinality, '/bootstrap':label(!'1..n')).
 checkValueCount(oneOrMore, Count, Name, Type, Entity, tooFewInstances(Name, Type, Entity, oneOrMore)):-1>Count.
-'/bootstrap':signature(zeroOrMore::cardinality, []).
+'/bootstrap':defAtom(zeroOrMore::cardinality).
 '/bootstrap':projection(zeroOrMore::cardinality, '/bootstrap':label(!'0..n')).
 checkValueCount(zeroOrMore, Count, Name, Type, Entity, _):-builtin:fail.
 '/bootstrap':signature(Name::propertyName(Entity, Type, Cardinality), _)~>'/bootstrap':check(Path, instance(InstName, Entity, Values)::'/bootstrap':statement, VNs, '/bootstrap':marker(Path, '/bootstrap':error(Error, VNs))):- \+builtin:var(InstName::instanceName(Entity)), \+builtin:var(Values::'/bootstrap':list(propVal(Entity))), countValues(Values, Name, Type, Entity, Cardinality, Count), checkValueCount(Cardinality, Count, Name, Type, Entity, Error).

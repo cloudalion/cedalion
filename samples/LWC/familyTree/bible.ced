@@ -1,30 +1,30 @@
-'/bootstrap':signature(abraham::'/LWC':instanceName(person), []).
-'/bootstrap':signature(terah::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(abraham::'/LWC':instanceName(person)).
+'/bootstrap':defAtom(terah::'/LWC':instanceName(person)).
 '/LWC':instance(terah, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Terah'), '/LWC':propVal(sirname, '/bootstrap':string, !'Dont know'), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(10, 7, -2030)), '/LWC':propVal(sex, gender, male)]).
 '/LWC':instance(abraham, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Abraham'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Terah'), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -2000)), '/LWC':propVal(dateOfDeath, '/LWC':date, '/LWC':date(1, 1, -1900)), '/LWC':propVal(sex, gender, male), '/LWC':entityRef(father, person, terah)]).
-'/bootstrap':signature(sarah::'/LWC':instanceName(person), []).
-'/bootstrap':signature(haran::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(sarah::'/LWC':instanceName(person)).
+'/bootstrap':defAtom(haran::'/LWC':instanceName(person)).
 '/LWC':instance(haran, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Haran'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Terah'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1999)), '/LWC':entityRef(father, person, terah)]).
 '/LWC':instance(sarah, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Sarah'), '/LWC':propVal(sirname, '/bootstrap':string, !'Bat Haran'), '/LWC':propVal(sex, gender, female), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1990)), '/LWC':entityRef(father, person, haran)]).
-'/bootstrap':signature(isaac::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(isaac::'/LWC':instanceName(person)).
 '/LWC':instance(isaac, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Isaac'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Abraham'), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1900)), '/LWC':propVal(sex, gender, male), '/LWC':entityRef(father, person, abraham), '/LWC':entityRef(mother, person, sarah)]).
-'/bootstrap':signature(milcah::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(milcah::'/LWC':instanceName(person)).
 '/LWC':instance(milcah, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Milcah'), '/LWC':propVal(sirname, '/bootstrap':string, !'Bat Haran'), '/LWC':propVal(sex, gender, female), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1991)), '/LWC':entityRef(father, person, haran)]).
-'/bootstrap':signature(lot::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(lot::'/LWC':instanceName(person)).
 '/LWC':instance(lot, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Lot'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Haran'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1992)), '/LWC':entityRef(father, person, haran)]).
-'/bootstrap':signature(nahor::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(nahor::'/LWC':instanceName(person)).
 '/LWC':instance(nahor, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Nahor'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Terah'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -2000)), '/LWC':entityRef(father, person, terah)]).
-'/bootstrap':signature(bethuel::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(bethuel::'/LWC':instanceName(person)).
 '/LWC':instance(bethuel, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Bethuel'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Nahor'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1970)), '/LWC':entityRef(father, person, nahor), '/LWC':entityRef(mother, person, milcah)]).
-'/bootstrap':signature(laban::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(laban::'/LWC':instanceName(person)).
 '/LWC':instance(laban, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Lavan'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Bethuel'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1940)), '/LWC':entityRef(father, person, bethuel)]).
-'/bootstrap':signature(rebekah::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(rebekah::'/LWC':instanceName(person)).
 '/LWC':instance(rebekah, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Rebekah'), '/LWC':propVal(sirname, '/bootstrap':string, !'Bat Bethuel'), '/LWC':propVal(sex, gender, female), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1940)), '/LWC':entityRef(father, person, bethuel)]).
-'/bootstrap':signature(jacob::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(jacob::'/LWC':instanceName(person)).
 '/LWC':instance(jacob, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Jacob'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Isaac'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1920)), '/LWC':entityRef(father, person, isaac), '/LWC':entityRef(mother, person, rebekah)]).
-'/bootstrap':signature(esau::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(esau::'/LWC':instanceName(person)).
 '/LWC':instance(esau, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Esau'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Isaac'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1920)), '/LWC':entityRef(father, person, isaac), '/LWC':entityRef(mother, person, rebekah)]).
-'/bootstrap':signature(rachel::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(rachel::'/LWC':instanceName(person)).
 '/LWC':instance(rachel, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Rachel'), '/LWC':propVal(sirname, '/bootstrap':string, !'Bat Laban'), '/LWC':propVal(sex, gender, female), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1920)), '/LWC':entityRef(father, person, laban)]).
-'/bootstrap':signature(joseph::'/LWC':instanceName(person), []).
+'/bootstrap':defAtom(joseph::'/LWC':instanceName(person)).
 '/LWC':instance(joseph, person, ['/LWC':propVal(givenName, '/bootstrap':string, !'Joseph'), '/LWC':propVal(sirname, '/bootstrap':string, !'Ben Jaboc'), '/LWC':propVal(sex, gender, male), '/LWC':propVal(dateOfBirth, '/LWC':date, '/LWC':date(1, 1, -1890)), '/LWC':entityRef(father, person, jacob), '/LWC':entityRef(mother, person, rachel)]).

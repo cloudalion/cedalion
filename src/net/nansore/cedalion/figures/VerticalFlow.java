@@ -28,7 +28,7 @@ public class VerticalFlow extends FlowFigure {
         // TODO Auto-generated constructor stub
     }
     
-    protected void setLayout() {
+    protected void setLayout(Compound term) {
         setLayoutManager(new FlowLayout(false));
     }
 

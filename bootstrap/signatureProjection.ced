@@ -1,4 +1,4 @@
-sigProj(sigProj(H, S, P)::statement, [H::typedTerm, S::list(typedTerm), P::visualization], vert([vis(H::typedTerm), horiz([label(!'    '), vert([horiz([symbol(8618), cpi:vis(S::list(typedTerm), horiz)]), horiz([symbol(8608), vis(P::visualization)])])])])).
+sigProj(sigProj(H, S, P)::statement, [H::typedTerm, S::list(typedTerm), P::visualization], vert([horiz([label(!declare), vis(H::typedTerm)]), horiz([label(!'    '), vert([horiz([label(!where), cpi:vis(S::list(typedTerm), horizontal(32, 32, label(! (,)), label(!'()')))]), horiz([label(!'display as'), vis(P::visualization)])])])])).
 sigProj(H, S, P)~>signature(H, S).
 sigProj(H, S, P)~>projection(H, P).
 contextMenuEntry([signature(H, S), projection(H, P)|Rest]::list(statement), VNs, Path, !'Unify signature and projection', cpi:edit(Path, [sigProj(H, S, P)|Rest]::list(statement), VNs)).

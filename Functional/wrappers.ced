@@ -9,7 +9,7 @@ evalArgs([], []):-builtin:true.
 evalArgs([First::T|Rest], [FirstV::T|RestV]):-eval(wrap(First), T, FirstV), evalArgs(Rest, RestV).
 '/bootstrap':adapter(Term::T, wrap(Term)::expr(T)).
 '/bootstrap':signature(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), [B::expr('/bootstrap':number), E::expr('/bootstrap':number)]).
-'/bootstrap':projection(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), '/bootstrap':horiz(['/bootstrap':label(!'['), '/bootstrap':vis(B::expr('/bootstrap':number)), '/bootstrap':label(! (,)), '/bootstrap':vis(E::expr('/bootstrap':number)), '/bootstrap':label(!')')])).
+'/bootstrap':projection(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), '/bootstrap':horiz(['/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(B::expr('/bootstrap':number)), '/bootstrap':label(! (,)), '/bootstrap':vis(E::expr('/bootstrap':number))]), 91, 41)])).
 def(range(B, E), '/bootstrap':list('/bootstrap':number), if(gt(E, B, '/bootstrap':number), wrap([unwrap(B)|unwrap(range(plus(B, wrap(1)), E))]), wrap([]))).
 '/bootstrap':unitTest(eval(range(wrap(0), wrap(3)), '/bootstrap':list('/bootstrap':number), [0, 1, 2])).
 '/bootstrap':signature(insertExpression(Path, T)::'/bootstrap':procedure, [Path::cpi:path, T::'/bootstrap':type]).

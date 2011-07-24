@@ -1,28 +1,30 @@
-signature(definitionType::type, []).
-signature(semanticDefinition::definitionType, []).
+defAtom(definitionType::type).
+defAtom(semanticDefinition::definitionType).
 projection(semanticDefinition::definitionType, label(!'Semantic Definition')).
 signature(defines(Definition, Defined, DefType)::statement, [Definition::statement, Defined::typedTerm, DefType::definitionType]).
 projection(defines(Definition, Defined, DefType)::statement, horiz([vis(Definition::statement), label(!defines), vis(Defined::typedTerm), label(! (as)), vis(DefType::definitionType)])).
 signature(canDefine(Definition, Defined, DefType)::pred, [Definition::statement, Defined::typedTerm, DefType::definitionType]).
 defines(Definition, Defined, DefType)~>canDefine(Definition, Defined, DefType):-builtin:true.
 signature(definitionOf(Defined, Definition, DefType, FileName, VarNames)::pred, [Defined::typedTerm, Definition::statement, DefType::definitionType, FileName::string, VarNames::list(varName)]).
-definitionOf(Defined, Definition, DefType, FileName, VarNames):- \+builtin:var(Defined), canDefine(Definition, Defined, DefType), checkSignature(Defined, _), builtin:loadedStatement(FileName, Definition, VarNames).
+definitionOf(Defined, AnnotDefinition, DefType, FileName, VarNames):- \+builtin:var(Defined), canDefine(Definition, Defined, DefType), checkSignature(Defined, _), builtin:loadedStatement(FileName, AnnotDefinition, VarNames), builtin:removeAnnotations(AnnotDefinition::statement, Definition::statement).
 defines((Pred:-_), Pred::pred, requiredSemanticDefinition).
-signature(typeSignature::definitionType, []).
+defAtom(typeSignature::definitionType).
 projection(typeSignature::definitionType, label(!'Type Signature')).
 defines(signature(TTerm, _), TTerm, typeSignature).
-signature(projectionDefinition::definitionType, []).
+defAtom(projectionDefinition::definitionType).
 projection(projectionDefinition::definitionType, label(!'Projection Definition')).
 defines(projection(TTerm, _), TTerm, projectionDefinition).
 signature(showDefinitions(TTerm, VNs)::procedure, [TTerm::typedTerm, VNs::list(varName)]).
 signature(definitionsVisualization(TTerm, VNs, Vis)::pred, [TTerm::typedTerm, VNs::list(varName), Vis::visualization]).
-definitionsVisualization(TTerm, VNs, raised(lineBorder(background(vert([horiz([bold(label(!'Aliases:')), vis(cpi:immediateDescriptor(Aliases, [])::list(string))])|Types]), cpi:rgb(192, 255, 192)), 5, cpi:rgb(192, 255, 192)))):-builtin:findall(vert([bold(vis(cpi:immediateDescriptor(DefType, VNs)::definitionType)), lineBorder(lowered(background(vert(Defs), cpi:rgb(255, 255, 255))), 5, cpi:rgb(192, 255, 192))]), visualization, definitionCategory(TTerm, DefType, Defs), Types), builtin:findall(Alias, string, aliasString(TTerm, Alias), Aliases).
+definitionsVisualization(TTerm, VNs, raised(lineBorder(background(vert([horiz([bold(label(!'Aliases:')), cpi:vis(cpi:immediateDescriptor(Aliases, [])::list(string), vert)])|Types]), cpi:rgb(192, 255, 192)), 5, cpi:rgb(192, 255, 192)))):-builtin:findall(vert([bold(vis(cpi:immediateDescriptor(DefType, VNs)::definitionType)), lineBorder(lowered(background(vert(Defs), cpi:rgb(255, 255, 255))), 5, cpi:rgb(192, 255, 192))]), visualization, definitionCategory(TTerm, DefType, Defs), Types), builtin:findall(Alias, string, aliasString(TTerm, Alias), Aliases).
 signature(definitionCategory(TTerm, DefType, Defs)::pred, [TTerm::typedTerm, DefType::definitionType, Defs::list(visualization)]).
 definitionCategory(TTerm, DefType, Defs):-checkSignature(DefType::definitionType, []), builtin:findall(link(vert([italic(label(FileName)), vis(cpi:immediateDescriptor(Definition, VarNames)::statement)]), FileName), visualization, definitionOf(TTerm, Definition, DefType, FileName, VarNames), Defs).
 signature(showDefinitions(TTerm)::procedure, [TTerm::typedTerm]).
 cpi:procedureCommand(showDefinitions(TTerm), doAll([dbRemove(searchForDef(_)), dbInsert(searchForDef(BlankTTerm)), showView(View)])):- \+builtin:var(TTerm), safeParseTerm(TTerm, Func, Args), blankList(Args, BlankArgs), builtin:parseTerm(BlankTTerm, Func, BlankArgs), definitionsVisualization(BlankTTerm, [], View).
 signature(searchForDef(TTerm)::statement, [TTerm::typedTerm]).
-contextMenuEntry(TTerm, _, _, !'Show Definitions', showDefinitions(TTerm)).
+signature(doShowDefinitions(TTerm)::procedure, [TTerm::typedTerm]).
+cpi:procedureCommand(doShowDefinitions(TTerm), doProc(showDefinitions(TTerm))):- \+builtin:var(TTerm).
+contextMenuEntry(TTerm, _, _, !'Show Definitions', doShowDefinitions(TTerm)).
 signature(blankList(List1, List2)::pred, [List1::list(typedTerm), List2::list(typedTerm)]).
 blankList([], []):-builtin:true.
 blankList([_::Type|List1], [_::Type|List2]):-blankList(List1, List2).

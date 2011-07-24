@@ -1,5 +1,5 @@
 signature(alias(TTerm, String)::statement, [TTerm::typedTerm, String::string]).
-projection(alias(TTerm, String)::statement, horiz([vis(String::string), label(!'is an alias for'), vis(TTerm::typedTerm)])).
+projection(alias(TTerm, String)::statement, horiz([label(!use), vis(String::string), label(!'as an alias for'), vis(TTerm::typedTerm)])).
 signature(aliasString(TTerm, String)::pred, [TTerm::typedTerm, String::string]).
 alias(TTerm, String)~>aliasString(TTerm, String):-builtin:true.
 signature(localString(Func, String)::pred, [Func::string, String::string]).

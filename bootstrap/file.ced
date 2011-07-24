@@ -1,6 +1,6 @@
 doc(!'Load a file named FileName into memory.  ResourceName is to be used for the paths, and Namespace is the default namespace to be used', signature(cpi:openFile(FileName, ResourceName, Namespace)::procedure, [FileName::string, ResourceName::string, Namespace::string])).
 signature(loadedFile(ResourceName, FileName, Model)::statement, [ResourceName::string, FileName::string, Model::model]).
-signature(undoFrame::type, []).
+defAtom(undoFrame::type).
 signature(editState(ResourceName, UndoStack, RedoStack, DirtyFlag)::statement, [ResourceName::string, UndoStack::list(undoFrame), RedoStack::list(undoFrame), DirtyFlag::number]).
 procedure(cpi:openFile(FileName, ResourceName, Namespace), doAll([readFile(FileName, Namespace, FileContent), assignFinal(Model, fileToModel(FileContent), model), dbInsert(loadedFile(ResourceName, FileName, Model)), dbInsert(editState(ResourceName, [], [], 0))])).
 doc(!'Close a file: remove its contents from memory', signature(cpi:closeFile(ResourceName)::procedure, [ResourceName::string])).
@@ -9,10 +9,10 @@ signature(fileIsLoaded(ResourceName, FileName, Model)::pred, [ResourceName::stri
 loadedFile(ResourceName, FileName, Model)~>fileIsLoaded(ResourceName, FileName, Model):-builtin:true.
 signature(editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter)::pred, [ResourceName::string, UndoStack::list(undoFrame), RedoStack::list(undoFrame), ModifiedCounter::number]).
 editState(ResourceName, UndoStack, RedoStack, ModifiedCounter)~>editStateIs(ResourceName, UndoStack, RedoStack, ModifiedCounter):-builtin:true.
-signature(model::type, []).
+defAtom(model::type).
 signature(fileToModel(Content)::expr(model), [Content::fileContent]).
-signature(nsElem::type, []).
-signature(annotatedTerm::type, []).
+defAtom(nsElem::type).
+defAtom(annotatedTerm::type).
 doc(!'A data structure to hold a list of statements with variable name bindings, and a list of namespace aliases', signature(builtin:fileContent(Terms, NsList)::fileContent, [Terms::list(annotatedTerm), NsList::list(nsElem)])).
 signature(model(Statements, VarNames, NsList)::model, [Statements::list(statement), VarNames::list(varName), NsList::list(nsElem)]).
 doc(!'A simple procedural expression that returns the Constant it is given', signature(cpi:constExpr(Const)::expr(T), [Const::T])).
@@ -49,4 +49,7 @@ varInList(Var::VarType, [First::FirstType|_]):-varIn(Var::VarType, First::FirstT
 varInList(Var::VarType, [_|Tail]):-varInList(Var::VarType, Tail).
 doc(!'An import statement.  Binds a namespace name to an alias (deprecated)', signature(builtin:import(Alias, NS)::statement, [Alias::string, NS::string])).
 projection(builtin:import(Alias, NS)::statement, horiz([label(!import), vis(NS::string), label(! (as)), vis(Alias::string)])).
-cpi:rootType(list(statement)).
+signature(cpi:rootType(Type)::pred, [Type::type]).
+cpi:rootType(list(statement)):-builtin:true.
+signature(cpi:rootMode(Mode)::pred, [Mode::mode]).
+cpi:rootMode(vert):-builtin:true.

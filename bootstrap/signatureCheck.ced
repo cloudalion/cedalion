@@ -3,7 +3,7 @@ checkSignature(THead, TBody, Error):-builtin:fail.
 signature(signaturePlaceMismatch(TFirstInHead, TFirstInBody)::error, [TFirstInHead::typedTerm, TFirstInBody::typedTerm]).
 projection(signaturePlaceMismatch(TFirstInHead, TFirstInBody)::error, horiz([label(!'In a type signature, head and body arguments must appear in the same order:'), vis(TFirstInHead::typedTerm), label(!and), vis(TFirstInBody::typedTerm)])).
 checkSignature([TFirstInHead|_], [TFirstInBody|_], signaturePlaceMismatch(TFirstInHead, TFirstInBody)):- \+builtin:equals(TFirstInHead, TFirstInBody).
-signature(signatureSizeMismatch::error, []).
+defAtom(signatureSizeMismatch::error).
 projection(signatureSizeMismatch::error, label(!'The size of the signature head does not match the size of the body')).
 checkSignature([_|_], [], signatureSizeMismatch):-builtin:true.
 checkSignature([], [_|_], signatureSizeMismatch):-builtin:true.
@@ -17,5 +17,6 @@ signature(varInVarNamesAndNotInTTerm(VarNames, TTerm, TVar)::pred, [VarNames::li
 varInVarNamesAndNotInTTerm([builtin:varName(TVar, _)|_], TTerm, TVar):- \+safeVarIn(TVar, TTerm::typedTerm).
 varInVarNamesAndNotInTTerm([_|VarNames], TTerm, TVar):-varInVarNamesAndNotInTTerm(VarNames, TTerm, TVar).
 checkSignature([_|THead], [_|TBody], Error):-checkSignature(THead, TBody, Error).
-checkError(signature(TTerm, TBody)::statement, Error):- \+builtin:var(TTerm), builtin:parseTerm(TTerm, _, THead), checkSignature(THead, TBody, Error).
+signature(builtin:removeAnnotations(WithAnnot, WithoutAnnot)::pred, [WithAnnot::typedTerm, WithoutAnnot::typedTerm]).
+checkError(S::statement, Error):-builtin:removeAnnotations(S::statement, signature(TTerm, TBody)::statement), \+builtin:var(TTerm), builtin:parseTerm(TTerm, _, THead), checkSignature(THead, TBody, Error).
 solution(typesNotFullyInstantiated(Statement, Path), VNs, cpi:edit(Path, Statement::statement, VNs)).
