@@ -4,3 +4,9 @@ sigProj(H, S, P)~>projection(H, P).
 contextMenuEntry([signature(H, S), projection(H, P)|Rest]::list(statement), VNs, Path, !'Unify signature and projection', cpi:edit(Path, [sigProj(H, S, P)|Rest]::list(statement), VNs)).
 check(Path, sigProj(H, S, P)::statement, VNs, Marker):-check(Path, signature(H, S)::statement, VNs, Marker).
 contextMenuEntry([sigProj(H, S, P)|Rest]::list(statement), VNs, Path, !'Split definitions', cpi:edit(Path, [signature(H, S), projection(H, P)|Rest]::list(statement), VNs)).
+signature(sigProjAtom(H, P)::statement, [H::typedTerm, P::visualization]).
+projection(sigProjAtom(H, P)::statement, vert([horiz([label(!declare), vis(H::typedTerm)]), horiz([label(!'    '), horiz([label(!'display as'), vis(P::visualization)])])])).
+sigProjAtom(H, P)~>defAtom(H).
+sigProjAtom(H, P)~>projection(H, P).
+contextMenuEntry([defAtom(H), projection(H, P)|Rest]::list(statement), VNs, Path, !'Unify signature and projection', cpi:edit(Path, [sigProjAtom(H, P)|Rest]::list(statement), VNs)).
+contextMenuEntry([sigProjAtom(H, P)|Rest]::list(statement), VNs, Path, !'Split definitions', cpi:edit(Path, [defAtom(H), projection(H, P)|Rest]::list(statement), VNs)).

@@ -3,12 +3,12 @@ signature(set(E, Pred)::set(T), [E::T, Pred::pred]).
 signature(horiz(List)::visualization, [List::list(visualization)]).
 signature(projection(TTerm, Vis)::statement, [TTerm::typedTerm, Vis::visualization]).
 signature(label(Str)::visualization, [Str::string]).
-projection(set(E, Pred)::set(T), brackets(horiz([vis(E::T), box(1), vis(Pred::pred)]), 123, 125)).
+projection(set(E, Pred)::set(T), brackets(horiz([vis(E::T), box(1), vis(Pred::pred)], cpi:middle), 123, 125)).
 signature(member(E, Set, T)::pred, [E::T, Set::set(T), T::type]).
 member(E, set(E, Pred), T):-Pred.
-projection(member(E, Set, T)::pred, horiz([vis(E::T), symbol(8712), halfSize(vis(T::type)), vis(Set::set(T))])).
+projection(member(E, Set, T)::pred, horiz([vis(E::T), horiz([symbol(8712), halfSize(vis(T::type))], cpi:top), vis(Set::set(T))])).
 signature(setDef(Set, Def, T)::statement, [Set::set(T), Def::set(T), T::type]).
-projection(setDef(Set, Def, T)::statement, horiz([vis(Set::set(T)), symbol(8797), halfSize(vis(T::type)), vis(Def::set(T))])).
+projection(setDef(Set, Def, T)::statement, horiz([vis(Set::set(T)), horiz([symbol(8797), halfSize(vis(T::type))], cpi:top), vis(Def::set(T))])).
 setDef(Set, Def, T)~>member(X, Set, T):-member(X, Def, T).
 signature(union(S1, S2)::set(T), [S1::set(T), S2::set(T)]).
 projection(union(S1, S2)::set(T), horiz([vis(S1::set(T)), symbol(8746), vis(S2::set(T))])).
@@ -21,7 +21,7 @@ projection(singleton(S)::set(T), brackets(vis(S::T), 123, 125)).
 member(E, singleton(E), T):-builtin:true.
 requires(signature(S::set(T), _), (member(_, S, T):-_)).
 signature(listSet(L)::set(T), [L::list(T)]).
-projection(listSet(L)::set(T), brackets(cpi:vis(L::list(T), horiz), 123, 125)).
+projection(listSet(L)::set(T), brackets(cpi:vis(L::list(T), horizontal(0, 0, label(! (,)), label(!' '))), 123, 125)).
 member(X, listSet(L), T):-listMember(X, T, L).
 signature(setParens(Set)::set(T), [Set::set(T)]).
 projection(setParens(Set)::set(T), brackets(vis(Set::set(T)), 40, 41)).
@@ -30,4 +30,9 @@ setDef(setParens(Set), Set, T).
 defines((member(_, Set, T):-_), Set::set(T), semanticDefinition).
 signature(diffSet(A, B)::set(T), [A::set(T), B::set(T)]).
 projection(diffSet(A, B)::set(T), horiz([vis(A::set(T)), label(! (\)), vis(B::set(T))])).
-setDef(diffSet(A, B), set(X, (member(X, A, T), \+member(X, B, T))), T).
+setDef(diffSet(A, B), set(X, (member(X, A, T), notMember(X, B, T))), T).
+signature(notMember(X, S, T)::pred, [X::T, S::set(T), T::type]).
+projection(notMember(E, Set, T)::pred, horiz([vis(E::T), symbol(8713), halfSize(vis(T::type)), vis(Set::set(T))])).
+notMember(X, S, T):- \+member(X, S, T).
+deprecated((\+member(X, B, T))::pred).
+deprecationReplacement(\+member(X, S, T), pred, notMember(X, S, T)).

@@ -1,5 +1,7 @@
-'/bootstrap':signature(subSequence(List1, List2)::'/bootstrap':pred, [List1::'/bootstrap':list(base), List2::'/bootstrap':list(base)]).
-'/bootstrap':projection(subSequence(List1, List2)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(List1::'/bootstrap':list(base)), '/bootstrap':label(!'is a subsequence of'), '/bootstrap':vis(List2::'/bootstrap':list(base))])).
+'/bootstrap':unitTest(containsSubsequence(seq(aSet, seq(gSet, tSet)), seq(rep(aSet, 5), seq(nSet, rep(tSet, 5))))).
+'/bootstrap':unitTest(\+containsSubsequence(seq(aSet, seq(gSet, seq(tSet, cSet))), seq(seq(rep(aSet, 5), seq(nSet, rep(tSet, 5))), cSet))).
+'/bootstrap':unitTest(\+containsSubsequence(seq(tSet, seq(gSet, tSet)), seq(rep(aSet, 5), seq(nSet, rep(tSet, 5))))).
+'/bootstrap':sigProj(subSequence(List1, List2)::'/bootstrap':pred, [List1::'/bootstrap':list(base), List2::'/bootstrap':list(base)], '/bootstrap':horiz(['/bootstrap':vis(List1::'/bootstrap':list(base)), '/bootstrap':label(!'is a subsequence of'), '/bootstrap':vis(List2::'/bootstrap':list(base))])).
 subSequence([], _):-builtin:true.
 subSequence(List1, [_|List2]):-subSequence(List1, List2).
 subSequence(List1, List2):-prefixOf(List1, List2).
@@ -10,6 +12,3 @@ prefixOf([], _):-builtin:true.
 '/bootstrap':signature(containsSubsequence(Set1, Set2)::'/bootstrap':pred, [Set1::'/bootstrap':set('/bootstrap':list(base)), Set2::'/bootstrap':set('/bootstrap':list(base))]).
 '/bootstrap':projection(containsSubsequence(Set1, Set2)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Set1::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'contains a sub-sequence of a member of'), '/bootstrap':vis(Set2::'/bootstrap':set('/bootstrap':list(base)))])).
 containsSubsequence(Set1, Set2):-'/bootstrap':member(Seq1, Set1, '/bootstrap':list(base)), '/bootstrap':member(Seq2, Set2, '/bootstrap':list(base)), subSequence(Seq1, Seq2).
-'/bootstrap':unitTest(containsSubsequence(seq(aSet, seq(gSet, tSet)), seq(rep(aSet, 5), seq(nSet, rep(tSet, 5))))).
-'/bootstrap':unitTest(\+containsSubsequence(seq(aSet, seq(gSet, seq(tSet, cSet))), seq(seq(rep(aSet, 5), seq(nSet, rep(tSet, 5))), cSet))).
-'/bootstrap':unitTest(\+containsSubsequence(seq(tSet, seq(gSet, tSet)), seq(rep(aSet, 5), seq(nSet, rep(tSet, 5))))).

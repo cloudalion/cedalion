@@ -1,0 +1,8 @@
+defAtom(shrink::mode).
+disabled(projection(annotation:shrink(signature(TTerm, TArgs))::statement, shrink, vert([horiz([label(!declare), vis(TTerm::typedTerm)]), horiz([label(!'    '), label(!where), vis(TArgs::list(typedTerm))])]))).
+disabled(projection(annotation:shrink(projection(TTerm, Proj))::statement, shrink, vert([horiz([label(!display), vis(TTerm::typedTerm)]), horiz([label(!'    '), label(! (as)), vis(Proj::visualization)])]))).
+projection(annotation:shrink(unitTest(Goal))::statement, shrink, vert([bold(label(!'Unit Test:')), horiz([label(!'  '), vis(Goal::pred)])])).
+projection(TTerm, horiz([V1, V2|VPrime]))~>projection(TTerm, shrink, vert([horiz([V1, V2]), horiz([label(!'    ')|VPrime])])).
+signature(annotation:escape(annotation:shrink(Term))::Type, [Term::Type]).
+projection(annotation:escape(annotation:shrink(Term))::Type, horiz([cpi:vis(Term::Type, shrink), halfSize(symbol(8628))], cpi:top)).
+contextMenuEntry(Term::Type, VNs, Path, !'Shrink', cpi:edit(Path, annotation:escape(annotation:shrink(Term))::Type, VNs)).

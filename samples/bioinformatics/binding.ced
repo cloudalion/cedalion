@@ -1,6 +1,6 @@
 '/bootstrap':disabled('/bootstrap':alias(bind(SeqSet, Name)::'/bootstrap':set('/bootstrap':list(base)), !'=[]')).
 '/bootstrap':unitTest('/bootstrap':member([a, t, a, t], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), '/bootstrap':singleton([a, t])), '/bootstrap':list(base))).
 '/bootstrap':unitTest('/bootstrap':member([c, t, c, t], seq(bind(rep(nSet, 2), '/bootstrap':singleton([c, t])), '/bootstrap':singleton([c, t])), '/bootstrap':list(base))).
-'/bootstrap':unitTest(\+'/bootstrap':member([a, t, c, t], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), '/bootstrap':singleton([a, t])), '/bootstrap':list(base))).
+'/bootstrap':unitTest('/bootstrap':notMember([a, t, c, t], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), '/bootstrap':singleton([a, t])), '/bootstrap':list(base))).
 '/bootstrap':sigProj(bind(SeqSet, Name)::'/bootstrap':set('/bootstrap':list(base)), [SeqSet::'/bootstrap':set('/bootstrap':list(base)), Name::'/bootstrap':set('/bootstrap':list(base))], '/bootstrap':horiz(['/bootstrap':vis(Name::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!'= ['), '/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':label(!']')])).
 dnaSetDef(bind(SeqSet, '/bootstrap':singleton(Seq)), '/bootstrap':set(Seq, '/bootstrap':member(Seq, SeqSet, '/bootstrap':list(base)))).

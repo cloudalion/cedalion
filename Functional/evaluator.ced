@@ -1,0 +1,1 @@
+'/bootstrap':contextMenuEntry(Expr::expr(T), VNs, Path, !'Evaluate', '/bootstrap':where('/bootstrap':doProc(cpi:edit(Path, wrap(Value)::expr(T), VNs)), eval(Expr, T, Value))).

@@ -1,8 +1,8 @@
-signature(procedure::type, []).
-signature(command::type, []).
+defAtom(procedure::type).
+defAtom(command::type).
 doc(!'Defines procedure Proc, by associating it to Command', signature(cpi:procedureCommand(Proc, Command)::pred, [Proc::procedure, Command::command])).
 projection(cpi:procedureCommand(Proc, Command)::pred, vert([horiz([bold(label(!procedure)), halfSize(label(!pred)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
-signature(statement::type, []).
+defAtom(statement::type).
 doc(!'Procedure definition in a statement', signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command])).
 projection(procedure(Proc, Command)::statement, vert([horiz([bold(label(!procedure)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
 doc(!'A goal that always succeeds', signature(builtin:true::pred, [])).
@@ -14,14 +14,14 @@ signature(ref(T)::type, [T::type]).
 doc(!'This is how a procedural function looks as a procedure', signature(cpi:func(Expr, Result, T)::procedure, [Expr::expr(T), Result::ref(T), T::type])).
 projection(cpi:func(Expr, Result, T)::procedure, horiz([bold(label(!func)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))])).
 function(Expr, T, Result, Command)~>procedure(cpi:func(Expr, Result, T), Command).
-signature(typedTerm::type, []).
+defAtom(typedTerm::type).
 doc(!'Associating a concept (represented by TTerm) with a Java class', signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string])).
 defines((cpi:termClass(TTerm, _):-_), TTerm, semanticDefinition).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
 signature(commandClass(Cmd, ClassName)::statement, [Cmd::command, ClassName::string]).
 commandClass(Cmd, ClassName)~>cpi:termClass(Cmd::command, ClassName):-builtin:true.
 signature(doAll(List)::command, [List::list(command)]).
-projection(doAll(List)::command, horiz([halfSize(label(!do)), vis(List::list(command))])).
+projection(doAll(List)::command, horiz([halfSize(label(!do)), cpi:vis(List::list(command), vertical(symbol(8594), label(!'()'), horiz([])))])).
 commandClass(doAll(_), !'net.nansore.cedalion.cmd.DoAll').
 signature(assign(Ref, Expr, Type)::command, [Ref::ref(Type), Expr::expr(Type), Type::type]).
 projection(assign(Ref, Expr, Type)::command, horiz([vis(Ref::ref(Type)), label(!':='), halfSize(vis(Type::type)), vis(Expr::expr(Type))])).
@@ -29,7 +29,7 @@ commandClass(assign(_, _, _), !'net.nansore.cedalion.cmd.Assign').
 signature(doProc(Proc)::command, [Proc::procedure]).
 projection(doProc(Proc)::command, horiz([halfSize(label(!p)), vis(Proc::procedure)])).
 commandClass(doProc(_), !'net.nansore.cedalion.cmd.DoProc').
-signature(fileContent::type, []).
+defAtom(fileContent::type).
 signature(readFile(FileName, Namespace, FileContent)::command, [FileName::string, Namespace::string, FileContent::fileContent]).
 commandClass(readFile(FileName, Namespace, FileContent), !'net.nansore.cedalion.cmd.ReadFile').
 signature(writeFile(FileName, FileContent)::command, [FileName::string, FileContent::fileContent]).
@@ -40,11 +40,11 @@ signature(dbInsert(Statement)::command, [Statement::statement]).
 commandClass(dbInsert(Statement), !'net.nansore.cedalion.cmd.DBInsert').
 signature(dbRemove(Statement)::command, [Statement::statement]).
 commandClass(dbRemove(Statement), !'net.nansore.cedalion.cmd.DBRemove').
-signature(number::type, []).
-signature(varName::type, []).
+defAtom(number::type).
+defAtom(varName::type).
 signature(termToString(TTerm, VarNames, Depth, NsList, Str)::command, [TTerm::typedTerm, VarNames::list(varName), Depth::number, NsList::list(namespacePair), Str::ref(string)]).
 commandClass(termToString(TTerm, VarNames, Depth, NsList, Str), !'net.nansore.cedalion.cmd.TermToString').
-signature(namespacePair::type, []).
+defAtom(namespacePair::type).
 signature(stringToTerm(StringRef, NsList, TTerm, VarNames)::command, [StringRef::ref(string), NsList::list(namespacePair), TTerm::typedTerm, VarNames::list(varName)]).
 commandClass(stringToTerm(StringRef, NsList, TTerm, VarNames), !'net.nansore.cedalion.cmd.StringToTerm').
 signature(notify(TTerm)::command, [TTerm::typedTerm]).
@@ -53,3 +53,6 @@ defines((cpi:procedureCommand(Proc, _):-_), Proc::procedure, semanticDefinition)
 signature(if(Cond, Then, Else)::procedure, [Cond::pred, Then::command, Else::command]).
 projection(if(Cond, Then, Else)::procedure, vert([horiz([label(!if), vis(Cond::pred)]), horiz([label(!'    '), vis(Then::command)]), label(!else), horiz([label(!'    '), vis(Else::command)])])).
 cpi:procedureCommand(if(Cond, Then, Else), Cmd):-builtin:if(Cond, Cmd::command=Then::command, Cmd::command=Else::command).
+signature(where(Proc, Goal)::procedure, [Proc::command, Goal::pred]).
+projection(where(Proc, Goal)::procedure, horiz([vis(Proc::command), label(!where), vis(Goal::pred)])).
+cpi:procedureCommand(where(Proc, Goal), Proc):-Goal.

@@ -1,0 +1,4 @@
+signature(sandbox(X)::statement, [X::typedTerm]).
+projection(sandbox(X)::statement, lineBorder(background(vis(X::typedTerm), cpi:rgb(255, 255, 128)), 5, cpi:rgb(192, 192, 192))).
+sandbox(X).
+default((_::_)::typedTerm).

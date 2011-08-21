@@ -1,0 +1,3 @@
+'/bootstrap':sigProj(rep(SeqSet, N)::'/bootstrap':set('/bootstrap':list(base)), [SeqSet::'/bootstrap':set('/bootstrap':list(base)), N::'/bootstrap':number], '/bootstrap':horiz(['/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':vis(N::'/bootstrap':number))], cpi:top)).
+'/bootstrap':alias(rep(SeqSet, N)::'/bootstrap':set('/bootstrap':list(base)), ! (^)).
+dnaSetDef(rep(X, N), '/bootstrap':union('/bootstrap':set([], '/Functional':eq('/Functional':wrap(N), '/Functional':wrap(0), '/bootstrap':number)), '/bootstrap':set(Seq, (N>0, builtin:succ(N1, N), '/bootstrap':member(Seq, seq(X, rep(X, N1)), '/bootstrap':list(base)))))).

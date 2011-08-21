@@ -20,6 +20,8 @@ import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
 import net.nansore.cedalion.helpers.FigureNavigator;
 import net.nansore.cedalion.helpers.FigureNotFoundException;
+import net.nansore.cedalion.helpers.HasPivotOffset;
+import net.nansore.cedalion.helpers.PivotHorizontalLayout;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
@@ -47,6 +49,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -61,9 +64,10 @@ import org.eclipse.ui.IWorkbenchPart;
  * Also supported by this figure are code completion and a context menu.  Both getting their content by issuing
  * queries to the Cedalion program. 
  */
-public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener{
+public class VisualTerm extends Panel implements TermFigure, TermContext, MouseListener, FocusListener, KeyListener, HasPivotOffset{
 
-    private TermContext context;
+    private static final int MAX_MENU_ENTRIES = 100;
+	private TermContext context;
     private TermFigure contentFigure;
 	private Object path;
 	private Compound descriptor;
@@ -184,10 +188,16 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 		try {
 			Variable varAction = new Variable("Action");
 			Iterator<Map<Variable, Object>> results = PrologProxy.instance().getSolutions(Compound.createCompound("cpi#contextMenuEntry", descriptor, varAction));
+			int count = 0;
 			while(results.hasNext()) {
 				Map<Variable, Object> result = (Map<Variable, Object>)results.next();
 				Compound action = (Compound)result.get(varAction);
 				TermInstantiator.instance().instantiate(action, menu, context);
+				if(count++ > MAX_MENU_ENTRIES) {
+					MenuItem errItem = new MenuItem(menu, SWT.NONE);
+					errItem.setText("<too many results>");
+					break;
+				}
 			}
 		} catch (PrologException e1) {
 			e1.printStackTrace();
@@ -518,5 +528,10 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	@Override
 	public void setFocused(VisualTerm visualTerm) {
 		context.setFocused(visualTerm);
+	}
+
+	@Override
+	public int getPivotOffset() {
+		return PivotHorizontalLayout.getChildPivotOffset(contentFigure);
 	}
 }

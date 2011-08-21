@@ -2,6 +2,9 @@ signature(horizontalCont(Delim)::mode, [Delim::visualization]).
 signature(horizontal(Start, End, Delim, Empty)::mode, [Start::number, End::number, Delim::visualization, Empty::visualization]).
 projection([]::list(_), horizontal(Start, End, Delim, Empty), Empty).
 projection([First|Rest]::list(T), horizontal(Start, End, Delim, Empty), brackets(horiz([vis(First::T), cpi:vis(Rest::list(T), horizontalCont(Delim))]), Start, End)).
+signature(horizontal(Delim, Empty)::mode, [Delim::visualization, Empty::visualization]).
+projection([]::list(_), horizontal(Delim, Empty), Empty).
+projection([First|Rest]::list(T), horizontal(Delim, Empty), horiz([annotation:minComment(label(!' '), !'We add this space to allow users to select the entire list'), vis(First::T), cpi:vis(Rest::list(T), horizontalCont(Delim))])).
 projection([]::list(T), horizontalCont(Delim), horiz([])).
 projection([First|Rest]::list(T), horizontalCont(Delim), horiz([Delim, vis(First::T), cpi:vis(Rest::list(T), horizontalCont(Delim))])).
 userVisualization(TTerm, horiz, Hist, Vis):-userVisualization(TTerm, horizontal(91, 93, label(! (,)), label(![])), Hist, Vis).

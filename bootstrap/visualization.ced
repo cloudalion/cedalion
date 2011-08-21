@@ -74,9 +74,12 @@ signature(brackets(Content, Open, Close)::visualization, [Content::visualization
 userVisualization(brackets(Content, Open, Close)::visualization, cpi:default, _, vert([brackets(vis(Content::visualization), OpenValue, CloseValue), halfSize(horiz([vis(Open::number), label(! (:)), vis(Close::number)]))])):-descriptorContentWithDefault(Open::number, 40::number, OpenValue::number, _), descriptorContentWithDefault(Close::number, 41::number, CloseValue::number, _).
 visClass(brackets(Content, Open, Close), !'net.nansore.cedalion.figures.Brackets').
 signature(box(Size)::visualization, [Size::number]).
-userVisualization(box(Size)::visualization, cpi:default, _, vert([box(SizeVal), horiz([box(SizeVal), vis(Size::number), box(SizeVal)]), box(SizeVal)])):-descriptorContentWithDefault(Size::number, 1::number, SizeVal::number, _).
+userVisualization(box(Size)::visualization, cpi:default, _, vert([box(SizeVal), pivot(horiz([box(SizeVal), vis(Size::number), box(SizeVal)])), box(SizeVal)])):-descriptorContentWithDefault(Size::number, 1::number, SizeVal::number, _).
 visClass(box(Size), !'net.nansore.cedalion.figures.Box').
 signature(dynamicList(Vis, Goal)::visualization, [Vis::visualization, Goal::pred]).
 projection(dynamicList(Vis, Goal)::visualization, brackets(horiz([vis(Vis::visualization), box(1), vis(Goal::pred)]), 123, 125)).
 alias(dynamicList(Vis, Goal)::visualization, !'{}').
 visClass(dynamicList(Vis, Goal), !'net.nansore.cedalion.figures.DynamicList').
+signature(pivot(X)::visualization, [X::visualization]).
+projection(pivot(X)::visualization, horiz([symbol(9758), vis(X::visualization)])).
+visClass(pivot(X), !'net.nansore.cedalion.figures.PivotFigure').

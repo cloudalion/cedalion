@@ -1,9 +1,6 @@
-'/bootstrap':defAtom(nSet::'/bootstrap':set('/bootstrap':list(base))).
-'/bootstrap':projection(nSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'N')).
+'/bootstrap':sigProjAtom(nSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'N')).
 dnaSetDef(nSet, '/bootstrap':union('/bootstrap':union('/bootstrap':union(aSet, tSet), cSet), gSet)).
-'/bootstrap':defAtom(wSet::'/bootstrap':set('/bootstrap':list(base))).
-'/bootstrap':projection(wSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'W')).
+'/bootstrap':sigProjAtom(wSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'W')).
 dnaSetDef(wSet, '/bootstrap':union(aSet, tSet)).
-'/bootstrap':defAtom(sSet::'/bootstrap':set('/bootstrap':list(base))).
-'/bootstrap':projection(sSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'S')).
+'/bootstrap':sigProjAtom(sSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'S')).
 dnaSetDef(sSet, '/bootstrap':union(cSet, gSet)).

@@ -1,6 +1,8 @@
 defAtom(topLevel::marker).
-check(Path, Statement::statement, VNs, marker(Path, topLevel)):-statementPath(Path).
+disabled((check(Path, Statement::statement, VNs, marker(Path, topLevel)):-statementPath(Path))).
+check(Path, Statement::statement, VNs, marker(Path, topLevel)):-builtin:true.
 markerVis(topLevel, Vis, color(Vis, cpi:rgb(0, 0, 128))).
 defAtom(notTopLevel::marker).
-check(cpi:path(Res, Path), TTerm, VNs, marker(cpi:path(Res, Path), notTopLevel)):-append(PathPrime, [_], Path, number), statementPath(cpi:path(Res, PathPrime)).
+disabled((check(cpi:path(Res, Path), TTerm, VNs, marker(cpi:path(Res, Path), notTopLevel)):-append(PathPrime, [_], Path, number), statementPath(cpi:path(Res, PathPrime)))).
+check(cpi:path(Res, Path), Term::Type, VNs, marker(cpi:path(Res, Path), notTopLevel)):- \+Type::type=statement::type.
 markerVis(notTopLevel, Vis, color(Vis, cpi:rgb(0, 0, 0))).

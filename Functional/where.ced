@@ -1,0 +1,3 @@
+'/bootstrap':signature(where(Expr, Goal)::expr(Type), [Expr::expr(Type), Goal::'/bootstrap':pred]).
+'/bootstrap':projection(where(Expr, Goal)::expr(Type), '/bootstrap':horiz(['/bootstrap':vis(Expr::expr(Type)), '/bootstrap':label(!where), '/bootstrap':vis(Goal::'/bootstrap':pred)])).
+eval(where(Expr, Goal), Type, Val):-Goal, eval(Expr, Type, Val).

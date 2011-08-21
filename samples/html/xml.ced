@@ -1,10 +1,10 @@
-'/bootstrap':signature(xml::'/bootstrap':type, []).
-'/bootstrap':signature(xmlAttr::'/bootstrap':type, []).
+'/bootstrap':defAtom(xml::'/bootstrap':type).
+'/bootstrap':defAtom(xmlAttr::'/bootstrap':type).
 '/bootstrap':signature(xml:element(Name, Attr, Body)::xml, [Name::'/bootstrap':string, Attr::'/bootstrap':list(xmlAttr), Body::'/bootstrap':list(xml)]).
-'/bootstrap':projection(xml:element(Name, Attr, Body)::xml, '/bootstrap':expand('/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':tooltip('/bootstrap':action('/bootstrap':label(!'...'), showProperties(Attr)), '/bootstrap':vis(Attr::'/bootstrap':list(xmlAttr))), '/bootstrap':label(! (>))]), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':vis(Attr::'/bootstrap':list(xmlAttr)), '/bootstrap':label(! (>))]), '/bootstrap':horiz(['/bootstrap':label(!'    '), '/bootstrap':vis(Body::'/bootstrap':list(xml))]), '/bootstrap':horiz(['/bootstrap':label(!'</'), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':label(! (>))])]))).
+'/bootstrap':projection(xml:element(Name, Attr, Body)::xml, '/bootstrap':expand('/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':tooltip('/bootstrap':label(!'...'), cpi:vis(Attr::'/bootstrap':list(xmlAttr), '/bootstrap':horizontal(32, 32, '/bootstrap':label(!' '), '/bootstrap':label(!'')))), '/bootstrap':label(! (>))]), '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(! (<)), '/bootstrap':vis(Name::'/bootstrap':string), cpi:vis(Attr::'/bootstrap':list(xmlAttr), '/bootstrap':horizontal(32, 32, '/bootstrap':label(!' '), '/bootstrap':label(!' '))), '/bootstrap':label(! (>))]), '/bootstrap':horiz(['/bootstrap':label(!'    '), cpi:vis(Body::'/bootstrap':list(xml), '/bootstrap':vert)]), '/bootstrap':horiz(['/bootstrap':label(!'</'), '/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':label(! (>))])]))).
 '/bootstrap':alias(xml:element(Name, Attr, Body)::xml, !'</>').
 '/bootstrap':default(xml:element(!name, [], [])::xml).
-'/bootstrap':signature(xmlAttrValue::'/bootstrap':type, []).
+'/bootstrap':defAtom(xmlAttrValue::'/bootstrap':type).
 '/bootstrap':alias(xml:attribute(Name, Type, Value)::xmlAttr, ! (=)).
 '/bootstrap':default(xml:attribute(!name, '/bootstrap':string, !value)::xmlAttr).
 '/bootstrap':signature(xml:attribute(Name, Type, Value)::xmlAttr, [Name::'/bootstrap':string, Type::'/bootstrap':type, Value::Type]).

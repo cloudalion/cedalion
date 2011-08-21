@@ -1,4 +1,4 @@
-signature(marker::type, []).
+defAtom(marker::type).
 signature(check(Path, TTerm, VarNames, Marker)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName), Marker::locMarker]).
 signature(statementPath(StatementPath)::pred, [StatementPath::cpi:path]).
 signature(true(Goal)::pred, [Goal::pred]).
@@ -21,9 +21,9 @@ signature(checkTypes(Path, TTerm, VarNames, MarkIn, MarkOut)::pred, [Path::cpi:p
 checkTypes(Path, Term::Type, VarNames, MarkIn, MarkOut):-builtin:if(builtin:var(Term::Type), checkVarType(Path, Term::Type, MarkIn, MarkOut), builtin:if(builtin:string(Term::Type), true(validateType(Path, string, Type, Path, MarkIn, MarkOut)), builtin:if(builtin:number(Term::Type), true(validateType(Path, number, Type, Path, MarkIn, MarkOut)), true(checkCompoundType(Path, Term::Type, VarNames, MarkIn, MarkOut))))).
 signature(validateType(Path, InType, ExType, OrigPath, MarkIn, MarkOut)::pred, [Path::cpi:path, InType::type, ExType::type, OrigPath::cpi:path, MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 doc(!'Perform unification of TTerm1 and TTerm2, not allowing variables to be unified with terms containing them', signature(builtin:safeUnify(TTerm1, TTerm2)::pred, [TTerm1::typedTerm, TTerm2::typedTerm])).
-signature(locMarker::type, []).
+defAtom(locMarker::type).
 signature(marker(Path, Marker)::locMarker, [Path::cpi:path, Marker::marker]).
-signature(error::type, []).
+defAtom(error::type).
 signature(error(Error, VarNames)::marker, [Error::error, VarNames::list(varName)]).
 signature(typeMimatch(InType, ExType, OrigPath)::error, [InType::type, ExType::type, OrigPath::cpi:path]).
 projection(typeMimatch(InType, ExType, OrigPath)::error, vert([horiz([label(!'Type mismatch.  Expected:'), vis(ExType::type), label(!'inferred:'), vis(InType::type)]), halfSize(vis(OrigPath::cpi:path))])).
@@ -36,7 +36,7 @@ signature(findVarType(MarkIn, TVar, Type, OrigPath)::pred, [MarkIn::list(locMark
 findVarType([marker(Path, varType(Var::Type))|_], TVar, Type, Path):-builtin:equals(Var::Type, TVar).
 findVarType([_|Markers], TVar, Type, Path):-findVarType(Markers, TVar, Type, Path).
 signature(missingSignature(TTerm, TArgs, Path)::error, [TTerm::typedTerm, TArgs::list(typedTerm), Path::cpi:path]).
-projection(missingSignature(TTerm, TArgs, Path)::error, horiz([label(!'Missing signature:'), vis(TTerm::typedTerm), symbol(8618), cpi:vis(TArgs::list(typedTerm), horiz)])).
+projection(missingSignature(TTerm, TArgs, Path)::error, horiz([label(!'Missing signature:'), label(!declare), vis(TTerm::typedTerm), label(!where), cpi:vis(TArgs::list(typedTerm), horizontal(32, 32, label(! (,)), label(!'()')))])).
 signature(checkCompoundType(Path, TTerm, VarNames, MarkIn, MarkOut)::pred, [Path::cpi:path, TTerm::typedTerm, VarNames::list(varName), MarkIn::list(locMarker), MarkOut::list(locMarker)]).
 checkCompoundType(Path, Term::ExType, VarNames, MarkIn, MarkOut):-builtin:if(checkSignature(Term::GivenType, TArgs), true(validateType(Path, GivenType, ExType, Path, MarkIn, MarkMid)), (true(builtin:parseTerm(Term::ExType, _, TArgs)), true(MarkMid::list(locMarker)=[marker(Path, error(missingSignature(Term::ExType, TArgs, Path), VarNames))|MarkIn]::list(locMarker)))), true(checkArgTypes(Path, 1, TArgs, VarNames, MarkMid, MarkOut)).
 signature(checkSignature(TTerm, TArgs)::pred, [TTerm::typedTerm, TArgs::list(typedTerm)]).
@@ -46,7 +46,7 @@ checkArgTypes(_, _, [], _, Markers, Markers):-builtin:true.
 checkArgTypes(cpi:path(Res, Path), Index, [TArg|TArgs], VarNames, MarkIn, MarkOut):-append(Path, [Index], SubPath, number), true(checkTypes(cpi:path(Res, SubPath), TArg, VarNames, MarkIn, MarkMid)), builtin:succ(Index, NextIndex), checkArgTypes(cpi:path(Res, Path), NextIndex, TArgs, VarNames, MarkMid, MarkOut).
 markerVis(typeOf(Term::Type, VarNames), V, tooltip(V, vis(cpi:immediateDescriptor(Type, VarNames)::type))).
 markerVis(varType(_), V, bold(V)).
-signature(exception::type, []).
+defAtom(exception::type).
 doc(!'Throw an exception', signature(builtin:throw(Exception)::pred, [Exception::exception])).
 signature(false(X)::exception, [X::pred]).
 true(X):-builtin:if(X, builtin:true, builtin:throw(false(X))).

@@ -1,7 +1,4 @@
-'/bootstrap':defAtom(base::'/bootstrap':type).
-'/bootstrap':projection(base::'/bootstrap':type, '/bootstrap':label(!'Nucleotide')).
-'/bootstrap':defAtom(a::base).
-'/bootstrap':projection(a::base, '/bootstrap':label(!'A')).
-'/bootstrap':defAtom(aSet::'/bootstrap':set('/bootstrap':list(base))).
-'/bootstrap':projection(aSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'A')).
+'/bootstrap':sigProjAtom(base::'/bootstrap':type, '/bootstrap':label(!'Nucleotide')).
+'/bootstrap':sigProjAtom(a::base, '/bootstrap':label(!'A')).
+'/bootstrap':sigProjAtom(aSet::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':label(!'A')).
 '/bootstrap':setDef(aSet, '/bootstrap':singleton([a]), '/bootstrap':list(base)).

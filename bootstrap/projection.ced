@@ -1,13 +1,14 @@
 checkSignature(cpi:descriptor(Path, Term, Markers)::Type, [Path::cpi:path, Term::Type, Markers::list(locMarker)]):-builtin:true.
 cpi:visualizeDescriptor(cpi:descriptor(Path, Term, Markers)::Type1, ProjType, MVis):-fixType(Type1::type, Type::type), cpi:termAtPath(Path, Term::Type, VarNames), true(applyCheckers(cpi:descriptor(Path, Term, Markers)::Type, Term::Type, VarNames, Desc)), builtin:if(builtin:var(Term::Type), visualizeVar(Term::Type, VarNames, Vis), builtin:if(builtin:number(Term::Type), visualizeNumber(Term::Type, Vis), builtin:if(builtin:string(Term::Type), visualizeString(Term::Type, Vis), visualizeCompound(Desc, Term::Type, ProjType, Vis)))), true(applyMarkers(Desc, Vis, MVis)).
 visualizeNumber(Num::_, label(Num)):-builtin:true.
-visualizeString(Str::_, label(Str)):-builtin:true.
+visualizeString(Str::_, color(label(Str), cpi:rgb(255, 0, 128))):-builtin:true.
 visualizeCompound(Desc, Term::Type, ProjType, Vis):-true(builtin:parseTerm(Term::Type, Func, TArgs)), true(subDescriptors(Desc, 0, TArgs, SubDescs)), true(builtin:parseTerm(Term2Vis::Type, Func, SubDescs)), true(visualizeTerm(Term2Vis::Type, ProjType, Vis)).
 doc(!'List is a list of elements such as Element, for every result of Goal', signature(builtin:findall(Element, Type, Goal, List)::pred, [Element::Type, Type::type, Goal::pred, List::list(Type)])).
 projection(builtin:findall(Element, Type, Goal, List)::pred, horiz([label(!'Find all'), vis(Element::Type), label(!'of type'), vis(Type::type), label(!'such that'), vis(Goal::pred), label(!into), vis(List::list(Type))])).
 applyCheckers(cpi:descriptor(Path, Term, OldMarkers)::Type, TTerm, VarNames, cpi:descriptor(Path, Term, Markers)::Type):-builtin:findall(Marker, locMarker, check(Path, TTerm, VarNames, Marker), NewMarkers), append(OldMarkers, NewMarkers, Markers, locMarker).
 subDescriptors(_, _, [], []):-builtin:true.
 subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, Markers)::Type, BeforeIndex, [_Arg::ArgType|TArgs], [cpi:descriptor(cpi:path(Res, NewPath), _DummyArg, MarkersForPath)::ArgType|SubDescs]):-builtin:succ(BeforeIndex, Index), append(Path, [Index], NewPath, _), markersForPath(Markers, cpi:path(Res, NewPath), MarkersForPath, MarkersLeft), subDescriptors(cpi:descriptor(cpi:path(Res, Path), Term, MarkersLeft)::Type, Index, TArgs, SubDescs).
+signature(pathIsPrefix(BasePath, Path)::pred, [BasePath::cpi:path, Path::cpi:path]).
 pathIsPrefix(cpi:path(Res, []), cpi:path(Res, _)):-builtin:true.
 pathIsPrefix(cpi:path(Res, [First|Base]), cpi:path(Res, [First|Path])):-pathIsPrefix(cpi:path(Res, Base), cpi:path(Res, Path)).
 signature(visualizeTerm(TTerm2Vis, ProjType, Vis)::pred, [TTerm2Vis::typedTerm, ProjType::mode, Vis::visualization]).
