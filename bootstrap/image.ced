@@ -1,0 +1,6 @@
+defAtom(image::type).
+signature(imageMarker(Img)::marker, [Img::image]).
+check(Path, Img::image, [], marker(Path, imageMarker(Img))):- \+builtin:var(Img::image).
+markerVis(imageMarker(Img), Vis, horiz([image(Img), halfSize(Vis)])).
+defAtom('Paste.png'::image).
+defAtom('New.png'::image).

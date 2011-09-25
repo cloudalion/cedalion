@@ -83,3 +83,5 @@ visClass(dynamicList(Vis, Goal), !'net.nansore.cedalion.figures.DynamicList').
 signature(pivot(X)::visualization, [X::visualization]).
 projection(pivot(X)::visualization, horiz([symbol(9758), vis(X::visualization)])).
 visClass(pivot(X), !'net.nansore.cedalion.figures.PivotFigure').
+signature(image(Img)::visualization, [Img::image]).
+visClass(image(Img), !'net.nansore.cedalion.figures.ImageFigure').

@@ -1,11 +1,10 @@
-signature(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, [TTerm::typedTerm, VarNames::list(varName), Path::cpi:path, Caption::string, Proc::procedure]).
-projection(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, vert([horiz([label(!'Context menu entry'), vis(Caption::string), label(!for), vis(TTerm::typedTerm), label(!'with varnames'), vis(VarNames::list(varName)), label(!'at path'), vis(Path::cpi:path)]), horiz([label(!'    '), label(!do), vis(Proc::procedure)])])).
-contextMenuEntry(List::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_|List]::list(T), VarNames)).
-contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _|Rest]::list(T), VarNames)).
-contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames)).
+defAtom('Create.png'::image).
+contextMenuEntry(List::list(T), VarNames, Path, !'Insert', cpi:edit(Path, [_|List]::list(T), VarNames), 'Create.png').
+contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Append', cpi:edit(Path, [First, _|Rest]::list(T), VarNames), 'Create.png').
+defAtom('Delete.png'::image).
+contextMenuEntry([First|Rest]::list(T), VarNames, Path, !'Delete', cpi:edit(Path, Rest::list(T), VarNames), 'Delete.png').
 signature(showView(Vis)::command, [Vis::visualization]).
 commandClass(showView(Vis), !'net.nansore.cedalion.cmd.ShowView').
-contextMenuEntry(TTerm, VarNames, Path, !'Show in View', showInView(TTerm, VarNames)).
 signature(showInView(TTerm, VarNames)::procedure, [TTerm::typedTerm, VarNames::list(varName)]).
 procedure(showInView(Term::Type, VarNames), showView(vis(cpi:immediateDescriptor(Term, VarNames)::Type))).
 signature(autoFix(Error, VarNames, AutoFix)::pred, [Error::error, VarNames::list(varName), AutoFix::procedure]).

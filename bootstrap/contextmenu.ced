@@ -4,16 +4,25 @@ defAtom(noop::procedure).
 procedure(noop, doAll([])).
 signature(isShortcutKey(BaseCaption, Shortcut)::pred, [BaseCaption::string, Shortcut::string]).
 shortcutKey(Command, Shortcut)~>isShortcutKey(Command, Shortcut):-builtin:true.
-annotation:shrink((contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>annotation:shrink((cpi:contextMenuEntry(cpi:descriptor(Path, Term, _)::Type, menuItem(Caption, WhatToDo)):-cpi:termAtPath(Path, TTerm, VarNames), annotation:comment(builtin:catch((cpi:procedureCommand(Proc, _), BaseCaption::string=Name::string, WhatToDo::procedure=Proc::procedure), _, annotation:comment((builtin:strcat(!'<exception>: ', Name, BaseCaption), WhatToDo::procedure=Proc::procedure), !'Prepend "<exception>" where an exception occured in the execution')), !'Check that the proceduere\'s preconditions hold'), annotation:comment(builtin:if(isShortcutKey(BaseCaption, Shortcut), (builtin:strcat(BaseCaption, !'	', BaseCaptionTab), builtin:strcat(BaseCaptionTab, Shortcut, Caption)), Caption::string=BaseCaption::string), !'Add the shortcut key to the caption, if exists'))))).
+signature(contextMenuEntry(TTerm, VarNames, Path, Name, Proc, Icon)::statement, [TTerm::typedTerm, VarNames::list(varName), Path::cpi:path, Name::string, Proc::procedure, Icon::image]).
+projection(contextMenuEntry(TTerm, VarNames, Path, Name, Proc, Icon)::statement, vert([horiz([label(!'Context menu entry'), vis(Name::string), label(!'with icon'), vis(Icon::image), label(!for), vis(TTerm::typedTerm), label(!'with varnames'), vis(VarNames::list(varName)), label(!'at path'), vis(Path::cpi:path)]), horiz([label(!'    '), label(!do), vis(Proc::procedure)])])).
+signature(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, [TTerm::typedTerm, VarNames::list(varName), Path::cpi:path, Caption::string, Proc::procedure]).
+projection(contextMenuEntry(TTerm, VarNames, Path, Caption, Proc)::statement, vert([horiz([label(!'Context menu entry'), vis(Caption::string), label(!for), vis(TTerm::typedTerm), label(!'with varnames'), vis(VarNames::list(varName)), label(!'at path'), vis(Path::cpi:path)]), horiz([label(!'    '), label(!do), vis(Proc::procedure)])])).
+defAtom(cpi:none::image).
+contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>contextMenuEntry(TTerm, VarNames, Path, Name, Proc, cpi:none).
+annotation:shrink((contextMenuEntry(TTerm, VarNames, Path, Name, Proc, Icon)~>annotation:shrink((cpi:contextMenuEntry(cpi:descriptor(Path, _, _)::_, menuItem(Caption, WhatToDo, Icon)):-cpi:termAtPath(Path, TTerm, VarNames), annotation:comment(builtin:catch((cpi:procedureCommand(Proc, _), BaseCaption::string=Name::string, WhatToDo::procedure=Proc::procedure), _, annotation:comment((builtin:strcat(!'<exception>: ', Name, BaseCaption), WhatToDo::procedure=Proc::procedure), !'Prepend "<exception>" where an exception occured in the execution')), !'Check that the proceduere\'s preconditions hold'), annotation:comment(builtin:if(isShortcutKey(BaseCaption, Shortcut), (builtin:strcat(BaseCaption, !'	', BaseCaptionTab), builtin:strcat(BaseCaptionTab, Shortcut, Caption)), Caption::string=BaseCaption::string), !'Add the shortcut key to the caption, if exists'))))).
 defAtom(noPath::cpi:path).
-contextMenuEntry(Term::Type, VarNames, noPath, Name, Proc)~>cpi:contextMenuEntry(cpi:immediateDescriptor(Term, VarNames)::Type, menuItem(Name, Proc)):-cpi:procedureCommand(Proc, _).
-signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
-cpi:termClass(menuItem(Name, Proc)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem'):-builtin:true.
-contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res)).
+contextMenuEntry(Term::Type, VarNames, noPath, Name, Proc, Icon)~>cpi:contextMenuEntry(cpi:immediateDescriptor(Term, VarNames)::Type, menuItem(Name, Proc, Icon)):-cpi:procedureCommand(Proc, _).
+signature(menuItem(Name, Proc, Icon)::menuEntry, [Name::string, Proc::procedure, Icon::image]).
+cpi:termClass(menuItem(Name, Proc, Icon)::menuEntry, !'net.nansore.cedalion.eclipse.CedalionMenuItem'):-builtin:true.
+defAtom('Undo.png'::image).
+contextMenuEntry(_, _, cpi:path(Res, _), !'Undo', cpi:undo(Res), 'Undo.png').
 annotation:comment(signature(cpi:redo(Res)::procedure, [Res::string]), !'Deprecated.  Moved to the /bootstrap namespace').
 deprecated(cpi:redo(Res)::procedure).
 signature(redo(Res)::procedure, [Res::string]).
 deprecationReplacement(cpi:redo(Res), procedure, redo(Res)).
 procedure(cpi:redo(Res), doProc(redo(Res))).
 signature(redo(Res)::procedure, [Res::string]).
-contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', redo(Res)).
+defAtom('Redo.png'::image).
+contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', redo(Res), 'Redo.png').
+contextMenuEntry(contextMenuEntry(TTerm, VarNames, Path, Name, Proc)::statement, VNs, P, !'Add Icon', cpi:edit(P, contextMenuEntry(TTerm, VarNames, Path, Name, Proc, Icon)::statement, VNs)).

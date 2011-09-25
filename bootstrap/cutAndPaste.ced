@@ -3,13 +3,14 @@ signature(clipboard(TTerm, VNs)::statement, [TTerm::typedTerm, VNs::list(varName
 clipboard(TTerm, VNs)~>inClipboard(TTerm, VNs):-builtin:true.
 signature(cut(List, T, VNs, Path)::procedure, [List::list(T), T::type, VNs::list(varName), Path::cpi:path]).
 procedure(cut([First|Rest], T, VNs, Path), doAll([dbInsert(clipboard(First::T, VNs)), doProc(cpi:edit(Path, Rest::list(T), VNs))])).
-contextMenuEntry([First|Rest]::list(T), VNs, Path, !'Cut', cut([First|Rest], T, VNs, Path)).
+defAtom('Cut.png'::image).
+contextMenuEntry([First|Rest]::list(T), VNs, Path, !'Cut', cut([First|Rest], T, VNs, Path), 'Cut.png').
 signature(paste(List, T, VNs, Path)::procedure, [List::list(T), T::type, VNs::list(varName), Path::cpi:path]).
 signature(pairType(TA, TB)::type, [TA::type, TB::type]).
 signature(pair(A, B)::pairType(TA, TB), [A::TA, B::TB]).
 projection(pair(A, B)::pairType(TA, TB), brackets(horiz([vis(A::TA), label(! (,)), vis(B::TB)]), 60, 62)).
-cpi:procedureCommand(paste(List, T, VNs, Path), doAll([doProc(cpi:edit(Path, NewList::list(T), NewVNs)), doAll(RemoveFromClipboard)])):-builtin:findall(dbRemove(clipboard(Term::T, RemVNs)), command, inClipboard(Term::T, RemVNs), RemoveFromClipboard), builtin:findall(pair(Item, ItemVNs), pairType(T, list(varName)), inClipboard(Item::T, ItemVNs), ItemList), ItemList::list(pairType(T, list(varName)))=[_|_]::list(_), calculatePasteItems(ItemList, T, List, VNs, NewList, NewVNs).
-contextMenuEntry(List::list(T), VNs, Path, !'Paste', paste(List, T, VNs, Path)).
+procedure(paste(List, T, VNs, Path), doProc(where(doAll([doProc(cpi:edit(Path, NewList::list(T), NewVNs)), doAll(RemoveFromClipboard)]), (builtin:findall(dbRemove(clipboard(Term::T, RemVNs)), command, inClipboard(Term::T, RemVNs), RemoveFromClipboard), builtin:findall(pair(Item, ItemVNs), pairType(T, list(varName)), inClipboard(Item::T, ItemVNs), ItemList), ItemList::list(pairType(T, list(varName)))=[_|_]::list(_), calculatePasteItems(ItemList, T, List, VNs, NewList, NewVNs))))).
+contextMenuEntry(List::list(T), VNs, Path, !'Paste', paste(List, T, VNs, Path), 'Paste.png').
 signature(calculatePasteItems(ItemList, T, List, VNs, NewList, NewVNs)::pred, [ItemList::list(pairType(T, list(varName))), T::type, List::list(T), VNs::list(varName), NewList::list(T), NewVNs::list(varName)]).
 calculatePasteItems([], T, List, VNs, List, VNs):-builtin:true.
 calculatePasteItems([pair(Item, ItemVNs)|Rest], T, List, VNs, [Item|NewList], NewVNs):-mergeVarNames(VNs, ItemVNs, MidVNs), calculatePasteItems(Rest, T, List, MidVNs, NewList, NewVNs).

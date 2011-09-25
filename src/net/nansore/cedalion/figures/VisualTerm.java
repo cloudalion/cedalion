@@ -318,8 +318,15 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 				Point p = viewport.getViewLocation();
                 if(p.y > getLocation().y) {
                 	viewport.setViewLocation(new Point(p.x, getLocation().y));
-                } else if(p.y + viewport.getSize().height < getLocation().y + getSize().height) {
+                } else if(p.y + viewport.getSize().height < getLocation().y + getSize().height &&
+                		viewport.getSize().height > getSize().height) {
                 	viewport.setViewLocation(new Point(p.x, getLocation().y + getSize().height - viewport.getSize().height));
+                }
+                if(p.x > getLocation().x) {
+                	viewport.setViewLocation(new Point(getLocation().x, p.y));
+                } else if(p.x + viewport.getSize().width < getLocation().x + getSize().width &&
+                		viewport.getSize().width > getSize().width) {
+                	viewport.setViewLocation(new Point(getLocation().x + getSize().width - viewport.getSize().width, p.y));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
