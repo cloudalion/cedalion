@@ -24,7 +24,6 @@ doc(!'A data structure to hold a pair of a statement along with its variable nam
 signature(mergeVarNames(VN1, VN2, VarNames)::pred, [VN1::list(varName), VN2::list(varName), VarNames::list(varName)]).
 fileModel([builtin:statement(S, VN1)|Terms], [S|Statements], VarNames):-fileModel(Terms, Statements, VN2), mergeVarNames(VN1, VN2, VarNames).
 mergeVarNames([], VarNames, VarNames):-builtin:true.
-signature(listMember(Elem, Type, List)::pred, [Elem::Type, Type::type, List::list(Type)]).
 doc(!'A data structure to hold a single typed variable (TVar) along with its Name', signature(builtin:varName(TVar, Name)::varName, [TVar::typedTerm, Name::string])).
 mergeVarNames([builtin:varName(Var::T, Name)|VN1], VN2, VarNames):-builtin:if(listMember(builtin:varName(Var::T, Name), varName, VN2), mergeVarNames(VN1, VN2, VarNames), mergeVarNames(VN1, [builtin:varName(Var::T, Name)|VN2], VarNames)).
 signature(varInVarNames(TVar, VN)::pred, [TVar::typedTerm, VN::list(varName)]).

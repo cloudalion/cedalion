@@ -1,3 +1,8 @@
+signature(listMember(Elem, Type, List)::pred, [Elem::Type, Type::type, List::list(Type)]).
+projection(listMember(Elem, Type, List)::pred, horiz([vis(Elem::Type), halfSize(horiz([label(! (::)), vis(Type::type)])), symbol(8714), vis(List::list(Type))])).
+alias(listMember(Elem, Type, List)::pred, !in).
+listMember(X, T, [X|_]):-builtin:true.
+listMember(X, T, [_|L]):-listMember(X, T, L).
 signature(horizontalCont(Delim)::mode, [Delim::visualization]).
 signature(horizontal(Start, End, Delim, Empty)::mode, [Start::number, End::number, Delim::visualization, Empty::visualization]).
 projection([]::list(_), horizontal(Start, End, Delim, Empty), Empty).

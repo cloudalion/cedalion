@@ -359,6 +359,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
     public void keyPressed(KeyEvent event) {
     	if(context.getFocused() != this)
     		return;
+    	applyShortcut(event.keyCode, event.stateMask);
         if(event.character == '\r' && event.stateMask == 0) {
             replaceContent();
         } else if(event.stateMask == (SWT.ALT | SWT.SHIFT)) {
@@ -396,6 +397,86 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 			}
         }
     }
+
+	private void applyShortcut(int keyCode, int stateMask) {
+		String key = keyDescription(keyCode, stateMask);
+		
+		// Query the command, if exists.
+		Variable procVar = new Variable();
+		Compound query = new Compound("cpi#shortcutKey", descriptor, key, procVar);
+		try {
+			Iterator<Map<Variable, Object>> solutions = PrologProxy.instance().getSolutions(query);
+			while(solutions.hasNext()) {
+				ExecutionContext exe = new ExecutionContext();
+				exe.runProcedure((Compound)solutions.next().get(procVar));
+			}
+		} catch (PrologException e) {
+			e.printStackTrace();
+		} catch (TermInstantiationException e) {
+			e.printStackTrace();
+		} catch (ExecutionContextException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private String keyDescription(int keyCode, int stateMask) {
+		// Build the key string
+		StringBuffer buff = new StringBuffer();
+		if((stateMask & SWT.CTRL) != 0) {
+			buff.append("Ctrl+");
+		}
+		if((stateMask & SWT.SHIFT) != 0) {
+			buff.append("Shift+");
+		}
+		if((stateMask & SWT.ALT) != 0) {
+			buff.append("Alt+");
+		}
+		switch((int)keyCode) {
+		case SWT.INSERT:
+			buff.append("Ins");
+			break;
+		case SWT.DEL:
+			buff.append("Del");
+			break;
+		case SWT.HOME:
+			buff.append("Home");
+			break;
+		case SWT.END:
+			buff.append("End");
+			break;
+		case SWT.PAGE_UP:
+			buff.append("PgUp");
+			break;
+		case SWT.PAGE_DOWN:
+			buff.append("PgDown");
+			break;
+		case SWT.ESC:
+			buff.append("Esc");
+			break;
+		case SWT.TAB:
+			buff.append("Tab");
+			break;
+		case SWT.F1:
+		case SWT.F2:
+		case SWT.F3:
+		case SWT.F4:
+		case SWT.F5:
+		case SWT.F6:
+		case SWT.F7:
+		case SWT.F8:
+		case SWT.F9:
+		case SWT.F10:
+		case SWT.F11:
+		case SWT.F12:
+			buff.append("F");
+			buff.append(keyCode - SWT.F1 + 1);
+			break;
+		default:
+			buff.append(Character.toUpperCase((char)keyCode));
+		}
+		String key = buff.toString();
+		return key;
+	}
 
 	private void replaceContent() {
 		try {

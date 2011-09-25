@@ -1,0 +1,14 @@
+signature(shortcutKey(Command, Key)::statement, [Command::string, Key::string]).
+projection(shortcutKey(Command, Key)::statement, horiz([vis(Key::string), label(!'is shortcut for'), vis(Command::string)])).
+signature(cpi:shortcutKey(TTerm, Key, Procedure)::pred, [TTerm::typedTerm, Key::string, Procedure::procedure]).
+contextMenuEntry(TTerm, VarNames, Path, Action, Procedure)~>actionProc(Action, TTerm, Path, VarNames, Procedure):-builtin:true.
+signature(actionProc(Action, TTerm, Path, VarNames, Procedure)::pred, [Action::string, TTerm::typedTerm, Path::cpi:path, VarNames::list(varName), Procedure::procedure]).
+annotation:shrink((shortcutKey(Action, Key)~>annotation:shrink((cpi:shortcutKey(cpi:descriptor(Path, _, _)::Type, Key, Procedure):-cpi:termAtPath(Path, TTerm, VarNames), actionProc(Action, TTerm, Path, VarNames, Procedure))))).
+shortcutKey(!'Insert', !'Shift+Alt+Ins').
+shortcutKey(!'Append', !'Alt+Ins').
+shortcutKey(!'Delete', !'Shift+Alt+Del').
+shortcutKey(!'Paste', !'Ctrl+Alt+V').
+shortcutKey(!'Show Definitions', !'F8').
+shortcutKey(!'Undo', !'Ctrl+Alt+Z').
+shortcutKey(!'Redo', !'Ctrl+Shift+Alt+Z').
+shortcutKey(!'Cut', !'Ctrl+Alt+X').

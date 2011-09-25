@@ -1,21 +1,21 @@
 defAtom(procedure::type).
 defAtom(command::type).
-doc(!'Defines procedure Proc, by associating it to Command', signature(cpi:procedureCommand(Proc, Command)::pred, [Proc::procedure, Command::command])).
+annotation:comment(signature(cpi:procedureCommand(Proc, Command)::pred, [Proc::procedure, Command::command]), !'Defines procedure Proc, by associating it to Command').
 projection(cpi:procedureCommand(Proc, Command)::pred, vert([horiz([bold(label(!procedure)), halfSize(label(!pred)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
 defAtom(statement::type).
-doc(!'Procedure definition in a statement', signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command])).
+annotation:comment(signature(procedure(Proc, Command)::statement, [Proc::procedure, Command::command]), !'Procedure definition in a statement').
 projection(procedure(Proc, Command)::statement, vert([horiz([bold(label(!procedure)), vis(Proc::procedure)]), horiz([label(!'    '), vis(Command::command)])])).
-doc(!'A goal that always succeeds', signature(builtin:true::pred, [])).
+annotation:comment(signature(builtin:true::pred, []), !'A goal that always succeeds').
 procedure(Proc, Command)~>cpi:procedureCommand(Proc, Command):-builtin:true.
 signature(expr(T)::type, [T::type]).
-doc(!'A procedural function.  Expr is a procedure that runs Command and then evaluates to Result of type T', signature(function(Expr, T, Result, Command)::statement, [Expr::expr(T), T::type, Result::ref(T), Command::command])).
+annotation:comment(signature(function(Expr, T, Result, Command)::statement, [Expr::expr(T), T::type, Result::ref(T), Command::command]), !'A procedural function.  Expr is a procedure that runs Command and then evaluates to Result of type T').
 projection(function(Expr, T, Result, Command)::statement, vert([horiz([bold(label(!function)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))]), horiz([label(!'    '), vis(Command::command)])])).
 signature(ref(T)::type, [T::type]).
-doc(!'This is how a procedural function looks as a procedure', signature(cpi:func(Expr, Result, T)::procedure, [Expr::expr(T), Result::ref(T), T::type])).
+annotation:comment(signature(cpi:func(Expr, Result, T)::procedure, [Expr::expr(T), Result::ref(T), T::type]), !'This is how a procedural function looks as a procedure').
 projection(cpi:func(Expr, Result, T)::procedure, horiz([bold(label(!func)), vis(T::type), vis(Result::ref(T)), label(! (=)), vis(Expr::expr(T))])).
 function(Expr, T, Result, Command)~>procedure(cpi:func(Expr, Result, T), Command).
 defAtom(typedTerm::type).
-doc(!'Associating a concept (represented by TTerm) with a Java class', signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string])).
+annotation:comment(signature(cpi:termClass(TTerm, ClassName)::pred, [TTerm::typedTerm, ClassName::string]), !'Associating a concept (represented by TTerm) with a Java class').
 defines((cpi:termClass(TTerm, _):-_), TTerm, semanticDefinition).
 signature(class(TTerm, ClassName)::statement, [TTerm::typedTerm, ClassName::string]).
 signature(commandClass(Cmd, ClassName)::statement, [Cmd::command, ClassName::string]).
@@ -56,3 +56,8 @@ cpi:procedureCommand(if(Cond, Then, Else), Cmd):-builtin:if(Cond, Cmd::command=T
 signature(where(Proc, Goal)::procedure, [Proc::command, Goal::pred]).
 projection(where(Proc, Goal)::procedure, horiz([vis(Proc::command), label(!where), vis(Goal::pred)])).
 cpi:procedureCommand(where(Proc, Goal), Proc):-Goal.
+deprecated((cpi:procedureCommand(_, _):-_)::statement).
+deprecationReplacement((cpi:procedureCommand(Proc, Cmd):-Goal), statement, procedure(Proc, doProc(where(Cmd, Goal)))).
+signature(foreach(Goal, Command)::procedure, [Goal::pred, Command::command]).
+projection(foreach(Goal, Command)::procedure, horiz([label(!'for each'), vis(Goal::pred), label(!do), vis(Command::command)])).
+procedure(foreach(Goal, Command), doProc(where(doAll(Commands), builtin:findall(Command, command, Goal, Commands)))).

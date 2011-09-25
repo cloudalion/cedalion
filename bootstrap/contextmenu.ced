@@ -2,7 +2,9 @@ defAtom(menuEntry::type).
 annotation:comment(signature(cpi:contextMenuEntry(Descriptor, MenuItem)::pred, [Descriptor::typedTerm, MenuItem::menuEntry]), !'Succeeds for every context menu entry provided for Descriptor.  MenuItem is bound to a description of the menu item to display').
 defAtom(noop::procedure).
 procedure(noop, doAll([])).
-annotation:shrink((contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>annotation:shrink((cpi:contextMenuEntry(cpi:descriptor(Path, Term, _)::Type, menuItem(Caption, WhatToDo)):-cpi:termAtPath(Path, TTerm, VarNames), builtin:catch((cpi:procedureCommand(Proc, _), Caption::string=Name::string, WhatToDo::procedure=Proc::procedure), _, (builtin:strcat(!'<exception>: ', Name, Caption), WhatToDo::procedure=noop::procedure)))))).
+signature(isShortcutKey(BaseCaption, Shortcut)::pred, [BaseCaption::string, Shortcut::string]).
+shortcutKey(Command, Shortcut)~>isShortcutKey(Command, Shortcut):-builtin:true.
+annotation:shrink((contextMenuEntry(TTerm, VarNames, Path, Name, Proc)~>annotation:shrink((cpi:contextMenuEntry(cpi:descriptor(Path, Term, _)::Type, menuItem(Caption, WhatToDo)):-cpi:termAtPath(Path, TTerm, VarNames), annotation:comment(builtin:catch((cpi:procedureCommand(Proc, _), BaseCaption::string=Name::string, WhatToDo::procedure=Proc::procedure), _, annotation:comment((builtin:strcat(!'<exception>: ', Name, BaseCaption), WhatToDo::procedure=Proc::procedure), !'Prepend "<exception>" where an exception occured in the execution')), !'Check that the proceduere\'s preconditions hold'), annotation:comment(builtin:if(isShortcutKey(BaseCaption, Shortcut), (builtin:strcat(BaseCaption, !'	', BaseCaptionTab), builtin:strcat(BaseCaptionTab, Shortcut, Caption)), Caption::string=BaseCaption::string), !'Add the shortcut key to the caption, if exists'))))).
 defAtom(noPath::cpi:path).
 contextMenuEntry(Term::Type, VarNames, noPath, Name, Proc)~>cpi:contextMenuEntry(cpi:immediateDescriptor(Term, VarNames)::Type, menuItem(Name, Proc)):-cpi:procedureCommand(Proc, _).
 signature(menuItem(Name, Proc)::menuEntry, [Name::string, Proc::procedure]).
@@ -12,6 +14,6 @@ annotation:comment(signature(cpi:redo(Res)::procedure, [Res::string]), !'Depreca
 deprecated(cpi:redo(Res)::procedure).
 signature(redo(Res)::procedure, [Res::string]).
 deprecationReplacement(cpi:redo(Res), procedure, redo(Res)).
-cpi:procedureCommand(cpi:redo(Res), Cmd):-cpi:procedureCommand(redo(Res), Cmd).
+procedure(cpi:redo(Res), doProc(redo(Res))).
 signature(redo(Res)::procedure, [Res::string]).
 contextMenuEntry(_, _, cpi:path(Res, _), !'Redo', redo(Res)).

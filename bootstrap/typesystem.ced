@@ -12,8 +12,6 @@ signature(checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, 
 checkTypeConsistency(Statement, StatementCopy, Markers, MarkersFinal, StatementPath, VarNames):-builtin:if(builtin:structurallyEqual(Statement::statement, StatementCopy::statement), MarkersFinal::list(locMarker)=Markers::list(locMarker), MarkersFinal::list(locMarker)=[marker(StatementPath, error(typesNotFullyInstantiated(Statement, StatementPath), VarNames))|Markers]::list(locMarker)).
 statementPath(cpi:path(_, [1])):-builtin:true.
 statementPath(cpi:path(Res, [2|Path])):-statementPath(cpi:path(Res, Path)).
-listMember(X, _T, [X|_]):-builtin:true.
-listMember(X, T, [_|L]):-listMember(X, T, L).
 doc(!'Succeeds if TTerm matches Var::Type, where Var is an unbound variable', signature(builtin:var(TTerm)::pred, [TTerm::typedTerm])).
 doc(!'Succeeds if TTerm matches Str::Type, where Str is a Cedalion string', signature(builtin:string(TTerm)::pred, [TTerm::typedTerm])).
 doc(!'Succeeds if TTerm matches Num::Type, where Num is a number', signature(builtin:number(TTerm)::pred, [TTerm::typedTerm])).

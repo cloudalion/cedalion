@@ -15,7 +15,7 @@ signature(varNameSuffix(Suffix, Vis, VisPrime)::statement, [Suffix::string, Vis:
 projection(varNameSuffix(Suffix, Vis, VisPrime)::statement, horiz([label(!'Variable suffix'), vis(Suffix::string), label(!modifies), vis(Vis::visualization), label(!into), vis(VisPrime::visualization)])).
 varNameSuffix(Suffix, Vis, VisPrime)~>varNameMacro(VarName, VisPrime):-builtin:strcat(BaseName, Suffix, VarName), visualizeVar(_, [builtin:varName(_, BaseName)], Vis).
 varNameSuffix(!'Prime', Vis, horiz([Vis, label(!'\'')])).
-varNameSuffix(!'Bar', Vis, vert([box(1), Vis])).
+varNameSuffix(!'Bar', Vis, vert([box(1), pivot(Vis)])).
 signature(subscriptVarSuffix(Suffix)::statement, [Suffix::string]).
 subscriptVarSuffix(Suffix)~>varNameSuffix(Suffix, Vis, horiz([Vis, halfSize(label(Suffix))], cpi:bottom)).
 subscriptVarSuffix(!'1').

@@ -7,6 +7,8 @@ import net.nansore.cedalion.execution.PathStore;
 import net.nansore.cedalion.execution.PropertyNotFoundException;
 import net.nansore.cedalion.execution.TermInstantiationException;
 import net.nansore.cedalion.execution.TermInstantiator;
+import net.nansore.cedalion.helpers.HasPivotOffset;
+import net.nansore.cedalion.helpers.PivotHorizontalLayout;
 import net.nansore.prolog.Compound;
 import net.nansore.prolog.PrologException;
 
@@ -27,7 +29,7 @@ import org.eclipse.draw2d.Panel;
  * 1. Its collapsed contents
  * 2. Its expanded contents
  */
-public class ExpandFigure extends TermContextProxy {
+public class ExpandFigure extends TermContextProxy implements HasPivotOffset {
 
 	private ImageFigure icon;
 	private Panel panel;
@@ -42,7 +44,7 @@ public class ExpandFigure extends TermContextProxy {
 		this.term = term;
 		path = parent.getPath();
 		// Build a panel with an icon to its left
-		setLayoutManager(new FlowLayout());
+		setLayoutManager(new PivotHorizontalLayout());
 		icon = new ImageFigure();
 		panel = new Panel();
 		panel.setLayoutManager(new FlowLayout());
@@ -135,6 +137,14 @@ public class ExpandFigure extends TermContextProxy {
 			collapsed.dispose();
 		icon.erase();
 		panel.erase();
+	}
+
+	@Override
+	public int getPivotOffset() {
+		if(isExpanded)
+			return PivotHorizontalLayout.getChildPivotOffset(expanded);
+		else
+			return PivotHorizontalLayout.getChildPivotOffset(collapsed);
 	}
 
 }
