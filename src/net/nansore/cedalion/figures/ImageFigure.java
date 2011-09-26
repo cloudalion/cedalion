@@ -30,6 +30,7 @@ public class ImageFigure extends Label implements TermFigure {
 			setText("Failed to load image: " + imageID);
 			e.printStackTrace();
 		}
+		context.bindFigure(this);
 	}
 
 	public static Image createImage(TermContext context, String imageID)
@@ -54,6 +55,7 @@ public class ImageFigure extends Label implements TermFigure {
 
 	@Override
 	public void dispose() {
+		erase();
 	}
 
 }

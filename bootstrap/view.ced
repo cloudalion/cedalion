@@ -11,9 +11,10 @@ signature(autoFix(Error, VarNames, AutoFix)::pred, [Error::error, VarNames::list
 autoFix(Error, VarNames, AutoFix):-builtin:fail.
 signature(fixError(X, VarNames)::procedure, [X::error, VarNames::list(varName)]).
 procedure(fixError(X, VarNames), doProc(if(autoFix(X, VarNames, Fix), doProc(Fix), doProc(showSolutions(X, VarNames))))).
-markerVis(error(X, VarNames), V, tooltip(horiz([smaller(color(action(symbol(9888), fixError(X, VarNames), autoFix(X, VarNames, _)), cpi:rgb(255, 0, 0))), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
+defAtom('Error.png'::image).
+markerVis(error(X, VarNames), V, tooltip(horiz([action(image('Error.png'), fixError(X, VarNames), autoFix(X, VarNames, _)), lineBorder(V, 1, cpi:rgb(255, 0, 0))]), vis(cpi:immediateDescriptor(X, VarNames)::error))).
 signature(showSolutions(Error, VarNames)::procedure, [Error::error, VarNames::list(varName)]).
-cpi:procedureCommand(showSolutions(Error, VarNames), showView(vert(Solutions))):-builtin:findall(Proc, procedure, errorSolution(Error, VarNames, Proc), Procs), visualizeSolutions(Procs, VarNames, Solutions).
+procedure(showSolutions(Error, VarNames), doProc(where(showView(vert(Solutions)), (builtin:findall(Proc, procedure, errorSolution(Error, VarNames, Proc), Procs), visualizeSolutions(Procs, VarNames, Solutions))))).
 signature(visualizeSolutions(Procs, VarNames, Solutions)::pred, [Procs::list(procedure), VarNames::list(varName), Solutions::list(visualization)]).
 visualizeSolutions([], _, []):-builtin:true.
 visualizeSolutions([Proc|Procs], VarNames, [lineBorder(action(horiz([label(! (>)), vis(cpi:immediateDescriptor(Proc, VarNames)::procedure)]), Proc), 1, cpi:rgb(0, 0, 0))|Solutions]):-visualizeSolutions(Procs, VarNames, Solutions).

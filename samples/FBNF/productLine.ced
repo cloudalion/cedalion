@@ -1,6 +1,6 @@
-'/bootstrap':signature(someStatement::'/bootstrap':statement, []).
-'/bootstrap':signature(feature::'/bootstrap':type, []).
-'/bootstrap':signature(someFeature::feature, []).
+'/bootstrap':defAtom(someStatement::'/bootstrap':statement).
+'/bootstrap':defAtom(feature::'/bootstrap':type).
+'/bootstrap':defAtom(someFeature::feature).
 '/bootstrap':signature(condStatement(Statement, Feature)::'/bootstrap':statement, [Statement::'/bootstrap':statement, Feature::feature]).
 '/bootstrap':projection(condStatement(Statement, Feature)::'/bootstrap':statement, '/bootstrap':raised('/bootstrap':background('/bootstrap':vert(['/bootstrap':lineBorder('/bootstrap':lowered('/bootstrap':background('/bootstrap':vis(Statement::'/bootstrap':statement), cpi:rgb(255, 255, 255))), 5, cpi:rgb(192, 192, 255)), '/bootstrap':horiz(['/bootstrap':label(!if), '/bootstrap':vis(Feature::feature), '/bootstrap':label(!'is enabled')])]), cpi:rgb(192, 192, 255)))).
 condStatement(someStatement, SomeFeature)~>isEnabled(SomeFeature)~>someStatement.

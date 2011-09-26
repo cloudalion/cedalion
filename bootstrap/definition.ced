@@ -35,4 +35,4 @@ canDefine(S1, TTerm, DefType):-builtin:loadedStatement(_, (S1~>S2), _), canDefin
 defines(signature(Term::Type, _), Type::type, semanticDefinition).
 signature(definitionMarker(DefType)::marker, [DefType::definitionType]).
 searchForDef(TTerm)~>check(Path, Statement::statement, _, marker(Path, definitionMarker(DefType))):-statementPath(Path), definitionOf(TTerm, Statement, DefType, _, _).
-markerVis(definitionMarker(DefType), Vis, tooltip(background(Vis, cpi:rgb(192, 255, 192)), vis(cpi:immediateDescriptor(DefType, [])::definitionType))).
+markerVis(definitionMarker(DefType), Vis, tooltip(horiz([image('Search.png'), Vis]), vis(cpi:immediateDescriptor(DefType, [])::definitionType))).

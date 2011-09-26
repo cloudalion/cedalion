@@ -5,4 +5,4 @@ projection(annotation:shrink(unitTest(Goal))::statement, shrink, vert([bold(labe
 projection(TTerm, horiz([V1, V2|VPrime]))~>projection(TTerm, shrink, vert([horiz([V1, V2]), horiz([label(!'    ')|VPrime])])).
 signature(annotation:escape(annotation:shrink(Term))::Type, [Term::Type]).
 projection(annotation:escape(annotation:shrink(Term))::Type, horiz([cpi:vis(Term::Type, shrink), halfSize(symbol(8628))], cpi:top)).
-contextMenuEntry(Term::Type, VNs, Path, !'Shrink', cpi:edit(Path, annotation:escape(annotation:shrink(Term))::Type, VNs)).
+projection(Term::Type, horiz([_, _, _|_]))~>contextMenuEntry(Term::Type, VNs, Path, !'Shrink', cpi:edit(Path, annotation:escape(annotation:shrink(Term))::Type, VNs)).
