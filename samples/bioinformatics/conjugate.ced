@@ -7,7 +7,7 @@ conjBase(g, c):-builtin:true.
 '/bootstrap':signature(conj(Seq, ConjSeq)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), ConjSeq::'/bootstrap':list(base)]).
 '/bootstrap':projection(conj(Seq, ConjSeq)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(ConjSeq::'/bootstrap':list(base)), '/bootstrap':label(!'is the conjugate of'), '/bootstrap':vis(Seq::'/bootstrap':list(base))])).
 conj([], []):-builtin:true.
-conj([Base|Seq], [ConjBase|ConjSeq]):-conjBase(Base, ConjBase), conj(Seq, ConjSeq).
+annotation:shrink((conj([Base|Seq], [ConjBase|ConjSeq]):-conjBase(Base, ConjBase), conj(Seq, ConjSeq))).
 '/bootstrap':signature(conjSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)), [SeqExpr::'/Functional':expr('/bootstrap':list(base))]).
 '/bootstrap':projection(conjSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(SeqExpr::'/Functional':expr('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':label(!conj))])).
 '/Functional':eval(conjSeq(SeqExpr), '/bootstrap':list(base), ConjSeq):-'/Functional':eval(SeqExpr, '/bootstrap':list(base), Seq), conj(Seq, ConjSeq).

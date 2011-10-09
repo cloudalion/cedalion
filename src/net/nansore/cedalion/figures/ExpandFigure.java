@@ -141,7 +141,7 @@ public class ExpandFigure extends TermContextProxy implements HasPivotOffset {
 
 	@Override
 	public int getPivotOffset() {
-		if(isExpanded)
+		if(isExpanded())
 			return PivotHorizontalLayout.getChildPivotOffset(expanded);
 		else
 			return PivotHorizontalLayout.getChildPivotOffset(collapsed);

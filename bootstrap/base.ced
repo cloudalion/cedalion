@@ -6,8 +6,8 @@ annotation:comment(signature((A, B)::pred, [A::pred, B::pred]), !'Conjunction.  
 annotation:comment(signature((Head~>Body)::statement, [Head::statement, Body::statement]), !'Rewrite rule.  It provides statements based on Body for every statement that matches Head.').
 annotation:comment(signature([]::list(_), []), !'Empty list (or the end of a list)').
 annotation:comment(signature([X|L]::list(T), [X::T, L::list(T)]), !'A list with at-least one element, or a link in a list').
-annotation:comment(signature(type::type, []), !'The type of all types...  Types are first-class citizens in Cedalion').
-annotation:comment(signature(string::type, []), !'The type of strings').
+annotation:comment(defAtom(type::type), !'The type of all types...  Types are first-class citizens in Cedalion').
+annotation:comment(defAtom(string::type), !'The type of strings').
 annotation:comment(signature(pred::type, []), !'The type of predicates.  Predicates are first-class citizens in Cedalion, and therefore they are typed').
 annotation:comment(signature(list(T)::type, [T::type]), !'The types of lists.  T represents the type of each element on the list (note that all elements must be of the same type).').
 annotation:comment(signature(horiz::mode, []), !'This mode orders Cedalion to present  a list as a horizontal list, bound by []').
