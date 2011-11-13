@@ -1,37 +1,37 @@
-'/bootstrap':doc(!'A property definition.  Matches a property name with a property type.', '/bootstrap':signature(property(Name, Type)::property(Ent), [Name::propertyName(Ent, Type, one), Type::propertyType])).
+annotation:comment('/bootstrap':signature(property(Name, Type)::property(Ent), [Name::propertyName(Ent, Type, one), Type::propertyType]), !'A property definition.  Matches a property name with a property type.').
 '/bootstrap':projection(property(Name, Type)::property(Ent), '/bootstrap':horiz(['/bootstrap':vis(Name::propertyName(Ent, Type, one)), '/bootstrap':label(! (:)), '/bootstrap':vis(Type::propertyType)])).
 '/bootstrap':deprecated(property(Name, Type)::property(Ent)).
 '/bootstrap':deprecationReplacement(property(Name, Type), property(Ent), property(Name, Type, one)).
 '/bootstrap':adapter(T::'/bootstrap':type, property(Name, primitiveType(T), one)::property(Ent)).
 '/bootstrap':adapter(Entity::entity, property(Name, ent(Entity), one)::property(Ent)).
-'/bootstrap':doc(!'Date will be used in the "person" entity', '/bootstrap':signature(date::'/bootstrap':type, [])).
-'/bootstrap':doc(!'Date will be used in the "person" entity', '/bootstrap':signature(date(D, M, Y)::date, [D::'/bootstrap':number, M::'/bootstrap':number, Y::'/bootstrap':number])).
+annotation:comment('/bootstrap':signature(date::'/bootstrap':type, []), !'Date will be used in the "person" entity').
+annotation:comment('/bootstrap':signature(date(D, M, Y)::date, [D::'/bootstrap':number, M::'/bootstrap':number, Y::'/bootstrap':number]), !'Date will be used in the "person" entity').
 '/bootstrap':projection(date(D, M, Y)::date, '/bootstrap':horiz(['/bootstrap':vis(D::'/bootstrap':number), '/bootstrap':label(! (/)), '/bootstrap':vis(M::'/bootstrap':number), '/bootstrap':label(! (/)), '/bootstrap':vis(Y::'/bootstrap':number)])).
 '/Functional':def('/html':toText(date(D, M, Y)::date), '/bootstrap':string, '/Functional':plus('/html':toText(D::'/bootstrap':number), '/Functional':plus('/Functional':wrap(! (/)), '/Functional':plus('/html':toText(M::'/bootstrap':number), '/Functional':plus('/Functional':wrap(! (/)), '/html':toText(Y::'/bootstrap':number)))))).
-'/bootstrap':doc(!'This error indicates that the property name has been defined, but it is not actually listed in the entity to which it belongs', '/bootstrap':signature(propertyNotInEntity::'/bootstrap':error, [])).
+annotation:comment('/bootstrap':signature(propertyNotInEntity::'/bootstrap':error, []), !'This error indicates that the property name has been defined, but it is not actually listed in the entity to which it belongs').
 '/bootstrap':projection(propertyNotInEntity::'/bootstrap':error, '/bootstrap':label(!'Property is defined, but does not appear in the entity definition')).
 entity(Ent, Fields)~>'/bootstrap':checkError('/bootstrap':signature(Prop::propertyName(Ent, Type, Cardinality), [])::'/bootstrap':statement, propertyNotInEntity):- \+'/bootstrap':listMember(property(Prop, Type, Cardinality), property(Ent), Fields).
-'/bootstrap':doc(!'An example entity', '/bootstrap':signature(person::entity, [])).
+annotation:comment('/bootstrap':signature(person::entity, []), !'An example entity').
 '/bootstrap':defAtom(firstName::propertyName(person, primitiveType('/bootstrap':string), one)).
 '/bootstrap':defAtom(personName::propertyName(person, primitiveType('/bootstrap':string), one)).
 '/bootstrap':projection(personName::propertyName(person, primitiveType('/bootstrap':string), one), '/bootstrap':label(!name)).
 '/bootstrap':defAtom(birthDate::propertyName(person, primitiveType(date), one)).
 '/bootstrap':defAtom(ownedCar::propertyName(person, ent(car), one)).
 entity(person, [property(firstName, primitiveType('/bootstrap':string), one), property(personName, primitiveType('/bootstrap':string), one), property(birthDate, primitiveType(date), one), property(ownedCar, ent(car), one)]).
-'/bootstrap':doc(!'The type for entity names', '/bootstrap':signature(entity::'/bootstrap':type, [])).
-'/bootstrap':doc(!'A type for properties of entities', '/bootstrap':signature(property(Entity)::'/bootstrap':type, [Entity::entity])).
-'/bootstrap':doc(!'An entity definition statement.  Has a name of type entity, and a list of properties', '/bootstrap':signature(entity(Entity, Properties)::'/bootstrap':statement, [Entity::entity, Properties::'/bootstrap':list(property(Entity))])).
+annotation:comment('/bootstrap':signature(entity::'/bootstrap':type, []), !'The type for entity names').
+annotation:comment('/bootstrap':signature(property(Entity)::'/bootstrap':type, [Entity::entity]), !'A type for properties of entities').
+annotation:comment('/bootstrap':signature(entity(Entity, Properties)::'/bootstrap':statement, [Entity::entity, Properties::'/bootstrap':list(property(Entity))]), !'An entity definition statement.  Has a name of type entity, and a list of properties').
 '/bootstrap':projection(entity(Entity, Properties)::'/bootstrap':statement, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!entity), '/bootstrap':vis(Entity::entity)]), '/bootstrap':horiz(['/bootstrap':label(!'    '), cpi:vis(Properties::'/bootstrap':list(property(Entity)), '/bootstrap':vert)])])).
 '/bootstrap':defines(entity(Entity, Properties), Entity::entity, '/bootstrap':semanticDefinition).
-'/bootstrap':doc(!'A general type for all property types', '/bootstrap':signature(propertyType::'/bootstrap':type, [])).
-'/bootstrap':doc(!'A type for property names.  Their type reflects the entity they are defined in, and the property type.', '/bootstrap':signature(propertyName(Ent, Type, Cardinality)::'/bootstrap':type, [Ent::entity, Type::propertyType, Cardinality::cardinality])).
+annotation:comment('/bootstrap':signature(propertyType::'/bootstrap':type, []), !'A general type for all property types').
+annotation:comment('/bootstrap':signature(propertyName(Ent, Type, Cardinality)::'/bootstrap':type, [Ent::entity, Type::propertyType, Cardinality::cardinality]), !'A type for property names.  Their type reflects the entity they are defined in, and the property type.').
 '/bootstrap':defAtom(cardinality::'/bootstrap':type).
-'/bootstrap':doc(!'A property, containing a name, a type and cardinality', '/bootstrap':signature(property(Name, Type, Cardinality)::property(Ent), [Name::propertyName(Ent, Type, Cardinality), Type::propertyType, Cardinality::cardinality])).
+annotation:comment('/bootstrap':signature(property(Name, Type, Cardinality)::property(Ent), [Name::propertyName(Ent, Type, Cardinality), Type::propertyType, Cardinality::cardinality]), !'A property, containing a name, a type and cardinality').
 '/bootstrap':projection(property(Name, Type, Cardinality)::property(Ent), '/bootstrap':horiz(['/bootstrap':vis(Name::propertyName(Ent, Type, Cardinality)), '/bootstrap':label(! (:)), '/bootstrap':vis(Type::propertyType), '/bootstrap':symbol(215), '/bootstrap':vis(Cardinality::cardinality)])).
-'/bootstrap':doc(!'A property of this type is a reference to another entity', '/bootstrap':signature(ent(Entity)::propertyType, [Entity::entity])).
+annotation:comment('/bootstrap':signature(ent(Entity)::propertyType, [Entity::entity]), !'A property of this type is a reference to another entity').
 '/bootstrap':projection(ent(Entity)::propertyType, '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!ent)), '/bootstrap':vis(Entity::entity)])).
 '/bootstrap':adapter(Entity::entity, ent(Entity)::propertyType).
-'/bootstrap':doc(!'A primitive type entity, where the value is of any valid Cedalion type.', '/bootstrap':signature(primitiveType(Type)::propertyType, [Type::'/bootstrap':type])).
+annotation:comment('/bootstrap':signature(primitiveType(Type)::propertyType, [Type::'/bootstrap':type]), !'A primitive type entity, where the value is of any valid Cedalion type.').
 '/bootstrap':projection(primitiveType(Type)::propertyType, '/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!pr)), '/bootstrap':vis(Type::'/bootstrap':type)])).
 '/bootstrap':adapter(Type::'/bootstrap':type, primitiveType(Type)::propertyType).
 '/bootstrap':defAtom(one::cardinality).

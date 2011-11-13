@@ -18,7 +18,8 @@ annotation:shrink(projection(annotation:parentheses(projection(TTerm, Vis))::sta
 defAtom(horizCont::mode).
 projection([]::list(_), horizCont, horiz([])).
 projection([F|R]::list(T), horizCont, horiz([label(! (,)), vis(F::T), cpi:vis(R::list(T), horizCont)])).
-projection((H~>B)::statement, horiz([vis(H::statement), symbol(8669), vis(B::statement)])).
+defAtom('wavy-arrow.png'::image).
+projection((H~>B)::statement, horiz([vis(H::statement), image('wavy-arrow.png'), vis(B::statement)])).
 alias((H~>B)::statement, ! (~>)).
 projection((Term::Type)::typedTerm, horiz([vis(Term::Type), label(! (::)), vis(Type::type)])).
 projection((A, B)::pred, vert([horiz([vis(A::pred), label(! (,))]), vis(B::pred)])).

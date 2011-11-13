@@ -1,0 +1,5 @@
+'/bootstrap':signature(plus(Alpha, Beta)::expr(Tau), [Alpha::expr(Tau), Beta::expr(Tau)]).
+'/bootstrap':projection(plus(Alpha, Beta)::expr(Tau), '/bootstrap':horiz(['/bootstrap':vis(Alpha::expr(Tau)), '/bootstrap':label(! (+)), '/bootstrap':vis(Beta::expr(Tau))])).
+'/bootstrap':alias(plus(Alpha, Beta)::expr(Tau), ! (+)).
+annotation:comment('/bootstrap':signature(builtin:plus(AlphaPrime, BetaPrime, C)::'/bootstrap':pred, [AlphaPrime::'/bootstrap':number, BetaPrime::'/bootstrap':number, C::'/bootstrap':number]), !'Succeeds if C equals (numerically) AlphaPrime+BetaPrime').
+eval(plus(Alpha, Beta), '/bootstrap':number, Gamma):-eval(Alpha, '/bootstrap':number, AlphaPrime), eval(Beta, '/bootstrap':number, BetaPrime), builtin:plus(AlphaPrime, BetaPrime, Gamma).

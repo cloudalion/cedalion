@@ -8,7 +8,7 @@
 '/bootstrap':adapter(Entity::entity, instance(_, Entity, [])::'/bootstrap':statement).
 '/bootstrap':defines(instance(InstanceName, Entity, PropValues), InstanceName::instanceName(Entity), '/bootstrap':semanticDefinition).
 '/bootstrap':defAtom(myCar::instanceName(car)).
-instance(myCar, car, [propVal(model, '/bootstrap':string, !escort), propVal(productionDate, date, date(10, 10, 2010)), propVal(licensePlate, '/bootstrap':string, !'55-444-33')]).
+instance(myCar, car, [propVal(make, '/bootstrap':string, !ford), propVal(model, '/bootstrap':string, !escort), propVal(productionDate, date, date(10, 10, 2010)), propVal(licensePlate, '/bootstrap':string, !'55-444-33')]).
 '/bootstrap':defAtom(me::instanceName(person)).
 '/bootstrap':signature(entityRef(Prop, RefEntity, Instance)::propVal(OwningEntity), [Prop::propertyName(OwningEntity, ent(RefEntity), _), RefEntity::entity, Instance::instanceName(RefEntity)]).
 '/bootstrap':projection(entityRef(Prop, RefEntity, Instance)::propVal(OwningEntity), '/bootstrap':horiz(['/bootstrap':vis(RefEntity::entity), '/bootstrap':bold('/bootstrap':vis(Prop::propertyName(OwningEntity, ent(RefEntity), _))), '/bootstrap':symbol(8594), '/bootstrap':vis(Instance::instanceName(RefEntity))])).

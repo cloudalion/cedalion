@@ -1,4 +1,4 @@
-'/bootstrap':signature(referenceExpression::'/bootstrap':type, []).
+'/bootstrap':defAtom(referenceExpression::'/bootstrap':type).
 '/bootstrap':signature(calculated(Name, Entity, Expr, OtherEntity)::'/bootstrap':statement, [Name::propertyName(Entity, ent(OtherEntity), _), Entity::entity, Expr::referenceExpression, OtherEntity::entity]).
 '/bootstrap':projection(calculated(Name, Entity, Expr, OtherEntity)::'/bootstrap':statement, '/bootstrap':horiz(['/bootstrap':vis(OtherEntity::entity), '/bootstrap':vis(Entity::entity), '/bootstrap':label(!.), '/bootstrap':vis(Name::propertyName(Entity, ent(OtherEntity), _)), '/bootstrap':label(! (=)), '/bootstrap':vis(Expr::referenceExpression)])).
 '/bootstrap':signature(calculateReference(Instance, Entity, Expr, OtherInstance, OtherEntity)::'/bootstrap':pred, [Instance::instanceName(Entity), Entity::entity, Expr::referenceExpression, OtherInstance::instanceName(OtherEntity), OtherEntity::entity]).
@@ -14,4 +14,4 @@ calculateReference(Instance, Entity, invField(Name, Entity, OtherEntity), OtherI
 '/bootstrap':projection(dot(A, B)::referenceExpression, '/bootstrap':horiz(['/bootstrap':vis(A::referenceExpression), '/bootstrap':label(!.), '/bootstrap':vis(B::referenceExpression)])).
 '/bootstrap':alias(dot(A, B)::referenceExpression, !.).
 calculateReference(Instance, Entity, dot(A, B), OtherInstance, OtherEntity):-calculateReference(Instance, Entity, A, InterimInstance, InterimEntity), calculateReference(InterimInstance, InterimEntity, B, OtherInstance, OtherEntity).
-calculated(Name, Entity, Expr, OtherEntity)~>reference(Instance, Entity, Name, OtherInstance, OtherEntity):-calculateReference(Instance, Entity, Expr, OtherInstance, OtherEntity).
+annotation:shrink((calculated(Name, Entity, Expr, OtherEntity)~>annotation:shrink((reference(Instance, Entity, Name, OtherInstance, OtherEntity):-calculateReference(Instance, Entity, Expr, OtherInstance, OtherEntity))))).

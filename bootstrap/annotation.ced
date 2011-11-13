@@ -16,8 +16,6 @@ userVisualization(annotation:escape(annotation:changeMode(Term, Mode))::Type, _,
 contextMenuEntry(Term::Type, VNs, Path, !'Change projection mode', cpi:edit(Path, annotation:escape(annotation:changeMode(Term, cpi:default)::Type), VNs)).
 contextMenuEntry([A|B]::list(T), VNs, Path, !'Display horizontally', cpi:edit(Path, annotation:escape(annotation:changeMode([A|B], horiz)::list(T)), VNs)).
 contextMenuEntry([A|B]::list(T), VNs, Path, !'Display vertically', cpi:edit(Path, annotation:escape(annotation:changeMode([A|B], vert)::list(T)), VNs)).
-signature(removeAnnotation(Annotated, Path, VNs)::procedure, [Annotated::typedTerm, Path::cpi:path, VNs::list(varName)]).
-procedure(annotation:minComment(removeAnnotation(Annotated, Path, VNs), !'This procedure removes an annotation from the code'), doProc(where(doProc(cpi:edit(Path, Unannotated, VNs)), (\+builtin:var(Annotated), safeParseTerm(Annotated, Func, [Unannotated|_]), builtin:strcat(!'annotation#', _, Func))))).
-contextMenuEntry(Annotated, VNs, Path, !'Remove annotation', removeAnnotation(Annotated, Path, VNs), 'Delete.png').
+contextMenuEntry(Annotated, VNs, Path, !'Remove annotation', where(doProc(cpi:edit(Path, Unannotated, VNs)), (\+builtin:var(Annotated), safeParseTerm(Annotated, Func, [Unannotated|_]), builtin:strcat(!'annotation#', _, Func))), 'Delete.png').
 annotation:comment(deprecated(doc(Doc, Signature)::statement), !'The annotation comment replaces the declaration documentation').
 deprecationReplacement(doc(Doc, Signature), statement, annotation:escape(annotation:comment(Signature, Doc))).

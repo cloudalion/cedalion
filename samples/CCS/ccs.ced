@@ -2,19 +2,19 @@ builtin:import(!c, !'/bootstrap').
 c:signature(def(Def, Type, Expr)::c:statement, [Def::Type, Type::c:type, Expr::Type]).
 c:projection(def(Def, Type, Expr)::c:statement, c:horiz([c:vis(Def::Type), c:label(! (::)), c:vis(Type::c:type), c:symbol(8797), c:vis(Expr::Type)])).
 c:alias(def(Def, Type, _)::c:statement, !'=def').
-c:signature(process::c:type, []).
-c:signature(myAction::c:type, []).
-c:signature(action::c:type, []).
+c:defAtom(process::c:type).
+c:defAtom(myAction::c:type).
+c:defAtom(action::c:type).
 c:signature(cat(Action, Process)::process, [Action::action, Process::process]).
 c:projection(cat(Action, Process)::process, c:horiz([c:vis(Action::action), c:label(!.), c:vis(Process::process)])).
 c:alias(cat(_, _)::process, !.).
 c:injectContent(cat(Action, Process), Process, process):-builtin:true.
-c:signature(a::action, []).
-c:signature(b::action, []).
-c:signature('P'::process, []).
-c:signature('Q'::process, []).
+c:defAtom(a::action).
+c:defAtom(b::action).
+c:defAtom('P'::process).
+c:defAtom('Q'::process).
 def('P', process, plus(cat(a, cat(b, cat(c, 'Q'))), cat(c, 'P'))).
-c:signature(c::action, []).
+c:defAtom(c::action).
 def('Q', process, cat(b, 'P')).
 c:signature(transition(P, Action, Q)::c:pred, [P::process, Action::action, Q::process]).
 c:projection(transition(P, Action, Q)::c:pred, c:horiz([c:vis(P::process), c:vert([c:symbol(8594), c:halfSize(c:vis(Action::action))]), c:vis(Q::process)])).
@@ -22,7 +22,7 @@ transition(cat(Action, P), Action, P):-builtin:true.
 def(P, process, Q)~>transition(P, Action, R):-transition(Q, Action, R).
 c:unitTest(transition('Q', b, 'P')).
 c:signature(enabled(P)::c:set(action), [P::process]).
-c:setDef(enabled(P), c:set(Action, transition(P, Action, _)), T).
+c:setDef(enabled(P), c:set(Action, transition(P, Action, _)), action).
 c:unitTest(c:member(a, enabled('P'), action)).
 c:unitTest(\+c:member(b, enabled('P'), action)).
 c:unitTest(c:member(c, enabled('P'), action)).

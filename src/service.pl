@@ -4,6 +4,7 @@
 :- op(100, fx, '$').
 :- op(650, xfx, '::').
 :- op(1, fx, '!').
+:- op(0, xfx, (':=')).
 
 % If predicate
 if(Cond, Then, _) :-

@@ -1,25 +1,25 @@
-'/bootstrap':signature(person::'/LWC':entity, []).
-'/bootstrap':signature(givenName::'/LWC':propertyName(person, '/LWC':primitiveType('/bootstrap':string), '/LWC':one), []).
-'/bootstrap':signature(sirname::'/LWC':propertyName(person, '/LWC':primitiveType('/bootstrap':string), '/LWC':one), []).
-'/bootstrap':signature(dateOfBirth::'/LWC':propertyName(person, '/LWC':primitiveType('/LWC':date), '/LWC':one), []).
-'/bootstrap':signature(dateOfDeath::'/LWC':propertyName(person, '/LWC':primitiveType('/LWC':date), '/LWC':zeroToOne), []).
-'/bootstrap':signature(father::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroToOne), []).
-'/bootstrap':signature(mother::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroToOne), []).
-'/bootstrap':signature(sex::'/LWC':propertyName(person, '/LWC':primitiveType(gender), '/LWC':one), []).
-'/bootstrap':signature(gender::'/bootstrap':type, []).
-'/bootstrap':signature(male::gender, []).
+'/bootstrap':defAtom(person::'/LWC':entity).
+'/bootstrap':defAtom(givenName::'/LWC':propertyName(person, '/LWC':primitiveType('/bootstrap':string), '/LWC':one)).
+'/bootstrap':defAtom(sirname::'/LWC':propertyName(person, '/LWC':primitiveType('/bootstrap':string), '/LWC':one)).
+'/bootstrap':defAtom(dateOfBirth::'/LWC':propertyName(person, '/LWC':primitiveType('/LWC':date), '/LWC':one)).
+'/bootstrap':defAtom(dateOfDeath::'/LWC':propertyName(person, '/LWC':primitiveType('/LWC':date), '/LWC':zeroToOne)).
+'/bootstrap':defAtom(father::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroToOne)).
+'/bootstrap':defAtom(mother::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroToOne)).
+'/bootstrap':defAtom(sex::'/LWC':propertyName(person, '/LWC':primitiveType(gender), '/LWC':one)).
+'/bootstrap':defAtom(gender::'/bootstrap':type).
+'/bootstrap':defAtom(male::gender).
 '/bootstrap':projection(male::gender, '/bootstrap':label(!'M')).
-'/bootstrap':signature(female::gender, []).
+'/bootstrap':defAtom(female::gender).
 '/bootstrap':projection(female::gender, '/bootstrap':label(!'F')).
 '/LWC':entity(person, ['/LWC':property(givenName, '/LWC':primitiveType('/bootstrap':string), '/LWC':one), '/LWC':property(sirname, '/LWC':primitiveType('/bootstrap':string), '/LWC':one), '/LWC':property(dateOfBirth, '/LWC':primitiveType('/LWC':date), '/LWC':one), '/LWC':property(dateOfDeath, '/LWC':primitiveType('/LWC':date), '/LWC':zeroToOne), '/LWC':property(father, '/LWC':ent(person), '/LWC':zeroToOne), '/LWC':property(mother, '/LWC':ent(person), '/LWC':zeroToOne), '/LWC':property(sex, '/LWC':primitiveType(gender), '/LWC':one)]).
-'/bootstrap':signature(parent::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore), []).
+'/bootstrap':defAtom(parent::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore)).
 '/LWC':calculated(parent, person, '/LWC':field(father, person, person), person).
 '/LWC':calculated(parent, person, '/LWC':field(mother, person, person), person).
-'/bootstrap':signature(grandParent::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore), []).
+'/bootstrap':defAtom(grandParent::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore)).
 '/LWC':calculated(grandParent, person, '/LWC':dot('/LWC':field(parent, person, person), '/LWC':field(parent, person, person)), person).
-'/bootstrap':signature(child::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore), []).
+'/bootstrap':defAtom(child::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore)).
 '/LWC':calculated(child, person, '/LWC':invField(parent, person, person), person).
-'/bootstrap':signature(sibling::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore), []).
+'/bootstrap':defAtom(sibling::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore)).
 '/LWC':calculated(sibling, person, '/LWC':dot('/LWC':field(parent, person, person), '/LWC':field(child, person, person)), person).
-'/bootstrap':signature(spouse::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore), []).
+'/bootstrap':defAtom(spouse::'/LWC':propertyName(person, '/LWC':ent(person), '/LWC':zeroOrMore)).
 '/LWC':calculated(spouse, person, '/LWC':dot('/LWC':field(child, person, person), '/LWC':field(parent, person, person)), person).

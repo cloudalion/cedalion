@@ -1,0 +1,20 @@
+'/bootstrap':signature(toString(TTerm, Mode)::'/Functional':expr('/bootstrap':string), [TTerm::'/bootstrap':typedTerm, Mode::'/bootstrap':mode]).
+'/Functional':def(toString(TTerm, Mode), '/bootstrap':string, '/Functional':where('/Functional':wrap(String), builtin:if(TTerm=String::'/bootstrap':string, builtin:true, builtin:if(TTerm=Num::'/bootstrap':number, '/Functional':eval('/Functional':'num2str'('/Functional':wrap(Num)), '/bootstrap':string, String), ('/bootstrap':visualizeTerm(TTerm, Mode, Vis), '/Functional':eval(visToString(Vis), '/bootstrap':string, String)))))).
+'/bootstrap':signature(toString(TTerm)::'/Functional':expr('/bootstrap':string), [TTerm::'/bootstrap':typedTerm]).
+'/Functional':def(toString(TTerm), '/bootstrap':string, toString(TTerm, cpi:default)).
+'/bootstrap':signature(visToString(Vis)::'/Functional':expr('/bootstrap':string), [Vis::'/bootstrap':visualization]).
+'/Functional':def(visToString('/bootstrap':horiz([V1|VPrime])), '/bootstrap':string, '/Functional':concat(visToString(V1), '/Functional':concat('/Functional':wrap(!' '), visToString('/bootstrap':horiz(VPrime))))).
+'/Functional':def(visToString('/bootstrap':horiz([])), '/bootstrap':string, '/Functional':wrap(!'')).
+'/Functional':def(visToString('/bootstrap':horiz(List, _)), '/bootstrap':string, visToString('/bootstrap':horiz(List))).
+'/Functional':def(visToString('/bootstrap':label(Str)), '/bootstrap':string, '/Functional':wrap(Str)).
+'/Functional':def(visToString('/bootstrap':vert([V1|VPrime])), '/bootstrap':string, '/Functional':concat(visToString(V1), '/Functional':concat('/Functional':wrap(!'
+'), visToString('/bootstrap':vert(VPrime))))).
+'/Functional':def(visToString('/bootstrap':vert([])), '/bootstrap':string, '/Functional':wrap(!'')).
+'/Functional':def(visToString('/bootstrap':vis(TTerm)), '/bootstrap':string, toString(TTerm)).
+'/Functional':def(visToString(cpi:vis(TTerm, Mode)), '/bootstrap':string, '/Functional':where(visToString(Vis), '/bootstrap':visualizeTerm(TTerm, Mode, Vis))).
+'/bootstrap':disabled('/Functional':def(visToString(Vis), '/bootstrap':string, annotation:shrink('/Functional':where(visToString(SubVis), '/bootstrap':safeParseTerm(Vis::'/bootstrap':visualization, _, [SubVis::'/bootstrap':visualization|_]))))).
+'/Functional':def(visToString('/bootstrap':halfSize(Vis)), '/bootstrap':string, visToString(Vis)).
+'/Functional':def(visToString('/bootstrap':brackets(Vis, Start, End)), '/bootstrap':string, '/Functional':where('/Functional':concat('/Functional':wrap(StartChar), '/Functional':concat(visToString(Vis), '/Functional':wrap(EndChar))), (builtin:charCodes(StartChar, [Start]), builtin:charCodes(EndChar, [End])))).
+'/Functional':def(visToString('/bootstrap':lineBorder(Vis, _, _)), '/bootstrap':string, visToString(Vis)).
+'/Functional':def(visToString('/bootstrap':background(Vis, _)), '/bootstrap':string, visToString(Vis)).
+'/bootstrap':contextMenuEntry(Term::Type, [], _, !'To String', '/bootstrap':where('/bootstrap':doProc('/bootstrap':showInView(String::'/bootstrap':string, [])), '/Functional':eval(toString(Term::Type), '/bootstrap':string, String))).

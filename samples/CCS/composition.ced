@@ -3,7 +3,7 @@
 '/bootstrap':alias(comp(P, Q)::process, ! (|)).
 transition(comp(P, Q), A, comp(P1, Q)):-transition(P, A, P1).
 transition(comp(P, Q), A, comp(P, Q1)):-transition(Q, A, Q1).
-'/bootstrap':signature(internal::action, []).
+'/bootstrap':defAtom(internal::action).
 '/bootstrap':projection(internal::action, '/bootstrap':symbol(964)).
 '/bootstrap':signature(input(A)::action, [A::action]).
 '/bootstrap':projection(input(A)::action, '/bootstrap':horiz(['/bootstrap':vis(A::action), '/bootstrap':label(!'?')])).
