@@ -56,7 +56,7 @@ cpi:procedureCommand(if(Cond, Then, Else), Cmd):-builtin:if(Cond, Cmd::command=T
 signature(where(Proc, Goal)::procedure, [Proc::command, Goal::pred]).
 projection(where(Proc, Goal)::procedure, horiz([vis(Proc::command), label(!where), vis(Goal::pred)])).
 cpi:procedureCommand(where(Proc, Goal), Proc):-Goal.
-deprecated((cpi:procedureCommand(_, _):-_)::statement).
+disabled(deprecated((cpi:procedureCommand(_, _):-_)::statement)).
 deprecationReplacement((cpi:procedureCommand(Proc, Cmd):-Goal), statement, procedure(Proc, doProc(where(Cmd, Goal)))).
 signature(foreach(Goal, Command)::procedure, [Goal::pred, Command::command]).
 projection(foreach(Goal, Command)::procedure, horiz([label(!'for each'), vis(Goal::pred), label(!do), vis(Command::command)])).

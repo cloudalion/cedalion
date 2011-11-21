@@ -1,0 +1,19 @@
+'/bootstrap':signature(statement(S)::'/bootstrap':pred, [S::'/bootstrap':statement]).
+statement(S):-builtin:loadedStatement(_, S, _).
+'/bootstrap':disabled((statement(S2):-statement((S1~>S2)), statement(S1))).
+'/bootstrap':signature(allClauses(Clauses)::'/bootstrap':pred, [Clauses::'/bootstrap':list('/bootstrap':statement)]).
+allClauses(Clauses):-builtin:findall((Head:-Body), '/bootstrap':statement, statement((Head:-Body)), Clauses).
+'/bootstrap':defAtom(predicateID::'/bootstrap':type).
+'/bootstrap':signature(uniqueElements(ElementList, ListIn, ListOut, Type)::'/bootstrap':pred, [ElementList::'/bootstrap':list(Type), ListIn::'/bootstrap':list(Type), ListOut::'/bootstrap':list(Type), Type::'/bootstrap':type]).
+uniqueElements([], List, List, _):-builtin:true.
+uniqueElements([L1|LPrime], ListIn, ListOut, Type):-builtin:if('/bootstrap':listMember(L1, Type, ListIn), uniqueElements(LPrime, ListIn, ListOut, Type), uniqueElements(LPrime, ListIn, [L1|ListOut], Type)).
+'/bootstrap':signature(allPredicates(Preds)::'/bootstrap':pred, [Preds::'/bootstrap':list(predicateID)]).
+'/bootstrap':signature(pred(Name, Arity)::predicateID, [Name::'/bootstrap':string, Arity::'/bootstrap':number]).
+'/bootstrap':projection(pred(Name, Arity)::predicateID, '/bootstrap':horiz(['/bootstrap':vis(Name::'/bootstrap':string), '/bootstrap':label(! (/)), '/bootstrap':vis(Arity::'/bootstrap':number)])).
+allPredicates(Preds):-allClauses(Clauses), '/Functional':eval('/Functional':map('/Functional':wrap(Clauses), '/Functional':lambda(Statement, headPredicate(Statement)), '/bootstrap':statement), '/bootstrap':list(predicateID), PredsNonUnique), uniqueElements(PredsNonUnique, [], Preds, predicateID).
+'/bootstrap':signature(headPredicate(Statement)::'/Functional':expr(predicateID), [Statement::'/Functional':expr('/bootstrap':statement)]).
+'/Functional':def(headPredicate(Statement), predicateID, '/Functional':where(predicateID('/Functional':wrap(Head)), '/Functional':eval(Statement, '/bootstrap':statement, (Head:-_)))).
+'/bootstrap':signature(predicateID(Pred)::'/Functional':expr(predicateID), [Pred::'/Functional':expr('/bootstrap':pred)]).
+'/Functional':def(predicateID(Pred), predicateID, '/Functional':where('/Functional':wrap(pred(Name, Arity)), ('/Functional':eval(Pred, '/bootstrap':pred, PredPrime), builtin:parseTerm(PredPrime::'/bootstrap':pred, Name, Args), '/Functional':eval(length(Args), '/bootstrap':number, Arity)))).
+'/bootstrap':defAtom(allPredicates::'/Functional':expr('/bootstrap':list(predicateID))).
+'/Functional':def(allPredicates, '/bootstrap':list(predicateID), '/Functional':where('/Functional':wrap(Preds), allPredicates(Preds))).

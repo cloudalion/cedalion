@@ -8,9 +8,9 @@ path(X, VT, Hist, [], ET, X):-builtin:true.
 '/bootstrap':projection(edge(X, VT, E, ET, Z)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(X::VT), '/bootstrap':label(! (::)), '/bootstrap':vis(VT::'/bootstrap':type), '/bootstrap':symbol(8611), '/bootstrap':vis(E::ET), '/bootstrap':label(! (::)), '/bootstrap':vis(ET::'/bootstrap':type), '/bootstrap':symbol(8594), '/bootstrap':vis(Z::VT)])).
 '/bootstrap':signature(builtin:ground(X::VT)::'/bootstrap':pred, [ (X::VT)::'/bootstrap':typedTerm]).
 path(X, VT, Hist, [E|Path], ET, Y):-'/bootstrap':true(builtin:ground(X::VT)), builtin:if(builtin:ground([E|Path]::'/bootstrap':list(ET)), builtin:true, \+'/bootstrap':listMember(X, VT, Hist)), edge(X, VT, E, ET, Z), path(Z, VT, [X|Hist], Path, ET, Y).
-'/bootstrap':signature(testNode::'/bootstrap':type, []).
-'/bootstrap':signature(x::testNode, []).
-'/bootstrap':signature(y::testNode, []).
+'/bootstrap':defAtom(testNode::'/bootstrap':type).
+'/bootstrap':defAtom(x::testNode).
+'/bootstrap':defAtom(y::testNode).
 edge(x, testNode, 1, '/bootstrap':number, y):-builtin:true.
 edge(y, testNode, 2, '/bootstrap':number, x):-builtin:true.
 '/bootstrap':unitTest(path(x, testNode, [1, 2], '/bootstrap':number, x)).

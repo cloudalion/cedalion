@@ -21,7 +21,9 @@
 '/bootstrap':signature(javascript(Statements)::'/bootstrap':statement, [Statements::'/bootstrap':list(statement)]).
 '/bootstrap':projection(javascript(Statements)::'/bootstrap':statement, '/bootstrap':vert(['/bootstrap':label(!javascript), cpi:vis(Statements::'/bootstrap':list(statement), '/bootstrap':vert)])).
 '/bootstrap':signature(function(Args, Body)::expr, [Args::'/bootstrap':list(symbol), Body::'/bootstrap':list(statement)]).
-'/bootstrap':projection(function(Args, Body)::expr, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!function), cpi:vis(Args::'/bootstrap':list(symbol), '/bootstrap':horizontal(40, 41, '/bootstrap':label(! (,)), '/bootstrap':label(!'()')))]), '/bootstrap':label(!'{'), cpi:vis(Body::'/bootstrap':list(statement), '/bootstrap':vertical('/bootstrap':label(!'    '), '/bootstrap':color('/bootstrap':label(!'    // Empty'), cpi:rgb(192, 192, 192)), '/bootstrap':horiz([]))), '/bootstrap':label(!'}')])).
+'/bootstrap':projection(function(Args, Body)::expr, '/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!function), cpi:vis(Args::'/bootstrap':list(symbol), '/bootstrap':horizontal(40, 41, '/bootstrap':label(! (,)), '/bootstrap':label(!'()'))), '/bootstrap':label(!'{')]), cpi:vis(Body::'/bootstrap':list(statement), '/bootstrap':vertical('/bootstrap':label(!'    '), '/bootstrap':color('/bootstrap':label(!'    // Empty'), cpi:rgb(192, 192, 192)), '/bootstrap':horiz([]))), '/bootstrap':label(!'}')])).
 '/bootstrap':defAtom(return::statement).
 '/bootstrap':projection(return::statement, '/bootstrap':horiz(['/bootstrap':label(!return), '/bootstrap':label(! (;))])).
-javascript([assign(foo, function([a, b], [assign(b, call(varExpr(a), [])), return]))]).
+'/bootstrap':signature(twoStatements(S1, S2)::statement, [S1::statement, S2::statement]).
+'/bootstrap':projection(twoStatements(S1, S2)::statement, '/bootstrap':vert(['/bootstrap':vis(S1::statement), '/bootstrap':vis(S2::statement)])).
+javascript([assign(foo, function([a, b], [twoStatements(assign(b, call(varExpr(a), [])), exprStatement(call(varExpr(bar), []))), return]))]).

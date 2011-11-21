@@ -34,5 +34,5 @@ setDef(diffSet(A, B), set(X, (member(X, A, T), notMember(X, B, T))), T).
 signature(notMember(X, S, T)::pred, [X::T, S::set(T), T::type]).
 projection(notMember(E, Set, T)::pred, horiz([vis(E::T), symbol(8713), halfSize(vis(T::type)), vis(Set::set(T))])).
 notMember(X, S, T):- \+member(X, S, T).
-deprecated((\+member(X, B, T))::pred).
-deprecationReplacement(\+member(X, S, T), pred, notMember(X, S, T)).
+disabled(deprecated((\+member(X, B, T))::pred)).
+disabled(deprecationReplacement(\+member(X, S, T), pred, notMember(X, S, T))).
