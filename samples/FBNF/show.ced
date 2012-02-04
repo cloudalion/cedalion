@@ -1,0 +1,3 @@
+'/bootstrap':contextMenuEntry(Term::Type,VNs,Path,!'Show in View','/bootstrap':where('/bootstrap':showView(cpi:vis(cpi:descriptor(Path,Term,[])::Type,'/bootstrap':vert)),builtin:true)).
+'/bootstrap':signature(f(X)::'/Functional':expr('/bootstrap':number),[X::'/Functional':expr('/bootstrap':number)]).
+'/Functional':def(f(X),'/bootstrap':number,'/Functional':div('/Functional':applyBinOp(annotation:parentheses('/Functional':applyBinOp(X,'/Functional':numPlus,'/Functional':const(2))),'/Functional':times,'/Functional':const(9)),'/Functional':const(6))).

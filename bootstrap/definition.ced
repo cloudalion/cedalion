@@ -30,7 +30,7 @@ signature(blankList(List1, List2)::pred, [List1::list(typedTerm), List2::list(ty
 blankList([], []):-builtin:true.
 blankList([_::Type|List1], [_::Type|List2]):-blankList(List1, List2).
 defines((S1~>S2), S1::statement, semanticDefinition).
-doc(!'Succeeds for all Statements loaded from file FileName.  VarNames is bound to a list of variable name bindings', signature(builtin:loadedStatement(FileName, Statement, VarNames)::pred, [FileName::string, Statement::statement, VarNames::list(varName)])).
+annotation:comment(signature(builtin:loadedStatement(FileName, Statement, VarNames)::pred, [FileName::string, Statement::statement, VarNames::list(varName)]), !'Succeeds for all Statements loaded from file FileName.  VarNames is bound to a list of variable name bindings').
 canDefine(S1, TTerm, DefType):-builtin:loadedStatement(_, (S1~>S2), _), canDefine(S2, TTerm, DefType).
 defines(signature(Term::Type, _), Type::type, semanticDefinition).
 signature(definitionMarker(DefType)::marker, [DefType::definitionType]).

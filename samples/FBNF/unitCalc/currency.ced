@@ -1,0 +1,16 @@
+'/bootstrap':defAtom(usd::unit).
+'/bootstrap':defAtom(usDollar::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,usDollar,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(1,[pow(usd,1)])),[])).
+constantAlias(usDollar,!'USD').
+'/bootstrap':signature(where(Expr,Goal)::'/javascript/ajax':ajaxExpr(T),[Expr::'/javascript/ajax':ajaxExpr(T),Goal::'/bootstrap':pred]).
+'/bootstrap':projection(where(Expr,Goal)::'/javascript/ajax':ajaxExpr(T),'/bootstrap':horiz(['/bootstrap':vis(Expr::'/javascript/ajax':ajaxExpr(T)),'/bootstrap':label(!where),'/bootstrap':vis(Goal::'/bootstrap':pred)])).
+cjs:ajaxEval(where(Expr,Goal),T,E,Q):-Goal,cjs:ajaxEval(Expr,T,E,Q).
+'/bootstrap':signature(currency(C)::'/javascript/ajax':ajaxExpr(physicalMeasure),[C::'/Functional':expr('/bootstrap':string)]).
+'/javascript/ajax':ajaxDef(physicalMeasure,currency(C),where('/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(N,[pow(usd,1)])),[cjs:get(URL,N::'/bootstrap':number)]),'/Functional':eval('/Functional':concat('/Functional':const(!'currency-rates/'),'/Functional':concat(C,'/Functional':const(!'.txt'))),'/bootstrap':string,URL))).
+'/bootstrap':signature(defCurrency(C)::'/bootstrap':statement,[C::'/bootstrap':string]).
+'/bootstrap':projection(defCurrency(C)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':label(!'define currency'),'/bootstrap':vis(C::'/bootstrap':string)])).
+defCurrency(C)~>constantAlias(currency('/Functional':const(C)),C).
+defCurrency(!'EUR').
+defCurrency(!'JPY').
+defCurrency(!'GBP').
+defCurrency(!'ILS').

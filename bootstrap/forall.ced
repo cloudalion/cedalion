@@ -1,0 +1,5 @@
+signature(forall(A,B)::pred,[A::pred,B::pred]).
+projection(forall(A,B)::pred,horiz([symbol(8704),vis(A::pred),symbol(8658),vis(B::pred)])).
+forall(A,B):- \+ (A,\+B).
+unitTest(forall(listMember(X,number,[1,2,3]),builtin:greaterThen(4,X))).
+unitTest(\+forall(listMember(X,number,[1,2,3]),builtin:greaterThen(3,X))).

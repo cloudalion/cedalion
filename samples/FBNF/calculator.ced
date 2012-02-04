@@ -1,41 +1,41 @@
-'/bootstrap':unitTest(evalString(!'1+2*(50.5-47.5)', expr, '/bootstrap':number, 7.0)).
-'/bootstrap':unitTest(evalString(!'1.1', expr, '/bootstrap':number, 1.1)).
-'/bootstrap':unitTest(evalString(!'1+2+3', expr, '/bootstrap':number, 6)).
-'/bootstrap':unitTest(evalString(!'100/10/10', expr, '/bootstrap':number, 1)).
-'/bootstrap':signature(digit::reducable('/bootstrap':number), []).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(0)), str(!'0')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(1)), str(!'1')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(2)), str(!'2')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(3)), str(!'3')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(4)), str(!'4')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(5)), str(!'5')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(6)), str(!'6')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(7)), str(!'7')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(8)), str(!'8')).
-prod(patternValue(digit, '/bootstrap':number, '/Functional':wrap(9)), str(!'9')).
-'/bootstrap':signature(integer(NumToTheLeft)::reducable('/bootstrap':number), [NumToTheLeft::'/Functional':expr('/bootstrap':number)]).
-prod(patternValue(integer(NumToTheLeft), '/bootstrap':number, RestOfNumber), conc(patternValue(digit, '/bootstrap':number, FirstDigit), patternValue(integer('/Functional':plus('/Functional':mult(NumToTheLeft, '/Functional':wrap(10)), FirstDigit)), '/bootstrap':number, RestOfNumber))).
-prod(patternValue(integer(NumToTheLeft), '/bootstrap':number, NumToTheLeft), empty).
-'/bootstrap':signature(number::reducable('/bootstrap':number), []).
-prod(patternValue(number, '/bootstrap':number, '/Functional':plus(WholePart, FractionalPart)), conc(patternValue(integer('/Functional':wrap(0)), '/bootstrap':number, WholePart), patternValue(fractionOpt('/Functional':wrap(0.1)), '/bootstrap':number, FractionalPart))).
-'/bootstrap':signature(fractionOpt(Multiplier)::reducable('/bootstrap':number), [Multiplier::'/Functional':expr('/bootstrap':number)]).
-prod(patternValue(fractionOpt(Multiplier), '/bootstrap':number, Fraction), conc(str(!.), patternValue(fraction(Multiplier), '/bootstrap':number, Fraction))).
-prod(patternValue(fractionOpt(_), '/bootstrap':number, '/Functional':wrap(0)), empty).
-'/bootstrap':signature(fraction(Multiplier)::reducable('/bootstrap':number), [Multiplier::'/Functional':expr('/bootstrap':number)]).
-prod(patternValue(fraction(Multiplier), '/bootstrap':number, '/Functional':plus('/Functional':mult(FirstDigit, Multiplier), RestOfFraction)), conc(patternValue(digit, '/bootstrap':number, FirstDigit), patternValue(fraction('/Functional':div(Multiplier, '/Functional':wrap(10))), '/bootstrap':number, RestOfFraction))).
-prod(patternValue(fraction(_), '/bootstrap':number, '/Functional':wrap(0)), empty).
-'/bootstrap':signature(expr::reducable('/bootstrap':number), []).
-prod(patternValue(expr, '/bootstrap':number, Suffix), conc(patternValue(multExpr, '/bootstrap':number, Primary), patternValue(exprSuffix(Primary), '/bootstrap':number, Suffix))).
-'/bootstrap':signature(exprSuffix(Primary)::reducable('/bootstrap':number), [Primary::'/Functional':expr('/bootstrap':number)]).
-prod(patternValue(exprSuffix(Primary), '/bootstrap':number, S), conc(str(! (+)), conc(patternValue(multExpr, '/bootstrap':number, Other), patternValue(exprSuffix('/Functional':plus(Primary, Other)), '/bootstrap':number, S)))).
-prod(patternValue(exprSuffix(Primary), '/bootstrap':number, S), conc(str(! (-)), conc(patternValue(multExpr, '/bootstrap':number, Other), patternValue(exprSuffix('/Functional':minus(Primary, Other)), '/bootstrap':number, S)))).
-prod(patternValue(exprSuffix(Primary), '/bootstrap':number, Primary), empty).
-'/bootstrap':signature(multExpr::reducable('/bootstrap':number), []).
-prod(patternValue(multExpr, '/bootstrap':number, Suffix), conc(patternValue(atomicExpr, '/bootstrap':number, Primary), patternValue(multSuffix(Primary), '/bootstrap':number, Suffix))).
-'/bootstrap':signature(multSuffix(Primary)::reducable('/bootstrap':number), [Primary::'/Functional':expr('/bootstrap':number)]).
-prod(patternValue(multSuffix(Primary), '/bootstrap':number, S), conc(str(! (*)), conc(patternValue(atomicExpr, '/bootstrap':number, Other), patternValue(multSuffix('/Functional':mult(Primary, Other)), '/bootstrap':number, S)))).
-prod(patternValue(multSuffix(Primary), '/bootstrap':number, S), conc(str(! (/)), conc(patternValue(atomicExpr, '/bootstrap':number, Other), patternValue(multSuffix('/Functional':div(Primary, Other)), '/bootstrap':number, S)))).
-prod(patternValue(multSuffix(Primary), '/bootstrap':number, Primary), empty).
-'/bootstrap':signature(atomicExpr::reducable('/bootstrap':number), []).
-prod(patternValue(atomicExpr, '/bootstrap':number, Value), patternValue(number, '/bootstrap':number, Value)).
-prod(patternValue(atomicExpr, '/bootstrap':number, Value), conc(str(!'('), conc(patternValue(expr, '/bootstrap':number, Value), str(!')')))).
+'/bootstrap':unitTest(evalString(!'1+2*(50.5-47.5)',expr,'/bootstrap':number,7.0)).
+'/bootstrap':unitTest(evalString(!'1.1',expr,'/bootstrap':number,1.1)).
+'/bootstrap':unitTest(evalString(!'1+2+3',expr,'/bootstrap':number,6)).
+'/bootstrap':unitTest(evalString(!'100/10/10',expr,'/bootstrap':number,1)).
+'/bootstrap':defAtom(digit::reducable('/bootstrap':number)).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(0)),str(!'0')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(1)),str(!'1')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(2)),str(!'2')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(3)),str(!'3')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(4)),str(!'4')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(5)),str(!'5')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(6)),str(!'6')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(7)),str(!'7')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(8)),str(!'8')).
+prod(patternValue(digit,'/bootstrap':number,'/Functional':const(9)),str(!'9')).
+'/bootstrap':signature(integer(NumToTheLeft)::reducable('/bootstrap':number),[NumToTheLeft::'/Functional':expr('/bootstrap':number)]).
+prod(patternValue(integer(NumToTheLeft),'/bootstrap':number,RestOfNumber),conc(patternValue(digit,'/bootstrap':number,FirstDigit),patternValue(integer('/Functional':plus('/Functional':mult(NumToTheLeft,'/Functional':const(10)),FirstDigit)),'/bootstrap':number,RestOfNumber))).
+prod(patternValue(integer(NumToTheLeft),'/bootstrap':number,NumToTheLeft),empty).
+'/bootstrap':defAtom(number::reducable('/bootstrap':number)).
+prod(patternValue(number,'/bootstrap':number,'/Functional':plus(WholePart,FractionalPart)),conc(patternValue(integer('/Functional':const(0)),'/bootstrap':number,WholePart),patternValue(fractionOpt('/Functional':const(0.1)),'/bootstrap':number,FractionalPart))).
+'/bootstrap':signature(fractionOpt(Multiplier)::reducable('/bootstrap':number),[Multiplier::'/Functional':expr('/bootstrap':number)]).
+prod(patternValue(fractionOpt(Multiplier),'/bootstrap':number,Fraction),conc(str(!.),patternValue(fraction(Multiplier),'/bootstrap':number,Fraction))).
+prod(patternValue(fractionOpt(_),'/bootstrap':number,'/Functional':const(0)),empty).
+'/bootstrap':signature(fraction(Multiplier)::reducable('/bootstrap':number),[Multiplier::'/Functional':expr('/bootstrap':number)]).
+prod(patternValue(fraction(Multiplier),'/bootstrap':number,'/Functional':plus('/Functional':mult(FirstDigit,Multiplier),RestOfFraction)),conc(patternValue(digit,'/bootstrap':number,FirstDigit),patternValue(fraction('/Functional':div(Multiplier,'/Functional':const(10))),'/bootstrap':number,RestOfFraction))).
+prod(patternValue(fraction(_),'/bootstrap':number,'/Functional':const(0)),empty).
+'/bootstrap':defAtom(expr::reducable('/bootstrap':number)).
+prod(patternValue(expr,'/bootstrap':number,Suffix),conc(patternValue(multExpr,'/bootstrap':number,Primary),patternValue(exprSuffix(Primary),'/bootstrap':number,Suffix))).
+'/bootstrap':signature(exprSuffix(Primary)::reducable('/bootstrap':number),[Primary::'/Functional':expr('/bootstrap':number)]).
+prod(patternValue(exprSuffix(Primary),'/bootstrap':number,S),conc(str(! (+)),conc(patternValue(multExpr,'/bootstrap':number,Other),patternValue(exprSuffix('/Functional':plus(Primary,Other)),'/bootstrap':number,S)))).
+prod(patternValue(exprSuffix(Primary),'/bootstrap':number,S),conc(str(! (-)),conc(patternValue(multExpr,'/bootstrap':number,Other),patternValue(exprSuffix('/Functional':minus(Primary,Other)),'/bootstrap':number,S)))).
+prod(patternValue(exprSuffix(Primary),'/bootstrap':number,Primary),empty).
+'/bootstrap':defAtom(multExpr::reducable('/bootstrap':number)).
+prod(patternValue(multExpr,'/bootstrap':number,Suffix),conc(patternValue(atomicExpr,'/bootstrap':number,Primary),patternValue(multSuffix(Primary),'/bootstrap':number,Suffix))).
+'/bootstrap':signature(multSuffix(Primary)::reducable('/bootstrap':number),[Primary::'/Functional':expr('/bootstrap':number)]).
+prod(patternValue(multSuffix(Primary),'/bootstrap':number,S),conc(str(! (*)),conc(patternValue(atomicExpr,'/bootstrap':number,Other),patternValue(multSuffix('/Functional':mult(Primary,Other)),'/bootstrap':number,S)))).
+prod(patternValue(multSuffix(Primary),'/bootstrap':number,S),conc(str(! (/)),conc(patternValue(atomicExpr,'/bootstrap':number,Other),patternValue(multSuffix('/Functional':div(Primary,Other)),'/bootstrap':number,S)))).
+prod(patternValue(multSuffix(Primary),'/bootstrap':number,Primary),empty).
+'/bootstrap':defAtom(atomicExpr::reducable('/bootstrap':number)).
+prod(patternValue(atomicExpr,'/bootstrap':number,Value),patternValue(number,'/bootstrap':number,Value)).
+prod(patternValue(atomicExpr,'/bootstrap':number,Value),conc(str(!'('),conc(patternValue(expr,'/bootstrap':number,Value),str(!')')))).

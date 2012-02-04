@@ -1,0 +1,23 @@
+'/bootstrap':signature(leftPattern(Tau)::'/bootstrap':type,[Tau::'/bootstrap':type]).
+'/bootstrap':signature(leftRec(P,V,Tau)::pattern,[P::leftPattern(Tau),V::Tau,Tau::'/bootstrap':type]).
+'/bootstrap':projection(leftRec(P,V,Tau)::pattern,'/bootstrap':horiz(['/bootstrap':halfSize('/bootstrap':label(!l)),'/bootstrap':vis(P::leftPattern(Tau)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(V::Tau),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(Tau::'/bootstrap':type)]))]),123,125)])).
+'/bootstrap':adapter(P::leftPattern(Tau),leftRec(P,V,Tau)::pattern).
+'/bootstrap':signature(parseSeed(P,Tau,T,R1,V1)::'/bootstrap':pred,[P::leftPattern(Tau),Tau::'/bootstrap':type,T::'/bootstrap':string,R1::'/bootstrap':string,V1::Tau]).
+'/bootstrap':signature(extendRec(P,Tau,R1,V1,R,V)::'/bootstrap':pred,[P::leftPattern(Tau),Tau::'/bootstrap':type,R1::'/bootstrap':string,V1::Tau,R::'/bootstrap':string,V::Tau]).
+parse(leftRec(P,V,Tau),T,R):-parseSeed(P,Tau,T,R1,V1),extendRec(P,Tau,R1,V1,R,V).
+'/bootstrap':signature(seedProd(S,V,Tau,P)::'/bootstrap':statement,[S::leftPattern(Tau),V::Tau,Tau::'/bootstrap':type,P::pattern]).
+'/bootstrap':projection(seedProd(S,V,Tau,P)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':label(!seed),'/bootstrap':vis(S::leftPattern(Tau)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(V::Tau),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(Tau::'/bootstrap':type)]))]),123,125),'/bootstrap':label(!'::='),'/bootstrap':vis(P::pattern)])).
+'/bootstrap':adapter(S::leftPattern(Tau),seedProd(S,V,Tau,P)::'/bootstrap':statement).
+seedProd(S,V,Tau,P)~>parseSeed(S,Tau,T,R,V):-parse(P,T,R).
+'/bootstrap':signature(extend(P,Tau,R1,V1,R2,V2)::'/bootstrap':pred,[P::leftPattern(Tau),Tau::'/bootstrap':type,R1::'/bootstrap':string,V1::Tau,R2::'/bootstrap':string,V2::Tau]).
+extendRec(P,Tau,R1,V1,R,V):-extend(P,Tau,R1,V1,R2,V2),extendRec(P,Tau,R2,V2,R,V).
+extendRec(P,Tau,R,V,R,V):-builtin:true.
+'/bootstrap':signature(leftProd(S,V,Tau,V1,Post)::'/bootstrap':statement,[S::leftPattern(Tau),V::Tau,Tau::'/bootstrap':type,V1::Tau,Post::pattern]).
+'/bootstrap':projection(leftProd(S,V,Tau,V1,Post)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':label(!left),'/bootstrap':vis(S::leftPattern(Tau)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(V::Tau),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(Tau::'/bootstrap':type)]))]),123,125),'/bootstrap':label(!'::='),'/bootstrap':vis(S::leftPattern(Tau)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(V1::Tau),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(Tau::'/bootstrap':type)]))]),123,125),'/bootstrap':label(! (,)),'/bootstrap':vis(Post::pattern)])).
+'/bootstrap':adapter(S::leftPattern(Tau),leftProd(S,V,Tau,V1,Post)::'/bootstrap':statement).
+annotation:shrink((leftProd(S,V,Tau,V1,Post)~>extend(S,Tau,R1,V1,R,V):-parse(Post,R1,R))).
+'/bootstrap':defAtom(e::leftPattern('/Functional':expr('/bootstrap':number))).
+seedProd(e,'/Functional':const(0),'/Functional':expr('/bootstrap':number),token(strintToken(!'0'))).
+leftProd(e,'/Functional':applyBinOp(L,'/Functional':numPlus,'/Functional':const(1)),'/Functional':expr('/bootstrap':number),L,conc(token(strintToken(! (+))),token(strintToken(!'1')))).
+leftProd(e,'/Functional':applyBinOp(L,'/Functional':minus,'/Functional':const(1)),'/Functional':expr('/bootstrap':number),L,conc(token(strintToken(! (-))),token(strintToken(!'1')))).
+'/bootstrap':unitTest(parse(leftRec(e,X,'/Functional':expr('/bootstrap':number)),!'0 -  1 - 1',!'')).

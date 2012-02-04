@@ -1,0 +1,38 @@
+'/bootstrap':defAtom(foot::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,foot,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(0.3048,[pow(meter,1)])),[])).
+constantAlias(foot,!'"').
+constantAlias(foot,!ft).
+constantAlias(foot,!feet).
+constantAlias(foot,!foot).
+'/bootstrap':defAtom(inch::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,inch,'/javascript/ajax':applyBinOp(foot,divBy,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(12,[])),[]))).
+constantAlias(inch,!'\'').
+constantAlias(inch,!inches).
+constantAlias(inch,!inch).
+'/bootstrap':defAtom(yard::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,yard,'/javascript/ajax':applyBinOp(foot,times,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(3,[])),[]))).
+constantAlias(yard,!yards).
+constantAlias(yard,!yard).
+'/bootstrap':defAtom(mile::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,mile,'/javascript/ajax':applyBinOp(foot,times,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(5280,[])),[]))).
+constantAlias(mile,!mile).
+constantAlias(mile,!miles).
+'/bootstrap':defAtom(acre::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,acre,'/javascript/ajax':applyBinOp('/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(43560,[])),[]),times,square(foot))).
+constantAlias(acre,!acres).
+constantAlias(acre,!acre).
+'/bootstrap':defAtom(pound::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,pound,'/javascript/ajax':applyBinOp('/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(453.59238,[])),[]),times,g)).
+constantAlias(pound,!pounds).
+constantAlias(pound,!pound).
+'/bootstrap':defAtom(ounce::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,ounce,'/javascript/ajax':applyBinOp(pound,divBy,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(16,[])),[]))).
+constantAlias(ounce,!oz).
+constantAlias(ounce,!ounces).
+constantAlias(ounce,!ounce).
+'/bootstrap':defAtom(fluidOunce::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,fluidOunce,'/javascript/ajax':applyBinOp(litre,times,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(0.02957353,[])),[]))).
+constantAlias(fluidOunce,!'fl oz').
+constantAlias(fluidOunce,!'fluid ounces').
+constantAlias(fluidOunce,!'fluid ounce').
+'/bootstrap':disabled((constantAlias(ounce,Alias)~>constantAlias(fluidOunce,Alias))).

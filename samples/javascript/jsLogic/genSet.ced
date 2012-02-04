@@ -1,0 +1,15 @@
+'/bootstrap':defAtom(null::'/javascript':expr).
+'/bootstrap':projection(null::'/javascript':expr,'/bootstrap':color('/bootstrap':italic('/bootstrap':label(!null)),cpi:rgb(64,64,128))).
+'/bootstrap':signature(firstArgName(Clause)::'/Functional':expr('/javascript':expr),[Clause::'/bootstrap':statement]).
+'/Functional':def(firstArgName((Head:-_)),'/javascript':expr,'/Functional':if(builtin:parseTerm(Head::'/bootstrap':pred,_,[First|_]),'/Functional':if((builtin:compound(First),builtin:parseTerm(First,Name,_)),'/Functional':wrap('/javascript':str(Name)),'/Functional':wrap(null)),'/Functional':wrap(null))).
+'/bootstrap':signature(jsStatementsForClauses(Clauses)::'/bootstrap':set('/javascript':statement),[Clauses::'/bootstrap':set('/bootstrap':statement)]).
+'/bootstrap':setDef(jsStatementsForClauses(Clauses),'/bootstrap':set('/javascript':exprStatement('/javascript':call('/javascript':dot('/javascript':dot('/javascript':varExpr(logic),!program),!add),['/javascript':str(Name),'/javascript':const(Arity),FirstArg,JSClause])), ('/bootstrap':member(Clause,Clauses,'/bootstrap':statement),'/Functional':eval(clauseFunction(Clause),'/javascript':expr,JSClause),'/Functional':eval(headPredicate('/Functional':const(Clause)),predicateID,pred(Name,Arity)),'/Functional':eval(firstArgName(Clause),'/javascript':expr,FirstArg))),'/javascript':statement).
+'/bootstrap':signature(jsStatementStrings(JsStatements)::'/bootstrap':set('/bootstrap':string),[JsStatements::'/bootstrap':set('/javascript':statement)]).
+'/bootstrap':setDef(jsStatementStrings(JsStatements),'/Functional':eset('/javascript':toString(Statement::'/javascript':statement,cpi:default),'/bootstrap':member(Statement,JsStatements,'/javascript':statement)),'/bootstrap':string).
+'/bootstrap':contextMenuEntry(ClauseSet::'/bootstrap':set('/bootstrap':statement),_,_,!'Generate Javascript Code','/bootstrap':generateFileForSet(!'cedalion.js',jsStatementStrings(jsStatementsForClauses(ClauseSet)))).
+'/bootstrap':signature(writeClauses(ClauseSet)::'/bootstrap':procedure,[ClauseSet::'/bootstrap':set('/bootstrap':statement)]).
+'/bootstrap':procedure(writeClauses(ClauseSet),'/bootstrap':writeFile(!'rawClauses.txt',builtin:fileContent(builtin:statement(Clause,[]),'/bootstrap':member(Clause,ClauseSet,'/bootstrap':statement),[]))).
+'/bootstrap':contextMenuEntry(ClauseSet::'/bootstrap':set('/bootstrap':statement),_,_,!'Generate raw clauses',writeClauses(ClauseSet)).
+'/bootstrap':defAtom(a::'/bootstrap':pred).
+'/bootstrap':defAtom(b::'/bootstrap':pred).
+'/bootstrap':sandbox('/bootstrap':listSet([ (a:-b)])::'/bootstrap':set('/bootstrap':statement)).

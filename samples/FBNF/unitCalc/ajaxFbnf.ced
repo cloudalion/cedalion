@@ -1,0 +1,6 @@
+'/bootstrap':signature(ajaxReducible(T)::'/bootstrap':type,[T::'/bootstrap':type]).
+'/bootstrap':signature(ajaxPatternValue(R,T,V)::'/FBNF':pattern,[R::ajaxReducible(T),T::'/bootstrap':type,V::'/javascript/ajax':ajaxExpr(T)]).
+'/bootstrap':projection(ajaxPatternValue(R,T,V)::'/FBNF':pattern,'/bootstrap':horiz(['/bootstrap':vis(R::ajaxReducible(T)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(V::'/javascript/ajax':ajaxExpr(T)),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(T::'/bootstrap':type)]))]),123,125)])).
+'/FBNF':match(ajaxPatternValue(R,T,_),ajaxPatternValue(R,T,_)):-builtin:true.
+'/bootstrap':alias(ajaxPatternValue(R,T,V)::'/FBNF':pattern,!'{ajax}').
+'/bootstrap':adapter(R::ajaxReducible(T),ajaxPatternValue(R,T,V)::'/FBNF':pattern).

@@ -1,5 +1,6 @@
 def(plus(A, B), '/bootstrap':list(T), switch(A, '/bootstrap':list(T), case([F|R], wrap([F|unwrap(plus(wrap(R), B))]), otherwise(B)))).
 '/bootstrap':signature(map(List, Lambda, T1)::expr('/bootstrap':list(T2)), [List::expr('/bootstrap':list(T1)), Lambda::func(T1, T2), T1::'/bootstrap':type]).
-def(map(List, Lambda, T1), '/bootstrap':list(T2), if(eval(List, '/bootstrap':list(T1), [L1|LPrime]), wrap([unwrap(apply(wrap(Lambda), T1, wrap(L1)))|unwrap(map(wrap(LPrime), Lambda, T1))]), wrap([]))).
+'/bootstrap':disabled(def(map(List, Lambda, T1), '/bootstrap':list(T2), if(eval(List, '/bootstrap':list(T1), [L1|LPrime]), wrap([unwrap(apply(wrap(Lambda), T1, wrap(L1)))|unwrap(map(wrap(LPrime), Lambda, T1))]), wrap([])))).
+def(map(List, Lambda, T1), '/bootstrap':list(T2), switch(List, '/bootstrap':list(T1), case([L1|LPrime], where(const([M1|MPrime]), (eval(map(const(LPrime), Lambda, T1), '/bootstrap':list(T2), MPrime), eval(apply(const(Lambda), T1, const(L1)), T2, M1), builtin:true)), case([], wrap([]), otherwise(failedToCompute(List)))))).
 '/bootstrap':unitTest(eval(map(wrap([1, 2, 3]), lambda(X, applyBinOp(X, numPlus, X)), '/bootstrap':number), '/bootstrap':list('/bootstrap':number), [2, 4, 6])).
 '/bootstrap':sandbox(map(wrap([1, 2, 3]), lambda(X, applyBinOp(X, numPlus, X)), '/bootstrap':number)::expr('/bootstrap':list('/bootstrap':number))).

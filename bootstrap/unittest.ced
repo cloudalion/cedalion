@@ -1,20 +1,21 @@
-signature(unitTest(Goal)::statement, [Goal::pred]).
-projection(unitTest(Goal)::statement, horiz([bold(label(!'Unit Test:')), vis(Goal::pred)])).
+signature(unitTest(Goal)::statement,[Goal::pred]).
+projection(unitTest(Goal)::statement,horiz([bold(label(!'Unit Test:')),vis(Goal::pred)])).
 unitTest(builtin:true).
-doc(!'A goal that never succeeds', signature(builtin:fail::pred, [])).
-signature((\+Goal)::pred, [Goal::pred]).
-projection((\+Goal)::pred, horiz([symbol(172), vis(Goal::pred)])).
+doc(!'A goal that never succeeds',signature(builtin:fail::pred,[])).
+signature((\+Goal)::pred,[Goal::pred]).
+projection((\+Goal)::pred,horiz([symbol(172),vis(Goal::pred)])).
 unitTest(\+builtin:fail).
-signature(failedTest(Goal)::error, [Goal::pred]).
-projection(failedTest(Goal)::error, horiz([label(!'Test'), vis(Goal::pred), label(!'has failed')])).
-doc(!'Succeeds if Goal succeeds, and if no exceptions have been thrown from it.  If an exception matchin Exception has been thrown, AltGoal is evaluated.', signature(builtin:catch(Goal, Exception, AltGoal)::pred, [Goal::pred, Exception::exception, AltGoal::pred])).
-projection(builtin:catch(Goal, Exception, AltGoal)::pred, vert([label(!'try:'), horiz([label(!'    '), vis(Goal::pred)]), horiz([label(!catch), vis(Exception::exception), label(! (:))]), horiz([label(!'    '), vis(AltGoal::pred)])])).
-signature(exceptionThrown(Exception)::error, [Exception::exception]).
-signature(testNotFullyInstantiated(Goal, Path, VarNames)::error, [Goal::pred, Path::cpi:path, VarNames::list(varName)]).
-check(Path, unitTest(Goal)::statement, VarNames, marker(Path, error(Error, VarNames))):- \+builtin:var(Goal::pred), builtin:copyTerm(Goal::pred, GoalCopy::pred), builtin:catch(builtin:if(Goal, builtin:if(builtin:structurallyEqual(Goal::pred, GoalCopy::pred), builtin:fail, Error::error=testNotFullyInstantiated(Goal, Path, VarNames)::error), Error::error=failedTest(Goal)::error), Exception, Error::error=exceptionThrown(Exception)::error).
-signature(showFailedTests::procedure, []).
-cpi:procedureCommand(showFailedTests, showView(vert(VisList))):-builtin:findall(vert([italic(vis(cpi:immediateDescriptor(File, VNs)::string)), horiz([vis(cpi:immediateDescriptor(Test, VNs)::pred), label(! (:)), vis(cpi:immediateDescriptor(Error, VNs)::error)])]), visualization, testHasFailed(Test, VNs, File, Error), VisList).
-signature(testHasFailed(Test, VNs, File, Error)::pred, [Test::pred, VNs::list(varName), File::string, Error::error]).
-testHasFailed(Test, VNs, File, Error):-builtin:loadedStatement(File, unitTest(Test), VNs), check(noPath, unitTest(Test)::statement, [], marker(noPath, error(Error, []))).
-contextMenuEntry(unitTest(_)::statement, _, _, !'Show all Failed Tests', showFailedTests).
-solution(testNotFullyInstantiated(Goal, Path, VarNames), VarNames, cpi:edit(Path, unitTest(Goal)::statement, VarNames)).
+signature(failedTest(Goal)::error,[Goal::pred]).
+projection(failedTest(Goal)::error,horiz([label(!'Test'),vis(Goal::pred),label(!'has failed')])).
+doc(!'Succeeds if Goal succeeds, and if no exceptions have been thrown from it.  If an exception matchin Exception has been thrown, AltGoal is evaluated.',signature(builtin:catch(Goal,Exception,AltGoal)::pred,[Goal::pred,Exception::exception,AltGoal::pred])).
+projection(builtin:catch(Goal,Exception,AltGoal)::pred,vert([label(!'try:'),horiz([label(!'    '),vis(Goal::pred)]),horiz([label(!catch),vis(Exception::exception),label(! (:))]),horiz([label(!'    '),vis(AltGoal::pred)])])).
+signature(exceptionThrown(Exception)::error,[Exception::exception]).
+signature(testNotFullyInstantiated(Goal,Path,VarNames)::error,[Goal::pred,Path::cpi:path,VarNames::list(varName)]).
+annotation:shrink((check(Path,unitTest(Goal)::statement,VarNames,marker(Path,Marker)):- \+builtin:var(Goal::pred),builtin:copyTerm(Goal::pred,GoalCopy::pred),builtin:catch(builtin:if(Goal,builtin:if(builtin:structurallyEqual(Goal::pred,GoalCopy::pred),builtin:fail,Marker::marker=tip(cpi:edit(Path,unitTest(Goal)::statement,VarNames))::marker),Marker::marker=error(failedTest(Goal),VarNames)::marker),Exception,Marker::marker=error(exceptionThrown(Exception),VarNames)::marker))).
+disabled((check(Path,unitTest(Goal)::statement,VarNames,marker(Path,error(Error,VarNames))):- \+builtin:var(Goal::pred),builtin:copyTerm(Goal::pred,GoalCopy::pred),builtin:catch(builtin:if(Goal,builtin:if(builtin:structurallyEqual(Goal::pred,GoalCopy::pred),builtin:fail,Marker::marker=tip(cpi:edit(Path,unitTest(Goal)::statement,VarNames))::marker),Marker::marker=error(failedTest(Goal),VarNames)::marker),Exception,Marker::marker=error(exceptionThrown(Exception),VarNames)::marker))).
+defAtom(showFailedTests::procedure).
+cpi:procedureCommand(showFailedTests,showView(vert(VisList))):-builtin:findall(vert([italic(vis(cpi:immediateDescriptor(File,VNs)::string)),horiz([vis(cpi:immediateDescriptor(Test,VNs)::pred),label(! (:)),vis(cpi:immediateDescriptor(Error,VNs)::error)])]),visualization,testHasFailed(Test,VNs,File,Error),VisList).
+signature(testHasFailed(Test,VNs,File,Error)::pred,[Test::pred,VNs::list(varName),File::string,Error::error]).
+testHasFailed(Test,VNs,File,Error):-builtin:loadedStatement(File,unitTest(Test),VNs),check(noPath,unitTest(Test)::statement,[],marker(noPath,error(Error,[]))).
+contextMenuEntry(unitTest(_)::statement,_,_,!'Show all Failed Tests',showFailedTests).
+solution(testNotFullyInstantiated(Goal,Path,VarNames),VarNames,cpi:edit(Path,unitTest(Goal)::statement,VarNames)).

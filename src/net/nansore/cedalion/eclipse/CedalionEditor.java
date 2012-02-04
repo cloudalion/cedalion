@@ -69,7 +69,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 		}
 	}
 
-	private VisualTermWidget editorWidget;
+	private CedalionWidget editorWidget;
     private List<ISelectionChangedListener> listeners = new ArrayList<ISelectionChangedListener>();
     private ISelection selection;
     private IFileEditorInput input;
@@ -135,7 +135,7 @@ public class CedalionEditor extends EditorPart implements ISelectionProvider, Te
 
     @Override
 	public void createPartControl(Composite parent) {
-	    editorWidget = new VisualTermWidget(parent, SWT.NONE, this);	
+	    editorWidget = new CedalionWidget(parent, SWT.NONE, this);	
 	    editorWidget.addDisposeListener(this);
 		Activator.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
 

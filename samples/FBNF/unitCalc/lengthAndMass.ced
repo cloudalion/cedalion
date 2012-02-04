@@ -1,0 +1,28 @@
+'/bootstrap':defAtom(m::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,m,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(1,[pow(meter,1)])),[])).
+constantAlias(m,!meter).
+constantAlias(m,!meters).
+'/bootstrap':defAtom(kilogram::unit).
+'/bootstrap':defAtom(kg::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,kg,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(1,[pow(kilogram,1)])),[])).
+'/bootstrap':defAtom(g::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,g,'/javascript/ajax':applyBinOp(kg,divBy,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(1000,[])),[]))).
+constantAlias(g,!gram).
+constantAlias(g,!grams).
+'/bootstrap':defAtom(hertz::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,hertz,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(1,[pow(second,-1)])),[])).
+constantAlias(hertz,!hertz).
+'/bootstrap':defAtom(nauticalMile::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,nauticalMile,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(1852,[pow(meter,1)])),[])).
+constantAlias(nauticalMile,!'nautical miles').
+constantAlias(nauticalMile,!'nautical mile').
+'/bootstrap':defAtom(knot::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,knot,'/javascript/ajax':applyBinOp(nauticalMile,divBy,hour)).
+constantAlias(knot,!knots).
+constantAlias(knot,!knot).
+'/bootstrap':defAtom(litre::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/javascript/ajax':ajaxDef(physicalMeasure,litre,cubic('/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(0.1,[pow(meter,1)])),[]))).
+constantAlias(litre,!litre).
+constantAlias(litre,!litres).
+constantAlias(litre,!liter).
+constantAlias(litre,!liters).

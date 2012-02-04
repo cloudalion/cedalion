@@ -1,0 +1,27 @@
+'/bootstrap':defAtom(unit::'/bootstrap':type).
+'/bootstrap':signature(pow(Unit,Degree)::unitPower,[Unit::unit,Degree::'/bootstrap':number]).
+'/bootstrap':projection(pow(Unit,Degree)::unitPower,'/bootstrap':horiz(['/bootstrap':vis(Unit::unit),'/bootstrap':halfSize('/bootstrap':vis(Degree::'/bootstrap':number))],cpi:top)).
+'/bootstrap':adapter(Unit::unit,pow(Unit,1)::unitPower).
+'/bootstrap':defAtom(meter::unit).
+'/bootstrap':defAtom(second::unit).
+'/bootstrap':signature(unitsMatch(Units1,Units2)::'/bootstrap':pred,[Units1::'/bootstrap':list(unitPower),Units2::'/bootstrap':list(unitPower)]).
+'/bootstrap':projection(unitsMatch(Units1,Units2)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(Units1::'/bootstrap':list(unitPower)),'/bootstrap':symbol(8801),'/bootstrap':vis(Units2::'/bootstrap':list(unitPower))])).
+unitsMatch(Units1,Units2):-'/bootstrap':forall('/bootstrap':listMember(U,unitPower,Units1),'/bootstrap':listMember(U,unitPower,Units2)),'/bootstrap':forall('/bootstrap':listMember(U,unitPower,Units2),'/bootstrap':listMember(U,unitPower,Units1)).
+'/bootstrap':unitTest(unitsMatch([pow(meter,1),pow(second,-1)],[pow(second,-1),pow(meter,1)])).
+'/bootstrap':unitTest(\+unitsMatch([pow(meter,1),pow(second,-1)],[pow(second,-1),pow(meter,-2)])).
+'/bootstrap':signature(unitsMult(Units1,Units2,Units)::'/bootstrap':pred,[Units1::'/bootstrap':list(unitPower),Units2::'/bootstrap':list(unitPower),Units::'/bootstrap':list(unitPower)]).
+'/bootstrap':projection(unitsMult(Units1,Units2,Units)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(Units::'/bootstrap':list(unitPower)),'/bootstrap':label(! (=)),'/bootstrap':vis(Units1::'/bootstrap':list(unitPower)),'/bootstrap':symbol(8901),'/bootstrap':vis(Units2::'/bootstrap':list(unitPower))])).
+unitsMult([],U,U):-builtin:true.
+'/bootstrap':signature(removeZeroPowers(UPrime,U)::'/bootstrap':pred,[UPrime::'/bootstrap':list(unitPower),U::'/bootstrap':list(unitPower)]).
+removeZeroPowers([],[]):-builtin:true.
+annotation:shrink((removeZeroPowers([pow(U1,P)|UPrime],U):-builtin:if(P::'/bootstrap':number=0::'/bootstrap':number,removeZeroPowers(UPrime,U), (removeZeroPowers(UPrime,UPrimePrime),U::'/bootstrap':list(unitPower)=[pow(U1,P)|UPrimePrime]::'/bootstrap':list(unitPower))))).
+unitsMult([U11|U1],U2,U):-multSingleUnit(U11,U2,UPrime),unitsMult(U1,UPrime,UPrimePrime),removeZeroPowers(UPrimePrime,U).
+'/bootstrap':signature(multSingleUnit(U11,U2,UPrime)::'/bootstrap':pred,[U11::unitPower,U2::'/bootstrap':list(unitPower),UPrime::'/bootstrap':list(unitPower)]).
+multSingleUnit(U,[],[U]):-builtin:true.
+annotation:shrink((multSingleUnit(pow(Unit,Power),[pow(UnitPrime,PowerPrime)|UIn],UOut):-builtin:if(Unit::unit=UnitPrime::unit, ('/Functional':eval('/Functional':applyBinOp('/Functional':const(Power),'/Functional':numPlus,'/Functional':const(PowerPrime)),'/bootstrap':number,NewPower),UOut::'/bootstrap':list(unitPower)=[pow(Unit,NewPower)|UIn]::'/bootstrap':list(unitPower)), (multSingleUnit(pow(Unit,Power),UIn,UOutPrime),UOut::'/bootstrap':list(unitPower)=[pow(UnitPrime,PowerPrime)|UOutPrime]::'/bootstrap':list(unitPower))))).
+'/bootstrap':unitTest(unitsMult([pow(meter,1)],[pow(second,-1)],[pow(second,-1),pow(meter,1)])).
+'/bootstrap':unitTest(unitsMult([pow(second,-1),pow(meter,1)],[pow(meter,-1)],[pow(second,-1)])).
+'/bootstrap':signature(unitsInv(Units2,Units2Prime)::'/bootstrap':pred,[Units2::'/bootstrap':list(unitPower),Units2Prime::'/bootstrap':list(unitPower)]).
+'/bootstrap':projection(unitsInv(Units2,Units2Prime)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(Units2Prime::'/bootstrap':list(unitPower)),'/bootstrap':label(! (=)),'/bootstrap':vert(['/bootstrap':label(!'1'),'/bootstrap':pivot('/bootstrap':box(1)),'/bootstrap':vis(Units2::'/bootstrap':list(unitPower))])])).
+unitsInv([],[]):-builtin:true.
+unitsInv([pow(U,P)|UPrime],[pow(U,PPrime)|UPrimePrime]):-'/Functional':eval('/Functional':applyBinOp('/Functional':const(0),'/Functional':minus,'/Functional':const(P)),'/bootstrap':number,PPrime),unitsInv(UPrime,UPrimePrime).

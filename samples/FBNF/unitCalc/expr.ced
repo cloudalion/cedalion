@@ -1,0 +1,15 @@
+'/bootstrap':defAtom(expr::'/FBNF':leftPattern('/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/FBNF':seedProd(expr,X,'/javascript/ajax':ajaxExpr(physicalMeasure),'/FBNF':leftRec(sumExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/bootstrap':defAtom(sumExpr::'/FBNF':leftPattern('/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/FBNF':leftProd(sumExpr,'/javascript/ajax':applyBinOp(A,plus,B),'/javascript/ajax':ajaxExpr(physicalMeasure),A,'/FBNF':conc('/FBNF':token('/FBNF':strintToken(! (+))),'/FBNF':leftRec(multExpr,B,'/javascript/ajax':ajaxExpr(physicalMeasure)))).
+'/FBNF':leftProd(sumExpr,'/javascript/ajax':applyBinOp(A,minus,B),'/javascript/ajax':ajaxExpr(physicalMeasure),A,'/FBNF':conc('/FBNF':token('/FBNF':strintToken(! (-))),'/FBNF':leftRec(multExpr,B,'/javascript/ajax':ajaxExpr(physicalMeasure)))).
+'/FBNF':seedProd(sumExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure),'/FBNF':leftRec(multExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/bootstrap':defAtom(multExpr::'/FBNF':leftPattern('/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/FBNF':leftProd(multExpr,'/javascript/ajax':applyBinOp(A,times,B),'/javascript/ajax':ajaxExpr(physicalMeasure),A,'/FBNF':conc('/FBNF':token('/FBNF':strintToken(! (*))),'/FBNF':leftRec(atomicExpr,B,'/javascript/ajax':ajaxExpr(physicalMeasure)))).
+'/FBNF':leftProd(multExpr,'/javascript/ajax':applyBinOp(A,divBy,B),'/javascript/ajax':ajaxExpr(physicalMeasure),A,'/FBNF':conc('/FBNF':token('/FBNF':strintToken(! (/))),'/FBNF':leftRec(atomicExpr,B,'/javascript/ajax':ajaxExpr(physicalMeasure)))).
+'/FBNF':seedProd(multExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure),'/FBNF':leftRec(atomicExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/bootstrap':defAtom(atomicExpr::'/FBNF':leftPattern('/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/FBNF':seedProd(atomicExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure),ajaxPatternValue(measure,physicalMeasure,X)).
+'/FBNF':seedProd(atomicExpr,X,'/javascript/ajax':ajaxExpr(physicalMeasure),'/FBNF':conc('/FBNF':token('/FBNF':strintToken(!'(')),'/FBNF':conc('/FBNF':leftRec(expr,X,'/javascript/ajax':ajaxExpr(physicalMeasure)),'/FBNF':token('/FBNF':strintToken(!')'))))).
+'/bootstrap':unitTest('/FBNF':parse('/FBNF':leftRec(expr,X,'/javascript/ajax':ajaxExpr(physicalMeasure)),!'1.3 meters + 2 meters *(6 - 3)',!'')).
+'/bootstrap':unitTest('/FBNF':parse('/FBNF':leftRec(expr,'/javascript/ajax':applyBinOp('/javascript/ajax':applyBinOp('/javascript/ajax':ajaxExpr(measure('/Functional':const(3)),[]),times,'/javascript/ajax':applyBinOp(nano,times,m)),divBy,'/javascript/ajax':applyBinOp('/javascript/ajax':ajaxExpr(measure('/Functional':const(4)),[]),times,'/javascript/ajax':applyBinOp(milli,times,s))),'/javascript/ajax':ajaxExpr(physicalMeasure)),!'3 nanometers / 4 milliseconds',!'')).

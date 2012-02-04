@@ -1,0 +1,8 @@
+'/bootstrap':signature(eval(S,V)::'/bootstrap':pred,[S::'/bootstrap':string,V::physicalMeasure]).
+eval(S,V):-'/FBNF':parse('/FBNF':conc(ajaxPatternValue(query,physicalMeasure,X),'/FBNF':whitespace),S,!''),cjs:ajaxEval(X,physicalMeasure,XPrime,[]),'/Functional':eval(XPrime,physicalMeasure,V).
+'eval2'(S,XPrime):-'/FBNF':parse(ajaxPatternValue(query,physicalMeasure,X),S,!''),cjs:ajaxEval(X,physicalMeasure,XPrime,[]).
+'/bootstrap':unitTest(eval(!'3 meters - 2 kilometers',physicalMeasure(-1997,[pow(meter,1)]))).
+'/bootstrap':unitTest(eval(!'10 days * (2 micrometer / millisecond) - kilometer',physicalMeasure(728.0,[pow(meter,1)]))).
+'/bootstrap':unitTest(eval(!'10 days * (2 micrometer / millisecond) - kilometer in megameters ',physicalMeasure(0.000728,[]))).
+'/bootstrap':unitTest(eval(!'sq mile in acres',physicalMeasure(640.0,[]))).
+'/bootstrap':unitTest(eval(!'500 sq kilometer in acres  ',_)).

@@ -28,7 +28,7 @@ public class CedalionViewScreenshot implements IViewActionDelegate {
 
 	@Override
 	public void run(IAction action) {
-		FileDialog  dlg = new FileDialog(view.getSite().getShell());
+		FileDialog  dlg = new FileDialog(view.getSite().getShell(), SWT.SAVE);
 		String fileName = dlg.open();
 		if(fileName == null)
 			return;

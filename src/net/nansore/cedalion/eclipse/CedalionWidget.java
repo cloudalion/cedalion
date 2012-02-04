@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * This class is a SWT composite control that contains a text field and a draw2d canvas. 
  */
-public class VisualTermWidget extends Composite {
+public class CedalionWidget extends Composite {
     
     private Text text;
     private FigureCanvas canvas;
@@ -58,7 +58,7 @@ public class VisualTermWidget extends Composite {
      * @param style the SWT style to use
      * @param cedalionEditor the owner editor
      */
-    public VisualTermWidget(Composite parent, int style, final CedalionEditor cedalionEditor) {
+    public CedalionWidget(Composite parent, int style, final CedalionEditor cedalionEditor) {
         super(parent, style);
         setLayout(new FormLayout());
         

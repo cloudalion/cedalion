@@ -1,0 +1,10 @@
+'/bootstrap':defAtom(integer::'/FBNF':leftPattern('/Functional':expr('/bootstrap':number))).
+'/FBNF':seedProd(integer,D,'/Functional':expr('/bootstrap':number),'/FBNF':patternValue('/FBNF':digit,'/bootstrap':number,D)).
+'/FBNF':leftProd(integer,'/Functional':plus('/Functional':mult(Val,'/Functional':const(10)),D),'/Functional':expr('/bootstrap':number),Val,'/FBNF':patternValue('/FBNF':digit,'/bootstrap':number,D)).
+'/bootstrap':unitTest('/FBNF':parse('/FBNF':leftRec(integer,_,'/Functional':expr('/bootstrap':number)),!'1234',!'')).
+'/bootstrap':defAtom(fraction::'/FBNF':reducable('/bootstrap':number)).
+'/FBNF':prod('/FBNF':patternValue(fraction,'/bootstrap':number,'/Functional':const(0)),'/FBNF':empty).
+'/FBNF':prod('/FBNF':patternValue(fraction,'/bootstrap':number,'/Functional':div('/Functional':plus(Frac,D),'/Functional':const(10))),'/FBNF':conc('/FBNF':patternValue('/FBNF':digit,'/bootstrap':number,D),'/FBNF':patternValue(fraction,'/bootstrap':number,Frac))).
+'/bootstrap':defAtom(number::'/FBNF':reducibleToken('/bootstrap':number)).
+'/FBNF':prod('/FBNF':inToken('/FBNF':tokenValue(number,'/bootstrap':number,'/Functional':applyBinOp(Int,'/Functional':numPlus,Frac))),'/FBNF':conc('/FBNF':leftRec(integer,Int,'/Functional':expr('/bootstrap':number)),'/FBNF':conc('/FBNF':str(!.),'/FBNF':patternValue(fraction,'/bootstrap':number,Frac)))).
+'/FBNF':prod('/FBNF':inToken('/FBNF':tokenValue(number,'/bootstrap':number,Int)),'/FBNF':leftRec(integer,Int,'/Functional':expr('/bootstrap':number))).

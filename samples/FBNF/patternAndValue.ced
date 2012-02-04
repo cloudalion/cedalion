@@ -1,0 +1,9 @@
+'/bootstrap':signature(patternAndValue(P,PPrime,V)::'/bootstrap':statement,[P::pattern,PPrime::'/bootstrap':typedTerm,V::'/bootstrap':typedTerm]).
+'/bootstrap':projection(patternAndValue(P,PPrime,V)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':vis(P::pattern),'/bootstrap':label(!'has pattern'),'/bootstrap':vis(PPrime::'/bootstrap':typedTerm),'/bootstrap':label(!'and value'),'/bootstrap':vis(V::'/bootstrap':typedTerm)])).
+patternAndValue(patternValue(R,T,V),R::reducable(T),V::'/Functional':expr(T)).
+patternAndValue('/FBNF/unitCalc':ajaxPatternValue(R,T,V),R::'/FBNF/unitCalc':ajaxReducible(T),V::'/javascript/ajax':ajaxExpr(T)).
+patternAndValue(token(tokenValue(Token,T,V)),Token::reducibleToken(T),V::'/Functional':expr(T)).
+patternAndValue(inToken(tokenValue(Token,T,V)),Token::reducibleToken(T),V::'/Functional':expr(T)).
+patternAndValue(token(strintToken(S)),S::'/bootstrap':string,S::'/bootstrap':string).
+'/bootstrap':disabled(('/bootstrap':defAtom(P::pattern)~>patternAndValue(P,P::pattern,0::'/bootstrap':number))).
+'/bootstrap':disabled(patternAndValue(whitespace,whitespace::pattern,whitespace::pattern)).

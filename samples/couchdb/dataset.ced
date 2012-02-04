@@ -1,0 +1,26 @@
+'/bootstrap':defAtom(user::'/bootstrap':type).
+'/bootstrap':defAtom(post::'/bootstrap':type).
+'/bootstrap':signature(dataset(T)::'/bootstrap':type,[T::'/bootstrap':type]).
+'/bootstrap':signature(visiblePosts(U)::dataset(post),[U::user]).
+'/bootstrap':signature(defineDataset(DSet,Def,Type)::'/bootstrap':statement,[DSet::dataset(Type),Def::dataset(Type),Type::'/bootstrap':type]).
+'/bootstrap':projection(defineDataset(DSet,Def,Type)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':vis(Type::'/bootstrap':type),'/bootstrap':vis(DSet::dataset(Type)),'/bootstrap':symbol(8839),'/bootstrap':vis(Def::dataset(Type))])).
+'/bootstrap':defAtom(dataPred::'/bootstrap':type).
+'/bootstrap':signature(friends(U)::dataset(user),[U::user]).
+'/bootstrap':signature(in(Element,DSet,Type)::dataPred,[Element::Type,DSet::dataset(Type),Type::'/bootstrap':type]).
+'/bootstrap':projection(in(Element,DSet,Type)::dataPred,'/bootstrap':horiz(['/bootstrap':vis(Element::Type),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(Type::'/bootstrap':type)])),'/bootstrap':symbol(8712),'/bootstrap':vis(DSet::dataset(Type))])).
+'/bootstrap':signature(and(P1,P2)::dataPred,[P1::dataPred,P2::dataPred]).
+'/bootstrap':projection(and(P1,P2)::dataPred,'/bootstrap':horiz(['/bootstrap':vis(P1::dataPred),'/bootstrap':label(! (,)),'/bootstrap':vis(P2::dataPred)])).
+'/bootstrap':signature(posts(UPrime)::dataset(post),[UPrime::user]).
+'/bootstrap':signature(dset(Value,Conds)::dataset(T),[Value::T,Conds::'/bootstrap':list(dataPred)]).
+'/bootstrap':projection(dset(Value,Conds)::dataset(T),'/bootstrap':horiz(['/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(Value::T),'/bootstrap':box(1),'/bootstrap':brackets(cpi:vis(Conds::'/bootstrap':list(dataPred),'/bootstrap':vert),0,0)]),123,125)])).
+'/bootstrap':defAtom(friendship::'/bootstrap':type).
+'/bootstrap':defAtom(friendships::dataset(friendship)).
+'/bootstrap':signature(friends(U,UPrime)::friendship,[U::user,UPrime::user]).
+'/bootstrap':projection(friends(U,UPrime)::friendship,'/bootstrap':horiz(['/bootstrap':vis(U::user),'/bootstrap':label(!and),'/bootstrap':vis(UPrime::user),'/bootstrap':label(!'are friends')])).
+defineDataset(friends(U),dset(UPrime,[in(friends(U,UPrime),friendships,friendship)]),user).
+defineDataset(friends(U),dset(UPrime,[in(friends(UPrime,U),friendships,friendship)]),user).
+defineDataset(visiblePosts(U),dset(Post,[in(UPrime,friends(U),user),in(Post,posts(UPrime),post)]),post).
+'/bootstrap':signature(wallPost(P)::wallPost,[P::post]).
+'/bootstrap':signature(wall(U)::dataset(wallPost),[U::user]).
+'/bootstrap':defAtom(wallPost::'/bootstrap':type).
+defineDataset(wall(U),dset(wallPost(P),[in(P,dset(PPrime,[in(PPrime,visiblePosts(U),post)]),post)]),wallPost).

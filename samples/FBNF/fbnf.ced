@@ -1,9 +1,17 @@
-'/bootstrap':signature(reducable(Type)::'/bootstrap':type, [Type::'/bootstrap':type]).
-'/bootstrap':signature(evalString(Str, Pattern, Type, Value)::'/bootstrap':pred, [Str::'/bootstrap':string, Pattern::reducable(Type), Type::'/bootstrap':type, Value::Type]).
-'/bootstrap':projection(evalString(Str, Pattern, Type, Value)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(Pattern::reducable(Type)), '/bootstrap':symbol(8658), '/bootstrap':vis(Str::'/bootstrap':string), '/bootstrap':label(!'evaluates to'), '/bootstrap':vis(Value::Type), '/bootstrap':label(!'of type'), '/bootstrap':vis(Type::'/bootstrap':type)])).
-evalString(Str, Pattern, Type, Value):-parse(patternValue(Pattern, Type, Expression), Str, !''), '/Functional':eval(Expression, Type, Value).
-'/bootstrap':signature(patternValue(Pattern, Type, Expression)::pattern, [Pattern::reducable(Type), Type::'/bootstrap':type, Expression::'/Functional':expr(Type)]).
-'/bootstrap':projection(patternValue(Pattern, Type, Expression)::pattern, '/bootstrap':horiz(['/bootstrap':vis(Pattern::reducable(Type)), '/bootstrap':symbol(8594), '/bootstrap':halfSize('/bootstrap':vis(Type::'/bootstrap':type)), '/bootstrap':vis(Expression::'/Functional':expr(Type))])).
-'/bootstrap':alias(patternValue(Pattern, Type, Expression)::pattern, ! (->)).
-'/bootstrap':adapter(patternValue(Pattern, Type, Expression)::pattern, prod(patternValue(Pattern, Type, Expression), _)::'/bootstrap':statement).
-'/bootstrap':adapter(Pattern::reducable(Type), patternValue(Pattern, Type, _)::pattern).
+'/bootstrap':signature(reducable(Type)::'/bootstrap':type,[Type::'/bootstrap':type]).
+'/bootstrap':signature(evalString(Str,Pattern,Type,Value)::'/bootstrap':pred,[Str::'/bootstrap':string,Pattern::reducable(Type),Type::'/bootstrap':type,Value::Type]).
+'/bootstrap':projection(evalString(Str,Pattern,Type,Value)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(Pattern::reducable(Type)),'/bootstrap':symbol(8658),'/bootstrap':vis(Str::'/bootstrap':string),'/bootstrap':label(!'evaluates to'),'/bootstrap':vis(Value::Type),'/bootstrap':label(!'of type'),'/bootstrap':vis(Type::'/bootstrap':type)])).
+evalString(Str,Pattern,Type,Value):-parse(patternValue(Pattern,Type,Expression),Str,!''),'/Functional':eval(Expression,Type,Value).
+'/bootstrap':signature(patternValue(Pattern,Type,Expression)::pattern,[Pattern::reducable(Type),Type::'/bootstrap':type,Expression::'/Functional':expr(Type)]).
+'/bootstrap':projection(patternValue(Pattern,Type,Expression)::pattern,'/bootstrap':horiz(['/bootstrap':vis(Pattern::reducable(Type)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(Expression::'/Functional':expr(Type)),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(Type::'/bootstrap':type)]))]),123,125)])).
+'/bootstrap':alias(patternValue(Pattern,Type,Expression)::pattern,!'{}').
+'/bootstrap':adapter(patternValue(Pattern,Type,Expression)::pattern,prod(patternValue(Pattern,Type,Expression),_)::'/bootstrap':statement).
+'/bootstrap':adapter(Pattern::reducable(Type),patternValue(Pattern,Type,_)::pattern).
+match(patternValue(X,T,_),patternValue(X,T,_)):-builtin:true.
+'/bootstrap':signature(reducibleToken(T)::'/bootstrap':type,[T::'/bootstrap':type]).
+'/bootstrap':signature(tokenValue(Reducible,T,Value)::token,[Reducible::reducibleToken(T),T::'/bootstrap':type,Value::'/Functional':expr(T)]).
+'/bootstrap':projection(tokenValue(Reducible,T,Value)::token,'/bootstrap':horiz(['/bootstrap':vis(Reducible::reducibleToken(T)),'/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(Value::'/Functional':expr(T)),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(T::'/bootstrap':type)]))]),123,125)])).
+'/bootstrap':adapter(RToken::reducibleToken(T),token(tokenValue(RToken,T,_))::pattern).
+match(token(tokenValue(RToken,T,_)),token(tokenValue(RToken,T,_))):-builtin:true.
+match(inToken(tokenValue(RToken,T,_)),inToken(tokenValue(RToken,T,_))):-builtin:true.
+'/bootstrap':sandbox(tokenValue(Reducible,T,Value)::token).

@@ -1,0 +1,18 @@
+'/bootstrap':defAtom(whitespace::pattern).
+prod(whitespace,conc(str(!' '),whitespace)).
+prod(whitespace,empty).
+'/bootstrap':defAtom(token::'/bootstrap':type).
+'/bootstrap':signature(token(T)::pattern,[T::token]).
+'/bootstrap':projection(token(T)::pattern,'/bootstrap':brackets('/bootstrap':vis(T::token),8810,8811)).
+'/bootstrap':adapter(T::token,token(T)::pattern).
+'/bootstrap':signature(inToken(T)::pattern,[T::token]).
+'/bootstrap':projection(inToken(T)::pattern,'/bootstrap':brackets('/bootstrap':vis(T::token),8811,8810)).
+prod(token(T),conc(whitespace,inToken(T))).
+'/bootstrap':contextMenuEntry(token(T)::pattern,VNs,Path,!'Change to in-token',cpi:edit(Path,inToken(T)::pattern,VNs)).
+'/bootstrap':signature(strintToken(S)::token,[S::'/bootstrap':string]).
+'/bootstrap':projection(strintToken(S)::token,'/bootstrap':horiz(['/bootstrap':label(!'\''),'/bootstrap':vis(S::'/bootstrap':string),'/bootstrap':label(!'\'')])).
+prod(inToken(strintToken(S)),str(S)).
+'/bootstrap':contextMenuEntry(str(S)::pattern,VNs,Path,!'Turn to token',cpi:edit(Path,strintToken(S)::token,VNs)).
+'/bootstrap':adapter(S::'/bootstrap':string,token(strintToken(S))::pattern).
+'/bootstrap':contextMenuEntry(token(strintToken(S))::pattern,VNs,Path,!'Remove Token',cpi:edit(Path,str(S)::pattern,VNs)).
+'/bootstrap':contextMenuEntry(str(S)::pattern,VNs,Path,!'Make Token',cpi:edit(Path,token(strintToken(S))::pattern,VNs)).

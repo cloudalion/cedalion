@@ -1,0 +1,16 @@
+'/bootstrap':signature(measureToHtml(M)::'/Functional':expr('/html':xml),[M::physicalMeasure]).
+'/Functional':def(measureToHtml(physicalMeasure(N,Units)),'/html':xml,'/Functional':where('/Functional':const(xml:element(!span,[],[xml:string(NumText)|UnitsHTML])), ('/Functional':eval('/Functional':'num2str'('/Functional':const(N)),'/bootstrap':string,NumText),'/Functional':eval(unitsToHtml(Units),'/bootstrap':list('/html':xml),UnitsHTML)))).
+'/bootstrap':signature(unitsToHtml(Units)::'/Functional':expr('/bootstrap':list('/html':xml)),[Units::'/bootstrap':list(unitPower)]).
+'/Functional':def(unitsToHtml([]),'/bootstrap':list('/html':xml),'/Functional':const([])).
+'/Functional':def(unitsToHtml([pow(Unit,Power)|Rest]),'/bootstrap':list('/html':xml),'/Functional':where('/Functional':if('/Functional':eq('/Functional':const(Power),'/Functional':const(1),'/bootstrap':number),'/Functional':const([xml:string(!' '),UnitHTML|RestHTML]),'/Functional':const([xml:string(!' '),UnitHTML,xml:element(!sup,[],[xml:string(PowerStr)])|RestHTML])), ('/Functional':eval(unitToHtml(Unit),'/html':xml,UnitHTML),'/Functional':eval('/Functional':'num2str'('/Functional':const(Power)),'/bootstrap':string,PowerStr),'/Functional':eval(unitsToHtml(Rest),'/bootstrap':list('/html':xml),RestHTML)))).
+'/bootstrap':signature(unitToHtml(Unit)::'/Functional':expr('/html':xml),[Unit::unit]).
+'/Functional':def(unitToHtml(meter),'/html':xml,'/Functional':const(xml:string(!meter))).
+'/Functional':def(unitToHtml(second),'/html':xml,'/Functional':const(xml:string(!second))).
+'/Functional':def(unitToHtml(kilogram),'/html':xml,'/Functional':const(xml:string(!kilogram))).
+'/Functional':def(unitToHtml(usd),'/html':xml,'/Functional':const(xml:string(!'US$'))).
+'/bootstrap':unitTest('/Functional':eval(measureToHtml(physicalMeasure(3,[pow(meter,1),pow(second,-1)])),'/html':xml,xml:element(!span,[],[xml:string(!'3'),xml:string(!' '),xml:string(!meter),xml:string(!' '),xml:string(!second),xml:element(!sup,[],[xml:string(!'-1')])]))).
+'/bootstrap':signature(parseToHtml(S,Html)::'/bootstrap':pred,[S::'/bootstrap':string,Html::'/bootstrap':string]).
+parseToHtml(S,Html):-eval(S,M),'/Functional':eval(measureToHtml(M),'/html':xml,Xml),'/Functional':eval('/html':toText(Xml::'/html':xml),'/bootstrap':string,Html).
+'/bootstrap':unitTest(parseToHtml(!'123 +5 ',!'<span >128</span>')).
+'/bootstrap':signature(measureToHtmlText(M)::'/Functional':expr('/bootstrap':string),[M::physicalMeasure]).
+'/Functional':def(measureToHtmlText(M),'/bootstrap':string,'/Functional':where('/html':toText(HTML::'/html':xml),'/Functional':eval(measureToHtml(M),'/html':xml,HTML))).

@@ -1,0 +1,9 @@
+'/bootstrap':signature(simplify(P,PPrime)::'/bootstrap':pred,[P::'/bootstrap':list(dataPred),PPrime::'/bootstrap':list(dataPred)]).
+'/bootstrap':projection(simplify(P,PPrime)::'/bootstrap':pred,'/bootstrap':horiz([cpi:vis(P::'/bootstrap':list(dataPred),'/bootstrap':vert),'/bootstrap':label(!'simplifies to'),cpi:vis(PPrime::'/bootstrap':list(dataPred),'/bootstrap':vert)])).
+simplify(P,PPrime):-builtin:if(trySimplify(P,PPrime),builtin:true,PPrime::'/bootstrap':list(dataPred)=P::'/bootstrap':list(dataPred)).
+'/bootstrap':signature(where(P1,Cond)::dataPred,[P1::dataPred,Cond::'/bootstrap':pred]).
+'/bootstrap':projection(where(P1,Cond)::dataPred,'/bootstrap':horiz(['/bootstrap':vis(P1::dataPred),'/bootstrap':label(!where),'/bootstrap':vis(Cond::'/bootstrap':pred)])).
+'/bootstrap':signature(trySimplify(P,PPrime)::'/bootstrap':pred,[P::'/bootstrap':list(dataPred),PPrime::'/bootstrap':list(dataPred)]).
+trySimplify([in(X,dset(X,[]),T)|P2],P2Prime):-simplify(P2,P2Prime).
+annotation:shrink((trySimplify([where(P1,Cond)|P2],QPrime):-simplify([P1],P1Prime),Cond,'/bootstrap':append(P1Prime,P2,Q,dataPred),simplify(Q,QPrime))).
+trySimplify([in(X,dset(Y,[in(Y,S,T)]),T)|P],Q):-simplify([in(X,S,T)|P],Q).

@@ -1,0 +1,3 @@
+signature(sanitizeVarNames(VarNames,SVarNames)::pred,[VarNames::list(varName),SVarNames::list(varName)]).
+annotation:shrink((sanitizeVarNames([],[]):-builtin:true)).
+annotation:shrink((sanitizeVarNames([builtin:varName(TVar,Name)|VarNames],SVarNames):-sanitizeVarNames(VarNames,SVarNamesPrime),builtin:if(builtin:var(TVar),SVarNames::list(varName)=[builtin:varName(TVar,Name)|SVarNamesPrime]::list(varName),SVarNames::list(varName)=SVarNamesPrime::list(varName)))).

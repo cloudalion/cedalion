@@ -1,0 +1,6 @@
+'/bootstrap':signature(partialEvaluate(P,Q,P1)::'/bootstrap':pred,[P::'/bootstrap':list(dataPred),Q::dataPred,P1::'/bootstrap':list(dataPred)]).
+'/bootstrap':projection(partialEvaluate(P,Q,P1)::'/bootstrap':pred,'/bootstrap':horiz([cpi:vis(P::'/bootstrap':list(dataPred),'/bootstrap':vert),'/bootstrap':label(!becomes),cpi:vis(P1::'/bootstrap':list(dataPred),'/bootstrap':vert),'/bootstrap':label(!given),'/bootstrap':vis(Q::dataPred)])).
+partialEvaluate([],_,[]):-builtin:true.
+partialEvaluate([in(X,B,T)|P2],subset(A,B,T),[in(X,A,T)|P2]):-builtin:true.
+annotation:parentheses(annotation:shrink((partialEvaluate([in(X,dset(V,P1),T)|P2],Q,[in(X,dset(V,P1Prime),T)|P2]):-partialEvaluate(P1,Q,P1Prime)))).
+annotation:parentheses(annotation:shrink((partialEvaluate([where(P1,Cond)|P2],Q,[where(P1Prime,Cond)|P2]):-partialEvaluate([P1|P2],Q,[P1Prime|P2])))).

@@ -1,0 +1,8 @@
+signature(tip(Proc)::marker,[Proc::procedure]).
+projection(tip(Proc)::marker,horiz([label(!'Tip:'),vis(Proc::procedure)])).
+defAtom('Magic wand.png'::image).
+markerVis(tip(Proc),Vis,action(tooltip(horiz([image('Magic wand.png'),Vis],cpi:top),vis(cpi:immediateDescriptor(Proc,[])::procedure)),Proc)).
+signature(tip(TTerm,Path,VNs,Proc)::statement,[TTerm::typedTerm,Path::cpi:path,VNs::list(varName),Proc::procedure]).
+projection(tip(TTerm,Path,VNs,Proc)::statement,horiz([label(!'Tip'),vis(Proc::procedure),label(!for),vis(TTerm::typedTerm),label(!'at path'),vis(Path::cpi:path),label(!'with varnames'),vis(VNs::list(varName))])).
+annotation:shrink((tip(TTerm,Path,VNs,Proc)~>check(Path,TTerm,VNs,marker(Path,tip(Proc))):-builtin:true)).
+unitTest(listMember(1,number,[1,2,3])).

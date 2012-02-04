@@ -1,0 +1,21 @@
+'/bootstrap':defAtom(measure::ajaxReducible(physicalMeasure)).
+'/FBNF':prod(ajaxPatternValue(measure,physicalMeasure,'/javascript/ajax':ajaxExpr(measure(Num),[])),'/FBNF':token('/FBNF':tokenValue(number,'/bootstrap':number,Num))).
+'/FBNF':prod(ajaxPatternValue(measure,physicalMeasure,'/javascript/ajax':applyBinOp('/javascript/ajax':ajaxExpr(measure(Num),[]),times,Units)),'/FBNF':conc('/FBNF':token('/FBNF':tokenValue(number,'/bootstrap':number,Num)),ajaxPatternValue(units,physicalMeasure,Units))).
+'/FBNF':prod(ajaxPatternValue(measure,physicalMeasure,Units),ajaxPatternValue(units,physicalMeasure,Units)).
+'/bootstrap':defAtom(units::ajaxReducible(physicalMeasure)).
+'/FBNF':prod(ajaxPatternValue(units,physicalMeasure,A),ajaxPatternValue(unitPattern,physicalMeasure,A)).
+'/FBNF':prod(ajaxPatternValue(units,physicalMeasure,'/javascript/ajax':applyBinOp(A,times,B)),'/FBNF':conc(ajaxPatternValue(unitPattern,physicalMeasure,A),ajaxPatternValue(units,physicalMeasure,B))).
+'/bootstrap':signature(square(A)::'/javascript/ajax':ajaxExpr(physicalMeasure),[A::'/javascript/ajax':ajaxExpr(physicalMeasure)]).
+'/FBNF':prod(ajaxPatternValue(units,physicalMeasure,square(A)),'/FBNF':conc('/FBNF':token('/FBNF':strintToken(!square)),ajaxPatternValue(units,physicalMeasure,A))).
+'/FBNF':prod(ajaxPatternValue(units,physicalMeasure,square(A)),'/FBNF':conc('/FBNF':token('/FBNF':strintToken(!sq)),ajaxPatternValue(units,physicalMeasure,A))).
+'/bootstrap':signature(cubic(A)::'/javascript/ajax':ajaxExpr(physicalMeasure),[A::'/javascript/ajax':ajaxExpr(physicalMeasure)]).
+'/FBNF':prod(ajaxPatternValue(units,physicalMeasure,cubic(A)),'/FBNF':conc('/FBNF':token('/FBNF':strintToken(!cubic)),ajaxPatternValue(units,physicalMeasure,A))).
+'/FBNF':prod(ajaxPatternValue(units,physicalMeasure,'/javascript/ajax':applyBinOp(A,divBy,B)),'/FBNF':conc(ajaxPatternValue(unitPattern,physicalMeasure,A),'/FBNF':conc('/FBNF':token('/FBNF':strintToken(!per)),ajaxPatternValue(units,physicalMeasure,B)))).
+'/javascript/ajax':ajaxDef(physicalMeasure,square(X),'/javascript/ajax':applyBinOp(X,times,X)).
+'/javascript/ajax':ajaxDef(physicalMeasure,cubic(X),'/javascript/ajax':applyBinOp(square(X),times,X)).
+'/bootstrap':defAtom(unitPattern::ajaxReducible(physicalMeasure)).
+'/bootstrap':signature(constantAlias(Const,Alias)::'/bootstrap':statement,[Const::'/javascript/ajax':ajaxExpr(physicalMeasure),Alias::'/bootstrap':string]).
+'/bootstrap':projection(constantAlias(Const,Alias)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':label(!use),'/bootstrap':vis(Alias::'/bootstrap':string),'/bootstrap':label(!'as alias for'),'/bootstrap':vis(Const::'/javascript/ajax':ajaxExpr(physicalMeasure))])).
+constantAlias(Const,Alias)~>'/FBNF':prod(ajaxPatternValue(unitPattern,physicalMeasure,Const),'/FBNF':token('/FBNF':strintToken(Alias))).
+'/bootstrap':contextMenuEntry(annotation:changeMode(['/javascript/ajax':ajaxDef(physicalMeasure,Const,Value)|Rest],'/bootstrap':vert)::'/bootstrap':list('/bootstrap':statement),VNs,Path,!'Add alias',cpi:edit(Path,annotation:changeMode(['/javascript/ajax':ajaxDef(physicalMeasure,Const,Value),constantAlias(Const,_)|Rest],'/bootstrap':vert)::'/bootstrap':list('/bootstrap':statement),VNs)).
+'/bootstrap':unitTest('/FBNF':parse(ajaxPatternValue(measure,physicalMeasure,'/javascript/ajax':applyBinOp('/javascript/ajax':ajaxExpr(measure('/Functional':const(2)),[]),times,'/javascript/ajax':applyBinOp(kilo,times,m))),!'2 kilometers',!'')).

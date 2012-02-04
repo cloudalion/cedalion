@@ -1,0 +1,22 @@
+'/bootstrap':defAtom(physicalMeasure::'/bootstrap':type).
+'/bootstrap':defAtom(unitPower::'/bootstrap':type).
+'/bootstrap':signature(physicalMeasure(X,U)::physicalMeasure,[X::'/bootstrap':number,U::'/bootstrap':list(unitPower)]).
+'/bootstrap':projection(physicalMeasure(X,U)::physicalMeasure,'/bootstrap':horiz(['/bootstrap':vis(X::'/bootstrap':number),cpi:vis(U::'/bootstrap':list(unitPower),'/bootstrap':horizontal(32,32,'/bootstrap':label(!' '),'/bootstrap':label(!units)))])).
+'/bootstrap':adapter(X::'/bootstrap':number,physicalMeasure(X,[])::physicalMeasure).
+'/bootstrap':adapter(X::'/bootstrap':number,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(X,[])),[])::'/javascript/ajax':ajaxExpr(physicalMeasure)).
+'/bootstrap':sandbox(physicalMeasure(2,[pow(meter,1),pow(second,-1)])::physicalMeasure).
+'/bootstrap':defAtom(plus::'/Functional':binOp(physicalMeasure)).
+'/bootstrap':projection(plus::'/Functional':binOp(physicalMeasure),'/bootstrap':label(! (+))).
+'/Functional':valueApplyBinOp(physicalMeasure(A,Units1),plus,physicalMeasure(B,Units2),'/Functional':const(physicalMeasure(Val,Units1)),physicalMeasure):-unitsMatch(Units1,Units2),'/Functional':eval('/Functional':applyBinOp('/Functional':const(A),'/Functional':numPlus,'/Functional':const(B)),'/bootstrap':number,Val).
+'/bootstrap':defAtom(minus::'/Functional':binOp(physicalMeasure)).
+'/bootstrap':projection(minus::'/Functional':binOp(physicalMeasure),'/bootstrap':label(! (-))).
+'/Functional':valueApplyBinOp(physicalMeasure(A,Units1),minus,physicalMeasure(B,Units2),'/Functional':const(physicalMeasure(Val,Units1)),physicalMeasure):-unitsMatch(Units1,Units2),'/Functional':eval('/Functional':applyBinOp('/Functional':const(A),'/Functional':minus,'/Functional':const(B)),'/bootstrap':number,Val).
+'/bootstrap':defAtom(times::'/Functional':binOp(physicalMeasure)).
+'/bootstrap':projection(times::'/Functional':binOp(physicalMeasure),'/bootstrap':label(! (*))).
+'/Functional':valueApplyBinOp(physicalMeasure(A,Units1),times,physicalMeasure(B,Units2),'/Functional':const(physicalMeasure(Val,Units)),physicalMeasure):-'/Functional':eval('/Functional':applyBinOp('/Functional':const(A),'/Functional':times,'/Functional':const(B)),'/bootstrap':number,Val),unitsMult(Units1,Units2,Units).
+'/bootstrap':defAtom(divBy::'/Functional':binOp(physicalMeasure)).
+'/bootstrap':projection(divBy::'/Functional':binOp(physicalMeasure),'/bootstrap':label(! (/))).
+'/Functional':valueApplyBinOp(physicalMeasure(A,Units1),divBy,physicalMeasure(B,Units2),'/Functional':const(physicalMeasure(Val,Units)),physicalMeasure):-'/Functional':eval('/Functional':applyBinOp('/Functional':const(A),'/Functional':divBy,'/Functional':const(B)),'/bootstrap':number,Val),unitsInv(Units2,Units2Prime),unitsMult(Units1,Units2Prime,Units).
+'/bootstrap':unitTest('/Functional':eval('/Functional':applyBinOp('/Functional':const(physicalMeasure(3,[pow(meter,1)])),divBy,'/Functional':const(physicalMeasure(2,[pow(second,1)]))),physicalMeasure,physicalMeasure(1.5,[pow(second,-1),pow(meter,1)]))).
+'/bootstrap':signature(measure(Expr)::'/Functional':expr(physicalMeasure),[Expr::'/Functional':expr('/bootstrap':number)]).
+'/Functional':def(measure(Expr),physicalMeasure,'/Functional':where('/Functional':const(physicalMeasure(Val,[])),'/Functional':eval(Expr,'/bootstrap':number,Val))).

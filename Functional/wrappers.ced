@@ -1,19 +1,20 @@
-'/bootstrap':signature(wrap(Term)::expr(T), [Term::T]).
-'/bootstrap':projection(wrap(Term)::expr(T), '/bootstrap':raised('/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(Term::T), cpi:rgb(192, 192, 255)), 2, cpi:rgb(192, 192, 255)))).
-eval(wrap(Term), T, V):-builtin:if(builtin:compound(Term::T), builtin:if(Term::T=unwrap(Expr)::T, eval(Expr, T, V), ('/bootstrap':safeParseTerm(Term::T, Name, Args), evalArgs(Args, EArgs), builtin:parseTerm(V::T, Name, EArgs))), V::T=Term::T).
-evalArgs([], []):-builtin:true.
-'/bootstrap':signature(evalArgs(Args, ArgsV)::'/bootstrap':pred, [Args::'/bootstrap':list('/bootstrap':typedTerm), ArgsV::'/bootstrap':list('/bootstrap':typedTerm)]).
-'/bootstrap':checkSignature(unwrap(Expr)::T, [Expr::expr(T)]):-builtin:true.
-'/bootstrap':projection(unwrap(Expr)::T, '/bootstrap':lineBorder('/bootstrap':lowered('/bootstrap':background('/bootstrap':vis(Expr::expr(T)), cpi:rgb(255, 255, 255))), 2, cpi:rgb(192, 192, 255))).
-'/bootstrap':doc(!'Is TTerm a compound typed-term?', '/bootstrap':signature(builtin:compound(TTerm)::'/bootstrap':pred, [TTerm::'/bootstrap':typedTerm])).
-evalArgs([First::T|Rest], [FirstV::T|RestV]):-eval(wrap(First), T, FirstV), evalArgs(Rest, RestV).
-'/bootstrap':adapter(Term::T, wrap(Term)::expr(T)).
-'/bootstrap':signature(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), [B::expr('/bootstrap':number), E::expr('/bootstrap':number)]).
-'/bootstrap':projection(range(B, E)::expr('/bootstrap':list('/bootstrap':number)), '/bootstrap':horiz(['/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(B::expr('/bootstrap':number)), '/bootstrap':label(! (,)), '/bootstrap':vis(E::expr('/bootstrap':number))]), 91, 41)])).
-def(range(B, E), '/bootstrap':list('/bootstrap':number), if(gt(E, B, '/bootstrap':number), wrap([unwrap(B)|unwrap(range(plus(B, wrap(1)), E))]), wrap([]))).
-'/bootstrap':unitTest(eval(range(wrap(0), wrap(3)), '/bootstrap':list('/bootstrap':number), [0, 1, 2])).
-'/bootstrap':signature(insertExpression(Path, T)::'/bootstrap':procedure, [Path::cpi:path, T::'/bootstrap':type]).
-cpi:procedureCommand(insertExpression(Path, T), '/bootstrap':doProc(cpi:edit(Path, unwrap(_)::T, []))):-ancestorIsWrapper(Path).
-'/bootstrap':contextMenuEntry(_::T, _, Path, !'Insert Expression', insertExpression(Path, T)).
-'/bootstrap':signature(ancestorIsWrapper(Path)::'/bootstrap':pred, [Path::cpi:path]).
-ancestorIsWrapper(cpi:path(Resource, Path)):-'/bootstrap':append(Prefix, [_|_], Path, '/bootstrap':number), cpi:termAtPath(cpi:path(Resource, Prefix), wrap(_)::expr(_), _).
+'/bootstrap':signature(wrap(Term)::expr(T),[Term::T]).
+'/bootstrap':projection(wrap(Term)::expr(T),'/bootstrap':raised('/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(Term::T),cpi:rgb(192,192,255)),2,cpi:rgb(192,192,255)))).
+eval(wrap(Term),T,V):-builtin:if(builtin:compound(Term::T),builtin:if(Term::T=unwrap(Expr)::T,eval(Expr,T,V), ('/bootstrap':safeParseTerm(Term::T,Name,Args),evalArgs(Args,EArgs),builtin:parseTerm(V::T,Name,EArgs))),V::T=Term::T).
+'/bootstrap':sandbox('/bootstrap':listSet([ ('/bootstrap':checkSignature(unwrap(Expr)::T,[Expr::expr(T)]):-builtin:true)])::'/bootstrap':set('/bootstrap':statement)).
+evalArgs([],[]):-builtin:true.
+'/bootstrap':signature(evalArgs(Args,ArgsV)::'/bootstrap':pred,[Args::'/bootstrap':list('/bootstrap':typedTerm),ArgsV::'/bootstrap':list('/bootstrap':typedTerm)]).
+'/bootstrap':checkSignature(unwrap(Expr)::T,[Expr::expr(T)]):-builtin:true.
+'/bootstrap':projection(unwrap(Expr)::T,'/bootstrap':lineBorder('/bootstrap':lowered('/bootstrap':background('/bootstrap':vis(Expr::expr(T)),cpi:rgb(255,255,255))),2,cpi:rgb(192,192,255))).
+'/bootstrap':doc(!'Is TTerm a compound typed-term?','/bootstrap':signature(builtin:compound(TTerm)::'/bootstrap':pred,[TTerm::'/bootstrap':typedTerm])).
+evalArgs([First::T|Rest],[FirstV::T|RestV]):-eval(wrap(First),T,FirstV),evalArgs(Rest,RestV).
+'/bootstrap':disabled('/bootstrap':adapter(Term::T,wrap(Term)::expr(T))).
+'/bootstrap':signature(range(B,E)::expr('/bootstrap':list('/bootstrap':number)),[B::expr('/bootstrap':number),E::expr('/bootstrap':number)]).
+'/bootstrap':projection(range(B,E)::expr('/bootstrap':list('/bootstrap':number)),'/bootstrap':horiz(['/bootstrap':brackets('/bootstrap':horiz(['/bootstrap':vis(B::expr('/bootstrap':number)),'/bootstrap':label(! (,)),'/bootstrap':vis(E::expr('/bootstrap':number))]),91,41)])).
+def(range(B,E),'/bootstrap':list('/bootstrap':number),if(gt(E,B,'/bootstrap':number),wrap([unwrap(B)|unwrap(range(plus(B,wrap(1)),E))]),wrap([]))).
+'/bootstrap':unitTest(eval(range(wrap(0),wrap(3)),'/bootstrap':list('/bootstrap':number),[0,1,2])).
+'/bootstrap':signature(insertExpression(Path,T)::'/bootstrap':procedure,[Path::cpi:path,T::'/bootstrap':type]).
+cpi:procedureCommand(insertExpression(Path,T),'/bootstrap':doProc(cpi:edit(Path,unwrap(_)::T,[]))):-ancestorIsWrapper(Path).
+'/bootstrap':contextMenuEntry(_::T,_,Path,!'Insert Expression',insertExpression(Path,T)).
+'/bootstrap':signature(ancestorIsWrapper(Path)::'/bootstrap':pred,[Path::cpi:path]).
+ancestorIsWrapper(cpi:path(Resource,Path)):-'/bootstrap':append(Prefix,[_|_],Path,'/bootstrap':number),cpi:termAtPath(cpi:path(Resource,Prefix),wrap(_)::expr(_),_).

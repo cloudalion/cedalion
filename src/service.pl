@@ -5,6 +5,8 @@
 :- op(650, xfx, '::').
 :- op(1, fx, '!').
 :- op(0, xfx, (':=')).
+:- op(0, yfx, ('div')).
+:- op(0, yfx, ('xor')).
 
 % If predicate
 if(Cond, Then, _) :-

@@ -1,0 +1,17 @@
+'/bootstrap':signature(recursiveMap(P1,P3)::'/bootstrap':pred,[P1::dataPred,P3::dataPred]).
+recursiveMap(P,P):-builtin:true.
+defineDataset(B,_,T)~>recursiveMap(P1,P3):-map(P1,subset(A,B,T)),recursiveMap(subset(A,B,T),P3).
+'/bootstrap':signature(subset(A,B,T1)::dataPred,[A::dataset(T1),B::dataset(T1),T1::'/bootstrap':type]).
+'/bootstrap':projection(subset(A,B,T1)::dataPred,'/bootstrap':horiz(['/bootstrap':vis(A::dataset(T1)),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(T1::'/bootstrap':type)])),'/bootstrap':symbol(8838),'/bootstrap':vis(B::dataset(T1))])).
+'/bootstrap':signature(map(P1,P2)::'/bootstrap':pred,[P1::dataPred,P2::dataPred]).
+'/bootstrap':projection(map(P1,P2)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(P1::dataPred),'/bootstrap':label(!'maps into'),'/bootstrap':vis(P2::dataPred)])).
+map(Q,subset(dset(X,PPrime),dset(X,P),T2)):-partialEvaluate(P,Q,P1),simplify(P1,PPrime).
+annotation:shrink((defineDataset(D,DPrime,T2)~>annotation:shrink((map(P,subset(C,D,T2)):-map(P,subset(C,DPrime,T2)))))).
+'/bootstrap':defAtom(boris::user).
+'/bootstrap':defAtom(natasha::user).
+'/bootstrap':unitTest(map(subset(dset(friends(boris,natasha),[]),friendships,friendship),subset(dset(natasha,[]),friends(boris),user))).
+'/bootstrap':unitTest(map(subset(dset(friends(boris,natasha),[]),friendships,friendship),subset(dset(boris,[]),friends(natasha),user))).
+'/bootstrap':unitTest(map(subset(dset(natasha,[]),friends(boris),user),subset(dset(X,[in(X,posts(natasha),post)]),visiblePosts(boris),post))).
+'/bootstrap':unitTest(recursiveMap(subset(dset(friends(boris,natasha),[]),friendships,friendship),subset(dset(friends(boris,natasha),[]),friendships,friendship))).
+'/bootstrap':unitTest(recursiveMap(subset(dset(friends(boris,natasha),[]),friendships,friendship),subset(dset(friends(boris,natasha),[]),friendships,friendship))).
+'/bootstrap':unitTest(recursiveMap(subset(dset(friends(boris,natasha),[]),friendships,friendship),subset(dset(wallPost(P),[in(P,posts(natasha),post)]),wall(boris),wallPost))).

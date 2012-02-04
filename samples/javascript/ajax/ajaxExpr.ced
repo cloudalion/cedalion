@@ -1,0 +1,15 @@
+'/bootstrap':signature(ajaxExpr(T)::'/bootstrap':type,[T::'/bootstrap':type]).
+'/bootstrap':defAtom(request::'/bootstrap':type).
+'/bootstrap':signature(cjs:get(URI,Target)::request,[URI::'/bootstrap':string,Target::'/bootstrap':typedTerm]).
+'/bootstrap':projection(cjs:get(URI,Target)::request,'/bootstrap':horiz(['/bootstrap':label(!'GET'),'/bootstrap':vis(URI::'/bootstrap':string),'/bootstrap':symbol(8658),'/bootstrap':vis(Target::'/bootstrap':typedTerm)])).
+'/bootstrap':signature(ajaxExpr(Expr,Reqs)::ajaxExpr(T),[Expr::'/Functional':expr(T),Reqs::'/bootstrap':list(request)]).
+'/bootstrap':projection(ajaxExpr(Expr,Reqs)::ajaxExpr(T),'/bootstrap':expand('/bootstrap':vis(Expr::'/Functional':expr(T)),'/bootstrap':vert(['/bootstrap':vis(Expr::'/Functional':expr(T)),'/bootstrap':horiz(['/bootstrap':label(!where),cpi:vis(Reqs::'/bootstrap':list(request),'/bootstrap':vert)])]))).
+'/bootstrap':adapter(Val::T,ajaxExpr('/Functional':const(Val),[])::ajaxExpr(T)).
+'/bootstrap':sandbox(ajaxExpr('/Functional':mult('/Functional':wrap(X),'/Functional':wrap(2)),[cjs:get(!'/x',X::'/bootstrap':number)])::ajaxExpr('/bootstrap':number)).
+'/bootstrap':signature(cjs:ajaxEval(AjaxExpr,T,Expr,Reqs)::'/bootstrap':pred,[AjaxExpr::ajaxExpr(T),T::'/bootstrap':type,Expr::'/Functional':expr(T),Reqs::'/bootstrap':list(request)]).
+'/bootstrap':projection(cjs:ajaxEval(AjaxExpr,T,Expr,Reqs)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(AjaxExpr::ajaxExpr(T)),'/bootstrap':label(!'evaluates to'),'/bootstrap':vis(Expr::'/Functional':expr(T)),'/bootstrap':halfSize('/bootstrap':horiz(['/bootstrap':label(! (::)),'/bootstrap':vis(T::'/bootstrap':type)])),'/bootstrap':label(!where),cpi:vis(Reqs::'/bootstrap':list(request),'/bootstrap':vert)])).
+cjs:ajaxEval(ajaxExpr(Expr,Reqs),T,Expr,Reqs):-builtin:true.
+'/bootstrap':signature(applyBinOp(AjaxExpr1,Op,AjaxExpr2)::ajaxExpr(T),[AjaxExpr1::ajaxExpr(T),Op::'/Functional':binOp(T),AjaxExpr2::ajaxExpr(T)]).
+'/bootstrap':projection(applyBinOp(AjaxExpr1,Op,AjaxExpr2)::ajaxExpr(T),'/bootstrap':horiz(['/bootstrap':vis(AjaxExpr1::ajaxExpr(T)),'/bootstrap':vis(Op::'/Functional':binOp(T)),'/bootstrap':vis(AjaxExpr2::ajaxExpr(T))])).
+'/bootstrap':adapter(Op::'/Functional':binOp(T),applyBinOp(AjaxExpr1,Op,AjaxExpr2)::ajaxExpr(T)).
+annotation:shrink((cjs:ajaxEval(applyBinOp(AjaxExpr1,Op,AjaxExpr2),T,'/Functional':applyBinOp(Expr1,Op,Expr2),Reqs):-cjs:ajaxEval(AjaxExpr1,T,Expr1,Reqs1),cjs:ajaxEval(AjaxExpr2,T,Expr2,Reqs2),'/bootstrap':append(Reqs1,Reqs2,Reqs,request))).

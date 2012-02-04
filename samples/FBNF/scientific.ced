@@ -1,20 +1,20 @@
-'/bootstrap':signature(sin(X)::'/Functional':expr('/bootstrap':number), [X::'/Functional':expr('/bootstrap':number)]).
-'/bootstrap':signature(pow(X, Y)::'/Functional':expr('/bootstrap':number), [X::'/Functional':expr('/bootstrap':number), Y::'/Functional':expr('/bootstrap':number)]).
-'/bootstrap':projection(pow(X, Y)::'/Functional':expr('/bootstrap':number), '/bootstrap':horiz(['/bootstrap':vis(X::'/Functional':expr('/bootstrap':number)), '/bootstrap':halfSize('/bootstrap':vis(Y::'/Functional':expr('/bootstrap':number)))])).
-'/bootstrap':alias(pow(X, Y)::'/Functional':expr('/bootstrap':number), ! (^)).
-'/Functional':def(pow(X, Y), '/bootstrap':number, '/Functional':if('/Functional':gt(Y, '/Functional':wrap(0), '/bootstrap':number), '/Functional':mult(X, pow(X, '/Functional':minus(Y, '/Functional':wrap(1)))), '/Functional':wrap(1))).
-'/bootstrap':signature(fact(X)::'/Functional':expr('/bootstrap':number), [X::'/Functional':expr('/bootstrap':number)]).
-'/bootstrap':projection(fact(X)::'/Functional':expr('/bootstrap':number), '/bootstrap':horiz(['/bootstrap':vis(X::'/Functional':expr('/bootstrap':number)), '/bootstrap':label(! (!))])).
-'/bootstrap':alias(fact(X)::'/Functional':expr('/bootstrap':number), ! (!)).
-'/Functional':def(fact(X), '/bootstrap':number, '/Functional':if('/Functional':gt(X, '/Functional':wrap(0), '/bootstrap':number), '/Functional':mult(X, fact('/Functional':parentheses('/Functional':minus(X, '/Functional':wrap(1))))), '/Functional':wrap(1))).
-'/Functional':def(sin(X), '/bootstrap':number, '/Functional':minus('/Functional':plus('/Functional':minus(X, '/Functional':div(pow(X, '/Functional':wrap(3)), fact('/Functional':wrap(3)))), '/Functional':div(pow(X, '/Functional':wrap(5)), fact('/Functional':wrap(5)))), '/Functional':div(pow(X, '/Functional':wrap(7)), fact('/Functional':wrap(7))))).
-'/bootstrap':signature(scientific::feature, []).
-'/bootstrap':signature(financial::feature, []).
-condStatement(prod(Symbol, Pattern), SomeFeature)~>isEnabled(SomeFeature)~>prod(Symbol, Pattern).
-condStatement(prod(patternValue(atomicExpr, '/bootstrap':number, sin(X)), conc(str(!sin), patternValue(atomicExpr, '/bootstrap':number, X))), scientific).
-condStatement(prod(patternValue(atomicExpr, '/bootstrap':number, cos(X)), conc(str(!cos), patternValue(atomicExpr, '/bootstrap':number, X))), scientific).
-'/bootstrap':signature(cos(X)::'/Functional':expr('/bootstrap':number), [X::'/Functional':expr('/bootstrap':number)]).
-'/Functional':def(cos(X), '/bootstrap':number, '/Functional':minus('/Functional':plus('/Functional':minus('/Functional':wrap(1), '/Functional':div(pow(X, '/Functional':wrap(2)), fact('/Functional':wrap(2)))), '/Functional':div(pow(X, '/Functional':wrap(4)), fact('/Functional':wrap(4)))), '/Functional':div(pow(X, '/Functional':wrap(6)), fact('/Functional':wrap(6))))).
-'/bootstrap':unitTest(evalString(!'sin0', expr, '/bootstrap':number, 0)).
-'/bootstrap':disabled(isEnabled(scientific)).
+'/bootstrap':signature(sin(X)::'/Functional':expr('/bootstrap':number),[X::'/Functional':expr('/bootstrap':number)]).
+'/bootstrap':signature(pow(X,Y)::'/Functional':expr('/bootstrap':number),[X::'/Functional':expr('/bootstrap':number),Y::'/Functional':expr('/bootstrap':number)]).
+'/bootstrap':projection(pow(X,Y)::'/Functional':expr('/bootstrap':number),'/bootstrap':horiz(['/bootstrap':vis(X::'/Functional':expr('/bootstrap':number)),'/bootstrap':halfSize('/bootstrap':vis(Y::'/Functional':expr('/bootstrap':number)))],cpi:top)).
+'/bootstrap':alias(pow(X,Y)::'/Functional':expr('/bootstrap':number),! (^)).
+'/Functional':def(pow(X,Y),'/bootstrap':number,'/Functional':if('/Functional':gt(Y,'/Functional':const(0),'/bootstrap':number),'/Functional':mult(X,pow(X,'/Functional':minus(Y,'/Functional':const(1)))),'/Functional':const(1))).
+'/bootstrap':signature(fact(X)::'/Functional':expr('/bootstrap':number),[X::'/Functional':expr('/bootstrap':number)]).
+'/bootstrap':projection(fact(X)::'/Functional':expr('/bootstrap':number),'/bootstrap':horiz(['/bootstrap':vis(X::'/Functional':expr('/bootstrap':number)),'/bootstrap':label(! (!))])).
+'/bootstrap':alias(fact(X)::'/Functional':expr('/bootstrap':number),! (!)).
+'/Functional':def(fact(X),'/bootstrap':number,'/Functional':if('/Functional':gt(X,'/Functional':const(0),'/bootstrap':number),'/Functional':mult(X,fact('/Functional':parentheses('/Functional':minus(X,'/Functional':const(1))))),'/Functional':const(1))).
+'/Functional':def(sin(X),'/bootstrap':number,'/Functional':minus('/Functional':plus('/Functional':minus(X,'/Functional':div(pow(X,'/Functional':const(3)),fact('/Functional':const(3)))),'/Functional':div(pow(X,'/Functional':const(5)),fact('/Functional':const(5)))),'/Functional':div(pow(X,'/Functional':const(7)),fact('/Functional':const(7))))).
+'/bootstrap':defAtom(scientific::feature).
+'/bootstrap':defAtom(financial::feature).
+condStatement(prod(Symbol,Pattern),SomeFeature)~>isEnabled(SomeFeature)~>prod(Symbol,Pattern).
+condStatement(prod(patternValue(atomicExpr,'/bootstrap':number,sin(X)),conc(str(!sin),patternValue(atomicExpr,'/bootstrap':number,X))),scientific).
+condStatement(prod(patternValue(atomicExpr,'/bootstrap':number,cos(X)),conc(str(!cos),patternValue(atomicExpr,'/bootstrap':number,X))),scientific).
+'/bootstrap':signature(cos(X)::'/Functional':expr('/bootstrap':number),[X::'/Functional':expr('/bootstrap':number)]).
+'/Functional':def(cos(X),'/bootstrap':number,'/Functional':minus('/Functional':plus('/Functional':minus('/Functional':const(1),'/Functional':div(pow(X,'/Functional':const(2)),fact('/Functional':const(2)))),'/Functional':div(pow(X,'/Functional':const(4)),fact('/Functional':const(4)))),'/Functional':div(pow(X,'/Functional':const(6)),fact('/Functional':const(6))))).
+'/bootstrap':unitTest(evalString(!'sin(0)',expr,'/bootstrap':number,0)).
+isEnabled(scientific).
 isEnabled(financial).

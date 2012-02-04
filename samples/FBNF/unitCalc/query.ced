@@ -1,0 +1,5 @@
+'/bootstrap':defAtom(query::ajaxReducible(physicalMeasure)).
+'/FBNF':prod(ajaxPatternValue(query,physicalMeasure,'/javascript/ajax':applyBinOp(X,divBy,U)),'/FBNF':conc('/FBNF':leftRec(expr,X,'/javascript/ajax':ajaxExpr(physicalMeasure)),'/FBNF':conc('/FBNF':token('/FBNF':strintToken(!in)),'/FBNF':leftRec(expr,U,'/javascript/ajax':ajaxExpr(physicalMeasure))))).
+'/FBNF':prod(ajaxPatternValue(query,physicalMeasure,X),'/FBNF':leftRec(expr,X,'/javascript/ajax':ajaxExpr(physicalMeasure))).
+'/bootstrap':signature(parseEval(S)::'/javascript/ajax':ajaxExpr(physicalMeasure),[S::'/bootstrap':string]).
+'/javascript/ajax':ajaxDef(physicalMeasure,parseEval(S),where(X,'/FBNF':parse(ajaxPatternValue(query,physicalMeasure,X),S,!''))).
