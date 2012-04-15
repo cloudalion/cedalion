@@ -1,8 +1,3 @@
-'/bootstrap':defAtom(physicalMeasure::'/bootstrap':type).
-'/bootstrap':defAtom(unitPower::'/bootstrap':type).
-'/bootstrap':signature(physicalMeasure(X,U)::physicalMeasure,[X::'/bootstrap':number,U::'/bootstrap':list(unitPower)]).
-'/bootstrap':projection(physicalMeasure(X,U)::physicalMeasure,'/bootstrap':horiz(['/bootstrap':vis(X::'/bootstrap':number),cpi:vis(U::'/bootstrap':list(unitPower),'/bootstrap':horizontal(32,32,'/bootstrap':label(!' '),'/bootstrap':label(!units)))])).
-'/bootstrap':adapter(X::'/bootstrap':number,physicalMeasure(X,[])::physicalMeasure).
 '/bootstrap':adapter(X::'/bootstrap':number,'/javascript/ajax':ajaxExpr('/Functional':const(physicalMeasure(X,[])),[])::'/javascript/ajax':ajaxExpr(physicalMeasure)).
 '/bootstrap':sandbox(physicalMeasure(2,[pow(meter,1),pow(second,-1)])::physicalMeasure).
 '/bootstrap':defAtom(plus::'/Functional':binOp(physicalMeasure)).

@@ -1,7 +1,3 @@
-'/bootstrap':defAtom(unit::'/bootstrap':type).
-'/bootstrap':signature(pow(Unit,Degree)::unitPower,[Unit::unit,Degree::'/bootstrap':number]).
-'/bootstrap':projection(pow(Unit,Degree)::unitPower,'/bootstrap':horiz(['/bootstrap':vis(Unit::unit),'/bootstrap':halfSize('/bootstrap':vis(Degree::'/bootstrap':number))],cpi:top)).
-'/bootstrap':adapter(Unit::unit,pow(Unit,1)::unitPower).
 '/bootstrap':defAtom(meter::unit).
 '/bootstrap':defAtom(second::unit).
 '/bootstrap':signature(unitsMatch(Units1,Units2)::'/bootstrap':pred,[Units1::'/bootstrap':list(unitPower),Units2::'/bootstrap':list(unitPower)]).
