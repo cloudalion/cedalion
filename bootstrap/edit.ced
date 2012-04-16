@@ -8,7 +8,7 @@ subTerm(TTerm,[],TTerm):-builtin:true.
 doc(!'Parse a typed term (TTerm) into a Name and a list of typed arguments (TArgs).  Can also be used to construct a typed term out of a name and typed args.  This predicate is not type-safe.  Use safeParseTerm instead.',signature(builtin:parseTerm(TTerm,Func,TArgs)::pred,[TTerm::typedTerm,Func::string,TArgs::list(typedTerm)])).
 subTerm(TTerm,[First|Path],TSubTerm):-safeParseTerm(TTerm,_,TArgs),element(TSubTerm1,First,TArgs,typedTerm),subTerm(TSubTerm1,Path,TSubTerm).
 signature(safeParseTerm(TTerm,Name,TArgs)::pred,[TTerm::typedTerm,Name::string,TArgs::list(typedTerm)]).
-safeParseTerm(Term::Type,Name,TArgs):-builtin:parseTerm(Term::Type,Name,TRawArgs),builtin:if((builtin:compound(Term::Type),checkSignature(Term::Type,TArgs),\+checkSignature(TRawArgs,TArgs,signaturePlaceMismatch(_,_)),\+checkSignature(TRawArgs,TArgs,signatureSizeMismatch)),builtin:true,TArgs::list(typedTerm)=TRawArgs::list(typedTerm)).
+safeParseTerm(Term::Type,Name,TArgs):-builtin:parseTerm(Term::Type,Name,TRawArgs),builtin:if((builtin:compound(Term::Type),checkSignature(Term::Type,TArgs),\+checkSignature(TRawArgs,TArgs,signaturePlaceMismatch(_,_)),\+checkSignature(TRawArgs,TArgs,signatureSizeMismatch)),annotation:comment(checkSignature(Term::Type,TArgs),!'Temporary fix, until fixing the if behavior in Javascript'),TArgs::list(typedTerm)=TRawArgs::list(typedTerm)).
 signature(element(Elem,Index,List,Type)::pred,[Elem::Type,Index::number,List::list(Type),Type::type]).
 element(First,1,[First|_],_):-builtin:true.
 doc(!'Calculate the next of previous integer',signature(builtin:succ(IndexMinusOne,Index)::pred,[IndexMinusOne::number,Index::number])).
