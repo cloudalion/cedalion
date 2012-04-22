@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
+
 import net.nansore.prolog.Compound;
 
 /**
@@ -56,7 +58,9 @@ public class Notifier {
 	public synchronized void notify(Compound term) {
 		List<Runnable> l = cmdMap.get(term);
 		if(l != null) {
-			for(Runnable r : l) {
+			List<Runnable> newList = new ArrayList<Runnable>();
+			newList.addAll(l);
+			for(Runnable r : newList) {
 				r.run();
 			}
 		}

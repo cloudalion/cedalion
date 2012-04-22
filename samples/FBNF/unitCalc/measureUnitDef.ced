@@ -1,0 +1,7 @@
+'/bootstrap':defAtom(physicalMeasure::'/bootstrap':type).
+'/bootstrap':defAtom(unitPower::'/bootstrap':type).
+'/bootstrap':sigProj(physicalMeasure(X,U)::physicalMeasure,[X::'/bootstrap':number,U::'/bootstrap':list(unitPower)],'/bootstrap':horiz(['/bootstrap':vis(X::'/bootstrap':number),cpi:vis(U::'/bootstrap':list(unitPower),'/bootstrap':horizontal(32,32,'/bootstrap':label(!' '),'/bootstrap':label(!units)))])).
+'/bootstrap':adapter(X::'/bootstrap':number,physicalMeasure(X,[])::physicalMeasure).
+'/bootstrap':defAtom(unit::'/bootstrap':type).
+'/bootstrap':sigProj(pow(Unit,Degree)::unitPower,[Unit::unit,Degree::'/bootstrap':number],'/bootstrap':horiz(['/bootstrap':vis(Unit::unit),'/bootstrap':halfSize('/bootstrap':vis(Degree::'/bootstrap':number))],cpi:top)).
+'/bootstrap':adapter(Unit::unit,pow(Unit,1)::unitPower).

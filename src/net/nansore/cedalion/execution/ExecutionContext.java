@@ -33,16 +33,17 @@ public class ExecutionContext {
 	public void runProcedure(Compound proc) throws PrologException, TermInstantiationException, ExecutionContextException {
 		Variable command = new Variable("Command");
 		Map<Variable, Object> result;
+		Object cmd = null;
 		try {
 			result = PrologProxy.instance().getSolution(new Compound("cpi#procedureCommand", proc, command));
 		} catch (NoSolutionsException e) {
 			throw new PrologException("Undefined procedure: " + proc);
 		}
-		try {
-			runCommand((Compound)result.get(command));
-		} catch (ClassCastException e) {
+		cmd = result.get(command);
+		if(!(cmd instanceof Compound)) {
 			throw new PrologException("Command returned from procedure " + proc + " is not a compound term");
 		}
+		runCommand((Compound)cmd);
 	}
 
 	private void runCommand(Compound commandTerm) throws PrologException, TermInstantiationException, ExecutionContextException {

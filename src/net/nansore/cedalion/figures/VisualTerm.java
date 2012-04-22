@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.nansore.cedalion.eclipse.CedalionCanvas;
 import net.nansore.cedalion.eclipse.TermContext;
 import net.nansore.cedalion.eclipse.TermVisualizationException;
 import net.nansore.cedalion.execution.ExecutionContext;
@@ -28,6 +27,7 @@ import net.nansore.prolog.PrologProxy;
 import net.nansore.prolog.Variable;
 
 import org.eclipse.core.runtime.Status;
+import org.eclipse.draw2d.FigureCanvas;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.Label;
@@ -314,7 +314,7 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
                 context.getTextEditor().setSelection(0, text.length());
                 context.getTextEditor().addKeyListener(this);
                 context.getTextEditor().setFocus();
-                Viewport viewport = ((CedalionCanvas)getCanvas()).getViewport();
+                Viewport viewport = ((FigureCanvas)getCanvas()).getViewport();
 				Point p = viewport.getViewLocation();
                 if(p.y > getLocation().y) {
                 	viewport.setViewLocation(new Point(p.x, getLocation().y));
@@ -500,7 +500,12 @@ public class VisualTerm extends Panel implements TermFigure, TermContext, MouseL
 	}
 
 	private FigureNavigator navigator() {
-		return FigureNavigator.getNavigatorForRoot(((CedalionCanvas)getCanvas()).getContents());
+		Control canvas = getCanvas();
+		if(canvas instanceof FigureCanvas) {
+			return FigureNavigator.getNavigatorForRoot(((FigureCanvas)canvas).getContents());
+		} else {
+			throw new RuntimeException("Bad Canvas"); 
+		}
 	}
 
     private void setContentFromString(String text) throws TermVisualizationException, PrologException, TermInstantiationException, ExecutionContextException {

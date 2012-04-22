@@ -1,0 +1,14 @@
+'/bootstrap':defAtom(jsCommand::'/bootstrap':type).
+'/bootstrap':signature(jsCommand(Statements)::jsCommand,[Statements::'/bootstrap':list('/javascript':statement)]).
+'/bootstrap':projection(jsCommand(Statements)::jsCommand,'/bootstrap':lowered('/bootstrap':lineBorder('/bootstrap':background(cpi:vis(Statements::'/bootstrap':list('/javascript':statement),'/bootstrap':vertical('/bootstrap':label(!''),'/bootstrap':color('/bootstrap':label(!'// Empty'),cpi:rgb(192,192,192)),'/bootstrap':horiz([]))),cpi:rgb(192,255,128)),5,cpi:rgb(192,255,128)))).
+'/bootstrap':default(jsCommand([])::jsCommand).
+specialTermConversion(jsCommand(Statements)::jsCommand,'/Functional':const('/javascript':function([logic],Statements))):-builtin:true.
+'/bootstrap':adapter(Statement::'/javascript':statement,jsCommand([Statement])::jsCommand).
+'/bootstrap':signature(inlineTerm(TTerm)::'/javascript':expr,[TTerm::'/bootstrap':typedTerm]).
+'/bootstrap':projection(inlineTerm(TTerm)::'/javascript':expr,'/bootstrap':raised('/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(TTerm::'/bootstrap':typedTerm),cpi:rgb(255,255,255)),5,cpi:rgb(255,255,255)))).
+'/bootstrap':alias(inlineTerm(TTerm)::'/javascript':expr,! (::)).
+'/javascript':hasSpecialRendering(inlineTerm(TTerm)::'/javascript':expr,Str):-'/Functional':eval(jsTerm(TTerm),'/javascript':expr,JS),'/Functional':eval('/javascript':toString('/javascript':call('/javascript':dot('/javascript':varExpr(logic),!concreteValue),[JS])::'/javascript':expr),'/bootstrap':string,Str).
+'/bootstrap':signature(jsExpr(Expr)::Type,[Expr::'/javascript':expr]).
+'/bootstrap':projection(jsExpr(Expr)::Type,'/bootstrap':lowered('/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(Expr::'/javascript':expr),cpi:rgb(192,255,128)),5,cpi:rgb(192,255,128)))).
+specialTermConversion(jsExpr(Expr)::Type,'/Functional':const(Expr)):-builtin:true.
+'/bootstrap':sandbox(jsExpr('/javascript':const(4))::'/bootstrap':statement).

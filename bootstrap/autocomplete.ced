@@ -1,25 +1,25 @@
-signature(autocomplete(Type, Prefix, Completion, Alias)::pred, [Type::type, Prefix::string, Completion::Type, Alias::string]).
-doc(!'Z is a concatenation of strings X and Y', signature(builtin:strcat(X, Y, Z)::pred, [X::string, Y::string, Z::string])).
-signature(defaultRepresentation(TTerm)::pred, [TTerm::typedTerm]).
-autocomplete(Type, Prefix, Completion, Alias):-checkSignature(Internal::InternalType, _), checkAdapter(Internal::InternalType, Completion::Type), aliasString(Internal::InternalType, Alias), builtin:strcat(Prefix, _, Alias), builtin:if(defaultRepresentation(Internal::InternalType), builtin:true, builtin:true), builtin:true.
-doc(!'Provide auto-complete solutions for TTerm, where the user has already entered Prefix.  CompletionString is to contain the full completion term, and Alias will contain the alias to be displayed', signature(cpi:autocomplete(TTerm, Prefix, CompletionString, Alias)::pred, [TTerm::typedTerm, Prefix::string, CompletionString::string, Alias::string])).
-cpi:autocomplete(Desc::Type1, Prefix, CompletionString, Alias):-fixType(Type1::type, Type::type), autocomplete(Type, Prefix, Completion, Alias), descriptorContent(Desc::Type, Content::Type, VarNames), builtin:if(injectContent(Completion, Content, Type), builtin:true, builtin:true), safeParseTerm(Completion::Type, _, InternalArgs), defaultRepresentationForAll(InternalArgs), builtin:termToString(Completion::Type, VarNames, 5, [], CompletionString).
-disabled((cpi:autocomplete(cpi:descriptor(Path, _, _)::Type1, Prefix, CompletionString, Alias):-fixType(Type1::type, Type::type), containingStatementPath(Path, StatementPath), cpi:termAtPath(StatementPath, Statement::statement, VarNames), validateVarNames(Statement, VarNames), checkAdapter(Var::VarType, Completion::Type), listMember(builtin:varName(Var::VarType, Alias), varName, VarNames), builtin:strcat(Prefix, _, Alias), builtin:termToString(Completion::Type, VarNames, 5, [], CompletionString))).
-signature(validateVarNames(Statement, VarNames)::pred, [Statement::statement, VarNames::list(varName)]).
-validateVarNames(_, []):-builtin:true.
-validateVarNames(Statement, [builtin:varName(TVar, _)|Rest]):-safeVarIn(TVar, Statement::statement), validateVarNames(Statement, Rest).
-signature(safeVarIn(TVar, TTerm)::pred, [TVar::typedTerm, TTerm::typedTerm]).
-safeVarIn(Var::VarType, Term::TermType):-builtin:if(builtin:var(Term::TermType), (builtin:equals(Var::VarType, Term::TermType), VarType::type=TermType::type), (safeParseTerm(Term::TermType, _, Args), safeVarInList(Var::VarType, Args))).
-signature(safeVarInList(TVar, TTerms)::pred, [TVar::typedTerm, TTerms::list(typedTerm)]).
-safeVarInList(TVar, [TTerm|_]):-safeVarIn(TVar, TTerm).
-safeVarInList(TVar, [_|TTerms]):-safeVarInList(TVar, TTerms).
-signature(injectContent(Completion, Content, Type)::pred, [Completion::Type, Content::Type, Type::type]).
-injectContent(Completion, Content, Type):-checkSignature(Completion::Type, [FirstArg::ArgType|Args]), checkAdapter(Content::Type, FirstArg::ArgType).
-signature(default(X)::statement, [X::typedTerm]).
+signature(autocomplete(Type,Prefix,Completion,Alias)::pred,[Type::type,Prefix::string,Completion::Type,Alias::string]).
+annotation:comment(signature(builtin:strcat(X,Y,Z)::pred,[X::string,Y::string,Z::string]),!'Z is a concatenation of strings X and Y').
+signature(defaultRepresentation(TTerm)::pred,[TTerm::typedTerm]).
+autocomplete(Type,Prefix,Completion,Alias):-checkSignature(Internal::InternalType,_),checkAdapter(Internal::InternalType,Completion::Type),aliasString(Internal::InternalType,Alias),builtin:strcat(Prefix,_,Alias),builtin:if(defaultRepresentation(Internal::InternalType),builtin:true,builtin:true),builtin:true.
+annotation:comment(signature(cpi:autocomplete(TTerm,Prefix,CompletionString,Alias)::pred,[TTerm::typedTerm,Prefix::string,CompletionString::string,Alias::string]),!'Provide auto-complete solutions for TTerm, where the user has already entered Prefix.  CompletionString is to contain the full completion term, and Alias will contain the alias to be displayed').
+cpi:autocomplete(Desc::Type1,Prefix,CompletionString,Alias):-fixType(Type1::type,Type::type),autocomplete(Type,Prefix,Completion,Alias),descriptorContent(Desc::Type,Content::Type,VarNames),builtin:if(injectContent(Completion,Content,Type,VarNames),builtin:true,builtin:true),safeParseTerm(Completion::Type,_,InternalArgs),defaultRepresentationForAll(InternalArgs),builtin:termToString(Completion::Type,VarNames,5,[],CompletionString).
+disabled((cpi:autocomplete(cpi:descriptor(Path,_,_)::Type1,Prefix,CompletionString,Alias):-fixType(Type1::type,Type::type),containingStatementPath(Path,StatementPath),cpi:termAtPath(StatementPath,Statement::statement,VarNames),validateVarNames(Statement,VarNames),checkAdapter(Var::VarType,Completion::Type),listMember(builtin:varName(Var::VarType,Alias),varName,VarNames),builtin:strcat(Prefix,_,Alias),builtin:termToString(Completion::Type,VarNames,5,[],CompletionString))).
+signature(validateVarNames(Statement,VarNames)::pred,[Statement::statement,VarNames::list(varName)]).
+validateVarNames(_,[]):-builtin:true.
+validateVarNames(Statement,[builtin:varName(TVar,_)|Rest]):-safeVarIn(TVar,Statement::statement),validateVarNames(Statement,Rest).
+signature(safeVarIn(TVar,TTerm)::pred,[TVar::typedTerm,TTerm::typedTerm]).
+safeVarIn(Var::VarType,Term::TermType):-builtin:if(builtin:var(Term::TermType), (builtin:equals(Var::VarType,Term::TermType),VarType::type=TermType::type), (safeParseTerm(Term::TermType,_,Args),safeVarInList(Var::VarType,Args))).
+signature(safeVarInList(TVar,TTerms)::pred,[TVar::typedTerm,TTerms::list(typedTerm)]).
+safeVarInList(TVar,[TTerm|_]):-safeVarIn(TVar,TTerm).
+safeVarInList(TVar,[_|TTerms]):-safeVarInList(TVar,TTerms).
+signature(injectContent(Completion,Content,Type,VarNames)::pred,[Completion::Type,Content::Type,Type::type,VarNames::list(varName)]).
+injectContent(Completion,Content,Type,VarNames):- \+annotation:parentheses((builtin:var(Content::Type),\+varInVarNames(Content::Type,VarNames))),checkSignature(Completion::Type,[FirstArg::ArgType|Args]),checkAdapter(Content::Type,FirstArg::ArgType).
+signature(default(X)::statement,[X::typedTerm]).
 default(X)~>defaultRepresentation(X):-builtin:true.
-default(projection(_::_, horiz([]))::statement).
+default(projection(_::_,horiz([]))::statement).
 default([]::list(_)).
-projection(default(TTerm)::statement, horiz([label(!'Use'), vis(TTerm::typedTerm), label(!'by default')])).
-signature(defaultRepresentationForAll(InternalArgs)::pred, [InternalArgs::list(typedTerm)]).
+projection(default(TTerm)::statement,horiz([label(!'Use'),vis(TTerm::typedTerm),label(!'by default')])).
+signature(defaultRepresentationForAll(InternalArgs)::pred,[InternalArgs::list(typedTerm)]).
 defaultRepresentationForAll([]):-builtin:true.
-defaultRepresentationForAll([Var::Type|TArgs]):-builtin:if((\+builtin:var(Type::type), defaultRepresentation(Var::Type)), builtin:true, builtin:true), defaultRepresentationForAll(TArgs).
+defaultRepresentationForAll([Var::Type|TArgs]):-builtin:if((\+builtin:var(Type::type),defaultRepresentation(Var::Type)),builtin:true,builtin:true),defaultRepresentationForAll(TArgs).
