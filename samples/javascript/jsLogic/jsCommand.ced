@@ -10,5 +10,8 @@ specialTermConversion(jsCommand(Statements)::jsCommand,'/Functional':const('/jav
 '/javascript':hasSpecialRendering(inlineTerm(TTerm)::'/javascript':expr,Str):-'/Functional':eval(jsTerm(TTerm),'/javascript':expr,JS),'/Functional':eval('/javascript':toString('/javascript':call('/javascript':dot('/javascript':varExpr(logic),!concreteValue),[JS])::'/javascript':expr),'/bootstrap':string,Str).
 '/bootstrap':signature(jsExpr(Expr)::Type,[Expr::'/javascript':expr]).
 '/bootstrap':projection(jsExpr(Expr)::Type,'/bootstrap':lowered('/bootstrap':lineBorder('/bootstrap':background('/bootstrap':vis(Expr::'/javascript':expr),cpi:rgb(192,255,128)),5,cpi:rgb(192,255,128)))).
+'/bootstrap':defAtom(jsExpr::'/bootstrap':type).
+'/bootstrap':adapter(Expr::'/javascript':expr,jsExpr(Expr)::jsExpr).
+'/bootstrap':adapter(Symbol::'/javascript':symbol,jsExpr('/javascript':varExpr(Symbol))::jsExpr).
 specialTermConversion(jsExpr(Expr)::Type,'/Functional':const(Expr)):-builtin:true.
 '/bootstrap':sandbox(jsExpr('/javascript':const(4))::'/bootstrap':statement).

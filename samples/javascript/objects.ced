@@ -2,6 +2,7 @@
 '/bootstrap':defAtom(fieldAssignment::'/bootstrap':type).
 '/bootstrap':signature(json(Fields)::expr,[Fields::'/bootstrap':list(fieldAssignment)]).
 '/bootstrap':projection(json(Fields)::expr,cpi:vis(Fields::'/bootstrap':list(fieldAssignment),'/bootstrap':horizontal(123,125,'/bootstrap':label(! (,)),'/bootstrap':label(!'{}')))).
+'/bootstrap':alias(json(Fields)::expr,!'{}').
 '/bootstrap':signature(bind(Field,Value)::fieldAssignment,[Field::expr,Value::expr]).
 '/bootstrap':projection(bind(Field,Value)::fieldAssignment,'/bootstrap':horiz(['/bootstrap':vis(Field::expr),'/bootstrap':label(! (:)),'/bootstrap':vis(Value::expr)])).
 '/bootstrap':adapter(Field::'/bootstrap':string,bind(str(Field),Value)::fieldAssignment).

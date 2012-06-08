@@ -1,0 +1,4 @@
+'/bootstrap':signature(async(Func)::'/javascript':expr,[Func::'/javascript':expr]).
+'/bootstrap':projection(async(Func)::'/javascript':expr,'/bootstrap':horiz(['/bootstrap':label(!async),'/bootstrap':vis(Func::'/javascript':expr)])).
+'/javascript':macro(async(Func)::'/javascript':expr,'/javascript':call('/javascript':dot('/javascript':varExpr('/javascript/jsLogic':logic),!snapshot),[Func])::'/javascript':expr).
+'/javascript':javascript(['/javascript':var(X,async(annotation:shrink('/javascript':function([],[]))))]).
