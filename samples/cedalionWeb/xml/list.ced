@@ -1,0 +1,6 @@
+'/bootstrap':signature(list(First,Rest)::xml,[First::xml,Rest::xml]).
+'/bootstrap':projection(list(First,Rest)::xml,'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':symbol(8718),'/bootstrap':vis(First::xml)]),'/bootstrap':vis(Rest::xml)])).
+'/javascript/statepred':clause(generates(list(First,Rest),Str),'/javascript/statepred':conj(generates(First,FirstStr),'/javascript/statepred':conj(generates(Rest,RestStr),'/javascript/statepred':pred('/Functional':eval('/Functional':applyBinOp('/Functional':const(FirstStr),'/Functional':concat,'/Functional':const(RestStr)),'/bootstrap':string,Str))))).
+'/bootstrap':contextMenuEntry(XML::xml,VNs,Path,!'Insert',cpi:edit(Path,list(_,XML)::xml,VNs)).
+'/bootstrap':contextMenuEntry(list(First,Rest)::xml,VNs,Path,!'Append',cpi:edit(Path,list(First,list(_,Rest))::xml,VNs)).
+'/bootstrap':contextMenuEntry(list(First,Rest)::xml,VNs,Path,!'Delete',cpi:edit(Path,Rest::xml,VNs)).
