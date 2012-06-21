@@ -5,29 +5,29 @@
 '/bootstrap':projection(applyBinOp(Arg1,Op,Arg2)::expr(T),'/bootstrap':horiz(['/bootstrap':vis(Arg1::expr(T)),'/bootstrap':vis(Op::binOp(T)),'/bootstrap':vis(Arg2::expr(T))])).
 '/bootstrap':adapter(Op::binOp(T),applyBinOp(Arg1,Op,Arg2)::expr(T)).
 def(applyBinOp(Arg1,numPlus,Arg2),'/bootstrap':number,where(const(V), (eval(Arg1,'/bootstrap':number,V1),eval(Arg2,'/bootstrap':number,V2),builtin:plus(V1,V2,V)))).
-'/bootstrap':unitTest(eval(applyBinOp(wrap(1),numPlus,wrap(2)),'/bootstrap':number,3)).
+'/bootstrap':unitTest(eval(applyBinOp(const(1),numPlus,const(2)),'/bootstrap':number,3)).
 '/bootstrap':signature(applyBinOpList(L1,Op,L2)::expr('/bootstrap':list(T)),[L1::expr('/bootstrap':list(T)),Op::binOp(T),L2::expr('/bootstrap':list(T))]).
 '/bootstrap':projection(applyBinOpList(L1,Op,L2)::expr('/bootstrap':list(T)),'/bootstrap':horiz(['/bootstrap':vis(L1::expr('/bootstrap':list(T))),'/bootstrap':vis(Op::binOp(T)),'/bootstrap':vis(L2::expr('/bootstrap':list(T)))])).
 '/bootstrap':adapter(Op::binOp(T),applyBinOpList(L1,Op,L2)::expr('/bootstrap':list(T))).
-def(applyBinOpList(L1,Op,L2),'/bootstrap':list(T),where(wrap([unwrap(applyBinOp(wrap(L11),Op,wrap(L21)))|unwrap(applyBinOpList(wrap(L1Prime),Op,wrap(L2Prime)))]), (eval(L1,'/bootstrap':list(T),[L11|L1Prime]),eval(L2,'/bootstrap':list(T),[L21|L2Prime])))).
+def(applyBinOpList(L1,Op,L2),'/bootstrap':list(T),where(const([First|Rest]), (eval(L1,'/bootstrap':list(T),[L11|L1Prime]),eval(L2,'/bootstrap':list(T),[L21|L2Prime]),eval(applyBinOpList(const(L1Prime),Op,const(L2Prime)),'/bootstrap':list(T),Rest),eval(applyBinOp(const(L11),Op,const(L21)),T,First)))).
 def(applyBinOpList(L1,Op,L2),'/bootstrap':list(T),where(const([]), (eval(L1,'/bootstrap':list(T),[]),eval(L2,'/bootstrap':list(T),[])))).
-'/bootstrap':unitTest(eval(applyBinOpList(wrap([1,2,3]),numPlus,applyBinOpList(wrap([4,5,6]),numPlus,wrap([3,2,1]))),'/bootstrap':list('/bootstrap':number),[8,9,10])).
+'/bootstrap':unitTest(eval(applyBinOpList(const([1,2,3]),numPlus,applyBinOpList(const([4,5,6]),numPlus,const([3,2,1]))),'/bootstrap':list('/bootstrap':number),[8,9,10])).
 '/bootstrap':signature(applyBinOpListScalar(List,Op,Scalar)::expr('/bootstrap':list(T)),[List::expr('/bootstrap':list(T)),Op::binOp(T),Scalar::expr(T)]).
 '/bootstrap':projection(applyBinOpListScalar(List,Op,Scalar)::expr('/bootstrap':list(T)),'/bootstrap':horiz(['/bootstrap':vis(List::expr('/bootstrap':list(T))),'/bootstrap':vis(Op::binOp(T)),'/bootstrap':vis(Scalar::expr(T))])).
 '/bootstrap':adapter(Op::binOp(T),applyBinOpListScalar(List,Op,Scalar)::expr('/bootstrap':list(T))).
-def(applyBinOpListScalar(L,Op,Scalar),'/bootstrap':list(T),where(wrap([unwrap(applyBinOp(wrap(L1),Op,Scalar))|unwrap(applyBinOpListScalar(wrap(LPrime),Op,Scalar))]),eval(L,'/bootstrap':list(T),[L1|LPrime]))).
-def(applyBinOpListScalar(L,Op,Scalar),'/bootstrap':list(T),where(wrap([]),eval(L,'/bootstrap':list(T),[]))).
-'/bootstrap':unitTest(eval(applyBinOpListScalar(wrap([1,2,3]),numPlus,wrap(2)),'/bootstrap':list('/bootstrap':number),[3,4,5])).
+def(applyBinOpListScalar(L,Op,Scalar),'/bootstrap':list(T),where(const([First|Rest]), (eval(L,'/bootstrap':list(T),[L1|LPrime]),eval(applyBinOp(const(L1),Op,Scalar),T,First),eval(applyBinOpListScalar(const(LPrime),Op,Scalar),'/bootstrap':list(T),Rest)))).
+def(applyBinOpListScalar(L,Op,Scalar),'/bootstrap':list(T),where(const([]),eval(L,'/bootstrap':list(T),[]))).
+'/bootstrap':unitTest(eval(applyBinOpListScalar(const([1,2,3]),numPlus,const(2)),'/bootstrap':list('/bootstrap':number),[3,4,5])).
 '/bootstrap':signature(applyBinOpSet(S1,Op,S2)::'/bootstrap':set(T),[S1::'/bootstrap':set(T),Op::binOp(T),S2::'/bootstrap':set(T)]).
 '/bootstrap':projection(applyBinOpSet(S1,Op,S2)::'/bootstrap':set(T),'/bootstrap':horiz(['/bootstrap':vis(S1::'/bootstrap':set(T)),'/bootstrap':vis(Op::binOp(T)),'/bootstrap':vis(S2::'/bootstrap':set(T))],cpi:middle)).
 '/bootstrap':adapter(Op::binOp(T),applyBinOpSet(S1,Op,S2)::'/bootstrap':set(T)).
-'/bootstrap':setDef(applyBinOpSet(S1,Op,S2),eset(applyBinOp(wrap(A1),Op,wrap(A2)), ('/bootstrap':member(A1,S1,T),'/bootstrap':member(A2,S2,T))),T).
+'/bootstrap':setDef(applyBinOpSet(S1,Op,S2),eset(applyBinOp(const(A1),Op,const(A2)), ('/bootstrap':member(A1,S1,T),'/bootstrap':member(A2,S2,T))),T).
 '/bootstrap':unitTest('/bootstrap':member(3,applyBinOpSet('/bootstrap':singleton(1),numPlus,'/bootstrap':singleton(2)),'/bootstrap':number)).
 '/bootstrap':signature(reduce(Op,L)::expr(T),[Op::binOp(T),L::expr('/bootstrap':list(T))]).
 '/bootstrap':projection(reduce(Op,L)::expr(T),'/bootstrap':horiz(['/bootstrap':bold('/bootstrap':vis(Op::binOp(T))),'/bootstrap':brackets('/bootstrap':vis(L::expr('/bootstrap':list(T))),40,41)])).
-def(reduce(Op,L),T,where(applyBinOp(wrap(L1),Op,reduce(Op,wrap([L2|LPrime]))),eval(L,'/bootstrap':list(T),[L1,L2|LPrime]))).
-def(reduce(Op,L),T,where(wrap(L1),eval(L,'/bootstrap':list(T),[L1]))).
-'/bootstrap':unitTest(eval(reduce(numPlus,wrap([1,2,3])),'/bootstrap':number,6)).
+def(reduce(Op,L),T,where(applyBinOp(const(L1),Op,reduce(Op,const([L2|LPrime]))),eval(L,'/bootstrap':list(T),[L1,L2|LPrime]))).
+def(reduce(Op,L),T,where(const(L1),eval(L,'/bootstrap':list(T),[L1]))).
+'/bootstrap':unitTest(eval(reduce(numPlus,const([1,2,3])),'/bootstrap':number,6)).
 '/bootstrap':defAtom(minus::binOp('/bootstrap':number)).
 '/bootstrap':projection(minus::binOp('/bootstrap':number),'/bootstrap':label(! (-))).
 def(applyBinOp(A,minus,B),'/bootstrap':number,minus(A,B)).

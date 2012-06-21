@@ -31,3 +31,4 @@ annotation:shrink((hasSpecialRendering(op(Arg1,Op,Arg2)::expr,Str):-'/Functional
 '/bootstrap':defAtom(lte::operator).
 '/bootstrap':projection(lte::operator,'/bootstrap':label(!'<=')).
 '/bootstrap':sandbox(op(const(1),lte,const(2))::expr).
+'/bootstrap':contextMenuEntry(op(Arg1,Op,Arg2)::expr,VNs,Path,!'Swap places',cpi:edit(Path,op(Arg2,Op,Arg1)::expr,VNs)).

@@ -1,7 +1,70 @@
 //DBG = function(x) { document.write("<p>DBG: " + x + "</p>"); };
 //DBG = function(x) { console.log("DBG: " + x); };
+DBG = function(x) { };
+
+// This class represents a data structure where logic programs can be stored and efficiently fetched
+function ClauseTrie() {
+	this.trie = {};
+	this.add = function(key, clause) {
+		var node = this.trie;
+		for(var i = 0; i < key.length; i++) {
+			if(!node[key[i]]) {
+				node[key[i]] = {};
+			}
+			node = node[key[i]];
+			if(!node["*"]) {
+				node["*"] = [];
+			}
+			node["*"].unshift(clause);
+		}
+		if(!node["!"]) {
+			node["!"] = [];
+		}
+		node["!"].unshift(clause);
+	};
+	this.applyClauses = function(logic, term, next) {
+		//DBG("Goal: " + logic.termToString(term));
+		var node = this.trie;
+		var subterm = term;
+		while(subterm instanceof Array) {
+			//DBG("Subterm: " + logic.termToString(subterm));
+			var nextNode = node[subterm[0]];
+			if(!nextNode) {
+				//DBG("Has next node");
+				break;
+			}
+			var clauses = node["!"];
+			//DBG("testing ! " + (clauses && clauses.length) || "None");
+			if(clauses) {
+				//DBG("Processing !");
+				for(var i = 0; i < clauses.length; i++) {
+					logic.push(logic.clauseFunction(clauses[i], term, next));
+				}
+			}
+			node = nextNode;
+			//DBG("Advanced to nextNode");
+			if(subterm.length > 1) {
+				subterm = logic.realValue(subterm[1]);
+				//DBG("advancing subterm: " + logic.termToString(subterm));
+			} else {
+				//DBG("breaking");
+				break;
+			}
+		}
+		var clauses = node["*"];
+		//DBG("testing * " + (clauses && clauses.length) || "None");
+		if(clauses) {
+			//DBG("Processing");
+			for(var i = 0; i < clauses.length; i++) {
+				logic.push(logic.clauseFunction(clauses[i], term, next));
+			}
+		}
+		//DBG("done");
+	};
+}
 
 function LogicProgram() {
+	this.trie = new ClauseTrie();
 }
 
 LogicProgram.prototype.addToKey = function(key, clause) {
@@ -12,17 +75,21 @@ LogicProgram.prototype.addToKey = function(key, clause) {
 	}
 };
 
-LogicProgram.prototype.add = function(index, clause) {
+/*LogicProgram.prototype.add = function(index, clause) {
 	// A key to match longer indexes matching this
 	this.addToKey(index.join(":") + ":*", clause);
 	// For every prefix (including full), add a key to match shorter or equal indexes
 	for(var i = 2; i <= index.length; i+=2) {
 		this.addToKey(index.slice(0, i).join(":"), clause);
 	}
+}*/
+
+LogicProgram.prototype.add = function(index, clause) {
+	this.trie.add(index, clause);
 }
 
 LogicProgram.prototype.addBuiltin = function(name, arity, func) {
-	this.add(["builtin#" + name, arity], function(logic, term, next) {
+	this.add(["builtin#" + name], function(logic, term, next) {
 		var termCopy = [];
 		for(var i = 0; i < term.length; i++) {
 			termCopy.push(logic.realValue(term[i]));
@@ -123,7 +190,7 @@ Logic.prototype.createIndex = function(term) {
 	index = [];
 	while(term instanceof Array) {
 		index.push(term[0]);
-		index.push(term.length-1);
+		//index.push(term.length-1);
 		if(term.length > 1) {
 			term = this.realValue(term[1]);
 		} else {
@@ -133,8 +200,18 @@ Logic.prototype.createIndex = function(term) {
 	return index;
 }
 
-Logic.prototype.call = function(term, next) {
-	//DBG("[" + this.stack.length + "] Call: " + this.termToString(term));
+Logic.prototype.executeClausesForFullIndex = function(index, term, next) {
+	// Match this index with longer or equal clause indexes
+	this.executeClauses(this.program[index.join(":")], term, next);
+};
+Logic.prototype.executeClausesForPartialIndex = function(index, term, next) {
+	// Match this index with shorter clause indexes
+	for(var i = 2; i < index.length; i+=2) {
+		this.executeClauses(this.program[index.slice(0, i).join(":") + ":*"], term, next);
+	}
+};
+/*Logic.prototype.call = function(term, next) {
+	DBG("[" + this.stack.length + "] Call: " + this.termToString(term));
 	this.recentCalls.push("[" + this.stack.length + "] Call: " + this.termToString(term));
 	if(this.recentCalls.length > 100) {
 		this.recentCalls.splice(0, this.recentCalls.length - 100);
@@ -145,14 +222,22 @@ Logic.prototype.call = function(term, next) {
 	var index = this.createIndex(term);
 	// Check that the predicate is defined
 	if(!this.program[index.slice(0, 2).join(":")]) {
+		//console.log(this.recentCalls.join("\n>> "));
 		throw "Undefined Predicate: " + index.slice(0, 2).join("/");
 	}
-	// Match this index with longer or equal clause indexes
-	this.executeClauses(this.program[index.join(":")], term, next);
-	// Match this index with shorter clause indexes
-	for(var i = 2; i < index.length; i+=2) {
-		this.executeClauses(this.program[index.slice(0, i).join(":") + ":*"], term, next);
+	this.executeClausesForFullIndex(index, term, next);
+	this.executeClausesForPartialIndex(index, term, next);
+
+};*/
+Logic.prototype.call = function(term, next) {
+	//DBG("[" + this.stack.length + "] Call: " + this.termToString(term));
+	this.recentCalls.push("[" + this.stack.length + "] Call: " + this.termToString(term));
+	if(this.recentCalls.length > 20) {
+		this.recentCalls.splice(0, this.recentCalls.length - 20);
 	}
+	term = this.realValue(term);
+	this.program.trie.applyClauses(this, term, next);
+
 };
 Logic.prototype.executeClauses = function(clauses, term, next) {
 	if(!clauses)
@@ -363,8 +448,8 @@ Logic.prototype.runProcedure = function(proc) {
 			CMD.getValue()(logic);
 		});
 	} catch(e) {
-		//console.log(e);
-		//console.log("Recent calls: " + this.recentCalls.join("\n"));
+		console.log(e);
+		console.log("Recent calls: " + this.recentCalls.join("\n"));
 		var trace = this.ctx("tracing").getValue(this);
 		if(typeof(trace)=="function") {
 			trace(e.toString());
@@ -529,23 +614,26 @@ logic.program.addBuiltin("var", 1, function(logic, term) {
 	var arg = term[1][1];
 	if(arg instanceof Variable)
 		arg = arg.getValue();
-	return arg instanceof Variable;
+	var ret = arg instanceof Variable;
+	return ret;
 });
 
 logic.program.addBuiltin("string", 1, function(logic, term) {
 	// The argument is a typedTerm (::).  We only care about its first element.
-	var arg = term[1][0];
+	var arg = term[1][1];
 	if(arg instanceof Variable)
 		arg = arg.getValue();
-	return typeof(arg) == "string";
+	var ret = typeof(arg) == "string";
+	return ret;
 });
 
 logic.program.addBuiltin("number", 1, function(logic, term) {
 	// The argument is a typedTerm (::).  We only care about its first element.
-	var arg = term[1][0];
+	var arg = term[1][1];
 	if(arg instanceof Variable)
 		arg = arg.getValue();
-	return typeof(arg) == "number";
+	var ret = typeof(arg) == "number";
+	return ret;
 });
 
 logic.program.addBuiltin("strcat", 3, function(logic, term) {
@@ -688,6 +776,11 @@ function termEquals(a, b) {
 	if(b instanceof Variable) {
 		b = b.getValue();
 	}
+	if(a instanceof Variable) {
+		var ret = (a === b);
+		//console.log(ret);
+		return ret;
+	}
 	if(a instanceof Array) {
 		if(!(b instanceof Array)) {
 			return false;
@@ -749,4 +842,19 @@ logic.program.addBuiltin("findall", 4, function(logic, term) {
 	});
 	return true;
 });
+
+logic.program.addBuiltin("succ", 2, function(logic, term) {
+	// If the first argument is a number, set the other argument to the folowing number
+	if(typeof(term[1]) == "number") {
+		term[2] = term[1] + 1;
+	} else {
+		term[1] = term[2] - 1;
+	}
+	return true;
+});
+
+logic.program.addBuiltin("throw", 1, function(logic, term) {
+	throw Error(logic.termToString(term[1]));
+});
+
 
