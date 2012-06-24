@@ -33,8 +33,6 @@ cpi:visualizeDescriptor(cpi:immediateDescriptor(Term,VarNames)::Type1,ProjType,V
 subDescriptors(cpi:immediateDescriptor(Term,VarNames)::Type,BeforeFirst,[SubTerm::SubType|TArgs],[cpi:immediateDescriptor(SubTerm,VarNames1)::SubType|SubDescs]):-true(builtin:succ(BeforeFirst,First)),true(selectVarNamesFor(SubTerm::SubType,VarNames,VarNames1)),true(subDescriptors(cpi:immediateDescriptor(Term,VarNames)::Type,First,TArgs,SubDescs)).
 isDescriptor(cpi:immediateDescriptor(_,_)::_):-builtin:true.
 isDescriptor(cpi:descriptor(_,_,_)::_):-builtin:true.
-descriptorContent(cpi:immediateDescriptor(Term,VarNames)::Type,Term::Type,VarNames):-builtin:true.
-descriptorContent(cpi:descriptor(Path,_,Markers)::Type,Term::Type,VarNames):-cpi:termAtPath(Path,Term::Type,VarNames).
 signature(fixType(TTerm1,TTerm2)::pred,[TTerm1::typedTerm,TTerm2::typedTerm]).
 fixType(TTerm1,TTerm2):-builtin:if(builtin:compound(TTerm1),builtin:if(isDescriptor(TTerm1),descriptorContent(TTerm1,TTerm2,_), (builtin:parseTerm(TTerm1,Func,Args),fixTypes(Args,FixedArgs),builtin:parseTerm(TTerm2,Func,FixedArgs))),builtin:true).
 fixTypes([],[]):-builtin:true.

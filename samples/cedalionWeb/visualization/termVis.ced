@@ -12,7 +12,8 @@ visualizeString(Str::'/bootstrap':string,'/bootstrap':label(Str)):-builtin:true.
 propagateImmediateDescriptors([],_,[]):-builtin:true.
 annotation:shrink((propagateImmediateDescriptors([Term::Type|TTerms],VNs,[cpi:immediateDescriptor(Term,VNs)::Type|TTermsPrime]):-propagateImmediateDescriptors(TTerms,VNs,TTermsPrime))).
 annotation:shrink((propagateDescriptor(cpi:immediateDescriptor(Term,VNs)::Type,PropTerm::Type,VNs):-builtin:parseTerm(Term::Type,Name,TArgs),propagateImmediateDescriptors(TArgs,VNs,TArgsPrime),builtin:parseTerm(PropTerm::Type,Name,TArgsPrime))).
-visualizeCompound(TDesc,Mode,Vis):-propagateDescriptor(TDesc,TTerm,VNs),'/bootstrap':visualizeTerm(TTerm,Mode,Vis).
+'/bootstrap':signature(builtin:once(Goal)::'/bootstrap':pred,[Goal::'/bootstrap':pred]).
+visualizeCompound(TDesc,Mode,Vis):-propagateDescriptor(TDesc,TTerm,VNs),builtin:once('/bootstrap':visualizeTerm(TTerm,Mode,Vis)).
 annotation:shrink((visualizeDescriptor(cpi:immediateDescriptor(Term,VNs)::Type,Mode,Vis):-removeDescriptorsFromType(Term::Type,TTerm),builtin:if(builtin:var(TTerm),visualizeVar(TTerm,VNs,Vis),builtin:if(builtin:number(TTerm),visualizeNumber(TTerm,Vis),builtin:if(builtin:string(TTerm),visualizeString(TTerm,Vis), (TTerm=TermPrime::TypePrime,visualizeCompound(cpi:immediateDescriptor(TermPrime,VNs)::TypePrime,Mode,Vis))))))).
 annotation:shrink('/javascript/statepred':clause('/cedalionWeb/xml':generates(toHTML(cpi:vis(Desc::Type,Mode)),Str),'/javascript/statepred':conj('/javascript/statepred':pred(visualizeDescriptor(Desc::Type,Mode,Vis)),'/cedalionWeb/xml':generates(toHTML(Vis),Str)))).
 '/cedalionWeb/xml':macro(toHTML('/bootstrap':vis(TDesc)),toHTML(cpi:vis(TDesc,cpi:default))).
