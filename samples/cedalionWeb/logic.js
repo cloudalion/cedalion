@@ -99,7 +99,8 @@ LogicProgram.prototype.addBuiltin = function(name, arity, func) {
 		}
 	});
 };
-function Logic(program) {
+function Logic(arg) {
+	var program = arg ? ((arg instanceof LogicProgram) ? arg : arg.program) : undefined;
 	this.stack = [];
 	this.recentCalls = [];
 	this.programIsLoaded = false;
@@ -109,6 +110,12 @@ function Logic(program) {
 		this.program = new LogicProgram();
 	}
 	this.contexts = {};
+	if(arg instanceof Logic) {
+		for(var ctx in arg.contexts) {
+			this.contexts[ctx] = new Variable();
+			this.contexts[ctx].bind(arg.contexts[ctx].getValue(arg), this);
+		}
+	}
 }
 Logic.prototype.push = function(f) {
 	this.stack.push(f);
@@ -500,8 +507,8 @@ Logic.prototype.snapshot = function(func) {
 			vars[i].bind(vals[i], logic);
 		}
 
-		// Build argument list
-		var result = func.apply(null, arguments);
+		// Call the original function
+		var result = func.apply(this, arguments);
 		logic.resume(stackLevel); // Backtrack away
 		return result;
 	}
@@ -603,9 +610,7 @@ logic.program.addBuiltin("modulus", 3, function(logic, term) {
 
 logic.program.addBuiltin("compound", 1, function(logic, term) {
 	// The argument is a typedTerm (::).  We only care about its first element.
-	var arg = term[1][1];
-	if(arg instanceof Variable)
-		arg = arg.getValue();
+	var arg = logic.realValue(term[1][1]);
 	return arg instanceof Array;
 });
 

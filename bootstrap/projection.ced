@@ -34,6 +34,7 @@ subDescriptors(cpi:immediateDescriptor(Term,VarNames)::Type,BeforeFirst,[SubTerm
 isDescriptor(cpi:immediateDescriptor(_,_)::_):-builtin:true.
 isDescriptor(cpi:descriptor(_,_,_)::_):-builtin:true.
 signature(fixType(TTerm1,TTerm2)::pred,[TTerm1::typedTerm,TTerm2::typedTerm]).
+signature(isDescriptor(TTerm1)::pred,[TTerm1::typedTerm]).
 fixType(TTerm1,TTerm2):-builtin:if(builtin:compound(TTerm1),builtin:if(isDescriptor(TTerm1),descriptorContent(TTerm1,TTerm2,_), (builtin:parseTerm(TTerm1,Func,Args),fixTypes(Args,FixedArgs),builtin:parseTerm(TTerm2,Func,FixedArgs))),builtin:true).
 fixTypes([],[]):-builtin:true.
 fixTypes([TTerm1|Args],[TTerm2|FixedArgs]):-fixType(TTerm1,TTerm2),fixTypes(Args,FixedArgs).

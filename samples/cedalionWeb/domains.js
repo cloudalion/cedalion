@@ -26,8 +26,6 @@ module.exports = function(couchURL) {
 		});
 		// Verify the database
 		DI.on([domName + "_logic", domName + "_info", "__logicCode", domName + "_code"], function(DI) {
-			//'/javascript/statepred':whenever(verifyDatabaseRev(DB,Code,Rev),Action,Finally)
-			console.log(1);
 			var pred = ["cjs#verifyDatabaseRev",
 				DI[domName + "_info"].db,
 				DI["__logicCode"] + DI[domName + "_code"],
