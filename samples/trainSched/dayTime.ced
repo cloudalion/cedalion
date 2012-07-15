@@ -1,0 +1,20 @@
+'/bootstrap':signature(dayNum(Day,Number)::'/bootstrap':statement,[Day::dayOfWeek,Number::'/bootstrap':number]).
+'/bootstrap':projection(dayNum(Day,Number)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':vis(Day::dayOfWeek),'/bootstrap':label(!'is day number'),'/bootstrap':vis(Number::'/bootstrap':number)])).
+dayNum(monday,0).
+dayNum(tuesday,1).
+dayNum(wednesday,2).
+dayNum(thursday,3).
+dayNum(friday,4).
+dayNum(saturday,5).
+dayNum(sunday,6).
+'/bootstrap':defAtom(dayTime::'/bootstrap':type).
+'/bootstrap':signature(dayTime(Day,Time)::dayTime,[Day::dayOfWeek,Time::timeOfDay]).
+'/bootstrap':projection(dayTime(Day,Time)::dayTime,'/bootstrap':horiz(['/bootstrap':vis(Day::dayOfWeek),'/bootstrap':vis(Time::timeOfDay)])).
+'/bootstrap':default(dayTime(monday,time(7,0))::dayTime).
+'/bootstrap':signature(dayTimeInMinutes(DayTime)::'/Functional':expr('/bootstrap':number),[DayTime::dayTime]).
+annotation:shrink((dayNum(Day,DayNumber)~>'/Functional':def(dayTimeInMinutes(dayTime(Day,time(H,M))),'/bootstrap':number,'/Functional':applyBinOp('/Functional':applyBinOp(annotation:parentheses('/Functional':applyBinOp('/Functional':applyBinOp('/Functional':const(DayNumber),'/Functional':times,'/Functional':const(24)),'/Functional':numPlus,'/Functional':const(H))),'/Functional':times,'/Functional':const(60)),'/Functional':numPlus,'/Functional':const(M))))).
+'/bootstrap':signature(minutesToDayTime(Minutes,DayTime)::'/bootstrap':pred,[Minutes::'/bootstrap':number,DayTime::dayTime]).
+annotation:shrink((dayNum(Day,DayNumber)~>annotation:shrink((minutesToDayTime(Minutes,dayTime(Day,time(H,M))):-'/Functional':eval(dayTimeInMinutes(dayTime(Day,time(0,0))),'/bootstrap':number,DayStart),'/Functional':ge('/Functional':const(Minutes),'/Functional':const(DayStart),'/bootstrap':number),'/Functional':gt('/Functional':applyBinOp('/Functional':const(DayStart),'/Functional':numPlus,'/Functional':applyBinOp('/Functional':const(24),'/Functional':times,'/Functional':const(60))),'/Functional':const(Minutes),'/bootstrap':number),'/Functional':eval('/Functional':idiv(annotation:parentheses('/Functional':applyBinOp('/Functional':const(Minutes),'/Functional':minus,'/Functional':const(DayStart))),'/Functional':const(60)),'/bootstrap':number,H),'/Functional':eval('/Functional':modulus(annotation:parentheses('/Functional':applyBinOp('/Functional':const(Minutes),'/Functional':minus,'/Functional':const(DayStart))),'/Functional':const(60)),'/bootstrap':number,M))))).
+'/bootstrap':unitTest(minutesToDayTime(650,dayTime(monday,time(10,50)))).
+'/bootstrap':unitTest(minutesToDayTime(3000,dayTime(wednesday,time(2,0)))).
+'/bootstrap':unitTest('/Functional':eval(dayTimeInMinutes(dayTime(wednesday,time(2,48))),'/bootstrap':number,3048)).

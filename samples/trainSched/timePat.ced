@@ -1,0 +1,32 @@
+'/bootstrap':defAtom(colon::'/parsing':token).
+'/bootstrap':projection(colon::'/parsing':token,'/bootstrap':label(! (:))).
+'/parsing':tokenDef(colon,'/parsing':char(! (:))).
+'/parsing':prod(decimal(NumOnLeft,Num),'/bootstrap':number,'/parsing':if('/parsing':bind('/parsing':charRange(!'0',!'9'),[DigitCode]),decimal('/Functional':applyBinOp('/Functional':applyBinOp(NumOnLeft,'/Functional':times,'/Functional':const(10)),'/Functional':numPlus,annotation:parentheses('/Functional':applyBinOp('/Functional':const(DigitCode),'/Functional':minus,'/parsing':charCode(!'0')))),Num),'/parsing':pred(Num::'/Functional':expr('/bootstrap':number)=NumOnLeft::'/Functional':expr('/bootstrap':number)))).
+'/bootstrap':signature(decimal(Num)::'/parsing':token,[Num::'/bootstrap':number]).
+'/bootstrap':signature(decimal(NumOnLeft,Num)::'/parsing':pattern('/bootstrap':number),[NumOnLeft::'/Functional':expr('/bootstrap':number),Num::'/Functional':expr('/bootstrap':number)]).
+'/parsing':tokenDef(decimal(Num),'/parsing':follow('/parsing':bind('/parsing':charRange(!'0',!'9'),[DigitCode]),'/parsing':follow(decimal('/Functional':applyBinOp('/Functional':const(DigitCode),'/Functional':minus,'/parsing':charCode(!'0')),NumExpr),'/parsing':pred('/Functional':eval(NumExpr,'/bootstrap':number,Num))))).
+'/bootstrap':unitTest('/parsing':parseString('/parsing':tokens([decimal(123),decimal(456),decimal(789)]),!'123 456 789')).
+'/bootstrap':signature(timePat(Time)::'/parsing':pattern('/parsing':token),[Time::timeOfDay]).
+'/parsing':prod(timePat(time(H,M)),'/parsing':token,'/parsing':follow('/parsing':follow('/parsing':follow('/parsing':terminal(decimal(H)),'/parsing':terminal(colon)),'/parsing':terminal(decimal(M))),'/parsing':opt('/parsing':terminal('/parsing':word(!am))))).
+'/parsing':prod(timePat(time(H,M)),'/parsing':token,'/parsing':follow('/parsing':follow('/parsing':follow('/parsing':follow('/parsing':terminal(decimal(HPrime)),'/parsing':terminal(colon)),'/parsing':terminal(decimal(M))),'/parsing':terminal('/parsing':word(!pm))),'/parsing':pred('/Functional':eval('/Functional':applyBinOp('/Functional':const(HPrime),'/Functional':numPlus,'/Functional':const(12)),'/bootstrap':number,H)))).
+'/bootstrap':unitTest('/parsing':lexParseString(timePat(time(3,30)),!'3:30')).
+'/bootstrap':unitTest('/parsing':lexParseString(timePat(time(3,30)),!'3 : 30')).
+'/bootstrap':signature(dayPat(Day)::'/parsing':pattern('/parsing':token),[Day::dayOfWeek]).
+'/parsing':prod(dayPat(monday),'/parsing':token,'/parsing':terminal('/parsing':word(!monday))).
+'/parsing':prod(dayPat(tuesday),'/parsing':token,'/parsing':terminal('/parsing':word(!tuesday))).
+'/parsing':prod(dayPat(wednesday),'/parsing':token,'/parsing':terminal('/parsing':word(!wednesday))).
+'/parsing':prod(dayPat(thursday),'/parsing':token,'/parsing':terminal('/parsing':word(!thursday))).
+'/parsing':prod(dayPat(friday),'/parsing':token,'/parsing':terminal('/parsing':word(!friday))).
+'/parsing':prod(dayPat(saturday),'/parsing':token,'/parsing':terminal('/parsing':word(!saturday))).
+'/parsing':prod(dayPat(sunday),'/parsing':token,'/parsing':terminal('/parsing':word(!sunday))).
+'/bootstrap':unitTest('/parsing':lexParseString(dayPat(sunday),!sunday)).
+'/bootstrap':signature(dayTimePat(Now,DayTime)::'/parsing':pattern('/parsing':token),[Now::dayTime,DayTime::dayTime]).
+'/parsing':prod(dayTimePat(V6,dayTime(Day,Time)),'/parsing':token,'/parsing':follow(dayPat(Day),timePat(Time))).
+'/parsing':prod(dayTimePat(V11,dayTime(Day,Time)),'/parsing':token,'/parsing':follow(timePat(Time),dayPat(Day))).
+'/parsing':prod(dayTimePat(dayTime(Today,V17),dayTime(Today,Time)),'/parsing':token,'/parsing':follow('/parsing':opt(annotation:parentheses('/parsing':follow('/parsing':terminal('/parsing':word(!today)),'/parsing':opt('/parsing':terminal('/parsing':word(!at)))))),timePat(Time))).
+'/parsing':prod(dayTimePat(dayTime(Today,V22),dayTime(Today,Time)),'/parsing':token,'/parsing':follow(timePat(Time),'/parsing':terminal('/parsing':word(!today)))).
+'/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(wednesday,time(16,32))),!'today 4:32 pm')).
+'/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(friday,time(16,32))),!'friday 4:32 pm')).
+'/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(friday,time(9,32))),!'friday 9:32 am')).
+'/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(friday,time(9,32))),!'9:32 am friday')).
+'/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(wednesday,time(9,32))),!'9:32 today')).

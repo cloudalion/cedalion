@@ -13,7 +13,7 @@ module.exports = function(couchURL) {
 		if(DI[domName + "_logic"]) {
 			return;
 		}
-		DI.httpGet(couchURL + "/static/" + domName + "/cedalion.js", domName + "_code");
+		DI.httpGet("http://" + domName + "/cedalion.js", domName + "_code");
 		DI.httpGetJSON(couchURL + "/static/" + domName, domName + "_info");
 		
 		// Generate the logic object

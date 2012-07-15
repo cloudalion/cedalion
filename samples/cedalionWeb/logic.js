@@ -672,7 +672,7 @@ logic.program.addBuiltin("charCodes", 2, function(logic, term) {
 		var list = term[2];
 		while(list[0] == ".") {
 			term[1] += String.fromCharCode(logic.realValue(list[1]));
-			list = list[2];
+			list = logic.realValue(list[2]);
 		}
 	}
 	return true;

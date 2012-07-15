@@ -1,0 +1,2 @@
+'/bootstrap':signature(openPage(Page)::'/javascript/jsLogic':procedure,[Page::'/cedalionWeb/xml':xml]).
+'/javascript/jsLogic':procedure(openPage(Page),'/javascript/jsLogic':jsCommand(['/javascript/jsLogic':runProcedure('/javascript/statepred':whenever('/cedalionWeb/xml':generates(Page,HTML),'/javascript/jsLogic':jsCommand(['/javascript':exprStatement('/javascript':call('/javascript':dot('/javascript':call('/javascript':varExpr('/javascript/jsLogic':jQuery),['/javascript':str(!'#main')]),!html),['/javascript/jsLogic':inlineTerm(HTML::'/bootstrap':string)]))])))])).

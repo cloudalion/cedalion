@@ -1,0 +1,17 @@
+'/bootstrap':defAtom(token::'/bootstrap':type).
+'/bootstrap':signature(token(Token)::pattern('/bootstrap':number),[Token::token]).
+'/bootstrap':signature(tokens(Tokens)::pattern('/bootstrap':number),[Tokens::'/bootstrap':list(token)]).
+prod(tokens([Token]),'/bootstrap':number,token(Token)).
+prod(tokens([Token|Tokens]),'/bootstrap':number,follow(follow(token(Token),repeatMax(char(!' '))),tokens(Tokens))).
+'/bootstrap':projection(tokenDef(Token,Pattern)::'/bootstrap':statement,'/bootstrap':horiz(['/bootstrap':label(!token),'/bootstrap':vis(Token::token),'/bootstrap':label(!'::='),'/bootstrap':vis(Pattern::pattern('/bootstrap':number))])).
+'/bootstrap':signature(tokenDef(Token,Pattern)::'/bootstrap':statement,[Token::token,Pattern::pattern('/bootstrap':number)]).
+tokenDef(Token,Pattern)~>prod(token(Token),'/bootstrap':number,Pattern).
+'/bootstrap':signature(word(W)::token,[W::'/bootstrap':string]).
+'/bootstrap':projection(word(W)::token,'/bootstrap':horiz(['/bootstrap':label(!'\''),'/bootstrap':vis(W::'/bootstrap':string),'/bootstrap':label(!'\'')])).
+'/bootstrap':adapter(W::'/bootstrap':string,word(W)::token).
+'/bootstrap':adapter(W::'/bootstrap':string,terminal(word(W))::pattern(token)).
+tokenDef(word(Str),follow(bind(oneOrMoreMax(annotation:parentheses(alt(charRange(!a,!z),charRange(!'A',!'Z')))),StrPrime),pred(builtin:charCodes(Str,StrPrime)))).
+'/bootstrap':unitTest(parseString(tokens([word(!hello),word(!world)]),!'hello world')).
+'/bootstrap':signature(lexParseString(Pattern,String)::'/bootstrap':pred,[Pattern::pattern(token),String::'/bootstrap':string]).
+'/bootstrap':projection(lexParseString(Pattern,String)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(Pattern::pattern(token)),'/bootstrap':label(!'parses the tokens of'),'/bootstrap':vis(String::'/bootstrap':string)])).
+lexParseString(Pattern,String):-parseString(tokens(Tokens),String),parse(Pattern,Tokens,token,[]).
