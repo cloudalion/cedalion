@@ -1,19 +1,16 @@
 '/bootstrap':defAtom(train::'/bootstrap':type).
 '/bootstrap':defAtom(departure::'/bootstrap':type).
 '/bootstrap':defAtom(station::'/bootstrap':type).
-'/bootstrap':signature(trainDef(Name,Departures,Stations)::train,[Name::'/bootstrap':string,Departures::'/bootstrap':list(departure),Stations::'/bootstrap':list(station)]).
-'/bootstrap':projection(trainDef(Name,Departures,Stations)::train,'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!train),'/bootstrap':vis(Name::'/bootstrap':string)]),'/bootstrap':horiz(['/bootstrap':label(!'    departures:'),cpi:vis(Departures::'/bootstrap':list(departure),'/bootstrap':vert)]),'/bootstrap':horiz(['/bootstrap':label(!'    stations:'),cpi:vis(Stations::'/bootstrap':list(station),'/bootstrap':vert)])])).
+'/bootstrap':sigProj(trainDef(Name,Departures,Stations)::train,[Name::'/bootstrap':string,Departures::'/bootstrap':list(departure),Stations::'/bootstrap':list(station)],'/bootstrap':horiz(['/bootstrap':label(!'Train Line:'),'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':vis(Name::'/bootstrap':string)]),'/bootstrap':horiz(['/bootstrap':label(!'Departures:'),cpi:vis(Departures::'/bootstrap':list(departure),'/bootstrap':vertical('/bootstrap':symbol(8729),'/bootstrap':color('/bootstrap':label(!'<none>'),cpi:rgb(192,192,192)),'/bootstrap':horiz([])))]),'/bootstrap':horiz(['/bootstrap':label(!'Stations:'),cpi:vis(Stations::'/bootstrap':list(station),'/bootstrap':vertical('/bootstrap':symbol(8729),'/bootstrap':color('/bootstrap':label(!'<none>'),cpi:rgb(192,192,192)),'/bootstrap':horiz([])))])])])).
 '/bootstrap':defAtom(timeOfDay::'/bootstrap':type).
 '/bootstrap':signature(daily(Time)::departure,[Time::timeOfDay]).
 '/bootstrap':projection(daily(Time)::departure,'/bootstrap':horiz(['/bootstrap':label(!'daily, at'),'/bootstrap':vis(Time::timeOfDay)])).
-'/bootstrap':default(daily(time(7,0))::departure).
-'/cedalionWeb/visualization':suggestion(daily(time(7,0))::departure).
+'/bootstrap':default(departure(daily,at(timeStr(!'7:00')))::departure).
 '/bootstrap':signature(time(H,M)::timeOfDay,[H::'/bootstrap':number,M::'/bootstrap':number]).
 '/bootstrap':projection(time(H,M)::timeOfDay,'/bootstrap':horiz(['/bootstrap':vis(H::'/bootstrap':number),'/bootstrap':label(! (:)),'/bootstrap':vis(M::'/bootstrap':number)])).
 '/bootstrap':defAtom(dayOfWeek::'/bootstrap':type).
 '/bootstrap':signature(weekly(DayOfWeek,Time)::departure,[DayOfWeek::dayOfWeek,Time::timeOfDay]).
 '/bootstrap':projection(weekly(DayOfWeek,Time)::departure,'/bootstrap':horiz(['/bootstrap':label(!each),'/bootstrap':vis(DayOfWeek::dayOfWeek),'/bootstrap':label(!at),'/bootstrap':vis(Time::timeOfDay)])).
-'/cedalionWeb/visualization':suggestion(weekly(monday,time(7,0))::departure).
 '/bootstrap':defAtom(monday::dayOfWeek).
 '/bootstrap':projection(monday::dayOfWeek,'/bootstrap':label(!'Monday')).
 '/bootstrap':defAtom(tuesday::dayOfWeek).
@@ -32,5 +29,21 @@
 '/bootstrap':signature(station(Station,Time)::station,[Station::'/bootstrap':string,Time::'/bootstrap':number]).
 '/bootstrap':projection(station(Station,Time)::station,'/bootstrap':horiz(['/bootstrap':vis(Station::'/bootstrap':string),'/bootstrap':label(!in),'/bootstrap':vis(Time::'/bootstrap':number),'/bootstrap':label(!minutes)])).
 '/bootstrap':default(station(!'<station>',0)::station).
-'/bootstrap':disabled('/javascript/jsLogic':procedure(cjs:webMain,'/javascript/jsLogic':jsCommand(['/javascript/jsLogic':runProcedure('/javascript/statepred':whenever('/cedalionWeb/xml':generates('/cedalionWeb/visualization':edit(trainDef(!'Orient Express',[daily(time(3,20)),weekly(wednesday,time(5,30))],[station(!'London',0),station(!'Paris',60),station(!'Prague',120),station(!'Delhi',300),station(!'Bejing',400),station(!'Tokyo',500)])::train,[],Modified::train,'/javascript/jsLogic':jsCommand(['/javascript/jsLogic':runProcedure('/javascript/jsLogic':foreach(toStruct(Modified::train,TrainPrime),'/javascript/jsLogic':jsCommand(['/javascript':exprStatement('/javascript':call('/javascript':dot('/javascript':varExpr('/javascript/jsLogic':console),!log),['/javascript/jsLogic':inlineTerm(TrainPrime::'/javascript/jsLogic':jsExpr)]))])))])),S),'/javascript/jsLogic':jsCommand(['/javascript':assign('/javascript':dot('/javascript':call('/javascript':dot('/javascript':varExpr('/cedalionWeb/visualization':document),!getElementById),['/javascript':str(!main)]),!innerHTML),'/javascript/jsLogic':inlineTerm(S::'/bootstrap':string))])))]))).
-'/bootstrap':sandbox(trainDef(!'Orient Express',[daily(time(3,20)),weekly(wednesday,time(5,30))],[station(!'London',0),station(!'Paris',60),station(!'Prague',120),station(!'Delhi',300),station(!'Bejing',400),station(!'Tokyo',500)])::train).
+'/bootstrap':defAtom(dayDesc::'/bootstrap':type).
+'/bootstrap':defAtom(timeDesc::'/bootstrap':type).
+'/bootstrap':sigProj(departure(DayDesc,TimeDesc)::departure,[DayDesc::dayDesc,TimeDesc::timeDesc],'/bootstrap':horiz(['/bootstrap':vis(DayDesc::dayDesc),'/bootstrap':vis(TimeDesc::timeDesc)])).
+'/cedalionWeb/visualization':isSuggestion(departure(DayDesc,TimeDesc)::departure):-'/cedalionWeb/visualization':isSuggestion(DayDesc::dayDesc),'/cedalionWeb/visualization':isSuggestion(TimeDesc::timeDesc).
+'/bootstrap':defAtom(daily::dayDesc).
+'/bootstrap':projection(daily::dayDesc,'/bootstrap':label(!'Daily')).
+'/cedalionWeb/visualization':suggestion(daily::dayDesc).
+'/bootstrap':signature(at(Time)::timeDesc,[Time::timeOfDay]).
+'/bootstrap':projection(at(Time)::timeDesc,'/bootstrap':horiz(['/bootstrap':label(!at),'/bootstrap':vis(Time::timeOfDay)])).
+'/cedalionWeb/visualization':suggestion(at(timeStr(!'7:00'))::timeDesc).
+'/bootstrap':sigProj(each(Day)::dayDesc,[Day::dayOfWeek],'/bootstrap':horiz(['/bootstrap':label(!'Each'),'/bootstrap':vis(Day::dayOfWeek)])).
+'/cedalionWeb/visualization':suggestion(each(monday)::dayDesc).
+'/bootstrap':sigProj(between(T1,Freq,T2)::timeDesc,[T1::timeOfDay,Freq::'/bootstrap':number,T2::timeOfDay],'/bootstrap':horiz(['/bootstrap':label(!'Starting'),'/bootstrap':vis(T1::timeOfDay),'/bootstrap':label(!every),'/bootstrap':vis(Freq::'/bootstrap':number),'/bootstrap':label(!'minutes, until'),'/bootstrap':vis(T2::timeOfDay)])).
+'/cedalionWeb/visualization':suggestion(between(timeStr(!'7:00'),60,timeStr(!'19:00'))::timeDesc).
+'/bootstrap':signature(timeStr(Str)::timeOfDay,[Str::'/bootstrap':string]).
+'/bootstrap':projection(timeStr(Str)::timeOfDay,'/bootstrap':vis(Str::'/bootstrap':string)).
+'/bootstrap':adapter(Str::'/bootstrap':string,timeStr(Str)::timeOfDay).
+'/bootstrap':sandbox(trainDef(!'Orient Express',[departure(daily,at(time(3,20))),departure(each(wednesday),between(timeStr(!'7:00 am'),30,timeStr(!'7:00 pm')))],[station(!'London',0),station(!'Paris',60),station(!'Prague',120),station(!'Delhi',300),station(!'Bejing',400),station(!'Tokyo',500)])::train).

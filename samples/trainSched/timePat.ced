@@ -21,10 +21,11 @@
 '/parsing':prod(dayPat(sunday),'/parsing':token,'/parsing':terminal('/parsing':word(!sunday))).
 '/bootstrap':unitTest('/parsing':lexParseString(dayPat(sunday),!sunday)).
 '/bootstrap':signature(dayTimePat(Now,DayTime)::'/parsing':pattern('/parsing':token),[Now::dayTime,DayTime::dayTime]).
-'/parsing':prod(dayTimePat(V6,dayTime(Day,Time)),'/parsing':token,'/parsing':follow(dayPat(Day),timePat(Time))).
-'/parsing':prod(dayTimePat(V11,dayTime(Day,Time)),'/parsing':token,'/parsing':follow(timePat(Time),dayPat(Day))).
-'/parsing':prod(dayTimePat(dayTime(Today,V17),dayTime(Today,Time)),'/parsing':token,'/parsing':follow('/parsing':opt(annotation:parentheses('/parsing':follow('/parsing':terminal('/parsing':word(!today)),'/parsing':opt('/parsing':terminal('/parsing':word(!at)))))),timePat(Time))).
-'/parsing':prod(dayTimePat(dayTime(Today,V22),dayTime(Today,Time)),'/parsing':token,'/parsing':follow(timePat(Time),'/parsing':terminal('/parsing':word(!today)))).
+'/parsing':prod(dayTimePat(Now,Now),'/parsing':token,'/parsing':alt('/parsing':empty,'/parsing':terminal('/parsing':word(!now)))).
+'/parsing':prod(dayTimePat(_,dayTime(Day,Time)),'/parsing':token,'/parsing':follow(dayPat(Day),timePat(Time))).
+'/parsing':prod(dayTimePat(_,dayTime(Day,Time)),'/parsing':token,'/parsing':follow(timePat(Time),dayPat(Day))).
+'/parsing':prod(dayTimePat(dayTime(Today,_),dayTime(Today,Time)),'/parsing':token,'/parsing':follow('/parsing':opt(annotation:parentheses('/parsing':follow('/parsing':terminal('/parsing':word(!today)),'/parsing':opt('/parsing':terminal('/parsing':word(!at)))))),timePat(Time))).
+'/parsing':prod(dayTimePat(dayTime(Today,_),dayTime(Today,Time)),'/parsing':token,'/parsing':follow(timePat(Time),'/parsing':terminal('/parsing':word(!today)))).
 '/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(wednesday,time(16,32))),!'today 4:32 pm')).
 '/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(friday,time(16,32))),!'friday 4:32 pm')).
 '/bootstrap':unitTest('/parsing':lexParseString(dayTimePat(dayTime(wednesday,time(19,43)),dayTime(friday,time(9,32))),!'friday 9:32 am')).
