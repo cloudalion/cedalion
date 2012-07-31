@@ -488,6 +488,7 @@ Logic.prototype.variable = function() { return new Variable(); }
 
 // Returns a function that, when executed, executes the given function with the current variable assignments
 Logic.prototype.snapshot = function(func) {
+	//console.log("Stack: " + this.stack.length); 
 	// Create arrays containing the current variable assignments.
 	var vars = [];
 	var vals = [];
