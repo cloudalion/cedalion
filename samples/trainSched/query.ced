@@ -2,4 +2,4 @@
 '/bootstrap':signature(forwardQuery(From,DepartureTime,To)::query,[From::'/bootstrap':string,DepartureTime::dayTime,To::'/bootstrap':string]).
 '/bootstrap':projection(forwardQuery(From,DepartureTime,To)::query,'/bootstrap':horiz(['/bootstrap':label(!from),'/bootstrap':vis(From::'/bootstrap':string),'/bootstrap':label(!to),'/bootstrap':vis(To::'/bootstrap':string),'/bootstrap':label(!departing),'/bootstrap':vis(DepartureTime::dayTime)])).
 '/bootstrap':signature(query(Query,Itinerary)::'/javascript/statepred':statePred,[Query::query,Itinerary::'/bootstrap':list(hop)]).
-'/javascript/statepred':clause(query(forwardQuery(From,DepartureTime,To),Itinerary),forwardPath(From,DepartureTime,To,Itinerary)).
+annotation:shrink('/javascript/statepred':clause(query(forwardQuery(From,DepartureTime,To),Itinerary),forwardPath(From,DepartureTime,To,Itinerary))).
