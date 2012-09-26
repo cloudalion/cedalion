@@ -68,6 +68,7 @@ function handlePOST(DI, req, res) {
 	reqDI.readJSONStream(req, "request");
 	reqDI.on(["logic", "request", "db"], function(reqDI) {
 		try {
+//			console.log("query: " + JSON.stringify(reqDI.request));
 			reqDI.logic.runProcedure(["cjs#runService", reqDI.logic.addReferences(reqDI.request, []), req, res]);
 		} catch(e) {
 			res.writeHead(500, "Unknown Server Error", {"content-type": "text/plain"});

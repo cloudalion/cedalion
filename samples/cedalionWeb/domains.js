@@ -32,12 +32,16 @@ module.exports = function(couchURL) {
 				DI[domName + "_info"]._rev];
 			DI[domName + "_logic"].runProcedure(["/javascript/statepred#whenever",
 				pred,
-				function(logic) {
-					console.log(2);
-					DI.setValue(domName + "_db", DI[domName + "_info"].db);
-					console.log("successful");
+				{
+					func: function(logic, terms) {
+						console.log(2);
+						DI.setValue(domName + "_db", DI[domName + "_info"].db);
+						console.log("successful");
+					},
+					terms: [],
+					termExprs: []
 				},
-				function(logic) {console.log("done");}]);
+				{ func: function(logic) {console.log("done");}, terms: [], termExprs: []}]);
 		});
 	};
 	return DI;

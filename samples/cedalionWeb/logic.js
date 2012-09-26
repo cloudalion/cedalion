@@ -386,9 +386,10 @@ Logic.prototype.fromJSON = function(json) {
 
 // Replace variables with to {var: number} pairs, allowing conversion to JSON
 Logic.prototype.removeCycles = function(term, index) {
+	var stack = (new Error()).stack;
 	term = this.realValue(term);
 	if(term instanceof Variable) {
-		this.unify(term, {"var": index.i++});
+		this.unify(term, {"var": index.i++ , "_stack": stack});
 		return this.realValue(term);
 	} else if(term instanceof Array){
 		var newTerm = [];
@@ -396,6 +397,8 @@ Logic.prototype.removeCycles = function(term, index) {
 			newTerm.push(this.removeCycles(term[i], index));
 		}
 		return newTerm;
+	} else if(typeof(term) === "function" && term.func) {
+		return this.wrapCommand({func: term.func, terms: this.removeCycles(term.terms, index), termExprs: term.termExprs});
 	} else {
 		return term;
 	}
@@ -403,7 +406,7 @@ Logic.prototype.removeCycles = function(term, index) {
 
 // Replace {var: number} pairs with references to actual variables
 Logic.prototype.addReferences = function(term, map) {
-	if(term["var"]) {
+	if(typeof(term) === "object" && "var" in term) {
 		if(!map[term["var"]]) {
 			//DBG("New variable for: " + term["var"]);
 			map[term["var"]] = new Variable();
@@ -417,6 +420,8 @@ Logic.prototype.addReferences = function(term, map) {
 		}
 		//DBG("Returning compound: " + newTerm);
 		return newTerm;
+	} else if(typeof(term) === "function" && term.func){
+		return this.wrapCommand({func: term.func, terms: this.addReferences(term.terms, map), termExprs: term.termExprs});
 	} else {
 		//DBG("Returning unmodified term: " + term);
 		return term;
@@ -452,7 +457,8 @@ Logic.prototype.runProcedure = function(proc) {
 	var logic = this;
 	try {
 		this.run(["cjs#procedureCommand", proc, CMD], function(){
-			CMD.getValue()(logic);
+			var cmd = CMD.getValue();
+			cmd.func(logic, cmd.terms, cmd.termExprs);
 		});
 	} catch(e) {
 		console.log(e);
@@ -471,23 +477,45 @@ Logic.prototype.procedure = function(proc) {
 };
 
 // Go deep inside the term, replacing all bound variables with their values
-Logic.prototype.concreteValue = function(term) {
+Logic.prototype.concreteValue = function(term /*, unique*/) {
 	term = this.realValue(term);
+/*	if(!unique) {
+		unique = Math.floor(Math.random()*1000000);
+	}
+	if(term.unique && term.unique == unique) {
+		return term;
+	} else if(typeof(term) == "object") {
+		term.unique = unique;
+	}*/
 	if(term instanceof Array) {
 		var newTerm = [];
 		for(var i = 0; i < term.length; i++) {
-			newTerm.push(this.concreteValue(term[i]));
+			newTerm.push(this.concreteValue(term[i] /*, unique*/));
 		}
 		return newTerm;
+//	} else if(term && term.terms) {
+//		return this.wrapCommand({func: term.func, terms: this.concreteValue(term.terms /*, unique*/)});
+	} else if(term && term.func) {
+		return this.concreteCommand(term);
 	} else {
 		return term; // In case of a bound variable, this is already its bound value.
 	}
-}
+};
+
+Logic.prototype.concreteCommand = function(cmd) {
+	var cmd2 = {
+		func: cmd.func,
+		terms: this.concreteValue(cmd.terms),
+		termExprs: cmd.termExprs
+	};
+	return this.wrapCommand(cmd2);
+};
 
 Logic.prototype.variable = function() { return new Variable(); }
 
 // Returns a function that, when executed, executes the given function with the current variable assignments
 Logic.prototype.snapshot = function(func) {
+	return func;
 	//console.log("Stack: " + this.stack.length); 
 	// Create arrays containing the current variable assignments.
 	var vars = [];
@@ -522,6 +550,55 @@ Logic.prototype.ctx = function(ctxName) {
 	return this.contexts[ctxName];
 };
 
+Logic.prototype.toList = function(array) {
+	var list = ["[]"];
+	for(var i = array.length - 1; i >= 0; i--) {
+		list = [".", array[i], list];
+	}
+	return list;
+};
+
+Logic.prototype.wrapCommand = function(command) {
+	var cmd = function() { console.log((new Error("Command no longer a function")).stack); };
+	if(!command.func) {
+		throw Error("Bad command object");
+	}
+	cmd.func = command.func;
+//	cmd.terms = this.replaceExprs(command.terms, command.termExprs);
+	cmd.terms = command.terms;
+	cmd.termExprs = command.termExprs;
+	cmd.toString = function() { return "<CMD " + this.func.toString() + " CMD>"; };
+	return cmd;
+};
+
+Logic.prototype.replaceExprs = function(term, termExprs) {
+	if(typeof(term) === "object" && "expr" in term) {
+		return termExprs[term.expr];
+	} else if (term instanceof Array) {
+		var newArray = [];
+		for(var i = 0; i < term.length; i++) {
+			newArray.push(this.replaceExprs(term[i], termExprs));
+		}
+		return newArray;
+	} else {
+		return term;
+	}
+};
+Logic.prototype.concreteTerm = function(term, termExprs, exprs) {
+/*	for(var i = 0; i < termExprs.length; i++) {
+		termExprs[i].bind(exprs[i], this);
+	}
+	return this.concreteValue(term);*/
+	return this.concreteValue(this.replaceExprs(term, exprs));
+};
+Logic.prototype.zeros = function(count) {
+	var z = [];
+	for(var i = 0; i < count; i++) {
+		z.push(0);
+	}
+	return z;
+};
+
 function Variable() {
 	this.value = this;
 }
@@ -550,6 +627,7 @@ Variable.prototype.getValue = function(logic) {
 };
 
 Variable.prototype.bind = function(val, logic) {
+//if(typeof(val)==="undefined") throw Error("Undefined in bind");
 	var obj = this;
 	var curr = this.value;
 	var undo = function () {obj.value = curr};
@@ -743,26 +821,36 @@ logic.program.addBuiltin("parseTerm", 3, function(logic, term) {
 	value = logic.realValue(value);
 	if(value instanceof Variable) {
 		// We need to construct
-		var newTerm = [term[2]];
-		var list = term[3];
-		while(list[0] == ".") {
-			// List elements are typedTerms, and we only care about the values
-			var argValue = new Variable();
-			var argType = new Variable();
-			if(!logic.unify(list[1], ["::", argValue, argType])) {
-				throw Error("Third argument to parseTerm must contain a list of typed terms");
+		if(typeof(term[2])==="string") {
+			// Compound term
+			var newTerm = [term[2]];
+			var list = term[3];
+			while(list[0] == ".") {
+				// List elements are typedTerms, and we only care about the values
+				var argValue = new Variable();
+				var argType = new Variable();
+				if(!logic.unify(list[1], ["::", argValue, argType])) {
+					throw Error("Third argument to parseTerm must contain a list of typed terms");
+				}
+				newTerm.push(argValue.getValue(logic));
+				list = logic.realValue(list[2]);
 			}
-			newTerm.push(argValue.getValue(logic));
-			list = logic.realValue(list[2]);
+			logic.unify(value, newTerm);
+		} else {
+			// Non-compound (e.g., command)
+			logic.unify(value, term[2]);			
 		}
-		logic.unify(value, newTerm);
-	} else {
+	} else if(value instanceof Array) {
 		// We need to decompose
 		term[2] = value[0]; // the name
 		term[3] = ["[]"];
 		for(var i = value.length - 1; i > 0; i--) {
 			term[3] = [".", ["::", value[i], new Variable()], term[3]];
 		}
+	} else {
+		// Concrete value that is not a compount term: the "name" will contain the value, and the list will be empty
+		term[2] = term[1];
+		term[3] = ["[]"];
 	}
 	return true;
 });
@@ -832,6 +920,14 @@ logic.program.addBuiltin("greaterThen", 2, function(logic, term) {
 	return term[1] > term[2];
 });
 
+Logic.prototype.copyTerm = function(term) {
+	var index = {i: 1};
+	var t = this.removeCycles(term, index);
+	var map = [];
+	var res = this.addReferences(t, map);
+	return res;
+};
+
 logic.program.addBuiltin("copyTerm", 2, function(logic, term) {
 	term[2] = logic.fromJSON(logic.toJSON(term[1]));
 	return true;
@@ -842,10 +938,11 @@ logic.program.add(["builtin#loadedStatement", 3], function(logic, term, next) {
 
 logic.program.addBuiltin("findall", 4, function(logic, term) {
 	var tmpLogic = new Logic(logic.program);
-	term[4] = ["[]"];
+	var all = [];
 	tmpLogic.run(term[3], function() {
-		term[4] = [".", logic.concreteValue(term[1]), term[4]];
+		all.push(logic.copyTerm(logic.concreteValue(term[1])));
 	});
+	term[4] = logic.toList(all);
 	return true;
 });
 
@@ -861,6 +958,11 @@ logic.program.addBuiltin("succ", 2, function(logic, term) {
 
 logic.program.addBuiltin("throw", 1, function(logic, term) {
 	throw Error(logic.termToString(term[1]));
+});
+
+logic.program.addBuiltin("concreteCommand", 2, function(logic, term) {
+	term[2] = logic.concreteCommand(term[1]);
+	return true;
 });
 
 

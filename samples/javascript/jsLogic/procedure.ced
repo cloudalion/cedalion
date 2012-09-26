@@ -2,8 +2,9 @@
 '/bootstrap':signature(procedure(Proc,Body)::'/bootstrap':statement,[Proc::procedure,Body::jsCommand]).
 '/bootstrap':projection(procedure(Proc,Body)::'/bootstrap':statement,'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!procedure),'/bootstrap':vis(Proc::procedure),'/bootstrap':label(!'{')]),'/bootstrap':horiz(['/bootstrap':label(!'    '),'/bootstrap':vis(Body::jsCommand)]),'/bootstrap':label(!'}')])).
 '/bootstrap':signature(cjs:procedureCommand(Proc,Command)::'/bootstrap':pred,[Proc::procedure,Command::jsCommand]).
-procedure(Proc,Command)~>cjs:procedureCommand(Proc,Command):-builtin:true.
+procedure(Proc,Command)~>cjs:procedureCommand(Proc,ConcreteCommand):-builtin:concreteCommand(Command,ConcreteCommand).
 '/bootstrap':defines((cjs:procedureCommand(Proc,Command):-_),Proc::procedure,'/bootstrap':semanticDefinition).
+'/bootstrap':signature(builtin:concreteCommand(Command,ConcreteCommand)::'/bootstrap':pred,[Command::jsCommand,ConcreteCommand::jsCommand]).
 '/bootstrap':defAtom(main::procedure).
 '/bootstrap':defAtom(console::'/javascript':symbol).
 '/bootstrap':signature(runProcedure(Proc)::'/javascript':statement,[Proc::procedure]).
@@ -19,7 +20,7 @@ procedure('main2'(Str),jsCommand(['/javascript':exprStatement('/javascript':call
 '/bootstrap':signature(foreach(Goal,Command)::procedure,[Goal::'/bootstrap':pred,Command::jsCommand]).
 '/bootstrap':projection(foreach(Goal,Command)::procedure,'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!for),'/bootstrap':brackets('/bootstrap':vis(Goal::'/bootstrap':pred),40,41),'/bootstrap':label(!'{')]),'/bootstrap':horiz(['/bootstrap':label(!'    '),'/bootstrap':vis(Command::jsCommand)]),'/bootstrap':label(!'}')])).
 '/bootstrap':alias(foreach(Goal,Command)::procedure,!for).
-cjs:procedureCommand(foreach(Goal,Command),Command):-Goal.
+cjs:procedureCommand(foreach(Goal,Command),ConcreteCommand):-Goal,builtin:concreteCommand(Command,ConcreteCommand).
 '/bootstrap':signature(do(Cmd)::procedure,[Cmd::jsCommand]).
 '/bootstrap':projection(do(Cmd)::procedure,'/bootstrap':horiz(['/bootstrap':label(!do),'/bootstrap':vis(Cmd::jsCommand)])).
-cjs:procedureCommand(do(Cmd),Cmd):-builtin:true.
+cjs:procedureCommand(do(Cmd),ConcCmd):-builtin:concreteCommand(Cmd,ConcCmd).

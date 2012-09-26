@@ -40,4 +40,4 @@ def(applyBinOp(A,divBy,B),'/bootstrap':number,div(A,B)).
 '/bootstrap':signature(valueApplyBinOp(APrime,Op,BPrime,V,T)::'/bootstrap':pred,[APrime::T,Op::binOp(T),BPrime::T,V::expr(T),T::'/bootstrap':type]).
 '/bootstrap':projection(valueApplyBinOp(APrime,Op,BPrime,V,T)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(T::'/bootstrap':type),'/bootstrap':vis(APrime::T),'/bootstrap':vis(Op::binOp(T)),'/bootstrap':vis(BPrime::T),'/bootstrap':label(! (=)),'/bootstrap':vis(V::expr(T))])).
 valueApplyBinOp(APrime,Op,BPrime,V,T):-builtin:fail.
-def(applyBinOp(A,Op,B),T,where(V, (eval(A,T,APrime),eval(B,T,BPrime),valueApplyBinOp(APrime,Op,BPrime,V,T)))).
+'/bootstrap':disabled(def(applyBinOp(A,Op,B),T,where(V, (eval(A,T,APrime),eval(B,T,BPrime),valueApplyBinOp(APrime,Op,BPrime,V,T))))).

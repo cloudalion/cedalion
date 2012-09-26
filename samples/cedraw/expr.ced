@@ -1,0 +1,6 @@
+'/bootstrap':sigProj(eval(Expr,Stack,Value)::'/bootstrap':pred,[Expr::expr,Stack::'/bootstrap':list(stackElem),Value::'/bootstrap':typedTerm],'/bootstrap':horiz(['/bootstrap':vis(Value::'/bootstrap':typedTerm),'/bootstrap':symbol(8656),'/bootstrap':vis(Expr::expr),'/bootstrap':symbol(8866),'/bootstrap':vis(Stack::'/bootstrap':list(stackElem))])).
+'/bootstrap':alias(eval(Expr,Stack,Value)::'/bootstrap':pred,!'<=').
+'/bootstrap':signature(var(Name)::expr,[Name::'/bootstrap':string]).
+'/bootstrap':projection(var(Name)::expr,'/bootstrap':bold('/bootstrap':vis(Name::'/bootstrap':string))).
+eval(var(_),[],0::'/bootstrap':number):-builtin:true.
+eval(var(Name),[stackEntry(FirstName,FirstValue)|Rest],Value):-builtin:if(Name::'/bootstrap':string=FirstName::'/bootstrap':string,Value=FirstValue,eval(var(Name),Rest,Value)).

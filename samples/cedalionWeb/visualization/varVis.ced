@@ -8,4 +8,4 @@ varNameVisualization(Name,Vis):-builtin:if(specialVarNameVisualization(Name,Vis)
 '/bootstrap':signature(specialVarNameVisualization(Name,Vis)::'/bootstrap':pred,[Name::'/bootstrap':string,Vis::'/bootstrap':visualization]).
 '/bootstrap':varNameMacroStatement(Name,Vis)~>specialVarNameVisualization(Name,Vis):-builtin:true.
 annotation:shrink(('/bootstrap':varNameSuffix(Suff,Vis,VisPrime)~>specialVarNameVisualization(Name,VisPrime):-builtin:strcat(Base,Suff,Name),varNameVisualization(Base,Vis))).
-visualizeVar(TVar,VNs,'/bootstrap':italic('/bootstrap':color(Vis,cpi:rgb(0,128,0)))):-builtin:if(varName(TVar,VNs,Name),varNameVisualization(Name,Vis),Vis::'/bootstrap':visualization='/bootstrap':label(!'_')::'/bootstrap':visualization).
+visualizeVar(TVar,VNs,'/bootstrap':italic('/bootstrap':color(Vis,cpi:rgb(0,128,0)))):-builtin:if((\+builtin:var(VNs::'/bootstrap':list('/bootstrap':varName)),varName(TVar,VNs,Name)),varNameVisualization(Name,Vis),Vis::'/bootstrap':visualization='/bootstrap':label(!'_')::'/bootstrap':visualization).

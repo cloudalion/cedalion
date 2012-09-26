@@ -1,6 +1,7 @@
 '/bootstrap':defAtom(statePred::'/bootstrap':type).
 '/bootstrap':signature(whenever(Pred,Cmd,Finally)::'/javascript/jsLogic':procedure,[Pred::statePred,Cmd::'/javascript/jsLogic':jsCommand,Finally::'/javascript/jsLogic':jsCommand]).
 '/bootstrap':projection(whenever(Pred,Cmd,Finally)::'/javascript/jsLogic':procedure,'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!for),'/bootstrap':halfSize('/bootstrap':label(!s)),'/bootstrap':brackets('/bootstrap':vis(Pred::statePred),40,41),'/bootstrap':label(!'{')]),'/bootstrap':horiz(['/bootstrap':label(!'    '),'/bootstrap':vis(Cmd::'/javascript/jsLogic':jsCommand)]),'/bootstrap':horiz(['/bootstrap':label(!'}'),'/bootstrap':label(!finally),'/bootstrap':label(!'{')]),'/bootstrap':horiz(['/bootstrap':label(!'    '),'/bootstrap':vis(Finally::'/javascript/jsLogic':jsCommand)]),'/bootstrap':label(!'}')])).
+'/javascript/jsLogic':procedure(whenever(Pred,Action,Finally),'/javascript/jsLogic':jsCommand(['/javascript/jsLogic':runProcedure('/javascript/asyncproc':andThen('for (s)'(Pred,Action),'/javascript/jsLogic':do(Finally)))])).
 '/bootstrap':alias(whenever(Pred,Cmd,Finally)::'/javascript/jsLogic':procedure,!'for (s) ... finally').
 '/bootstrap':signature(whenever(Pred,Cmd)::'/javascript/jsLogic':procedure,[Pred::statePred,Cmd::'/javascript/jsLogic':jsCommand]).
 '/bootstrap':projection(whenever(Pred,Cmd)::'/javascript/jsLogic':procedure,'/bootstrap':vert(['/bootstrap':horiz(['/bootstrap':label(!for),'/bootstrap':halfSize('/bootstrap':label(!s)),'/bootstrap':brackets('/bootstrap':vis(Pred::statePred),40,41),'/bootstrap':label(!'{')]),'/bootstrap':horiz(['/bootstrap':label(!'    '),'/bootstrap':vis(Cmd::'/javascript/jsLogic':jsCommand)]),'/bootstrap':label(!'}')])).
@@ -11,4 +12,4 @@ annotation:comment('/bootstrap':signature(pred(Pred)::statePred,[Pred::'/bootstr
 '/bootstrap':projection(pred(Pred)::statePred,'/bootstrap':brackets('/bootstrap':vis(Pred::'/bootstrap':pred),10216,10217)).
 '/bootstrap':adapter(Pred::'/bootstrap':pred,pred(Pred)::statePred).
 '/bootstrap':alias(pred(Pred)::statePred,!'<>').
-'/javascript/jsLogic':procedure(whenever(pred(Pred),Cmd,Finally),'/javascript/jsLogic':jsCommand(['/javascript/jsLogic':runProcedure('/javascript/jsLogic':foreach(Pred,Cmd)),'/javascript/jsLogic':runProcedure('/javascript/jsLogic':do(Finally))])).
+def(pred(Pred),Cmd,Finally,'/javascript/jsLogic':jsCommand(['/javascript/jsLogic':runProcedure('/javascript/jsLogic':foreach(Pred,Cmd)),'/javascript/jsLogic':runProcedure('/javascript/jsLogic':do(Finally))])).
