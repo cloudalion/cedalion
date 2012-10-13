@@ -16,7 +16,11 @@ DI.on(['config'], function(DI) {
 
 function handleGET(DI, req, res) {
 	// Proxy request to static content
-	var clientOpt = urlParse(DI.config.couchURL + "/static/" + req.headers.host + req.url);
+	var url = req.url;
+	if(url === "/") {
+		url = "/index.html";
+	}
+	var clientOpt = urlParse(DI.config.couchURL + "/static/" + req.headers.host + url);
 	clientOpt.headers = req.headers;
 	http.get(clientOpt, function(clientRes) {
 		if(clientRes.statusCode != 404) {
@@ -25,7 +29,7 @@ function handleGET(DI, req, res) {
 		} else {
 			// If the response is 404 (not found), try openning a local file with that name.
 			var fileDI = new nodeUtils.DI("fileDI");
-			var filePath = __dirname + "/" + req.url;
+			var filePath = __dirname + "/" + url;
 			fs.stat(filePath, function(err, stat) {
 				if(!err) {
 					fileDI.setValue("stat", stat);

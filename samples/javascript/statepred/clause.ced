@@ -12,4 +12,4 @@ def(conj(A,B),Action,Finally,'/javascript/jsLogic':jsCommand(['/javascript':var(
 '/bootstrap':signature('test1'(N)::statePred,[N::'/bootstrap':number]).
 clause('test1'(1),pred(builtin:true)).
 clause('test1'(2),pred(builtin:true)).
-unitTest(findall(N,'/bootstrap':number,'test1'(N),[2,1])).
+unitTest(findall(N,'/bootstrap':number,'test1'(N),[1,2])).

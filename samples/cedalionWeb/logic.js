@@ -238,6 +238,7 @@ Logic.prototype.executeClausesForPartialIndex = function(index, term, next) {
 };*/
 Logic.prototype.call = function(term, next) {
 	//DBG("[" + this.stack.length + "] Call: " + this.termToString(term));
+if(term[0] == "/Functional#eval" && term[1] instanceof Variable && term[1].getValue() instanceof Variable) throw Error("Bad eval");
 	this.recentCalls.push("[" + this.stack.length + "] Call: " + this.termToString(term));
 	if(this.recentCalls.length > 20) {
 		this.recentCalls.splice(0, this.recentCalls.length - 20);
@@ -398,7 +399,7 @@ Logic.prototype.removeCycles = function(term, index) {
 		}
 		return newTerm;
 	} else if(typeof(term) === "function" && term.func) {
-		return this.wrapCommand({func: term.func, terms: this.removeCycles(term.terms, index), termExprs: term.termExprs});
+		return this.wrapCommand({func: term.func, terms: this.removeCycles(term.terms, index)});
 	} else {
 		return term;
 	}
@@ -421,7 +422,7 @@ Logic.prototype.addReferences = function(term, map) {
 		//DBG("Returning compound: " + newTerm);
 		return newTerm;
 	} else if(typeof(term) === "function" && term.func){
-		return this.wrapCommand({func: term.func, terms: this.addReferences(term.terms, map), termExprs: term.termExprs});
+		return this.wrapCommand({func: term.func, terms: this.addReferences(term.terms, map)});
 	} else {
 		//DBG("Returning unmodified term: " + term);
 		return term;
@@ -458,7 +459,7 @@ Logic.prototype.runProcedure = function(proc) {
 	try {
 		this.run(["cjs#procedureCommand", proc, CMD], function(){
 			var cmd = CMD.getValue();
-			cmd.func(logic, cmd.terms, cmd.termExprs);
+			cmd.func(logic, cmd.terms);
 		});
 	} catch(e) {
 		console.log(e);
@@ -506,7 +507,6 @@ Logic.prototype.concreteCommand = function(cmd) {
 	var cmd2 = {
 		func: cmd.func,
 		terms: this.concreteValue(cmd.terms),
-		termExprs: cmd.termExprs
 	};
 	return this.wrapCommand(cmd2);
 };
@@ -543,6 +543,27 @@ Logic.prototype.snapshot = function(func) {
 	}
 };
 
+Logic.prototype.preserveContext = function(func) {
+	// Create a snapshot of the current context
+	var contexts = {};
+	for(var name in this.contexts) {
+		contexts[name] = this.concreteValue(this.contexts[name]);
+	}
+	var logic = this;
+	// Return the function
+	return function() {
+		var stackLevel = logic.stack.length;
+		for(var name in contexts) {
+			logic.ctx(name).bind(contexts[name], logic);
+		}
+
+		// Call the original function
+		var result = func.apply(this, arguments);
+		logic.resume(stackLevel); // Backtrack away
+		return result;
+	}
+};
+
 Logic.prototype.ctx = function(ctxName) {
 	if(!this.contexts[ctxName]) {
 		this.contexts[ctxName] = new Variable();
@@ -564,9 +585,7 @@ Logic.prototype.wrapCommand = function(command) {
 		throw Error("Bad command object");
 	}
 	cmd.func = command.func;
-//	cmd.terms = this.replaceExprs(command.terms, command.termExprs);
 	cmd.terms = command.terms;
-	cmd.termExprs = command.termExprs;
 	cmd.toString = function() { return "<CMD " + this.func.toString() + " CMD>"; };
 	return cmd;
 };
@@ -584,11 +603,7 @@ Logic.prototype.replaceExprs = function(term, termExprs) {
 		return term;
 	}
 };
-Logic.prototype.concreteTerm = function(term, termExprs, exprs) {
-/*	for(var i = 0; i < termExprs.length; i++) {
-		termExprs[i].bind(exprs[i], this);
-	}
-	return this.concreteValue(term);*/
+Logic.prototype.concreteTerm = function(term, exprs) {
 	return this.concreteValue(this.replaceExprs(term, exprs));
 };
 Logic.prototype.zeros = function(count) {
@@ -929,7 +944,8 @@ Logic.prototype.copyTerm = function(term) {
 };
 
 logic.program.addBuiltin("copyTerm", 2, function(logic, term) {
-	term[2] = logic.fromJSON(logic.toJSON(term[1]));
+//	term[2] = logic.fromJSON(logic.toJSON(term[1]));
+	term[2] = logic.copyTerm(term[1]);
 	return true;
 });
 logic.program.add(["builtin#loadedStatement", 3], function(logic, term, next) {
@@ -937,10 +953,12 @@ logic.program.add(["builtin#loadedStatement", 3], function(logic, term, next) {
 });
 
 logic.program.addBuiltin("findall", 4, function(logic, term) {
-	var tmpLogic = new Logic(logic.program);
+var rand = Math.random();
+	//var tmpLogic = new Logic(logic.program);
 	var all = [];
-	tmpLogic.run(term[3], function() {
-		all.push(logic.copyTerm(logic.concreteValue(term[1])));
+	logic.run(term[3], function() {
+		var copy = logic.copyTerm(logic.concreteValue(term[1]));
+		all.push(copy);
 	});
 	term[4] = logic.toList(all);
 	return true;
@@ -961,7 +979,8 @@ logic.program.addBuiltin("throw", 1, function(logic, term) {
 });
 
 logic.program.addBuiltin("concreteCommand", 2, function(logic, term) {
-	term[2] = logic.concreteCommand(term[1]);
+//	term[2] = logic.concreteCommand(term[1]);
+	term[2] = term[1];
 	return true;
 });
 
