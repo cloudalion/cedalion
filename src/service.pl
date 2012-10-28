@@ -416,7 +416,8 @@ generateLines(_, _, _).
 writeTerm(Stream, Term, VarNames) :-
 	convertTermToWritable(Term, VarNames, WTerm),
 	write_term(Stream, WTerm, [quoted(false)]),
-	write(Stream, '.\n').
+	write(Stream, '.\n'),
+	flush_output(Stream).
 
 % Convert a term(Term, VarNames) tupple into a term to be written without quotes:
 % Variables are converted to contain their to their names, atoms are quoted if needed
