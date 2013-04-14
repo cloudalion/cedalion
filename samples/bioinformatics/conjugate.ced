@@ -1,20 +1,20 @@
-'/bootstrap':signature(conjBase(Base, ConjBase)::'/bootstrap':pred, [Base::base, ConjBase::base]).
-'/bootstrap':projection(conjBase(Base, ConjBase)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(ConjBase::base), '/bootstrap':label(!'is the conjugate of'), '/bootstrap':vis(Base::base)])).
-conjBase(a, t):-builtin:true.
-conjBase(t, a):-builtin:true.
-conjBase(c, g):-builtin:true.
-conjBase(g, c):-builtin:true.
-'/bootstrap':signature(conj(Seq, ConjSeq)::'/bootstrap':pred, [Seq::'/bootstrap':list(base), ConjSeq::'/bootstrap':list(base)]).
-'/bootstrap':projection(conj(Seq, ConjSeq)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(ConjSeq::'/bootstrap':list(base)), '/bootstrap':label(!'is the conjugate of'), '/bootstrap':vis(Seq::'/bootstrap':list(base))])).
-conj([], []):-builtin:true.
-annotation:shrink((conj([Base|Seq], [ConjBase|ConjSeq]):-conjBase(Base, ConjBase), conj(Seq, ConjSeq))).
-'/bootstrap':signature(conjSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)), [SeqExpr::'/Functional':expr('/bootstrap':list(base))]).
-'/bootstrap':projection(conjSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(SeqExpr::'/Functional':expr('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':label(!conj))])).
-'/Functional':eval(conjSeq(SeqExpr), '/bootstrap':list(base), ConjSeq):-'/Functional':eval(SeqExpr, '/bootstrap':list(base), Seq), conj(Seq, ConjSeq).
-'/bootstrap':signature(conj(SeqSet)::'/bootstrap':set('/bootstrap':list(base)), [SeqSet::'/bootstrap':set('/bootstrap':list(base))]).
-'/bootstrap':projection(conj(SeqSet)::'/bootstrap':set('/bootstrap':list(base)), '/bootstrap':horiz(['/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))), '/bootstrap':halfSize('/bootstrap':label(!conj))])).
-dnaSetDef(conj(SeqSet), '/Functional':eset(conjSeq('/Functional':wrap(Seq)), '/bootstrap':member(Seq, SeqSet, '/bootstrap':list(base)))).
-'/bootstrap':unitTest('/bootstrap':member([a, t, c, g], conj('/bootstrap':setParens(seq(tSet, seq(aSet, seq(gSet, cSet))))), '/bootstrap':list(base))).
-'/bootstrap':unitTest('/bootstrap':notMember([a, t, c, t], conj('/bootstrap':setParens(seq(tSet, seq(aSet, seq(gSet, cSet))))), '/bootstrap':list(base))).
-'/bootstrap':unitTest('/bootstrap':member([a, t, t, a], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), conj('/bootstrap':singleton([a, t]))), '/bootstrap':list(base))).
-'/bootstrap':unitTest('/bootstrap':notMember([a, t, a, t], seq(bind(rep(nSet, 2), '/bootstrap':singleton([a, t])), conj('/bootstrap':singleton([a, t]))), '/bootstrap':list(base))).
+'/bootstrap':signature(conjBase(Base,ConjBase)::'/bootstrap':pred,[Base::base,ConjBase::base]).
+'/bootstrap':projection(conjBase(Base,ConjBase)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(ConjBase::base),'/bootstrap':label(!'is the conjugate of'),'/bootstrap':vis(Base::base)])).
+conjBase(a,t):-builtin:true.
+conjBase(t,a):-builtin:true.
+conjBase(c,g):-builtin:true.
+conjBase(g,c):-builtin:true.
+'/bootstrap':signature(conj(Seq,ConjSeq)::'/bootstrap':pred,[Seq::'/bootstrap':list(base),ConjSeq::'/bootstrap':list(base)]).
+'/bootstrap':projection(conj(Seq,ConjSeq)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(ConjSeq::'/bootstrap':list(base)),'/bootstrap':label(!'is the conjugate of'),'/bootstrap':vis(Seq::'/bootstrap':list(base))])).
+conj([],[]):-builtin:true.
+annotation:shrink((conj([Base|Seq],[ConjBase|ConjSeq]):-conjBase(Base,ConjBase),conj(Seq,ConjSeq))).
+'/bootstrap':signature(conjSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)),[SeqExpr::'/Functional':expr('/bootstrap':list(base))]).
+'/bootstrap':projection(conjSeq(SeqExpr)::'/Functional':expr('/bootstrap':list(base)),'/bootstrap':horiz(['/bootstrap':vis(SeqExpr::'/Functional':expr('/bootstrap':list(base))),'/bootstrap':halfSize('/bootstrap':label(!conj))])).
+'/Functional':eval(conjSeq(SeqExpr),'/bootstrap':list(base),ConjSeq):-'/Functional':eval(SeqExpr,'/bootstrap':list(base),Seq),conj(Seq,ConjSeq).
+'/bootstrap':signature(conj(SeqSet)::'/bootstrap':set('/bootstrap':list(base)),[SeqSet::'/bootstrap':set('/bootstrap':list(base))]).
+'/bootstrap':projection(conj(SeqSet)::'/bootstrap':set('/bootstrap':list(base)),'/bootstrap':horiz(['/bootstrap':vis(SeqSet::'/bootstrap':set('/bootstrap':list(base))),'/bootstrap':halfSize('/bootstrap':label(!conj))],cpi:top)).
+dnaSetDef(conj(SeqSet),'/Functional':eset(conjSeq('/Functional':const(Seq)),'/bootstrap':member(Seq,SeqSet,'/bootstrap':list(base)))).
+'/bootstrap':unitTest('/bootstrap':member([a,t,c,g],conj('/bootstrap':setParens(seq(tSet,seq(aSet,seq(gSet,cSet))))),'/bootstrap':list(base))).
+'/bootstrap':unitTest('/bootstrap':notMember([a,t,c,t],conj('/bootstrap':setParens(seq(tSet,seq(aSet,seq(gSet,cSet))))),'/bootstrap':list(base))).
+'/bootstrap':unitTest('/bootstrap':member([a,t,t,a],seq(bind(rep(nSet,2),'/bootstrap':singleton([a,t])),conj('/bootstrap':singleton([a,t]))),'/bootstrap':list(base))).
+'/bootstrap':unitTest('/bootstrap':notMember([a,t,a,t],seq(bind(rep(nSet,2),'/bootstrap':singleton([a,t])),conj('/bootstrap':singleton([a,t]))),'/bootstrap':list(base))).

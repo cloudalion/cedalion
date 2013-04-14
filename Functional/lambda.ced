@@ -6,8 +6,9 @@
 '/bootstrap':projection(apply(Lambda,T1,X)::expr(T2),'/bootstrap':horiz(['/bootstrap':label(!'['),'/bootstrap':vis(Lambda::expr(func(T1,T2))),'/bootstrap':label(!']'),'/bootstrap':halfSize('/bootstrap':vis(T1::'/bootstrap':type)),'/bootstrap':label(!'('),'/bootstrap':vis(X::expr(T1)),'/bootstrap':label(!')')])).
 eval(apply(LambdaExpr,T1,X),T2,V):-builtin:copyTerm(LambdaExpr::expr(func(T1,T2)),LambdaExprPrime::expr(func(T1,T2))),eval(LambdaExprPrime,func(T1,T2),lambda(X,Expr)),eval(Expr,T2,V).
 '/bootstrap':signature(g(X)::expr(func('/bootstrap':number,'/bootstrap':number)),[X::expr('/bootstrap':number)]).
-def(g(X),func('/bootstrap':number,'/bootstrap':number),wrap(lambda(Y,plus(X,Y)))).
+def(g(X),func('/bootstrap':number,'/bootstrap':number),const(lambda(Y,plus(X,Y)))).
 '/bootstrap':unitTest(eval(apply(g(wrap(3)),'/bootstrap':number,wrap(2)),'/bootstrap':number,5)).
+'/bootstrap':disabled(def(plus(A,B),func(T1,T2),wrap(lambda(X,plus(apply(A,T1,X),apply(B,T1,X)))))).
 def(plus(A,B),func(T1,T2),wrap(lambda(X,plus(apply(A,T1,X),apply(B,T1,X))))).
 def(minus(A,B),func(T1,T2),wrap(lambda(X,minus(apply(A,T1,X),apply(B,T1,X))))).
 def(mult(A,B),func(T1,T2),wrap(lambda(X,mult(apply(A,T1,X),apply(B,T1,X))))).

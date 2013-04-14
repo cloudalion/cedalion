@@ -1,12 +1,12 @@
-'/bootstrap':signature(baseNumericValue(Base)::'/Functional':expr('/bootstrap':number), [Base::base]).
-'/Functional':def(baseNumericValue(a), '/bootstrap':number, '/Functional':wrap(1)).
-'/Functional':def(baseNumericValue(c), '/bootstrap':number, '/Functional':wrap(2)).
-'/Functional':def(baseNumericValue(g), '/bootstrap':number, '/Functional':wrap(3)).
-'/Functional':def(baseNumericValue(t), '/bootstrap':number, '/Functional':wrap(4)).
-'/bootstrap':signature(seqNumericValue(Seq)::'/Functional':expr('/bootstrap':number), [Seq::'/bootstrap':list(base)]).
-'/Functional':def(seqNumericValue([]), '/bootstrap':number, '/Functional':wrap(0)).
-'/Functional':def(seqNumericValue([Base|Seq]), '/bootstrap':number, '/Functional':plus(baseNumericValue(Base), '/Functional':mult(seqNumericValue(Seq), '/Functional':wrap(5)))).
-'/bootstrap':signature(greaterOrEquals(A, B)::'/bootstrap':pred, [A::'/bootstrap':list(base), B::'/bootstrap':list(base)]).
-'/bootstrap':projection(greaterOrEquals(A, B)::'/bootstrap':pred, '/bootstrap':horiz(['/bootstrap':vis(A::'/bootstrap':list(base)), '/bootstrap':label(! (>=)), '/bootstrap':vis(B::'/bootstrap':list(base))])).
-greaterOrEquals(SeqA, SeqB):-'/Functional':gt(seqNumericValue(SeqA), seqNumericValue(SeqB), '/bootstrap':number).
-greaterOrEquals(SeqA, SeqB):-'/Functional':eq(seqNumericValue(SeqA), seqNumericValue(SeqB), '/bootstrap':number).
+'/bootstrap':signature(baseNumericValue(Base)::'/Functional':expr('/bootstrap':number),[Base::base]).
+'/Functional':def(baseNumericValue(a),'/bootstrap':number,'/Functional':const(1)).
+'/Functional':def(baseNumericValue(c),'/bootstrap':number,'/Functional':const(2)).
+'/Functional':def(baseNumericValue(g),'/bootstrap':number,'/Functional':const(3)).
+'/Functional':def(baseNumericValue(t),'/bootstrap':number,'/Functional':const(4)).
+'/bootstrap':signature(seqNumericValue(Seq)::'/Functional':expr('/bootstrap':number),[Seq::'/bootstrap':list(base)]).
+'/Functional':def(seqNumericValue([]),'/bootstrap':number,'/Functional':const(0)).
+'/Functional':def(seqNumericValue([Base|Seq]),'/bootstrap':number,'/Functional':plus(baseNumericValue(Base),'/Functional':mult(seqNumericValue(Seq),'/Functional':const(5)))).
+'/bootstrap':signature(greaterOrEquals(A,B)::'/bootstrap':pred,[A::'/bootstrap':list(base),B::'/bootstrap':list(base)]).
+'/bootstrap':projection(greaterOrEquals(A,B)::'/bootstrap':pred,'/bootstrap':horiz(['/bootstrap':vis(A::'/bootstrap':list(base)),'/bootstrap':label(! (>=)),'/bootstrap':vis(B::'/bootstrap':list(base))])).
+greaterOrEquals(SeqA,SeqB):-'/Functional':gt(seqNumericValue(SeqA),seqNumericValue(SeqB),'/bootstrap':number).
+greaterOrEquals(SeqA,SeqB):-'/Functional':eq(seqNumericValue(SeqA),seqNumericValue(SeqB),'/bootstrap':number).

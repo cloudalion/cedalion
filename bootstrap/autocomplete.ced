@@ -17,7 +17,6 @@ signature(injectContent(Completion,Content,Type,VarNames)::pred,[Completion::Typ
 injectContent(Completion,Content,Type,VarNames):- \+annotation:parentheses((builtin:var(Content::Type),\+varInVarNames(Content::Type,VarNames))),checkSignature(Completion::Type,[FirstArg::ArgType|Args]),checkAdapter(Content::Type,FirstArg::ArgType).
 signature(default(X)::statement,[X::typedTerm]).
 default(X)~>defaultRepresentation(X):-builtin:true.
-default(projection(_::_,horiz([]))::statement).
 default([]::list(_)).
 projection(default(TTerm)::statement,horiz([label(!'Use'),vis(TTerm::typedTerm),label(!'by default')])).
 signature(defaultRepresentationForAll(InternalArgs)::pred,[InternalArgs::list(typedTerm)]).
