@@ -1,2 +1,2 @@
-'/bootstrap':contextMenuEntry(Expr::expr(T), VNs, Path, !'Evaluate', '/bootstrap':where('/bootstrap':doProc(cpi:edit(Path, wrap(Value)::expr(T), VNs)), eval(Expr, T, Value))).
-'/bootstrap':contextMenuEntry('/bootstrap':sandbox(Expr::expr(T))::'/bootstrap':statement, VNs, Path, !'Turn to unit test', cpi:edit(Path, '/bootstrap':unitTest(eval(Expr, T, _))::'/bootstrap':statement, VNs)).
+'/bootstrap':contextMenuEntry(Expr::expr(T),VNs,Path,!'Evaluate','/bootstrap':where('/bootstrap':doProc(cpi:edit(Path,wrap(Value)::expr(T),VNs)),eval(Expr,T,Value))).
+'/bootstrap':contextMenuEntry('/bootstrap':sandbox(Expr::expr(T))::'/bootstrap':statement,VNs,Path,!'Turn to unit test',cpi:edit(Path,'/bootstrap':unitTest(eval(Expr,T,_))::'/bootstrap':statement,VNs)).
