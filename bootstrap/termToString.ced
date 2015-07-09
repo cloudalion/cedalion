@@ -1,0 +1,5 @@
+signature(builtin:rawTermToString(TTerm,Str)::pred,[TTerm::typedTerm,Str::string]).
+unitTest(builtin:rawTermToString(_::_,!'A')).
+unitTest(builtin:rawTermToString((builtin:fail:-builtin:true)::statement,!':-(\'builtin#fail\',\'builtin#true\')')).
+signature(builtin:termToString(TTerm,VNs,Depth,NSList,Str)::pred,[TTerm::typedTerm,VNs::list(varName),Depth::number,NSList::list(namespacePair),Str::string]).
+unitTest(builtin:termToString((builtin:fail:-builtin:true)::statement,[],100,[],!'builtin:fail:-builtin:true')).
