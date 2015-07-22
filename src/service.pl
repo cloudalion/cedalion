@@ -415,7 +415,7 @@ generateLines(_, _, _).
 						      write_term_to_codes(Term1, Codes, [numbervars(true), ignore_ops(true), quoted(true)]),
 						      atom_codes(String, Codes)
 						  ), (
-						      read_term_from_atom(String, Term, [])
+						      read_term_from_atom(String, Term, [character_escapes(true)])
 						      )).
 
 
