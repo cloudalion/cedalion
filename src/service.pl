@@ -417,7 +417,7 @@ generateLines(_, _, _).
 						  ), (
 						      read_term_from_atom(String, Term, [character_escapes(true)])
 						      )).
-
+'builtin#timeout'(Goal, Timeout) :- catch(call_with_time_limit(Timeout, Goal), time_limit_exceeded, throw('builtin#timeout')).
 
 % Write a term to a stream from a term(Term, VarNames) tupple
 writeTerm(Stream, Term, VarNames) :-
@@ -496,3 +496,4 @@ quoteAtomIfNeeded(Atom, Atom) :-
 	!.
 quoteAtomIfNeeded(Atom, QAtom) :-
 	quote(Atom, QAtom).
+

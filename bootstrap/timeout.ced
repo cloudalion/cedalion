@@ -1,0 +1,5 @@
+defAtom(aPredicateThatDoesNotTerminate::pred).
+aPredicateThatDoesNotTerminate:-aPredicateThatDoesNotTerminate.
+signature(builtin:timeout(Goal,Timeout)::pred,[Goal::pred,Timeout::number]).
+defAtom(builtin:timeout::exception).
+unitTest(builtin:catch(builtin:timeout(aPredicateThatDoesNotTerminate,0.05),builtin:timeout,builtin:true)).
