@@ -1,19 +1,24 @@
-signature(alias(TTerm, String)::statement, [TTerm::typedTerm, String::string]).
-projection(alias(TTerm, String)::statement, horiz([label(!use), vis(String::string), label(!'as alias for'), vis(TTerm::typedTerm)])).
-signature(aliasString(TTerm, String)::pred, [TTerm::typedTerm, String::string]).
-alias(TTerm, String)~>aliasString(TTerm, String):-builtin:true.
-signature(localString(Func, String)::pred, [Func::string, String::string]).
-doc(!'Codes are the ASCII codes of Str', signature(builtin:charCodes(Str, Codes)::pred, [Str::string, Codes::list(number)])).
-sigProj(append(L1, L2, L3, T)::pred, [L1::list(T), L2::list(T), L3::list(T), T::type], horiz([vis(L3::list(T)), label(!'is the concatenation of'), vis(L1::list(T)), label(!and), vis(L2::list(T)), label(!'of type'), vis(T::type)])).
-localString(Func, String):-builtin:charCodes(!'#', [HashCode]), builtin:charCodes(Func, FuncCodes), append(_, [HashCode|StringCodes], FuncCodes, number), builtin:charCodes(String, StringCodes).
-aliasString(TTerm, String):-builtin:parseTerm(TTerm, Func, _), localString(Func, String).
-unitTest(localString(!'aa#bb', !bb)).
-unitTest(aliasString(alias(TTerm, String)::statement, !alias)).
-alias(projection(_, _)::statement, !'->>').
-alias((\+X)::pred, !not).
-alias((\+X)::pred, ! (\+)).
-projection(TTerm, label(Alias))~>alias(TTerm, Alias).
-projection(TTerm, horiz([label(Alias)|_]))~>alias(TTerm, Alias).
-projection(TTerm, horiz([_, label(Alias)|_]))~>alias(TTerm, Alias).
-contextMenuEntry([signature(TTerm, [])|OtherStatements]::list(statement), VNs, Path, !'Create an alias', cpi:edit(Path, [signature(TTerm, []), projection(TTerm, label(!alias))|OtherStatements]::list(statement), VNs)).
-contextMenuEntry([signature(TTerm, Body)|OtherStatements]::list(statement), VNs, Path, !'Define projection', cpi:edit(Path, [signature(TTerm, Body), projection(TTerm, horiz([]))|OtherStatements]::list(statement), VNs)).
+signature(alias(TTerm,String)::statement,[TTerm::typedTerm,String::string]).
+projection(alias(TTerm,String)::statement,horiz([label(!use),vis(String::string),label(!'as alias for'),vis(TTerm::typedTerm)])).
+signature(aliasString(TTerm,String)::pred,[TTerm::typedTerm,String::string]).
+alias(TTerm,String)~>aliasString(TTerm,String):-builtin:true.
+signature(localString(Func,String)::pred,[Func::string,String::string]).
+doc(!'Codes are the ASCII codes of Str',signature(builtin:charCodes(Str,Codes)::pred,[Str::string,Codes::list(number)])).
+sigProj(append(L1,L2,L3,T)::pred,[L1::list(T),L2::list(T),L3::list(T),T::type],horiz([vis(L3::list(T)),label(!'is the concatenation of'),vis(L1::list(T)),label(!and),vis(L2::list(T)),label(!'of type'),vis(T::type)])).
+localString(Func,String):-builtin:charCodes(!'#',[HashCode]),builtin:charCodes(Func,FuncCodes),append(_,[HashCode|StringCodes],FuncCodes,number),builtin:charCodes(String,StringCodes).
+aliasString(TTerm,String):-builtin:parseTerm(TTerm,Func,_),localString(Func,String).
+unitTest(localString(!'aa#bb',!bb)).
+unitTest(aliasString(alias(TTerm,String)::statement,!alias)).
+alias(projection(_,_)::statement,!'->>').
+alias((\+X)::pred,!not).
+alias((\+X)::pred,! (\+)).
+projection(TTerm,label(Alias))~>alias(TTerm,Alias).
+projection(TTerm,horiz([label(Alias)|_]))~>alias(TTerm,Alias).
+projection(TTerm,horiz([_,label(Alias)|_]))~>alias(TTerm,Alias).
+contextMenuEntry([signature(TTerm,[])|OtherStatements]::list(statement),VNs,Path,!'Create an alias',cpi:edit(Path,[signature(TTerm,[]),projection(TTerm,label(!alias))|OtherStatements]::list(statement),VNs)).
+contextMenuEntry([signature(TTerm,Body)|OtherStatements]::list(statement),VNs,Path,!'Define projection',defineProjection(TTerm,Body,OtherStatements,VNs,Path)).
+signature(defineProjection(TTerm,Body,OtherStatements,VNs,Path)::procedure,[TTerm::typedTerm,Body::list(typedTerm),OtherStatements::list(statement),VNs::list(varName),Path::cpi:path]).
+signature(visListForBody(Body,VisList)::pred,[Body::list(typedTerm),VisList::list(visualization)]).
+cpi:procedureCommand(defineProjection(TTerm,Body,OtherStatements,VNs,Path),doProc(cpi:edit(Path,annotation:changeMode([signature(TTerm,Body),projection(TTerm,horiz(VisList))|OtherStatements],vert)::list(statement),VNs))):-visListForBody(Body,VisList).
+visListForBody([],[]):-builtin:true.
+visListForBody([TTerm|TTerms],[vis(TTerm)|VisList]):-visListForBody(TTerms,VisList).

@@ -4,4 +4,4 @@ defAtom(TTerm)~>signature(TTerm,[]).
 signature(wrongAtomicSignature(TTerm,Path,VNs)::error,[TTerm::typedTerm,Path::cpi:path,VNs::list(varName)]).
 check(Path,signature(TTerm,Empty)::statement,VNs,marker(Path,error(wrongAtomicSignature(TTerm,Path,VNs),VNs))):- \+builtin:var(Empty::list(typedTerm)),Empty::list(typedTerm)=[]::list(typedTerm),\+builtin:var(TTerm::typedTerm),statementPath(Path).
 autoFix(wrongAtomicSignature(TTerm,Path,VNs),_,cpi:edit(Path,defAtom(TTerm)::statement,VNs)):-builtin:true.
-contextMenuEntry([defAtom(TTerm)|Rest]::list(statement),VNs,Path,!'Define Projection',cpi:edit(Path,[defAtom(TTerm),projection(TTerm,horiz([]))|Rest]::list(statement),VNs)).
+contextMenuEntry([defAtom(TTerm)|Rest]::list(statement),VNs,Path,!'Define projection',cpi:edit(Path,[defAtom(TTerm),projection(TTerm,horiz([]))|Rest]::list(statement),VNs)).
