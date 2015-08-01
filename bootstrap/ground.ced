@@ -1,0 +1,3 @@
+signature(builtin:ground(TTerm)::pred,[TTerm::typedTerm]).
+unitTest(builtin:ground(1::number)).
+unitTest(\+builtin:ground([_]::list(_))).
