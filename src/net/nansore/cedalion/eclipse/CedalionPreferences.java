@@ -43,9 +43,7 @@ public class CedalionPreferences
 		addField(new FontFieldEditor("normalFont", "Normal Font", getFieldEditorParent()));
 		addField(new FontFieldEditor("symbolFont", "Symbol Font", getFieldEditorParent()));
 		addField(new FileFieldEditor("prologInterpreter", "Prolog Interpreter", getFieldEditorParent()));
-		addField(new BooleanFieldEditor("useProxy", "Use Proxy", getFieldEditorParent()));
-		addField(new StringFieldEditor("proxyHost", "Proxy host", getFieldEditorParent()));
-		addField(new IntegerFieldEditor("proxyPort", "Proxy port", getFieldEditorParent()));
+		addField(new FileFieldEditor("initialImage", "Initial Cedalion image", getFieldEditorParent()));
 	}
 
 	@Override

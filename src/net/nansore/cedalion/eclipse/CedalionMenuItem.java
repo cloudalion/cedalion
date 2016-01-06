@@ -1,5 +1,7 @@
 package net.nansore.cedalion.eclipse;
 
+import java.io.IOException;
+
 import net.nansore.cedalion.execution.ExecutionContext;
 import net.nansore.cedalion.execution.ExecutionContextException;
 import net.nansore.cedalion.execution.TermInstantiationException;
@@ -32,13 +34,16 @@ public class CedalionMenuItem {
 		item.setText((String) term.arg(1));
 		final Compound proc = (Compound) term.arg(2);
 		try {
-			icon = ImageFigure.createImage(context, term.arg(3).toString());
+			icon = ImageFigure.createImage(context, (Compound)term.arg(3));
 			if(icon != null) {
 				item.setImage(icon);
 			}
 		} catch (CoreException e1) {
 			// No image in this case
 			e1.printStackTrace();
+		} catch (IOException e) {
+			// No image in this case
+			e.printStackTrace();
 		}
 		item.addListener(SWT.Selection, new Listener() {
 			

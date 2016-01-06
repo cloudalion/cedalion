@@ -497,3 +497,16 @@ quoteAtomIfNeeded(Atom, Atom) :-
 quoteAtomIfNeeded(Atom, QAtom) :-
 	quote(Atom, QAtom).
 
+
+% Load an image - similar to consult/1, but keeps the keeps the predicates dynamic
+loadImage(!(FileName)) :-
+    open(FileName, read, Stream),
+    read_term(Stream, Term, []),
+    loadImageFromStream(Term, Stream).
+
+loadImageFromStream(end_of_file, _) :- !.
+loadImageFromStream(Term, Stream) :-
+    assert(Term),
+    read_term(Stream, Term1, []),
+    loadImageFromStream(Term1, Stream).
+

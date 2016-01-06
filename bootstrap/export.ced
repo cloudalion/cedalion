@@ -1,4 +1,15 @@
-defAtom(exportCedalionProgram::procedure).
-annotation:comment(signature(builtin:fileContent(AnnotatedStatement, Goal, NSList)::fileContent, [AnnotatedStatement::annotatedTerm, Goal::pred, NSList::list(nsElem)]), !'A representation for the contents of a generated file for the writeFile command.  For every result of Goal, AnnotatedStatement represents a statement to be written to file').
-procedure(exportCedalionProgram, writeFile(!'export.car', builtin:fileContent(builtin:statement(Statement, VarNames), builtin:loadedStatement(_, Statement, VarNames), []))).
-contextMenuEntry([]::list(statement), _, _, !'Export Cedalion Program', exportCedalionProgram).
+signature(export(Path)::statement,[Path::string]).
+projection(export(Path)::statement,horiz([label(!'Export to:'),vis(Path::string)])).
+export(!'bootstrap.cedimg').
+unitTest(builtin:true).
+signature(exportTo(Path)::procedure,[Path::string]).
+signature(writeStatementsTo(Path)::procedure,[Path::string]).
+procedure(exportTo(Path),doProc(writeStatementsTo(Path))).
+annotation:shrink((cpi:procedureCommand(writeStatementsTo(Path),doAll([writeTextFile(Path,Lines),showView(horiz([label(!'Exported to'),vis(cpi:immediateDescriptor(Path,[])::string)]))])):-builtin:findall(Line,string, (member(Clause,clauses,statement),'/Functional':eval(statementToLine(Clause),string,Line)),Lines))).
+contextMenuEntry(export(Path)::statement,_,_,!'Export',exportTo(Path)).
+signature(statementToLine(Statement)::'/Functional':expr(string),[Statement::statement]).
+'/Functional':def(statementToLine(Statement),string,'/Functional':where('/Functional':applyBinOp('/Functional':const(Str),'/Functional':concat,'/Functional':const(!.)),builtin:rawTermToString(Statement::statement,Str))).
+annotation:shrink(signature(clausesForStatement(Statement,File,VNs)::set(statement),[Statement::statement,File::string,VNs::list(varName)])).
+annotation:shrink(setDef(clausesForStatement(Statement,File,VNs),union(singleton((builtin:loadedStatement(File,Statement,VNs):-builtin:true)),set(Clause, (builtin:removeAnnotations(Statement::statement,StatementWithoutAnnotations::statement),rewriteToClause(StatementWithoutAnnotations,Clauses),listMember(Clause,statement,Clauses)))),statement)).
+defAtom(clauses::set(statement)).
+setDef(clauses,set(Clause, (builtin:loadedStatement(File,Stmnt,VNs),member(Clause,clausesForStatement(Stmnt,File,VNs),statement))),statement).

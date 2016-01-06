@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import net.nansore.cedalion.figures.Link;
 import net.nansore.prolog.Compound;
+import net.nansore.prolog.NoSolutionsException;
 import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 
@@ -80,15 +81,9 @@ public class Activator extends AbstractUIPlugin {
             	PrologProxy.initialize(plInterpreter, loadToFileSystem(context, "service.pl"));
 
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+				loadInitialImage(getPreferenceStore().getString("initialImage"));
 	            loadResources(root);
 	            
-/*	            Proxy proxy = null;
-	            if(getPreferenceStore().getBoolean("useProxy")) {
-	            	proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(getPreferenceStore().getString("proxyHost"), getPreferenceStore().getInt("proxyPort")));
-	            }*/
-	            	
-	            //pkgLoader = new PackageLoader(getStateLocation().toFile(), proxy);
-	            //loadNamespaces();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -99,9 +94,10 @@ public class Activator extends AbstractUIPlugin {
         }
 	}
 
-//	public void loadNamespaces() throws PrologException, IOException {
-//		pkgLoader.loadNamespaces();
-//	}
+	private void loadInitialImage(String imageFile) throws NoSolutionsException, PrologException {
+		if(imageFile == "") return;
+		PrologProxy.instance().getSolution(new Compound("loadImage", imageFile));
+	}
 
 	/**
 	 * Load a plugin resource into a file-system file.

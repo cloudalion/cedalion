@@ -1,6 +1,22 @@
 defAtom(image::type).
-signature(imageMarker(Img)::marker, [Img::image]).
-check(Path, Img::Type, [], marker(Path, imageMarker(Img1))):- \+builtin:var(Img::Type), builtin:equals(Type::type, image::type), Img1::image=Img::Type.
-markerVis(imageMarker(Img), Vis, vert([image(Img), halfSize(Vis)])).
+signature(imageMarker(Img)::marker,[Img::image]).
+check(Path,Img::Type,[],marker(Path,imageMarker(Img1))):- \+builtin:var(Img::Type),builtin:equals(Type::type,image::type),Img1::image=Img::Type.
+markerVis(imageMarker(Img),Vis,vert([image(Img),halfSize(Vis)])).
 defAtom('Paste.png'::image).
 defAtom('New.png'::image).
+signature(defineImage(Image,URL)::statement,[Image::image,URL::string]).
+projection(defineImage(Image,URL)::statement,horiz([vis(Image::image),label(!'is located at'),vis(URL::string)])).
+signature(cpi:imageURL(Image,URL)::pred,[Image::image,URL::string]).
+defineImage(Image,URL)~>cpi:imageURL(Image,URL):-builtin:true.
+defineImage('New.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/New.png').
+defineImage('Error.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Error.png').
+defineImage('Create.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Create.png').
+defineImage('Cut.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Cut.png').
+defineImage('Delete.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Delete.png').
+defineImage('Magic wand.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Magic%20wand.png').
+defineImage('Paste.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Paste.png').
+defineImage('Redo.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Redo.png').
+defineImage('Search.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Search.png').
+defineImage('Undo.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Undo.png').
+defineImage('wavy-arrow.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/wavy-arrow.png').
+defineImage('Yellow tag.png',!'https://raw.githubusercontent.com/brosenan/cedalion/master/bootstrap/Yellow%20tag.png').
