@@ -48,15 +48,12 @@ public class ImageFigure extends Label implements TermFigure {
 
 	public static Image createImage(TermContext context, Compound imageID)
 			throws CoreException, IOException {
-		if(imageID.equals("cpi#none")) {
+		if(imageID.name().equals("cpi#none")) {
 			return null;
 		}
 		if(images.containsKey(imageID))
 			return images.get(imageID);
 		
-//		IPath filePath = new Path(imageID.replaceFirst("#", "/"));
-//		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(filePath);
-//		Image img = new Image(context.getCanvas().getDisplay(), new ImageData(file.getContents()));
 		Map<Variable, Object> solution;
 		Variable varURL = new Variable();
 		try {

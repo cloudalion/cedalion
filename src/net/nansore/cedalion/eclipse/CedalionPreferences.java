@@ -43,7 +43,7 @@ public class CedalionPreferences
 		addField(new FontFieldEditor("normalFont", "Normal Font", getFieldEditorParent()));
 		addField(new FontFieldEditor("symbolFont", "Symbol Font", getFieldEditorParent()));
 		addField(new FileFieldEditor("prologInterpreter", "Prolog Interpreter", getFieldEditorParent()));
-		addField(new FileFieldEditor("initialImage", "Initial Cedalion image", getFieldEditorParent()));
+		addField(new StringFieldEditor("initialImage", "Initial Cedalion image file or URL", getFieldEditorParent()));
 	}
 
 	@Override

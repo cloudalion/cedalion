@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.MissingResourceException;
@@ -94,8 +95,24 @@ public class Activator extends AbstractUIPlugin {
         }
 	}
 
-	private void loadInitialImage(String imageFile) throws NoSolutionsException, PrologException {
+	private void loadInitialImage(String imageFile) throws NoSolutionsException, PrologException, IOException {
 		if(imageFile == "") return;
+		try {
+			URL url = new URL(imageFile);
+			URLConnection conn = url.openConnection();
+			File tmpFile = File.createTempFile("ced", ".cedimg");
+			FileOutputStream outputStream = new FileOutputStream(tmpFile);
+			int n;
+			byte[] buffer = new byte[1024];
+			while ((n = conn.getInputStream().read(buffer)) > -1) {
+				outputStream.write(buffer, 0, n);
+			}
+			outputStream.close();
+			imageFile = tmpFile.getAbsolutePath();
+		} catch (MalformedURLException e) {
+			// This is not a URL.  Proceeding as if this is a file name.
+		}
+		System.out.println("Loading image from file: " + imageFile);
 		PrologProxy.instance().getSolution(new Compound("loadImage", imageFile));
 	}
 
