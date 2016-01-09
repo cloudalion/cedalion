@@ -17,13 +17,15 @@ RUN mkdir -p /usr/share/eclipse/dropins/plugins
 COPY net.nansore.cedalion_*.jar /usr/share/eclipse/dropins/plugins
 COPY net.nansore.cedalion.prefs /home/cedalion/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/
 
-# Work volumes
-VOLUME /home/cedalion/workspace
-VOLUME /home/cedalion/git
-
 # Create user cedalion
-RUN mkdir -p /home/cedalion
+RUN mkdir -p /home/cedalion/workspace /home/cedalion/git
 RUN echo cedalion:cedalion:1000:1000::/home/cedalion:/bin/bash | newusers
 RUN chown -R cedalion:cedalion /home/cedalion
 
+# Work volumes
+USER cedalion
+VOLUME /home/cedalion/workspace
+VOLUME /home/cedalion/git
+
+USER root
 CMD    ["/usr/sbin/sshd", "-D"]
