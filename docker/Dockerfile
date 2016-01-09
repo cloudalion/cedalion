@@ -15,6 +15,7 @@ EXPOSE 22
 # Install the Cedalion plugin
 RUN mkdir -p /usr/share/eclipse/dropins/plugins
 COPY net.nansore.cedalion_*.jar /usr/share/eclipse/dropins/plugins
+COPY net.nansore.cedalion.prefs /home/cedalion/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/
 
 # Create user cedalion
 RUN mkdir -p /home/cedalion/workspace /home/cedalion/git
@@ -25,7 +26,6 @@ RUN chown -R cedalion:cedalion /home/cedalion
 USER cedalion
 VOLUME /home/cedalion/workspace
 VOLUME /home/cedalion/git
-COPY net.nansore.cedalion.prefs /home/cedalion/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/
 WORKDIR /home/cedalion/workspace
 
 USER root
