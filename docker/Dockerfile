@@ -20,10 +20,10 @@ RUN chown cedalion:cedalion /home/cedalion
 # Install the Cedalion plugin
 RUN mkdir -p /usr/share/eclipse/dropins/plugins
 COPY net.nansore.cedalion_*.jar /usr/share/eclipse/dropins/plugins
-COPY net.nansore.cedalion.prefs /cedalion/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/
+COPY net.nansore.cedalion.prefs /home/cedalion/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/
 
 # Work volumes
-VOLUME /cedalion/workspace
-VOLUME /cedalion/git
+VOLUME /home/cedalion/workspace
+VOLUME /home/cedalion/git
 
 CMD    ["/usr/sbin/sshd", "-D"]
