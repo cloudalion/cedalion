@@ -9,10 +9,13 @@ RUN apt-get install -y fonts-droid
 
 # sshd configuration
 RUN mkdir /var/run/sshd
-RUN echo 'root:root' |chpasswd
-RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 EXPOSE 22
+
+# Create user cedalion
+RUN mkdir -p /home/cedalion
+RUN echo cedalion:cedalion:1000:1000::/home/cedalion:/bin/bash | newusers
+RUN chown cedalion:cedalion /home/cedalion
 
 # Install the Cedalion plugin
 RUN mkdir -p /usr/share/eclipse/dropins/plugins
