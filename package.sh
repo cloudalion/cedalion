@@ -6,6 +6,7 @@ cp ~/eclipse/dropins/plugins/net.nansore.cedalion_$version.jar docker
 docker build -t brosenan/cedalion:$version docker/
 docker tag -f brosenan/cedalion:$version brosenan/cedalion:latest
 docker push brosenan/cedalion:$version
+docker push brosenan/cedalion:latest
 
 git commit -am $version
 git tag -a $version
