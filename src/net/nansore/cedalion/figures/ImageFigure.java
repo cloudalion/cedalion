@@ -1,8 +1,6 @@
 package net.nansore.cedalion.figures;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -17,14 +15,9 @@ import net.nansore.prolog.PrologException;
 import net.nansore.prolog.PrologProxy;
 import net.nansore.prolog.Variable;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.draw2d.Label;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 
 public class ImageFigure extends Label implements TermFigure {
 	

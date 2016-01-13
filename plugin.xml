@@ -9,7 +9,16 @@
             extensions="ced"
             icon="icons/cedalion-icon16.png"
             id="net.nansore.cedalion.editor"
+            launcher="foo"
             name="Cedalion Editor">
+      </editor>
+      <editor
+            default="false"
+            extensions="cedimg"
+            icon="icons/cedalion-image.png"
+            id="cedalion.image_pusher"
+            launcher="net.nansore.cedalion.eclipse.CedalionImagePusher"
+            name="Push Cedalion Image">
       </editor>
    </extension>
    <extension
