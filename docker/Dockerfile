@@ -8,7 +8,7 @@ RUN apt-get install -y openssh-server eclipse-gef eclipse-egit git swi-prolog
 RUN apt-get install -y fonts-droid light-themes
 
 # Web development
-RUN apt-get install -y eclipse-wtp
+RUN apt-get install -y eclipse-wtp-webtools
 
 # sshd configuration
 RUN mkdir /var/run/sshd
