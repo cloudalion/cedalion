@@ -7,6 +7,9 @@ RUN apt-get install -y openssh-server eclipse-gef eclipse-egit git swi-prolog
 # fonts with all the necessary Unicode symbols
 RUN apt-get install -y fonts-droid light-themes
 
+# Web development
+RUN apt-get install -y eclipse-wtp
+
 # sshd configuration
 RUN mkdir /var/run/sshd
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
