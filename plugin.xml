@@ -9,7 +9,6 @@
             extensions="ced"
             icon="icons/cedalion-icon16.png"
             id="net.nansore.cedalion.editor"
-            launcher="foo"
             name="Cedalion Editor">
       </editor>
       <editor
